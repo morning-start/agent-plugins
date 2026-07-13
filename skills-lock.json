@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skills": {
+    "make-moonbit-c-bindings": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/make-moonbit-c-bindings/SKILL.md",
+      "computedHash": "bc11f84d685621aa0bb8e5f53cd98ea6671786091182c2725e58f2ad76ddfa33"
+    },
+    "moonbit-agent-guide": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-agent-guide/SKILL.md",
+      "computedHash": "3c9c2e5213fbc88b34297be34d66d468f914b971f1c07eb2914c7638f37ecb49"
+    },
+    "moonbit-c-binding": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-c-binding/SKILL.md",
+      "computedHash": "020b3ad20391d9811e6cc950feb63e909912258ef7a7a2761dd4413933874dee"
+    },
+    "moonbit-extract-spec-test": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-extract-spec-test/SKILL.md",
+      "computedHash": "ce1cfe5a73ba8c40e0dca6ba20020ee1f0b63cf8a211db1baddd85b777b714a4"
+    },
+    "moonbit-orientation": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-orientation/SKILL.md",
+      "computedHash": "6b4fcb7ad56781ab745c49e38b3619e4ea0dd227cb64129443e33a3ab6890c7d"
+    },
+    "moonbit-proof": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-proof/SKILL.md",
+      "computedHash": "f3d20d18628dd7486374a30f8b9e5548f61e5e7fb595be92fac6de04b59b5453"
+    },
+    "moonbit-refactoring": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-refactoring/SKILL.md",
+      "computedHash": "0434db739ddb7083794c960409241c9da48f0e2c0ce2553bc7dc2da69672d234"
+    },
+    "moonbit-spec-test-development": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/moonbit-spec-test-development/SKILL.md",
+      "computedHash": "0ac04ee67aa820a4eb6d23fc38589effe089d5eeb5b073f337b182e05768b29c"
+    },
+    "ocaml2moonbit-migration": {
+      "source": "moonbitlang/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ocaml2moonbit-migration/SKILL.md",
+      "computedHash": "52f4ea98bdcb068ce64828d5d26c948fd1c5d432c366f2c3df8743a65e67b338"
+    }
+  }
+}
