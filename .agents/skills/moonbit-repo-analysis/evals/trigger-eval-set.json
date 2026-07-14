@@ -1,0 +1,22 @@
+{
+  "description": "Current description baseline",
+  "queries": [
+    {"query": "分析一下这个 MoonBit 项目", "should_trigger": true},
+    {"query": "看看这个库怎么设计的", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "提取设计模式", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "做个代码分析报告", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "how is this MoonBit lib structured", "should_trigger": true},
+    {"query": "analyze this MoonBit repo", "should_trigger": true},
+    {"query": "月兔项目分析", "should_trigger": true},
+    {"query": "给我讲讲这个 MoonBit 项目的架构", "should_trigger": true},
+    {"query": "给我讲讲这个项目的分层设计", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "这个项目的模块是怎么组织的", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "分析一下 dependencies 关系", "should_trigger": true, "context": "in a MoonBit workspace"},
+    {"query": "这个 MoonBit 库的设计哲学是什么", "should_trigger": true},
+    {"query": "帮我 review 这段代码", "should_trigger": false},
+    {"query": "这个 bug 怎么修", "should_trigger": false},
+    {"query": "分析这个 Python 项目的架构", "should_trigger": false},
+    {"query": "帮我把这段 Rust 代码重构一下", "should_trigger": false},
+    {"query": "对比一下两个项目的设计", "should_trigger": false}
+  ]
+}
