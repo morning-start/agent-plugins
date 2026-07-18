@@ -173,6 +173,52 @@ moon test --target native -f "<task_test_name>"
 # 预期: 始终通过（同一工具链版本）
 ```
 
+## 快速任务模式（Fast Task Playbooks）
+
+> 来源: `moonbit-agent-guide`
+
+根据任务类型选择最小执行流程：
+
+### Bug Fix — 修复 Bug
+
+```bash
+# 1. 复现或定位失败行为
+moon test --target native -f "<failing_test>"
+# 2. 定位符号
+moon ide outline | grep <symbol>
+moon ide peek-def <symbol>
+moon ide find-references <symbol>
+# 3. 最小修复
+# 4. 验证
+moon check && moon test [dirname|filename] --filter 'glob' && moon fmt && moon info
+# 预期: pkg.generated.mbti 不变（API 无变化）
+```
+
+### Refactor — 重构
+
+```bash
+# 1. 确认行为不变
+# 2. 语义重命名/导航
+moon ide rename <symbol> <new_name>
+# 同名符号: moon ide rename <symbol> <new_name> --loc filename:line:col
+# 3. 保持编辑包局部
+# 4. 验证
+moon check && moon test [dirname|filename] && moon fmt && moon info
+# 预期: API 保持不变
+```
+
+### New Feature — 新功能
+
+```bash
+# 1. 发现现有 API 避免重复
+moon ide doc '<query>'
+# 2. 添加实现，用 ///| 分隔
+# 3. 添加黑盒测试 + 文档示例
+# 4. 验证
+moon check && moon test [dirname|filename] && moon fmt && moon info
+# 预期: pkg.generated.mbti 反映新增 API
+```
+
 ## IDE 工具链
 
 在实现前和使用期间，优先用语义工具代替文本搜索：

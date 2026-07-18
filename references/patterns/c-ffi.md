@@ -47,6 +47,87 @@ src/
 - `malloc → defer free` 手动内存管理
 - 类型宽度编译期断言
 
+## 回调模式（Callback）
+
+> 来源: `moonbit-c-binding`
+
+C 回调函数需要桥接到 MoonBit：
+
+```moonbit
+// 方式 1: 使用 FuncRef（推荐）
+extern "c" fn set_callback(cb: FuncRef[(Int) -> Unit]) -> Unit = "set_callback"
+
+// 方式 2: 使用闭包
+extern "c" fn set_closure(cb: (Int) -> Unit) -> Unit = "set_closure"
+
+// 方式 3: 带状态的回调（通过 user_data）
+extern "c" fn set_callback_with_data(
+  cb: FuncRef[(Int, Unit) -> Unit],
+  data: #borrow Unit
+) -> Unit = "set_callback_with_data"
+```
+
+**C 侧对应:**
+
+```c
+// 方式 1: FuncRef 是函数指针
+typedef void (*callback_t)(int32_t);
+MOONBIT_FFI_EXPORT void set_callback(callback_t cb) {
+  cb(42);
+}
+
+// 方式 3: 带 user_data
+typedef void (*callback_data_t)(int32_t, void*);
+MOONBIT_FFI_EXPORT void set_callback_with_data(
+  callback_data_t cb, void *data) {
+  cb(42, data);
+}
+```
+
+## 外部对象 + Finalizer
+
+> 来源: `moonbit-c-binding`
+
+C 句柄包装为 MoonBit 对象，由 GC 自动清理：
+
+```moonbit
+// 声明外部对象类型
+type Handle = #external UInt64
+
+// 创建包装对象
+pub fn wrap_handle(ptr: UInt64) -> Handle {
+  // MoonBit 不追踪此对象的生命周期
+  Handle(ptr)
+}
+
+// 带 finalizer 的外部对象
+type ManagedHandle with finalizer {
+  ptr: UInt64
+}
+
+// 创建托管对象（GC 自动释放）
+pub fn create_managed() -> ManagedHandle {
+  let raw = c_create()
+  let handle = ManagedHandle { ptr: raw }
+  // 注册 finalizer: GC 回收时自动调用 c_destroy
+  handle
+}
+
+// finalizer 实现
+fn finalize(handle: ManagedHandle) {
+  c_destroy(handle.ptr)
+}
+```
+
+**所有权注解总结:**
+
+| 注解 | 含义 | 适用场景 |
+|------|------|---------|
+| `#borrow` | C 不持有引用，MoonBit GC 管理 | 临时传参给 C 处理 |
+| `#owned` | 所有权转移给 C | 传递数据给 C 后不再使用 |
+| `#external` | C 管理生命周期，MoonBit 不追踪 | 包装 C 分配的对象 |
+| `with finalizer` | GC 自动调用释放函数 | 需要自动清理的 C 资源 |
+
 ## 参考项目
 - moonbit-community/miniio (23 文件, 4 层架构)
 - moonbitlang/async 的 C FFI 部分

@@ -97,3 +97,28 @@ moon test --update  # 更新快照
 | 空 `catch` | 吞错误 | 至少 log |
 | `Option[T]` | 冗长 | 用 `T?` |
 | String 参数 | 分配 | 用 `StringView` |
+
+## 常见陷阱（Common Pitfalls）
+
+> 来源: `moonbit-agent-guide`
+
+| # | 陷阱 | 说明 | 正确做法 |
+|---|------|------|---------|
+| 1 | 变量/函数大写开头 | 编译错误 | 变量/函数用小写，类型用大写 |
+| 2 | 忘记 `mut` | 结构体字段默认不可变 | 需要修改的字段加 `mut` |
+| 3 | 忽略错误处理 | 错误被静默吞掉 | 要么声明 `raise` 传播，要么 `catch` 处理 |
+| 4 | 滥用 `return` | 冗余 | 最后一个表达式就是返回值，不需要 `return` |
+| 5 | 方法缺少 `Type::` 前缀 | 语法错误 | 方法定义: `fn Type::method(self) { ... }` |
+| 6 | 数组越界 | 运行时 panic | 用 `get()` 安全访问 |
+| 7 | 忘记 `@package` 前缀 | 调用其他包的函数/类型时 | `@json.parse(...)` 而非 `parse(...)` |
+| 8 | 使用 `++` / `--` | 不支持 | 用 `i = i + 1` 或 `i += 1` |
+| 9 | 显式 `try` 标记 | MoonBit 不需要 | 在 `raise` 函数中正常调用即可传播 |
+| 10 | `main` 写空参数列表 | `fn main() { ... }` 错误 | 用 `fn main { ... }` 或 `fn main raise { ... }` |
+| 11 | 枚举构造器字段语法错误 | 用 `:` 而非 `~` | 用 `label~ : Type` 语法 |
+| 12 | C 风格 for 循环 | MoonBit 不支持 | 用 `for i in 0..<(n-1) { ... }` |
+| 13 | `derive(Show)` 用于调试 | Show 是用户输出 | 用 `derive(Debug)` + `debug_inspect()` |
+| 14 | 调用 `@json.inspect()` | 包前缀多余 | 直接用 `json_inspect(value, ...)` |
+| 15 | 给 async 函数加 `raise` | async 默认可以 raise | 不要加 `raise`，除非要限制为 `noraise` |
+| 16 | 使用 `await` 关键字 | MoonBit 没有 | async 函数直接调用，不需要 await |
+| 17 | 用 `for { ... }` 做无限循环 | 语法错误 | 用 `for ;; { ... }` |
+| 18 | 文件路径用于类型路径 | 文件名不创建命名空间 | 文件只做组织用，类型路径用 `@package.Type` |

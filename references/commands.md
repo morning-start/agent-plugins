@@ -21,6 +21,31 @@ moon info --target native
 # 失败: 先 moon check 确保类型正确
 ```
 
+## 运行命令
+
+```bash
+# 运行主包
+moon run cmd/main
+
+# 从标准输入运行代码（快速实验）
+echo 'fn main { println("Hello!") }' | moon run -
+
+# 从命令行参数运行代码（单行）
+moon run -e 'fn main { println("Hello, MoonBit!") }'
+
+# 多行代码运行
+moon run --target native -e "$(cat <<'EOF'
+fn main {
+  println("Hello, MoonBit!")
+}
+EOF
+)"
+
+# 构建项目
+moon build --target native
+# 构建所有目标: moon build --target all
+```
+
 ## 项目命令
 
 ```bash
