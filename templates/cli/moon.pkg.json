@@ -1,8 +1,0 @@
-{
-  "import": [
-    "moonbitlang/core",
-    "moonbitlang/core/argparse",
-    "moonbitlang/core/fs"
-  ],
-  "target": ["native"]
-}

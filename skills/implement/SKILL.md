@@ -246,7 +246,7 @@ moon ide rename <old> <new>
 
 ## MoonBit API 速查
 
-> 基于 moonbitlang/core 0.1.20260713 版本。工具链更新后请用 `moon ide doc` 确认最新 API。
+> 基于 moonbitlang/core 0.1.20260713 (v0.10.4) 版本。工具链更新后请用 `moon ide doc` 确认最新 API。
 
 ### 类型转换
 
@@ -294,33 +294,249 @@ s[1:4].to_owned()  // "ell" (String)
 ### 测试断言
 
 ```moonbit
-// 检查输出（✅ 正确）
-inspect(value, content?=Some("expected_output"))
+// ✅ 正确（0.9.0+）
+debug_inspect(value, content=Some("expected_output"))
 
-// 检查输出（❌ 已废弃）
-// inspect(value, content?="expected_output")
+// ❌ 已废弃（0.9.0）
+// inspect(value, content?=Some("expected_output"))
 
 // 使用 Debug trait 而非 Show
 derive(Debug, Eq, ToJson)
-// derive(Show, Eq, ToJson)  // ❌ 已废弃，用 Debug
+// derive(Show, Eq, ToJson)  // ❌ 已废弃，0.9.0 起用 Debug
+
+// 调试断言（0.8.0+）
+@debug.assert_eq(a, b)
+// assert_eq(a, b)  // ❌ 已废弃
+```
+
+### 调试输出
+
+```moonbit
+// 调试插值（0.9.0+）
+"\{to_repr(value)}"  // 通过 Debug 输出
+"\{value}"           // 通过 Show 输出（用于用户可见的输出）
+
+// Debug 特征支持 ignore 参数（0.8.0+）
+derive(Debug(ignore=[ExternalType]))
 ```
 
 ### 字符串插值
 
 ```moonbit
-// ✅ 正确
+// ✅ 正确（0.10.0+ 编译为 StringBuilder 写入，性能更好）
 "Hello, \{name}!"
 
 // ❌ 已废弃
 // "Hello, \(name)!"
+
+// const 支持字符串插值（0.8.3+）
+const Hello = "Hello"
+const Message = "\{Hello} World"
+
+// Bytes 字符串插值（0.10.4+）
+let b : Bytes = b"value=\{x}"
+```
+
+### 循环语法
+
+```moonbit
+// for..in 带额外循环变量（0.8.3+）
+for x in xs; sum = 0 {
+  continue sum + x
+} nobreak {
+  sum
+}
+
+// for..in 带状态变量更新（0.10.0+）
+for i in 0..<10; p1 = 1, p2 = 0; p1 = p1 + p2, p2 = p1 {
+  // 每次循环自动更新 p1, p2
+}
+
+// 无限循环（0.8.0+）
+for ;; { ... }
+// for { ... }  // ❌ 已废弃
+
+// 反向 range（0.8.0+）
+for x in 4>..0 { ... }    // 反向，不包含
+for x in 4>=..0 { ... }   // 反向，包含
+
+// 闭合 range 语法（0.8.0+）
+for i in 0..<=10 { ... }  // 包含 10
+// for i in 0..=10 { ... }  // ❌ 已废弃，用 ..<=
+
+// nobreak 替代 else（0.8.0+）
+for i = 0; i < 10; i = i + 1 {
+} nobreak {
+  i
+}
+// 循环的 else 块 → nobreak
+
+// List comprehension（0.9.0+）
+let evens = [ for i in 0..<100 if i % 2 == 0 => i ]
+
+// List comprehension 带额外循环变量（0.10.0+）
+let fibs = [
+  for _ in 0..<10
+      p1 = 1, p2 = 0
+      p1 = p1 + p2, p2 = p1 => { p1 }
+]
+
+// Iter 字面量（0.10.4+）
+let xs : Iter[Int] = [| 1, 2, 3 |]
+let ys = [| ..xs, 4, 5 |]
+```
+
+### 模板写入语法（0.10.0+）
+
+```moonbit
+// 用 buf <+ "string" 替代 buf.write_string("string")
+let buf = StringBuilder()
+buf <+ "Hello, \{name}!"
+buf <+ "More text"
+buf.to_string()
+
+// 条件写入（0.10.4+）
+let logger : Option[StringBuilder] = Some(StringBuilder())
+logger <? "[debug] message"  // 仅当 logger 为 Some 时写入
 ```
 
 ### Map 初始化
 
 ```moonbit
-// ✅ 正确
-let map : Map[String, Int] = Map::new()
+// ✅ 正确（0.10.4+ 推荐 Map([]) 而非 Map::new()）
+let map : Map[String, Int] = Map([])
 
-// ❌ 已废弃
+// 旧写法仍可用，但可能产生歧义警告
 // let map = Map::new()  // 类型推断可能失败，需显式标注
+```
+
+### 类型定义
+
+```moonbit
+// suberror 语法（0.8.0+）
+suberror Err {
+  Err(String)
+}
+// suberror Err String  // ❌ 已废弃
+
+// declare 关键字（0.8.0+，spec-first 开发）
+declare type T
+declare fn T::f(x : T) -> Int
+declare impl Show for S
+
+// trait 和 impl 需要 fn 关键字（0.10.0+）
+trait I {
+  fn f(Self) -> Unit
+}
+impl I for Int with fn f(_) {}
+
+// extend 语法（0.10.4+，替代 impl 隐式方法挂载）
+extend Type with Trait::{f, g}
+pub extend Type with Trait::{f, g}  // 公开挂载
+
+// 多态 trait 方法（0.10.0+）
+trait Logger {
+  fn[X : Show] write_object(Self, X) -> Unit
+}
+
+// 自定义构造器（0.8.0+）
+struct Point {
+  x : Int
+  y : Int
+}
+fn Point::Point(x : Int, y : Int) -> Point { { x, y } }
+// 使用: let p = Point(1, 2)
+
+// extensible enum（0.9.0+）
+pub(all) extenum LogEvent[T] {
+  Info(T)
+  Warning(T)
+}
+// 在另一个包中扩展:
+// extenum @base.LogEvent[T] += { Debug(T) }
+
+// 反向 range 语法（0.8.0+）
+// x>..y  — 反向不包含
+// x>=..y — 反向包含
+// x..<=y — 正向包含（替代 x..=y）
+```
+
+### 管道语法
+
+```moonbit
+// 反向管道 <|（0.9.0+）
+div <| [ text("hello") ]
+obj.method(args) <| last_arg
+
+// 正向管道 |>（可用）
+42 |> Some
+```
+
+### 项目配置（0.10.4+）
+
+```moonbit
+// moon.pkg 使用 pkgtype 替代 options("is-main": true)
+pkgtype(kind: "executable")       // 可执行包
+pkgtype(kind: "foreign_library")  // 外部库（C FFI）
+pkgtype(kind: "library")          // 库（默认）
+
+// 使用 #export_name 指定导出符号名
+#export_name("my_func")
+pub fn my_func() -> Int { 42 }
+
+// moon.mod 顶层配置（0.10.4+）
+// source = "src" 等配置项提升到 moon.mod 顶层
+
+// supported-targets 支持 +js+wasm+wasm-gc 语法（0.8.3+）
+// supported_targets = "+all-js"  // 不支持 js
+```
+
+### 包配置格式（0.10.4+）
+
+```moonbit
+// ✅ 新格式: moon.mod / moon.pkg
+// moon.mod:
+// name = "namespace/package"
+// version = "0.1.0"
+// preferred_target = "native"
+// supported_targets = ["native", "wasm", "js"]
+// source = "src"
+
+// moon.pkg:
+// import {
+//   "moonbitlang/core",
+// }
+
+// ❌ 旧格式 moon.mod.json / moon.pkg.json 将在下个版本移除
+// 使用 moon fmt 自动迁移
+```
+
+### 其他语法
+
+```moonbit
+// 正则表达式（0.9.0+）
+const PATTERN = re"abc"
+let matched = s =~ re"abc"
+
+// or pattern with 默认值（0.10.4+）
+match s {
+  Some(x) | None with x = 0 => ... // 处理 x
+}
+
+// 数组条件展开（0.10.4+）
+let xs = [1, 2, ..if cond { extra }, 3]
+
+// 反向 pipeline（0.9.0+）
+fn view() -> Html {
+  div <| [ text("hello") ]
+}
+
+// const 字符串拼接（0.8.3+）
+const Hello = "Hello"
+const HelloWorld = Hello + " World"
+
+// #alias 和 #as_free_fn 的独立属性控制（0.8.0+）
+#alias(g2, deprecated)
+#deprecated
+fn f() -> Unit
 ```

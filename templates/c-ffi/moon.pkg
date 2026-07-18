@@ -1,3 +1,5 @@
+pkgtype(kind: "foreign_library")
+
 options(
   "native-stub": [
     "wrapper.c",

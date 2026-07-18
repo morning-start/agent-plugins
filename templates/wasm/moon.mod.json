@@ -1,9 +1,0 @@
-# MoonBit WASM 模块模板
-
-{
-  "name": "namespace/package",
-  "version": "0.1.0",
-  "preferred-target": "wasm",
-  "supported-targets": "wasm,wasm-gc",
-  "source": "src"
-}

@@ -9,8 +9,17 @@ fn find(id: Int) -> User?
 // ✅ Result 用于可恢复错误
 pub fn parse(input: StringView) -> Result[Ast, ParseError]
 
-// ✅ suberror 用于不可恢复错误
-pub(all) suberror IoError { NotFound | PermissionDenied } derive(Show, Eq)
+// ✅ suberror 用于不可恢复错误（0.8.0+ 语法）
+pub(all) suberror IoError {
+  NotFound
+  PermissionDenied
+} derive(Debug, Eq)
+// suberror IoError { NotFound | PermissionDenied }  // 也支持行内语法
+// suberror IoError NotFound | PermissionDenied       // ❌ 0.8.0 前语法，已废弃
+
+// ✅ Debug 替代 Show（0.9.0+）
+derive(Debug, Eq, ToJson)
+// derive(Show, Eq, ToJson)  // ❌ 已废弃
 ```
 
 ## 字符串
@@ -19,7 +28,12 @@ pub(all) suberror IoError { NotFound | PermissionDenied } derive(Show, Eq)
 // ✅ 用 StringView 参数（零拷贝）
 pub fn parse(input: StringView) -> Result[Ast, ParseError]
 
-// ✅ 用 StringBuilder 构建
+// ✅ 用 StringBuilder 构建 + 模板写入（0.10.0+）
+let buf = StringBuilder()
+buf <+ "Hello, \{name}!"
+buf.to_string()
+
+// ✅ 旧写法 still valid
 let mut sb = StringBuilder::new()
 sb.write_string("Hello, ")
 ```
@@ -100,7 +114,7 @@ moon test --update  # 更新快照
 
 ## 常见陷阱（Common Pitfalls）
 
-> 来源: `moonbit-agent-guide`
+> 来源: `moonbit-agent-guide` + MoonBit 更新日志
 
 | # | 陷阱 | 说明 | 正确做法 |
 |---|------|------|---------|
@@ -116,9 +130,17 @@ moon test --update  # 更新快照
 | 10 | `main` 写空参数列表 | `fn main() { ... }` 错误 | 用 `fn main { ... }` 或 `fn main raise { ... }` |
 | 11 | 枚举构造器字段语法错误 | 用 `:` 而非 `~` | 用 `label~ : Type` 语法 |
 | 12 | C 风格 for 循环 | MoonBit 不支持 | 用 `for i in 0..<(n-1) { ... }` |
-| 13 | `derive(Show)` 用于调试 | Show 是用户输出 | 用 `derive(Debug)` + `debug_inspect()` |
+| 13 | `derive(Show)` 用于调试 | Show 是用户输出（0.9.0+ 废弃） | 用 `derive(Debug)` + `debug_inspect()` |
 | 14 | 调用 `@json.inspect()` | 包前缀多余 | 直接用 `json_inspect(value, ...)` |
 | 15 | 给 async 函数加 `raise` | async 默认可以 raise | 不要加 `raise`，除非要限制为 `noraise` |
 | 16 | 使用 `await` 关键字 | MoonBit 没有 | async 函数直接调用，不需要 await |
-| 17 | 用 `for { ... }` 做无限循环 | 语法错误 | 用 `for ;; { ... }` |
+| 17 | 用 `for { ... }` 做无限循环 | 0.8.0 起废弃 | 用 `for ;; { ... }` |
 | 18 | 文件路径用于类型路径 | 文件名不创建命名空间 | 文件只做组织用，类型路径用 `@package.Type` |
+| 19 | 用 `inspect()` 替代 `debug_inspect()` | 0.9.0+ 废弃 | 用 `debug_inspect(value, content=...)` |
+| 20 | 使用 `assert_eq()` | 0.8.0+ 废弃 | 用 `@debug.assert_eq(a, b)` |
+| 21 | 使用 `moon.mod.json`/`moon.pkg.json` | 下版本移除 | 用 `moon.mod`/`moon.pkg`，`moon fmt` 自动迁移 |
+| 22 | 忘记 `fn` 关键字在 `trait`/`impl` 中 | 0.10.0+ 需要 | 用 `trait I { fn f(Self) }` + `impl I for T with fn f(_) {}` |
+| 23 | 使用 `options("is-main": true)` | 0.10.4+ 废弃 | 用 `pkgtype(kind: "executable")` |
+| 24 | 使用 `options("native-stub": [...])` | 0.10.4+ 废弃 | 用 `pkgtype(kind: "foreign_library")` |
+| 25 | 使用 `for { ... }` 替代 `for ;; { ... }` | 0.8.0+ 废弃 | 用 `for ;; { ... }` 或 `while true { ... }` |
+| 26 | 使用 `x..=y` 范围语法 | 0.8.0+ 废弃 | 用 `x..<=y` |
