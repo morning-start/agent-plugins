@@ -77,3 +77,63 @@ description: "Evaluate and verify a MoonBit project. Type-aware: uses different 
   "next": "publish | implement"
 }
 ```
+
+## 类型感知分支
+
+根据 `project_type` 调整验证策略：
+
+| 项目类型 | 验证重点 | 关键检查 |
+|---------|---------|---------|
+| `lib` | 跨平台兼容性 | `moon check --target all` |
+| `cli` | 命令输出、退出码 | 集成测试 + 标准 I/O |
+| `c-ffi` | 内存安全、ASan | `python3 scripts/run-asan.py` |
+| `wasm` | WASM 目标、内存 | `moon test --target wasm` |
+| `parser` | 合规率、边界测试 | 官方测试套件 |
+| `async` | 协程取消、超时 | 并发测试 |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **验证管道**: 无状态，每次运行产生相同结果
+- **测试快照**: `moon test --update` 可重放
+- **git status**: 运行后检查是否有意外变更
+
+```bash
+# Idempotency check: 重新评估
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+# 重复运行应产生相同输出（同一工具链版本）
+```
+
+## Checkpoint: evaluation
+
+```bash
+# 验证评估结果
+echo "status: pass|fail"
+echo "project_type: {lib|cli|c-ffi|wasm}"
+echo "checks: fmt|check|test|info"
+# 预期: 全部 pass
+# 如果任一失败: 回到对应阶段修复
+```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| `moon test` 失败 | 测试输出 | 检查断言 | 回归 -> 回滚 |
+| `moon check` 失败 | E#### | 检查类型 | ABI 不匹配 |
+| `moon info` 失败 | 类型检查未通过 | 先 `moon check` | 公共 API 变更 |
+| `moon fmt --check` 失败 | 格式问题 | `moon fmt` | 编辑器配置冲突 |
+
+## IDE 工具链
+
+验收前检查公共 API 是否意外变更：
+
+```bash
+moon info --target native
+moon ide doc '<public_api>'
+```
+
+## 上游参考
+
+- `moonbit-agent-guide` — `moon info` 与公共接口变更检查

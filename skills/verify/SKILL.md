@@ -57,20 +57,6 @@ moon test --target native -f "test_name"     # 运行单个测试
 moon check --target native          # 先确保类型检查通过
 ```
 
-## 幂等性
-
-本技能可安全重复运行：
-
-- **验证管道**：无状态，每次运行产生相同结果（同一工具链版本下）
-- **文件检查**：只读，不修改任何文件
-- **git status**：运行后检查是否有意外变更
-
-```bash
-# 幂等性检查
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# 重复运行应产生相同输出（同一工具链版本）
-```
-
 ## 输出
 
 ```json
@@ -87,3 +73,50 @@ moon fmt --check && moon check --target native --warn-list +73 && moon test --ta
   "failures": []
 }
 ```
+
+## Checkpoint: post-verify
+
+```bash
+# 验证完成后检查
+echo "status: pass"
+echo "project_type: {lib|cli|c-ffi|wasm}"
+echo "checks: fmt|check|test|info"
+# 预期: 全部 pass
+# 如果任一失败: 返回对应阶段修复
+```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| `moon fmt --check` | `moon fmt` | 自动修复格式 | 编辑器配置冲突 |
+| `moon check` | `--explain E####` | 检查类型签名 | ABI 不匹配 |
+| `moon test` | `--show-output` | 修正测试断言 | 测试框架 bug |
+| `moon info` | 先 `moon check` | 确保类型正确 | 公共 API 变更 |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **验证管道**: 无状态，每次运行产生相同结果
+- **文件检查**: 只读，不修改任何文件
+- **git status**: 运行后检查是否有意外变更
+
+```bash
+# Idempotency check
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+# 重复运行应产生相同输出（同一工具链版本）
+```
+
+## IDE 工具链
+
+验证前后检查公共接口稳定性：
+
+```bash
+moon info --target native
+moon ide doc '<public_api>'
+```
+
+## 上游参考
+
+- `moonbit-agent-guide` — `moon info` 与 `pkg.generated.mbti` 变更检查

@@ -145,3 +145,62 @@ references/patterns/{project_type}.md
   "next": "design"
 }
 ```
+
+## 类型感知分支
+
+根据 `project_type` 调整追问清单：
+
+| 项目类型 | 核心追问 | 关键约束 |
+|---------|---------|---------|
+| `lib` | 核心功能、API 最小表面、目标平台 | native,wasm,js |
+| `cli` | 命令/子命令、参数格式、标准 I/O | native-only |
+| `c-ffi` | 链接哪个库、alloc/free 对、所有权模型 | native-only |
+| `wasm` | WASI 版本、内存操作、目标平台 | wasm,wasm-gc |
+| `parser` | 解析格式、版本、序列化需求 | 测试套件要求 |
+| `async` | 高层服务、TLS、取消语义 | native-only |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **需求文档**: 每次生成覆盖同名文件
+- **追问逻辑**: 相同输入产生相同追问
+- **无副作用**: 不修改代码
+
+```bash
+# Idempotency check: 重新运行澄清
+echo "project_type: {project_type}"
+# 预期: 相同的项目类型分类
+```
+
+## Checkpoint: requirements
+
+```bash
+# 验证需求文档完整性
+test -f docs/requirements.md && echo "requirements.md: OK" || echo "requirements.md: MISSING"
+grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "project_type: MISSING"
+grep -q "目标平台" docs/requirements.md && echo "目标平台: OK" || echo "目标平台: MISSING"
+# 预期: 所有检查通过
+# 如果缺失: 回到分类步骤
+```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| 关键词匹配失败 | 无法确定 project_type | 追问用户 | 展示类型矩阵 |
+| 需求文档生成失败 | 目录不存在 | 创建 docs/ 目录 | 检查写入权限 |
+| 用户描述模糊 | 追问清单不足 | 追加追问 | 给出示例帮助用户表达 |
+
+## IDE 工具链
+
+需求澄清阶段优先用发现命令确认能力边界：
+
+```bash
+moon ide doc '<query>'
+moon --version
+```
+
+## 上游参考
+
+- `moonbit-orientation` — freshness gate 与能力边界

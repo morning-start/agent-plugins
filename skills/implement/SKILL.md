@@ -44,62 +44,65 @@ description: "Implement MoonBit features with TDD. Type-aware: different TDD str
 # 测试: 内存操作、边界值、WASI 调用
 ```
 
-## 每个任务的 TDD 循环
+### RED: 写失败测试
 
 ```bash
-# ===== RED: 写测试 =====
-# 在对应测试文件中添加测试
-# 验证测试失败
-moon test --target native -f "test_name"
-# 预期: 测试失败 (函数未实现)
+# 针对当前任务写一个会失败的测试
+moon test --target native -f "<task_test_name>"
+# 预期: 测试失败（红）
+# 如果测试意外通过: 检查测试断言是否足够严格
+```
+
+## Checkpoint: red
+
+```bash
+# 验证测试确实失败
+moon test --target native -f "<task_test_name>"
+# 预期: 至少 1 个测试失败
+# 如果全绿: 测试可能太弱，强化断言后重试
 ```
 
 ```bash
-# ===== GREEN: 实现 =====
-# 最小实现代码
-moon test --target native -f "test_name"
-# 如果失败: 自动诊断并修复
+# GREEN: 写最小实现让测试通过
+moon test --target native -f "<task_test_name>"
+# 预期: 测试通过
+# 如果失败: 检查实现是否正确
+```
+
+## Checkpoint: green
+
+```bash
+# 验证当前任务测试通过
+moon test --target native -f "<task_test_name>"
+# 预期: 通过
+# 如果失败: 回到实现步骤
 ```
 
 ```bash
-# ===== VERIFY: 验证 =====
-# 根据 project_type 验证
-# lib: mbt moon fmt --check && moon check --target native --warn-list +73 && moon test --target native
-# cli: moon fmt --check && moon check --target native && moon test --target native
-# c-ffi: moon fmt --check && moon check --target native && moon test --target native
-# wasm: moon fmt --check && moon check --target wasm && moon test --target wasm
+# VERIFY: 全量验证不影响其他功能
+moon fmt --check && moon check --target native --warn-list +73 --target native && moon test --target native
+# c-ffi: 额外验证 C 编译
+# wasm: 额外验证 WASM 目标
 ```
 
-### 任务完成后展示给用户
-
-```markdown
-## 任务完成: Task 3 — {任务名}
-
-**变更文件**: {文件列表}
-**测试结果**: ✅ {N}/{M} 通过
-
-**要继续吗？**
-- 继续 → 进入下一个任务
-- 改这里 → 说明要改什么
-```
-
-### Checkpoint: 任务完成
+## Checkpoint: verify
 
 ```bash
-# 验证变更未破坏已有功能
-moon test --target native
-# 如果失败: moon test --target native -- --show-output
-
-# 验证类型检查通过
-moon check --target native --warn-list +73
-# 如果失败: moon check --explain E####
-
-# c-ffi 特有: 验证 C 编译
-# gcc -c src/wrapper.c -I src/ 2>&1
-
-# wasm 特有: 验证 WASM 目标
-# moon check --target wasm
+# 全量验证
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+# 预期: 全部通过
+# 如果失败: 定位并修复回归
 ```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| `moon test -f` | 测试未失败 | 强化断言 | 换一个更具体的测试场景 |
+| `moon test -f` | 实现后仍失败 | 检查逻辑 | 调试单步执行 |
+| `moon check` | E#### | `moon check --explain` | 检查类型签名 |
+| `moon test` | 其他测试失败 | 检查回归 | 回滚本任务改动 |
+| `moon fmt --check` | 格式问题 | `moon fmt` | 编辑器配置冲突 |
 
 ### 失败处理
 
@@ -129,3 +132,68 @@ moon check --target native --warn-list +73
   "next": "implement | evaluate"
 }
 ```
+
+## Idempotency
+
+本技能可安全重复运行：
+
+- **TDD 循环**: 每个任务独立，重跑单个任务不影响其他任务
+- **测试过滤**: `-f` 参数确保只运行指定测试
+- **验证管道**: 无状态，每次运行产生相同结果
+
+```bash
+# Idempotency check: 重跑同一任务测试
+moon test --target native -f "<task_test_name>"
+# 预期: 始终通过（同一工具链版本）
+```
+## 类型感知分支
+
+根据 `project_type` 调整 TDD 策略：
+
+| 项目类型 | TDD 重点 | 验证目标 |
+|---------|---------|---------|
+| `lib` | 公共 API 覆盖、边界情况 | `moon test --target native` |
+| `cli` | 命令解析、参数传递、标准 I/O | `moon test --target native` + 集成测试 |
+| `c-ffi` | 内存安全、错误转换、边界值 | `moon check --target native` + ASan |
+| `wasm` | 内存操作、边界值、WASI | `moon test --target wasm` |
+| `parser` | valid/invalid/edge 分类测试 | `moon test --target native` |
+| `async` | 协程测试、超时、取消安全 | `moon test --target native` |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **TDD 循环**: 每个任务独立，重跑单个任务不影响其他任务
+- **测试过滤**: `-f` 参数确保只运行指定测试
+- **验证管道**: 无状态，每次运行产生相同结果
+
+```bash
+# Idempotency check: 重跑同一任务测试
+moon test --target native -f "<task_test_name>"
+# 预期: 始终通过（同一工具链版本）
+```
+
+## IDE 工具链
+
+在实现前和使用期间，优先用语义工具代替文本搜索：
+
+```bash
+# 发现现有 API
+moon ide doc '<query>'
+
+# 查看符号定义
+moon ide peek-def <symbol>
+
+# 查找引用，确认调用点
+moon ide find-references <symbol>
+
+# 安全重命名
+moon ide rename <old> <new>
+# 同名符号加 --loc filename:line:col
+```
+
+## 上游参考
+
+- `moonbit-agent-guide` — 通用 MoonBit 工作流与验证循环
+- `moonbit-refactoring` — API 最小化、方法化、模式匹配重构
+- `moonbit-c-binding` — FFI 绑定细节（适用于 c-ffi/wasm）

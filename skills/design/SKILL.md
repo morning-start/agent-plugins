@@ -153,3 +153,86 @@ src/
   "next": "implement"
 }
 ```
+
+## 类型感知分支
+
+根据 `project_type` 调整设计输出：
+
+| 项目类型 | 设计重点 | 额外输出 |
+|---------|---------|---------|
+| `lib` | 最小 API 表面、跨平台兼容 | 跨目标兼容性检查 |
+| `cli` | 命令结构、标准 I/O、退出码 | 命令流程图 |
+| `c-ffi` | 四层 FFI 架构、类型宽度、所有权 | C⇔MoonBit 类型映射表 |
+| `wasm` | 内存操作、WASI 调用、目标兼容 | WASM 内存布局图 |
+| `parser` | 词法/语法分层、错误定位 | 词法状态机图 |
+| `async` | 事件循环、任务系统、取消传播 | 并发架构图 |
+
+### c-ffi 类型映射前置
+
+当 `project_type = c-ffi` 时，在 API 设计前先确定 C⇔MoonBit 类型映射：
+
+| C 类型 | MoonBit 类型 | 说明 |
+|--------|-------------|------|
+| `int`, `int32_t` | `Int` | 32 位有符号 |
+| `uint32_t` | `UInt` | 32 位无符号 |
+| `int64_t` | `Int64` | 64 位有符号 |
+| `float` | `Float` | 32 位浮点 |
+| `double` | `Double` | 64 位浮点 |
+| `bool` | `Bool` | 以 `int32_t` 传递 |
+| `void*` (GC 管理) | `type Handle` (opaque) | 外部对象 + finalizer |
+| `void*` (C 管理) | `type Handle` + `#external` | C 管理生命周期 |
+| `const char*` | `Bytes` | UTF-8 字符串 |
+| callback | `FuncRef[...]` | 回调闭包 |
+
+**所有权注解:**
+- `#borrow` — C 不持有引用，MoonBit GC 管理
+- `#owned` — 所有权转移给 C
+- `#external` — C 管理生命周期，MoonBit 不追踪
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **设计文档**: 每次生成覆盖同名文件，不产生副作用
+- **类型分支**: 同一 project_type 多次运行结果一致
+- **无副作用**: 不修改代码，只生成设计文档
+
+```bash
+# Idempotency check: 重新运行设计流程
+echo "project_type: {project_type}"
+# 预期: 相同的架构选项和推荐
+```
+
+## Checkpoint: architecture
+
+```bash
+# 验证架构文档完整性
+test -f docs/architecture.md && echo "architecture.md: OK" || echo "architecture.md: MISSING"
+grep -q "架构模式" docs/architecture.md && echo "架构模式: OK" || echo "架构模式: MISSING"
+grep -q "目录结构" docs/architecture.md && echo "目录结构: OK" || echo "目录结构: MISSING"
+# 预期: 所有检查通过
+# 如果缺失: 回到类型分支步骤
+```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| 架构选择困难 | 多个模式都适用 | 列出优缺点对比 | 展示参考项目 |
+| 类型映射冲突 | C 类型宽度不匹配 | 检查 C 头文件 | 询问用户 ABI 要求 |
+| API 设计模糊 | 用户描述不清晰 | 给出示例 API | 追问使用场景 |
+
+## IDE 工具链
+
+设计前先发现现有 API，避免命名冲突：
+
+```bash
+moon ide doc '<query>'
+moon ide outline
+moon ide peek-def <symbol>
+```
+
+## 上游参考
+
+- `moonbit-agent-guide` — 项目结构与布局
+- `moonbit-c-binding` — FFI 类型映射与所有权注解

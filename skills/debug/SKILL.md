@@ -80,3 +80,57 @@ moon fmt --check && moon check --target native --warn-list +73 && moon test --ta
   "verification": "pass"
 }
 ```
+
+## 类型感知分支
+
+根据 `project_type` 调整诊断策略：
+
+| 项目类型 | 特有诊断 | 关键检查 |
+|---------|---------|---------|
+| `lib` | 跨平台兼容性 | `moon check --target all` |
+| `cli` | 参数解析、标准 I/O | 检查 @argparse 配置 |
+| `c-ffi` | C 编译错误、内存泄漏 | `gcc -c wrapper.c`、ASan |
+| `wasm` | WASM 目标错误 | `moon check --target wasm` |
+| `parser` | 词法/语法错误 | 检查 tokenize/parser 位置信息 |
+| `async` | 协程取消、超时 | 检查 task_group 错误传播 |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **诊断命令**: 只读，不修改文件
+- **修复操作**: 每次修复后验证，可回滚
+- **验证管道**: 无状态
+
+```bash
+# Idempotency check: 重新运行诊断
+moon check --target native --warn-list +73 && moon test --target native
+# 预期: 相同的错误信息（未修复时）
+```
+
+## Checkpoint: diagnosis
+
+```bash
+# 验证诊断结果
+echo "failure_type: {type_error|assertion|runtime|compile|missing_import|c-ffi|wasm}"
+echo "root_cause: <description>"
+echo "fix_applied: <description>"
+# 预期: 明确失败类型和根本原因
+# 如果无法分类: 使用通用诊断流程
+```
+
+## IDE 工具链
+
+诊断时优先使用语义导航：
+
+```bash
+moon ide find-references <symbol>
+moon ide peek-def <symbol>
+moon ide outline
+moon check --explain E####
+```
+
+## 上游参考
+
+- `moonbit-agent-guide` — 通用 MoonBit 诊断与验证
+- `moonbit-orientation` — 错误码与工具链 freshness gate
