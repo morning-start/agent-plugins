@@ -14,21 +14,21 @@ description: "Run the MoonBit verification gate. Type-aware: runs different veri
 ### lib — 跨平台验证
 
 ```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
 # 可选: moon check --target all（跨平台兼容性）
 ```
 
 ### cli — 本地可执行验证
 
 ```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
 # CLI 特有: 测试标准输入输出
 ```
 
 ### c-ffi — 原生绑定验证
 
 ```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
+moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
 # C 特有: 需要 GCC/Clang 编译器
 # 可选: ASan 验证（Address Sanitizer）
 ```
@@ -36,7 +36,7 @@ moon fmt --check && moon check --target native --warn-list +73 && moon test --ta
 ### wasm — WASM 验证
 
 ```bash
-moon fmt --check && moon check --target wasm --warn-list +73 && moon test --target wasm && moon info --target wasm
+moon fmt --check && moon check --target wasm --warn-list +73 && moon test --target wasm && moon info --target wasm && moon-audit pipeline .
 # WASM 特有: 需要 WASM 运行时（wasmtime）
 ```
 

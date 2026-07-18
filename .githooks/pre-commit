@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Git pre-commit hook — install via: git config core.hooksPath .githooks
+# Delegates to hooks/pre-commit.sh for the actual checks
+set -euo pipefail
+
+HOOK_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+exec bash "${HOOK_DIR}/hooks/pre-commit.sh"

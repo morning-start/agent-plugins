@@ -11,6 +11,32 @@
           }
         ]
       }
+    ],
+    "PreCommit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit.sh\"",
+            "async": false,
+            "description": "Pre-commit gate: moon fmt --check + moon check + moon-audit"
+          }
+        ]
+      }
+    ],
+    "PreCompletion": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-completion.sh\" \"${PROJECT_DIR}\"",
+            "async": false,
+            "description": "Pre-completion gate: fmt --check + check + test + moon-audit"
+          }
+        ]
+      }
     ]
   }
 }

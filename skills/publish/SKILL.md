@@ -41,10 +41,31 @@ moon test --target native -f "usage"
 ### 3. 生成 CI 配置
 
 ```bash
-# lib:   moon fmt --check + moon check --target all + moon test --target native
-# cli:   moon fmt --check + moon check --target native + moon test --target native
-# c-ffi: moon fmt --check + moon check --target native + moon test --target native + ASan
-# wasm:  moon fmt --check + moon check --target wasm + moon test --target wasm
+# lib:   moon fmt --check + moon check --target all + moon test --target native + moon-audit pipeline .
+# cli:   moon fmt --check + moon check --target native + moon test --target native + moon-audit pipeline .
+# c-ffi: moon fmt --check + moon check --target native + moon test --target native + ASan + moon-audit pipeline .
+# wasm:  moon fmt --check + moon check --target wasm + moon test --target wasm + moon-audit pipeline .
+```
+
+同时生成安全审计专用 CI：
+
+```bash
+cat > .github/workflows/security.yml << 'EOF'
+name: Security Audit
+on: [push, pull_request]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: I3eg1nner/moon-audit@main
+        with:
+          fail-on-findings: 'true'
+          severity: 'error'
+          upload-sarif: 'true'
+EOF
 ```
 
 ### 4. 展示给用户
