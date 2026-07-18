@@ -1,0 +1,41 @@
+{
+  "skill_name": "moonbit-pipeline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to build a TOML parser in MoonBit. It should parse TOML 1.0 files and serialize them back to TOML strings. Target platform is native only.",
+      "expected_output": "A MoonBit project with TOML parser, including: moon.mod.json, src/lib.mbt with parse() and to_string() functions, test files with valid/invalid/edge cases, verified with moon fmt --check + moon check + moon test",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我写一个 MoonBit 的 CLI 工具，用来统计目录下所有 .mbt 文件的代码行数。需要支持递归子目录和排除 _build 目录。",
+      "expected_output": "A MoonBit CLI project with: moon.mod.json, src/main.mbt with @argparse, src/lib.mbt with line counting logic, test files, verified with moon fmt --check + moon check + moon test",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need to wrap a C library called libfoo in MoonBit. It has about 20 functions for image processing. I need the full 4-layer FFI architecture.",
+      "expected_output": "A MoonBit native FFI binding project with: moon.mod.json (native target), src/moon.pkg with native-stub, src/wrapper.c, src/ffi.mbt (extern c declarations), src/lib.mbt (safe public API), verified with moon check + moon test",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I wrote a MoonBit JSON parser but it's failing on nested objects. The error is 'type mismatch: expected Object but got Array'. Help me debug this.",
+      "expected_output": "Diagnosis of the type error, root cause analysis, fix applied to the parser, re-verified with moon check + moon test",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "I just finished implementing my MoonBit package. Check if it's ready for publishing. Run the full security audit and publication pipeline.",
+      "expected_output": "Full verification pipeline run (fmt --check + check + test + info + moon-audit), README.mbt.md generated, CI configuration created, publication readiness report",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Review my MoonBit HTTP server code for security issues. I'm using mocket and I'm worried about CORS and XSS.",
+      "expected_output": "Security audit results from moon-audit, focusing on CWE-942 (CORS credentials), CWE-79 (XSS/template injection), CWE-113 (CRLF injection), CWE-614 (Cookie attributes), with fix recommendations",
+      "files": []
+    }
+  ]
+}

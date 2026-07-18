@@ -1,6 +1,6 @@
 ---
 name: publish
-description: "Prepare a MoonBit project for publication — use when the user says 'publish', 'release', 'deploy', 'package', 'share', or after all verification passes. Type-aware: different publication strategies for lib, cli, c-ffi, wasm. Agent generates README.mbt.md with executable examples, creates CI configuration (.github/workflows/ci.yml + security.yml), and checks publish readiness. User decides whether to publish. Must run after verify.""
+description: "Prepare a MoonBit project for publication — use when the user says 'publish', 'release', 'deploy', 'package', 'share', or after all verification passes. Type-aware: different publication strategies for lib, cli, c-ffi, wasm. Agent generates README.mbt.md with executable examples, creates CI configuration (.github/workflows/ci.yml + security.yml), and checks publish readiness. User decides whether to publish. Must run after verify."
 ---
 
 # Publish — 发布准备

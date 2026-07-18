@@ -1,6 +1,6 @@
 ---
 name: moon-audit
-description: "Static security audit for MoonBit projects — use when the user says 'security', 'audit', 'vulnerability', 'CWE', 'safe', 'is it secure', before publish, after major changes, or as CI gate. Scans 14 CWE rules (XSS, CRLF injection, CORS misconfiguration, Cookie missing attributes, DoS, path traversal, unsafe cast, panic reachable). Install via `moon add minie135/moon-audit`. Run before publish and after any major feature addition.""
+description: "Static security audit for MoonBit projects — use when the user says 'security', 'audit', 'vulnerability', 'CWE', 'safe', 'is it secure', before publish, after major changes, or as CI gate. Scans 14 CWE rules (XSS, CRLF injection, CORS misconfiguration, Cookie missing attributes, DoS, path traversal, unsafe cast, panic reachable). Install via `moon add minie135/moon-audit`. Run before publish and after any major feature addition."
 ---
 
 # Moon-Audit — 安全审查

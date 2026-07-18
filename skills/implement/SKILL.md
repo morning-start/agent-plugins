@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Implement MoonBit features with TDD. Use when the user says 'implement', 'write code', 'add feature', 'make it work', or after design/planning is done. Type-aware: different TDD strategies for lib, cli, c-ffi, wasm. Agent does Red-Green-Verify per task, then presents results to user. Also includes Fast Task Playbooks for Bug Fix, Refactor, and New Feature scenarios.""
+description: "Implement MoonBit features with TDD. Use when the user says 'implement', 'write code', 'add feature', 'make it work', or after design/planning is done. Type-aware: different TDD strategies for lib, cli, c-ffi, wasm. Agent does Red-Green-Verify per task, then presents results to user. Also includes Fast Task Playbooks for Bug Fix, Refactor, and New Feature scenarios."
 ---
 
 # Implement — TDD 实现

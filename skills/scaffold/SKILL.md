@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: "Generate a MoonBit project skeleton from templates. Use when the user says 'create project', 'scaffold', 'set up', 'start a new package', or when a moon.mod.json is missing. Agent creates project structure based on project_type: lib, cli, c-ffi, or wasm. Uses templates/{type}/ files. Run this before any implementation work.""
+description: "Generate a MoonBit project skeleton from templates. Use when the user says 'create project', 'scaffold', 'set up', 'start a new package', or when a moon.mod.json is missing. Agent creates project structure based on project_type: lib, cli, c-ffi, or wasm. Uses templates/{type}/ files. Run this before any implementation work."
 ---
 
 # Scaffold — 项目脚手架

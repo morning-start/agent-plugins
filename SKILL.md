@@ -60,7 +60,12 @@ description: "MoonBit 全生命周期开发技能。用户做架构决策和 API
 | `debug/` | 实现卡住，自动诊断失败 |
 | `review/` | 需要检查代码质量 |
 | `verify/` | 需要运行验证管道 |
+| `moon-audit/` | 需要安全审计 |
 | `publish/` | 准备发布 |
+
+## 编排
+
+完整编排流程（入口 → 分类 → 路由 → 执行 → 完成）请参考 `references/orchestration.md`。
 
 ## 启动方式
 
@@ -80,7 +85,7 @@ description: "MoonBit 全生命周期开发技能。用户做架构决策和 API
 ```
 用户: "我要做一个 TOML 解析器"
 
-Agent: 加载 skills/clarify.md
+Agent: 加载 skills/clarify/SKILL.md
   → "好的，我需要了解几个事情：
      1. 目标平台是 native 还是 also wasm/js？
      2. 需要支持 TOML 1.0 还是 1.1？
@@ -88,7 +93,7 @@ Agent: 加载 skills/clarify.md
 
 用户: "native 就够了，TOML 1.0，需要序列化"
 
-Agent: 加载 skills/design.md
+Agent: 加载 skills/design/SKILL.md
   → "根据你的需求，推荐 递归下降 + 分层 架构。
      参考项目: bobzhang/toml (34 文件, 745 测试)
      
@@ -107,7 +112,7 @@ Agent: "好的，修改 ParseError 加上 line/col 字段。
 
 用户: "开始"
 
-Agent: 加载 skills/implement.md
+Agent: 加载 skills/implement/SKILL.md
   → Task 1: 定义 TomlValue 类型 + 测试
      [实现中...]
      ✅ 完成，要看看吗？

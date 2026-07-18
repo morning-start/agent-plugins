@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Design architecture and API for a MoonBit project. Use after clarify when the user needs to decide architecture patterns, API surface, or project structure. Agent presents architecture options with real project references (miniio, toml-parser, async), trade-offs, and recommendations. User decides the direction and designs the API surface. Do NOT skip this and start implementing without a design decision.""
+description: "Design architecture and API for a MoonBit project. Use after clarify when the user needs to decide architecture patterns, API surface, or project structure. Agent presents architecture options with real project references (miniio, toml-parser, async), trade-offs, and recommendations. User decides the direction and designs the API surface. Do NOT skip this and start implementing without a design decision."
 ---
 
 # Design — 设计决策
