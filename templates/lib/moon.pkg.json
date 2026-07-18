@@ -1,0 +1,6 @@
+{
+  "import": [
+    "moonbitlang/core"
+  ],
+  "target": ["native", "wasm", "js"]
+}

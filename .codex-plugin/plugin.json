@@ -1,0 +1,8 @@
+{
+  "name": "moonbit-skills",
+  "description": "MoonBit development skill suite",
+  "repository": "https://github.com/moonbit-community/moonbit-skills",
+  "version": "0.1.0",
+  "author": "moonbit-community",
+  "hooks": "hooks/hooks.json"
+}

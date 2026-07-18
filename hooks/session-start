@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# SessionStart hook for moonbit-skills plugin
+# Injects SKILL.md context into agent session
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+skill_content=$(cat "${PLUGIN_ROOT}/skills/clarify/SKILL.md" 2>&1 || echo "Error reading skill")
+
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+skill_escaped=$(escape_for_json "$skill_content")
+session_context="<EXTREMELY_IMPORTANT>\nYou have the MoonBit skill loaded.\n\n**Below is the full content of the clarify skill - your entry point for MoonBit development:**\n\n${skill_escaped}\n</EXTREMELY_IMPORTANT>"
+
+# Output for Claude Code
+echo "{\"additionalContext\": \"$session_context\"}"
