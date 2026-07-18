@@ -1,6 +1,6 @@
 ---
 name: verify
-description: "Run the MoonBit verification gate. Type-aware: runs different verification pipelines for lib, cli, c-ffi, wasm projects. Called by other skills as a quality check."
+description: "Run the MoonBit verification gate — use after any implementation, debugging, refactoring, or before claiming completion. Type-aware: runs different verification pipelines for lib, cli, c-ffi, wasm projects. Includes moon fmt --check, moon check --warn-list +73, moon test, moon info, and moon-audit pipeline. Called by other skills as a quality check. Do NOT skip this before claiming done.""
 ---
 
 # Verify — 验证门禁

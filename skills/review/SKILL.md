@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Review MoonBit code quality. Type-aware: different review criteria for lib, cli, c-ffi, wasm. Agent checks type design, visibility, error handling, and architecture compliance. Applies auto-fixes."
+description: "Review MoonBit code quality — use when the user says 'review', 'check code', 'quality check', 'audit code', or after implementation is done. Type-aware: different review criteria for lib, cli, c-ffi, wasm. Agent checks type design, visibility, error handling, and architecture compliance. Applies auto-fixes. Must run before verify.""
 ---
 
 # Review — 代码审查

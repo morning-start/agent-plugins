@@ -1,6 +1,6 @@
 ---
 name: evaluate
-description: "Evaluate and verify a MoonBit project. Type-aware: uses different verification pipelines for lib, cli, c-ffi, wasm. Agent runs verification, presents results. User decides if good enough."
+description: "Evaluate and verify a MoonBit project — use when the user says 'test', 'verify', 'check if it works', 'ready to publish', or after implementation is done. Type-aware: uses different verification pipelines for lib, cli, c-ffi, wasm. Agent runs verification, presents results. User decides if good enough. Must run before publish.""
 ---
 
 # Evaluate — 评估验收

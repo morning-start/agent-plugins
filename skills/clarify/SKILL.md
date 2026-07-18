@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Clarify requirements for a MoonBit project. Agent asks targeted questions about project type, target platform, API surface, and constraints. User describes their intent. Use this first when the user says 'I want to build X'."
+description: "Clarify requirements for a MoonBit project. MUST use this FIRST whenever the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', or any MoonBit development request. Agent asks targeted questions about project type, target platform, API surface, and constraints. User describes their intent. Do NOT skip this and jump to implementation — clarify first."
 ---
 
 # Clarify — 需求澄清

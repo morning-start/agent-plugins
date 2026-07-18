@@ -1,6 +1,6 @@
 ---
 name: debug
-description: "Debug MoonBit test or type failures. Type-aware: different diagnostic strategies for lib, cli, c-ffi, wasm. Agent collects error info, classifies, diagnoses, applies fix, re-verifies."
+description: "Debug MoonBit test or type failures — use when the user says 'debug', 'fix error', 'test fails', 'type error', 'not working', or when implement skill reports 3 consecutive failures. Type-aware: different diagnostic strategies for lib, cli, c-ffi, wasm. Agent collects error info, classifies, diagnoses, applies fix, re-verifies. Includes Error Recovery Quick Reference table for 6 command types.""
 ---
 
 # Debug — 调试

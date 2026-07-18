@@ -1,6 +1,6 @@
 ---
 name: moon-audit
-description: "Static security audit for MoonBit projects. Scans 14 CWE rules (XSS, CRLF injection, CORS, Cookie, DoS, path traversal, unsafe cast, panic). Use before publish, after major changes, or as CI gate. Install via `moon add minie135/moon-audit`."
+description: "Static security audit for MoonBit projects — use when the user says 'security', 'audit', 'vulnerability', 'CWE', 'safe', 'is it secure', before publish, after major changes, or as CI gate. Scans 14 CWE rules (XSS, CRLF injection, CORS misconfiguration, Cookie missing attributes, DoS, path traversal, unsafe cast, panic reachable). Install via `moon add minie135/moon-audit`. Run before publish and after any major feature addition.""
 ---
 
 # Moon-Audit — 安全审查
@@ -111,6 +111,41 @@ moon-audit generate-poc -o poc.md /path/to/project
 ```bash
 # 需要配置 .env 中的 API Key
 moon-audit llm-analyze --format script /path/to/project
+```
+
+## Checkpoint: post-scan
+
+```bash
+# 验证扫描是否完成
+test -f results.sarif && echo "✅ SARIF 报告已生成" || echo "⚠️ 无 SARIF 报告"
+moon-audit summary /path/to/project 2>&1 | head -10
+# 预期: 显示漏洞统计
+# 如果失败: 检查 moon-audit 是否正确安装
+```
+
+## 错误恢复速查表
+
+| 命令 | 诊断 | 修复 | 升级 |
+|------|------|------|------|
+| `moon-audit /path` | 命令未找到 | 安装 moon-audit: `moon add minie135/moon-audit` | 从 GitHub 源码构建 |
+| `moon-audit --format sarif` | 输出文件未生成 | 检查 `-o` 参数路径 | 改用 JSON 格式 |
+| `moon-audit --fail-on-error` | exit 1 阻断 CI | 检查漏洞详情，修复后重扫 | 临时关闭 `--fail-on-error` |
+| `moon-audit pipeline` | 子命令失败 | `moon-audit /path` 单独运行静态扫描 | 查看工具日志 |
+| `moon-audit summary` | 无输出 | 确认项目路径正确 | 运行 `moon-audit /path` 先扫描 |
+
+## 幂等性
+
+本技能可安全重复运行：
+
+- **扫描命令**: 无状态，每次运行产生相同结果（同一工具链版本、同一规则配置下）
+- **文件生成**: `-o` 输出文件会覆盖，不影响项目源码
+- **配置**: `.moon-audit.json` 不变时，结果可复现
+
+```bash
+# Idempotency check: 重复扫描应产生相同结果
+moon-audit --format json /path/to/project > /tmp/audit1.json
+moon-audit --format json /path/to/project > /tmp/audit2.json
+diff /tmp/audit1.json /tmp/audit2.json && echo "✅ 幂等性通过" || echo "⚠️ 结果有差异（可能因外部因素）"
 ```
 
 ## 配置
