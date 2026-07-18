@@ -243,3 +243,84 @@ moon ide rename <old> <new>
 - `moonbit-agent-guide` — 通用 MoonBit 工作流与验证循环
 - `moonbit-refactoring` — API 最小化、方法化、模式匹配重构
 - `moonbit-c-binding` — FFI 绑定细节（适用于 c-ffi/wasm）
+
+## MoonBit API 速查
+
+> 基于 moonbitlang/core 0.1.20260713 版本。工具链更新后请用 `moon ide doc` 确认最新 API。
+
+### 类型转换
+
+```moonbit
+// StringView → String（✅ 正确）
+let s: String = view.to_owned()
+
+// StringView → String（❌ 已废弃，0.1.20260713 起移除）
+// let s: String = view.to_string()
+
+// String → Int64
+let n = "123".parse_int64().or(0i64)
+
+// String → Double
+let f = "3.14".parse_double().or(0.0)
+
+// String → Int
+let i = "42".parse_int().or(0)
+
+// Int64 → String
+let s = 42i64.to_string()
+```
+
+### 字符串操作
+
+```moonbit
+// 检查前缀/后缀（✅ 正确）
+"hello".has_prefix("he")      // true
+"hello".has_suffix("lo")      // true
+
+// 检查前缀/后缀（❌ 已废弃）
+// "hello".starts_with("he")
+// "hello".ends_with("lo")
+
+// 查找子串
+"key = value".find("=")  // Some(3)
+"no eq".find("=")        // None
+
+// 字符串切片
+let s = "hello"
+s[1:4]   // "ell" (StringView)
+s[1:4].to_owned()  // "ell" (String)
+```
+
+### 测试断言
+
+```moonbit
+// 检查输出（✅ 正确）
+inspect(value, content?=Some("expected_output"))
+
+// 检查输出（❌ 已废弃）
+// inspect(value, content?="expected_output")
+
+// 使用 Debug trait 而非 Show
+derive(Debug, Eq, ToJson)
+// derive(Show, Eq, ToJson)  // ❌ 已废弃，用 Debug
+```
+
+### 字符串插值
+
+```moonbit
+// ✅ 正确
+"Hello, \{name}!"
+
+// ❌ 已废弃
+// "Hello, \(name)!"
+```
+
+### Map 初始化
+
+```moonbit
+// ✅ 正确
+let map : Map[String, Int] = Map::new()
+
+// ❌ 已废弃
+// let map = Map::new()  // 类型推断可能失败，需显式标注
+```
