@@ -1,6 +1,6 @@
 ---
 name: moonbit-skill
-description: "MoonBit 工程化开发技能。用户做架构决策和 API 设计，Agent 做实现和验证。通过 4 种模式协作：规划需求 → 脚手架 → TDD 实现 → 验证验收。"
+description: "MoonBit 工程化开发技能。用户做架构决策和 API 设计，Agent 做实现和验证。通过 5 个技能协作：plan→scaffold→implement→verify→evaluate。使用场景：任何 MoonBit 项目开发，包括创建新项目、编写代码、调试、审查、发布。当用户说 '我要做 MoonBit 项目'、'写一个 MoonBit 的 X'、'帮我开发 MoonBit 的 Y' 时触发。入口点是 skills/plan/SKILL.md。"
 ---
 
 # MoonBit 开发技能
@@ -53,7 +53,7 @@ plan(SKILL.md) ──→ scaffold(SKILL.md) ──→ implement(SKILL.md) ──
     │                     │
     │                     └── 模板: templates/{type}/
     │
-    └── 参考: references/arch-patterns.md, references/idioms.md, references/commands.md
+    └── 参考: references/patterns/, references/idioms.md, references/commands.md
 ```
 
 阶段切换时调用 `verify/` 做门禁检查。

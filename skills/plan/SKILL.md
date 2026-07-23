@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Plan a MoonBit project — merge of clarify + design. Agent asks targeted questions about project type and requirements, then presents architecture options and recommended API surface. User decides direction. Use FIRST when the user says 'I want to build X', 'create', 'new project', 'write a parser/CLI/lib'. Do NOT skip to implementation without a plan."
+description: "Plan a MoonBit project — figure out requirements, architecture, and API surface before writing code. Use this FIRST whenever the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first. Agent asks targeted questions, presents architecture options, user decides direction. This is the entry point for all MoonBit development work."
 ---
 
 # Plan — 需求澄清 + 设计决策
@@ -44,7 +44,7 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 
 ### 2. 展示架构方案
 
-根据 `project_type` 展示对应架构模式（参考 `references/arch-patterns.md`）：
+根据 `project_type` 展示对应架构模式（参考 `references/patterns/{type}.md`）：
 
 **项目类型 → 推荐架构**
 - `cli`: `main.mbt` (@argparse) + `lib.mbt`，native-only
@@ -86,6 +86,25 @@ pub fn parse(input: StringView) -> Result[Ast, ParseError]
 - pub fn parse(StringView) -> Result[Ast, ParseError]
 ```
 
+## 检查点
+
+```bash
+# 验证需求文档完整性
+test -f docs/requirements.md && echo "requirements.md: OK" || echo "requirements.md: MISSING"
+grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "project_type: MISSING"
+# 预期: 所有检查通过
+```
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| 关键词匹配失败 | 无法确定 project_type | 追问用户，展示类型矩阵 |
+| 架构选择困难 | 多个模式都适用 | 列出优缺点对比，展示参考项目 |
+| API 设计模糊 | 用户描述不清晰 | 给出示例 API 帮助用户表达 |
+| 需求文档生成失败 | 目录不存在 | 创建 docs/ 目录 |
+
+
 ## 用户 vs Agent 分工
 
 | 谁 | 做什么 |
@@ -104,3 +123,7 @@ pub fn parse(input: StringView) -> Result[Ast, ParseError]
   "next": "scaffold"
 }
 ```
+
+## 下一步
+
+计划确认后，进入 `scaffold/` 生成项目骨架。如果用户已有一个项目，可以直接进入 `implement/`。

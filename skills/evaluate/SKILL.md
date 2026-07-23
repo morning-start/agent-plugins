@@ -1,21 +1,34 @@
 ---
 name: evaluate
-description: "Final evaluation and publication — merge of evaluate + publish. Use after verification passes, when the user says 'ready to publish', 'release', 'deploy'. Agent generates README.mbt.md with executable docs, CI configuration, and publication checklist. User decides whether to publish. Must run after verify."
+description: "Final evaluation and publication for MoonBit projects. Use whenever the user says 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after verification passes. Agent delegates to verify/ for gate checks, then generates README.mbt.md with executable docs, CI configuration, and publication checklist. User decides whether to publish. This is the LAST step before publishing — make sure verify/ passed first."
 ---
 
 # Evaluate — 验收评估 + 发布准备
 
 ## 职责
 
-最终验收 + 发布准备。**Agent 跑验证→生成文档/CI→用户决定是否发布。**
+最终验收 + 发布准备。**Agent 委托 verify/ 做门禁→生成文档/CI→用户决定是否发布。**
+
+## 验收标准
+
+发布前必须满足以下条件：
+
+| 条件 | 检查方式 | 是否阻断 |
+|------|---------|---------|
+| 所有测试通过 | `moon test --target native` | 是 |
+| 类型检查无警告 | `moon check --warn-list +73` | 是 |
+| 代码格式正确 | `moon fmt --check` | 是 |
+| 安全扫描无 error | `moon-audit --fail-on-error .` | 推荐 |
+| 有可运行文档示例 | 测试含 usage 标签 | 否 |
+| 用户确认版本号 | 用户输入 | 是 |
 
 ## 执行流程
 
-### 1. 全量验证
+### 1. 委托 verify/ 做全量门禁
 
-```bash
-moon fmt --check && moon check --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
-```
+不重复验证管道——**先调用 `verify/` 技能**，确保 fmt + check + test + moon-audit + info 全部通过。
+
+如果 verify 失败，返回 implement/ 修复，不继续发布。
 
 ### 2. 生成 README 文档
 
@@ -69,8 +82,12 @@ jobs:
 
 | 谁 | 做什么 |
 |---|--------|
-| Agent | 运行验证管道、生成 README 和 CI、检查发布就绪 |
+| Agent | 委托 verify 做门禁、生成 README 和 CI、检查发布就绪 |
 | 用户 | 判断质量是否达标、确认版本号、执行 `moon publish` |
+
+## 下一步
+
+发布完成或用户说"再改"后，回到 `implement/` 继续任务。
 
 ## 输出
 
@@ -78,10 +95,14 @@ jobs:
 {
   "status": "approved | needs_fix",
   "project_type": "lib",
-  "verification": {"fmt": "pass", "check": "pass", "test": "pass (12/12)", "info": "pass", "security": "pass"},
+  "verification": "pass",
   "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml"],
   "publish_ready": true,
   "user_decision": "approved",
   "next": "publish | implement"
 }
 ```
+
+## 下一步
+
+发布完成或用户说"再改"后，回到 `implement/` 继续任务。

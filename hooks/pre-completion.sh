@@ -47,7 +47,7 @@ fi
 # 4. Security audit
 if command -v moon-audit &>/dev/null; then
   echo "→ moon-audit pipeline..."
-  if moon-audit pipeline . 2>/dev/null; then
+  if moon-audit --fail-on-error . 2>/dev/null; then
     echo "✅ Security audit passed"
   else
     echo "❌ Security audit found issues. Run: moon-audit ."

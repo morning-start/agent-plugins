@@ -2,7 +2,7 @@
 
 ## 入口
 
-所有用户请求从 `SKILL.md` 进入。
+所有用户请求从 `SKILL.md` 进入。加载后定位到 `skills/plan/SKILL.md` 开始对话。
 
 ## 分类矩阵
 

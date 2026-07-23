@@ -28,9 +28,11 @@ fi
 echo "✅ Type check passed"
 
 # 3. Security audit (if available)
-if command -v moon-audit &>/dev/null; then
-  echo "→ moon-audit pipeline..."
+  echo "→ moon-audit --fail-on-error ."
   if ! moon-audit --fail-on-error . 2>/dev/null; then
+    echo "❌ Security audit found errors. Run: moon-audit ."
+    exit 1
+  fi
     echo "❌ Security audit found errors. Run 'moon-audit .' for details."
     exit 1
   fi

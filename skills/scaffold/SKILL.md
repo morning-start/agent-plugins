@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: "Generate a MoonBit project skeleton from templates. Use when the user says 'create project', 'scaffold', 'set up', 'start a new package', or when a moon.mod.json is missing. Agent creates project structure based on project_type: lib, cli, c-ffi, or wasm. Uses templates/{type}/ files. Run this before any implementation work."
+description: "Generate a MoonBit project skeleton from templates. Use whenever the user says 'create project', 'scaffold', 'set up', 'start a new package', 'initialize', or when you notice moon.mod.json is missing. Agent creates the full project structure based on project_type: lib, cli, c-ffi, or wasm. Uses templates/{type}/ files. Run this BEFORE any implementation work — never write code in a project without a proper skeleton."
 ---
 
 # Scaffold — 项目脚手架
@@ -96,19 +96,6 @@ description: "Generate a MoonBit project skeleton from templates. Use when the u
 }
 ```
 
-## 类型感知分支
-
-根据 `project_type` 选择模板：
-
-| 项目类型 | 模板目录 | 关键文件 |
-|---------|---------|---------|
-| `lib` | `templates/lib/` | `moon.mod.json`, `moon.pkg.json`, `lib.mbt`, `test.mbt` |
-| `cli` | `templates/cli/` | `moon.mod.json`, `moon.pkg.json`, `main.mbt` (含 @argparse) |
-| `c-ffi` | `templates/c-ffi/` | `moon.mod.json`, `moon.pkg` (含 native-stub), `ffi.mbt` |
-| `wasm` | `templates/wasm/` | `moon.mod.json`, `moon.pkg.json`, `ffi.mbt`, `test.mbt` |
-| `parser` | 参考 `templates/lib/` + 分层 | `tokenize/`, `parser.mbt`, `lib.mbt` |
-| `async` | 参考 `templates/lib/` + async 依赖 | 基于 `moonbitlang/async` |
-
 ## 幂等性
 
 本技能可安全重复运行：
@@ -162,3 +149,7 @@ moon info --target native
 
 - `moonbit-agent-guide` — MoonBit 项目布局与文件组织
 
+
+## 下一步
+
+骨架通过验证后，进入 `implement/` 开始 TDD 实现。

@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Implement MoonBit features with TDD. Use when the user says 'implement', 'write code', 'add feature', or after the plan is done. Type-aware: different TDD strategies for lib, cli, c-ffi, wasm, parser, async. Agent does Red-Green-Verify per task, shows results to user. Debug is built-in: 3 auto-fix attempts then ask user. NOT a MoonBit syntax reference — refer to references/idioms.md for API details."
+description: "Implement MoonBit features with TDD. Use whenever the user says 'implement', 'write code', 'add feature', 'make it work', 'fix this bug', 'refactor', or after the plan is done. Type-aware: different TDD strategies for lib, cli, c-ffi, wasm, parser, async. Agent does Red-Green-Verify per task, shows results to user. Debug is built-in: 3 auto-fix attempts then ask user. NOT a MoonBit syntax reference — refer to references/idioms.md for API details. Use this for ALL coding work, including debugging and refactoring."
 ---
 
 # Implement — TDD 实现
@@ -73,3 +73,9 @@ moon fmt --check && moon check --warn-list +73 && moon test
   "next": "implement | evaluate"
 }
 ```
+
+## 下一步
+
+实现完成后，先调用 `verify/` 做全量门禁检查，然后进入 `evaluate/` 做最终验收和发布准备。
+
+如果用户请求的是调试/修复现有代码，不需要走完整管线——直接在当前项目上执行 TDD 循环即可。

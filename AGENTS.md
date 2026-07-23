@@ -17,7 +17,7 @@ moonbit-skills/
 │   ├── scaffold/SKILL.md  # 能力: 项目脚手架
 │   └── verify/SKILL.md    # 能力: 验证门禁 (含 review + moon-audit)
 ├── references/            ← 知识库
-│   ├── arch-patterns.md   # 架构模式参考
+│   ├── patterns/         # 各类型架构模式 (cli, c-ffi, wasm, parser, async, lib)
 │   ├── idioms.md          # MoonBit 惯用写法 + API 速查
 │   └── commands.md        # MoonBit 命令参考
 ├── hooks/                 ← 钩子注入
