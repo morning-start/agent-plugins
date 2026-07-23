@@ -9,32 +9,32 @@
     },
     {
       "id": 2,
-      "prompt": "帮我写一个 MoonBit 的 CLI 工具，用来统计目录下所有 .mbt 文件的代码行数。需要支持递归子目录和排除 _build 目录。",
-      "expected_output": "MoonBit CLI project: plan/ (CLI 参数设计), scaffold/ (cli 骨架), implement/ (TDD), verify/ (gate passed), evaluate/ (README + CI)",
+      "prompt": "Help me write a MoonBit CLI tool that counts source lines in all .mbt files recursively and excludes _build directories.",
+      "expected_output": "MoonBit CLI project: plan/ (CLI parameter design), scaffold/ (cli skeleton), implement/ (TDD), verify/ (gate passed), evaluate/ (README + CI)",
       "files": []
     },
     {
       "id": 3,
       "prompt": "I need to wrap a C library called libfoo in MoonBit. It has about 20 functions for image processing.",
-      "expected_output": "MoonBit native FFI binding project: plan/ (四层 FFI 架构), scaffold/ (c-ffi 骨架), implement/ (从 L0 向外写), verify/ (gate passed + ASan optional)",
+      "expected_output": "MoonBit native FFI binding project: plan/ (four-layer FFI architecture), scaffold/ (c-ffi skeleton), implement/ (L0 outward bindings), verify/ (gate passed + optional ASan)",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "I wrote a MoonBit JSON parser but it's failing on nested objects. The error is 'type mismatch: expected Object but got Array'. Help me debug this.",
-      "expected_output": "Debug built into implement: collect failure info, classify, diagnose, fix, re-verify. 3 attempts max then ask user.",
+      "prompt": "I wrote a MoonBit JSON parser but it is failing on nested objects. The error is type mismatch: expected Object but got Array. Help me debug this.",
+      "expected_output": "Debug built into implement: collect failure info, classify, diagnose, fix, and re-verify. Ask the user after three failed attempts.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "I just finished implementing my MoonBit package. Check if it's ready for publishing.",
-      "expected_output": "verify/ gate (fmt + check + test + info + moon-audit) → evaluate/ (README.mbt.md + CI + publication checklist)",
+      "prompt": "I just finished implementing my MoonBit package. Check if it is ready for publishing.",
+      "expected_output": "verify/ gate (fmt + check + test + info + moon-audit), then evaluate/ (README.mbt.md + CI + publication checklist)",
       "files": []
     },
     {
       "id": 6,
       "prompt": "Review my MoonBit HTTP server code for security issues.",
-      "expected_output": "verify/ runs moon-audit pipeline, reports CWE findings (CORS, XSS, CRLF injection, Cookie attributes), auto-fixes where possible",
+      "expected_output": "verify/ runs the moon-audit pipeline, reports security findings, and applies safe automatic fixes where possible.",
       "files": []
     }
   ]

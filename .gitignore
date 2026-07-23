@@ -2,3 +2,8 @@ draft/
 **/skills/*-workspace/
 .*/skills/
 analysis_reference/
+workspace/
+**/_build/
+**/target/
+**/.mooncakes/
+**/.moonagent/
