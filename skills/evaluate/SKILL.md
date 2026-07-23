@@ -1,65 +1,76 @@
 ---
 name: evaluate
-description: "Evaluate and verify a MoonBit project — use when the user says 'test', 'verify', 'check if it works', 'ready to publish', or after implementation is done. Type-aware: uses different verification pipelines for lib, cli, c-ffi, wasm. Agent runs verification, presents results. User decides if good enough. Must run before publish."
+description: "Final evaluation and publication — merge of evaluate + publish. Use after verification passes, when the user says 'ready to publish', 'release', 'deploy'. Agent generates README.mbt.md with executable docs, CI configuration, and publication checklist. User decides whether to publish. Must run after verify."
 ---
 
-# Evaluate — 评估验收
+# Evaluate — 验收评估 + 发布准备
 
 ## 职责
 
-根据 `project_type` 验证项目质量，由用户判断是否达到标准。**Agent 跑验证，用户做判断。**
+最终验收 + 发布准备。**Agent 跑验证→生成文档/CI→用户决定是否发布。**
 
 ## 执行流程
 
-### 1. Agent 运行验证
-
-根据项目类型运行对应验证管道：
+### 1. 全量验证
 
 ```bash
-# lib:   moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# cli:   moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# c-ffi: moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# wasm:  moon fmt --check && moon check --target wasm --warn-list +73 && moon test --target wasm && moon info --target wasm
+moon fmt --check && moon check --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
 ```
 
-### 2. 评估标准
+### 2. 生成 README 文档
 
-| 项目类型 | 通过标准 | 额外检查 |
-|---------|---------|---------|
-| `lib` | fmt + check + test + info 全部通过 | `moon check --target all` 跨平台 |
-| `cli` | fmt + check + test + info 全部通过 | CLI 输出测试 |
-| `c-ffi` | fmt + check + test + info 全部通过 | ASan 验证（可选） |
-| `wasm` | fmt + check + test + info 全部通过 | WASM 运行时测试 |
+从 `moon info` 提取公共 API 签名，生成 `src/README.mbt.md`（含可执行示例）：
 
-### 3. 展示结果给用户
+```bash
+moon info --target native > src/README.mbt.md
+moon test --target native -f "usage"   # 验证文档示例可运行
+```
+
+### 3. 生成 CI 配置
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: moonbitlang/moonbit-toolchain@v1
+      - run: moon fmt --check && moon check --warn-list +73 && moon test --target native && moon info --target native
+      - run: moon-audit pipeline .
+```
+
+### 4. 发布检查清单
 
 ```markdown
-## 验证结果
+## 发布检查清单
 
-| 检查 | 结果 |
-|------|------|
-| moon fmt --check | ✅ |
-| moon check ({target}) | ✅ |
-| moon test ({target}) | ✅ 12/12 |
-| moon info | ✅ |
-
-**代码质量总结**:
-- 类型设计: 良好
-- 错误处理: 良好
-- 测试覆盖: 核心功能已覆盖
-
-**是否达到发布标准？**
-- 好了 → 进入 publish
-- 还有问题 → 说明要改什么
+- [x] 完整验证管道通过
+- [x] 文档示例可运行
+- [x] CI 配置已生成
+- [ ] 用户确认版本号
+- [ ] 用户执行 `moon publish`（需要 mooncakes 账号）
 ```
 
-### 4. 用户决定
+## 各类型发布策略
 
-| 用户说 | 处理 |
-|--------|------|
-| 「好了」 | 进入 publish |
-| 「这里改一下」 | 回到 implement，修改后重新评估 |
-| 「还不够」 | 说明具体问题，Agent 修复后重新评估 |
+| 类型 | 发布方式 | CI 验证命令 |
+|------|---------|------------|
+| lib | mooncake 包 | `moon check --target all` |
+| cli | 可执行文件 + mooncake | `moon test --target native` |
+| c-ffi | mooncake 包（含 native-stub） | `moon check --target native` + ASan |
+| wasm | WASM 模块 + mooncake | `moon test --target wasm` |
+| parser | mooncake 包 | `moon test --target native` + 合规率 |
+| async | mooncake 包 | `moon test --target native` |
+
+## 用户 vs Agent 分工
+
+| 谁 | 做什么 |
+|---|--------|
+| Agent | 运行验证管道、生成 README 和 CI、检查发布就绪 |
+| 用户 | 判断质量是否达标、确认版本号、执行 `moon publish` |
 
 ## 输出
 
@@ -67,73 +78,10 @@ description: "Evaluate and verify a MoonBit project — use when the user says '
 {
   "status": "approved | needs_fix",
   "project_type": "lib",
-  "verification": {
-    "fmt": "pass",
-    "check": "pass",
-    "test": "pass (12/12)",
-    "info": "pass"
-  },
+  "verification": {"fmt": "pass", "check": "pass", "test": "pass (12/12)", "info": "pass", "security": "pass"},
+  "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml"],
+  "publish_ready": true,
   "user_decision": "approved",
   "next": "publish | implement"
 }
 ```
-
-## 类型感知分支
-
-根据 `project_type` 调整验证策略：
-
-| 项目类型 | 验证重点 | 关键检查 |
-|---------|---------|---------|
-| `lib` | 跨平台兼容性 | `moon check --target all` |
-| `cli` | 命令输出、退出码 | 集成测试 + 标准 I/O |
-| `c-ffi` | 内存安全、ASan | `python3 scripts/run-asan.py` |
-| `wasm` | WASM 目标、内存 | `moon test --target wasm` |
-| `parser` | 合规率、边界测试 | 官方测试套件 |
-| `async` | 协程取消、超时 | 并发测试 |
-
-## 幂等性
-
-本技能可安全重复运行：
-
-- **验证管道**: 无状态，每次运行产生相同结果
-- **测试快照**: `moon test --update` 可重放
-- **git status**: 运行后检查是否有意外变更
-
-```bash
-# Idempotency check: 重新评估
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# 重复运行应产生相同输出（同一工具链版本）
-```
-
-## Checkpoint: evaluation
-
-```bash
-# 验证评估结果
-echo "status: pass|fail"
-echo "project_type: {lib|cli|c-ffi|wasm}"
-echo "checks: fmt|check|test|info"
-# 预期: 全部 pass
-# 如果任一失败: 回到对应阶段修复
-```
-
-## 错误恢复速查表
-
-| 命令 | 诊断 | 修复 | 升级 |
-|------|------|------|------|
-| `moon test` 失败 | 测试输出 | 检查断言 | 回归 -> 回滚 |
-| `moon check` 失败 | E#### | 检查类型 | ABI 不匹配 |
-| `moon info` 失败 | 类型检查未通过 | 先 `moon check` | 公共 API 变更 |
-| `moon fmt --check` 失败 | 格式问题 | `moon fmt` | 编辑器配置冲突 |
-
-## IDE 工具链
-
-验收前检查公共 API 是否意外变更：
-
-```bash
-moon info --target native
-moon ide doc '<public_api>'
-```
-
-## 上游参考
-
-- `moonbit-agent-guide` — `moon info` 与公共接口变更检查

@@ -9,48 +9,30 @@
 ```
 moonbit-skills/
 ├── AGENTS.md              ← this file
-├── CLAUDE.md              ← agent instruction
 ├── SKILL.md               ← main entry: 协作模型 + 技能入口
-├── skills/                ← 对话模式 + 原子能力 (每个子目录含 SKILL.md)
-│   ├── clarify/SKILL.md   # 模式: 需求澄清
-│   ├── design/SKILL.md    # 模式: 设计决策
-│   ├── implement/SKILL.md # 模式: TDD 实现
-│   ├── evaluate/SKILL.md  # 模式: 评估验收
+├── skills/                ← 5 个核心技能
+│   ├── plan/SKILL.md      # 模式: 需求澄清 + 设计决策 (原名 clarify + design)
+│   ├── implement/SKILL.md # 模式: TDD 实现 (内置 debug)
+│   ├── evaluate/SKILL.md  # 模式: 评估验收 + 发布准备 (原名 evaluate + publish)
 │   ├── scaffold/SKILL.md  # 能力: 项目脚手架
-│   ├── debug/SKILL.md     # 能力: 调试
-│   ├── review/SKILL.md    # 能力: 代码审查
-│   ├── verify/SKILL.md    # 能力: 验证门禁
-│   └── publish/SKILL.md   # 能力: 发布
+│   └── verify/SKILL.md    # 能力: 验证门禁 (含 review + moon-audit)
+├── references/            ← 知识库
+│   ├── arch-patterns.md   # 架构模式参考
+│   ├── idioms.md          # MoonBit 惯用写法 + API 速查
+│   └── commands.md        # MoonBit 命令参考
 ├── hooks/                 ← 钩子注入
 │   ├── hooks.json
 │   ├── session-start
 │   └── run-hook.cmd
-├── .claude-plugin/        ← Claude Code 插件
-│   └── plugin.json
-├── .codex-plugin/         ← Codex 插件
-│   └── plugin.json
-├── docs/                  ← 文档和计划
-│   ├── README.md
-│   ├── plans/
-│   └── specs/
-├── scripts/               ← 自动化脚本
-│   └── README.md
-├── references/            ← 知识库
-│   ├── arch-patterns.md
-│   ├── commands.md
-│   ├── idioms.md
-│   └── decision-tree.md
 ├── templates/             ← 模板
-│   ├── moon.mod.json
-│   ├── moon.pkg.json
-│   ├── lib.mbt
-│   ├── test.mbt
-│   └── ffi.mbt
-├── .agents/               ← agent definitions
-│   ├── agent/
-│   └── skills/
-├── analysis_reference/    ← to be deleted
-└── draft/                 ← to be deleted
+│   ├── lib/
+│   ├── cli/
+│   ├── c-ffi/
+│   └── wasm/
+├── .claude-plugin/        ← Claude Code 插件
+├── .codex-plugin/         ← Codex 插件
+├── evals/                 ← 评估
+└── scripts/               ← 自动化脚本
 ```
 
 ## 协作模型
@@ -58,8 +40,8 @@ moonbit-skills/
 ```
 用户说"我要做 X"
     │
-    ├── clarify: Agent 问清楚 → 用户描述需求
-    ├── design: Agent 展示知识 → 用户决定架构 + 设计 API
+    ├── plan: Agent 问清楚 + 展示方案 → 用户决定架构 + 设计 API
+    ├── scaffold: Agent 生成骨架 → 用户确认
     ├── implement: Agent 逐个任务 TDD → 用户审查/调整
     └── evaluate: Agent 验证 → 用户判断"好了"或"再改"
 ```
@@ -68,6 +50,6 @@ moonbit-skills/
 
 ## Key Constraints
 
-- `draft/` and `analysis_reference/` are learning materials — delete after migration
-- `skills/` contains patterns (how to collaborate) and capabilities (what to execute)
-- Each skill file is self-contained: when to use, what happens, user vs Agent roles
+- `skills/` 包含 5 个核心技能，每个自包含：何时用、做什么、用户 vs Agent 角色
+- `references/` 是知识库，不是技能 — Agent 参考用，不直接执行
+- `templates/` 是脚手架模板，按类型分目录

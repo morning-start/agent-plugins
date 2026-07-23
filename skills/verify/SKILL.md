@@ -1,122 +1,92 @@
 ---
 name: verify
-description: "Run the MoonBit verification gate — use after any implementation, debugging, refactoring, or before claiming completion. Type-aware: runs different verification pipelines for lib, cli, c-ffi, wasm projects. Includes moon fmt --check, moon check --warn-list +73, moon test, moon info, and moon-audit pipeline. Called by other skills as a quality check. Do NOT skip this before claiming done."
+description: "Run the MoonBit verification gate — merge of review + verify + moon-audit. Use after implementation, before claiming done. Type-aware: runs verification pipeline, code review, and security audit in one pass. Agent runs checks, applies auto-fixes, presents results. User decides if acceptable. Do NOT skip this before claiming done."
 ---
 
-# Verify — 验证门禁
+# Verify — 验证门禁（含代码审查 + 安全审计）
 
 ## 职责
 
-根据 `project_type` 运行对应的验证管道。**Agent 执行，返回结果。**
+一站式验证管道：**代码审查 → 验证门禁 → 安全审计**。Agent 全自动执行，用户做最终判断。
 
-## 验证管道
-
-### lib — 跨平台验证
+## 验证管道（全量）
 
 ```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
-# 可选: moon check --target all（跨平台兼容性）
+# 1. 代码审查 + 自动修复
+moon check --warn-list +73          # 类型检查，含警告
+moon fmt --check                     # 格式检查（失败则 moon fmt 自动修复）
+
+# 2. 验证门禁
+moon test --target native            # 测试全部通过
+moon info --target native            # 公共 API 稳定性
+
+# 3. 安全审计
+moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 ```
 
-### cli — 本地可执行验证
+## 各类型验证重点
+
+| 类型 | 验证命令 | 额外检查 |
+|------|---------|---------|
+| lib | `moon test --target native` | `moon check --target all` 跨平台 |
+| cli | `moon test --target native` | CLI 输出/退出码测试 |
+| c-ffi | `moon check --target native` | ASan 验证（可选） |
+| wasm | `moon test --target wasm` | WASM 运行时 test |
+| parser | `moon test --target native` | 官方测试套件合规率 |
+| async | `moon test --target native` | 并发测试 |
+
+## 代码审查项目（自动修复）
+
+| 检查 | 合格 | 修复 |
+|------|------|------|
+| 可选值 | `T?` 而非 `Option[T]` | 自动替换 |
+| 字符串参数 | `StringView` 而非 `String` | 自动替换 |
+| 错误处理 | 正确使用 `Result`/`suberror` | 自动修正 |
+| 自定义错误 | `derive(Debug, Eq, ToJson)` | 自动添加 |
+| 可见性 | 只导出外部需要的 | 移除不必要的 `pub` |
+| 空 catch | 无 `catch { _ => () }` | 添加日志或重新抛出 |
+| 资源管理 | `with_closed_*` RAII 模式 | 包装为 RAII |
+
+## 安全审计（moon-audit）
 
 ```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
-# CLI 特有: 测试标准输入输出
+# 安装
+moon add minie135/moon-audit
+
+# 运行
+moon-audit pipeline .                # 全流程
+moon-audit --format json .           # JSON 输出
+moon-audit --fail-on-error .         # Error 漏洞时 exit 1（CI 用）
+
+# 解读
+moon-audit summary .                 # 按 CWE 分类聚合
+moon-audit remediate -o fixes.md .   # 修复建议
 ```
 
-### c-ffi — 原生绑定验证
+## 错误恢复
 
-```bash
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native && moon-audit pipeline .
-# C 特有: 需要 GCC/Clang 编译器
-# 可选: ASan 验证（Address Sanitizer）
-```
-
-### wasm — WASM 验证
-
-```bash
-moon fmt --check && moon check --target wasm --warn-list +73 && moon test --target wasm && moon info --target wasm && moon-audit pipeline .
-# WASM 特有: 需要 WASM 运行时（wasmtime）
-```
-
-## 分步诊断（如果失败）
-
-```bash
-# fmt 失败
-moon fmt                            # 自动修复格式
-
-# check 失败
-moon check --explain E####          # 获取错误详解
-
-# test 失败
-moon test --target native -- --show-output   # 查看详细输出
-moon test --target native -f "test_name"     # 运行单个测试
-
-# info 失败
-moon check --target native          # 先确保类型检查通过
-```
+| 命令 | 诊断 | 修复 |
+|------|------|------|
+| `moon fmt --check` | 格式问题 | `moon fmt` 自动修复 |
+| `moon check` 失败 | `--explain E####` | 检查类型签名 |
+| `moon test` 失败 | `--show-output` | 修正断言 |
+| `moon info` 失败 | 先 `moon check` | 类型正确后重试 |
+| `moon-audit` 未安装 | 命令未找到 | `moon add minie135/moon-audit` |
 
 ## 输出
 
 ```json
 {
-  "status": "pass | fail",
+  "status": "pass | fix_applied | fail",
   "project_type": "lib",
-  "target": "native",
   "checks": {
     "fmt": "pass",
     "check": "pass",
     "test": "pass (12/12)",
-    "info": "pass"
+    "info": "pass",
+    "security": "pass (0 findings)"
   },
+  "auto_fixes": ["removed pub from 2 functions", "replaced Option[T] with T?"],
   "failures": []
 }
 ```
-
-## Checkpoint: post-verify
-
-```bash
-# 验证完成后检查
-echo "status: pass"
-echo "project_type: {lib|cli|c-ffi|wasm}"
-echo "checks: fmt|check|test|info"
-# 预期: 全部 pass
-# 如果任一失败: 返回对应阶段修复
-```
-
-## 错误恢复速查表
-
-| 命令 | 诊断 | 修复 | 升级 |
-|------|------|------|------|
-| `moon fmt --check` | `moon fmt` | 自动修复格式 | 编辑器配置冲突 |
-| `moon check` | `--explain E####` | 检查类型签名 | ABI 不匹配 |
-| `moon test` | `--show-output` | 修正测试断言 | 测试框架 bug |
-| `moon info` | 先 `moon check` | 确保类型正确 | 公共 API 变更 |
-
-## 幂等性
-
-本技能可安全重复运行：
-
-- **验证管道**: 无状态，每次运行产生相同结果
-- **文件检查**: 只读，不修改任何文件
-- **git status**: 运行后检查是否有意外变更
-
-```bash
-# Idempotency check
-moon fmt --check && moon check --target native --warn-list +73 && moon test --target native && moon info --target native
-# 重复运行应产生相同输出（同一工具链版本）
-```
-
-## IDE 工具链
-
-验证前后检查公共接口稳定性：
-
-```bash
-moon info --target native
-moon ide doc '<public_api>'
-```
-
-## 上游参考
-
-- `moonbit-agent-guide` — `moon info` 与 `pkg.generated.mbti` 变更检查
