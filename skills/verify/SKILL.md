@@ -47,6 +47,9 @@ moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 | 可见性 | 只导出外部需要的 | 涉及 `pub` 时只报告 |
 | 空 catch | 无 `catch { _ => () }` | 报告并给出建议 |
 | 资源管理 | `with_closed_*` RAII 模式 | FFI/资源代码只报告 |
+| 枚举可见性 | 跨包构造需 `pub(all) enum`，`pub enum` 不导出构造器 | 涉及枚举可见性变更时只报告 |
+| 跨包 struct 字面量 | 跨包只能用 `pub` 字段，通常需要提供构造器函数 | 结构体重构只报告 |
+| `unused_mut` 语义 | `mut` 仅在变量重新赋值时需要，push/mutate 不需要 | 谨慎添加/移除 `mut`，需验证 push/mutate 场景 |
 
 自动修复后必须重新运行 fmt、check、test，并输出变更摘要。涉及 public API、ABI、WASM 导出或 C 所有权时，停止自动修复并请求用户确认。
 ## 安全审计（moon-audit）

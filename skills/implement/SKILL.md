@@ -46,6 +46,17 @@ moon test --target native -f "failing_test"
 moon fmt --check && moon check --warn-list +73 && moon test
 ```
 
+## 常见类型错误速查
+
+| 现象 | 原因 | 修复 |
+|------|------|------|
+| `String[i]` 类型不匹配 | `String[i]` 返回 `UInt16`（编码点数值），不是 `Char` | 用 `Char::from_int(s[i].to_int())` 转换后再使用 |
+| `Json` 没有 `unwrap` 方法 | `@json.parse` 返回 `Json`，不是 `Result` | 直接使用 `@json.parse(s)`，错误处理用 `try/catch` |
+| `Error` 构造器歧义 | 多个枚举同名变体 | 用 `Type::Variant` 显式消歧：`FinishReason::Error` |
+| Char→String 得到数字 | `UInt16.to_string()` 输出数值字符串 | 先 `Char::from_int(s[i].to_int())`，再插值 `"\{ch}"` |
+| `for (k, v) in map` 解析错误 | `for` 循环不支持元组解构 | `for entry in map { match entry { (k, v) => ... } }` |
+| `match` 嵌套在 `+` 中报错 | MoonBit 不允许 `+` 操作数内直接嵌套 `match` | 先提取 `let part = match ... { ... }`，再拼接 |
+
 ## 快速任务模式
 
 | 场景 | 最小流程 |
