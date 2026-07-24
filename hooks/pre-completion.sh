@@ -11,9 +11,12 @@ cd "$PROJECT_DIR"
 
 # Check if we're in a MoonBit project
 if [ ! -f moon.mod.json ] && [ ! -f moon.mod ]; then
-  echo "❌ Not a MoonBit project: $PROJECT_DIR"
-  exit 1
+  echo "Not a MoonBit project: $PROJECT_DIR"
+  echo "Skipping MoonBit completion gate"
+  exit 0
 fi
+
+STRICT_AUDIT="${MOONBIT_STRICT_AUDIT:-1}"
 
 FAILED=0
 
@@ -58,7 +61,6 @@ else
 fi
 
 # 5. Package info
-echo "→ moon info --target native..."
 if moon info --target native 2>/dev/null; then
   echo "✅ Package info OK"
 else

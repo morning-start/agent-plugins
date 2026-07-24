@@ -1,7 +1,23 @@
-# Scripts
+# Evaluation scripts
 
-Automation scripts for the MoonBit skill suite.
+Evaluation outputs belong in the ignored `workspace/` directory and must not be committed.
 
-## Available scripts
+```text
+workspace/
+└── iteration-N/
+    └── eval-ID/
+```
 
-- (none yet)
+Clean local results before a new run when needed:
+
+```bash
+rm -rf workspace/
+```
+
+On Windows PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force workspace
+```
+
+Keep durable test prompts and assertions in `evals/evals.json`; keep generated outputs in `workspace/` only.

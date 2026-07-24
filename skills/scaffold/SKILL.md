@@ -30,6 +30,15 @@ package_name: MoonBit package name
 target: native | wasm | js, as supported by the selected type
 ```
 
+能力型项目的降级规则：
+
+| capability | primary_type | 额外动作 |
+|------------|--------------|----------|
+| `parser` | `lib` 或 `cli` | 使用对应模板，再创建 lexer/tokenize/parser/validate 分层 |
+| `async` | `lib` 或 `cli` | 使用对应模板，再添加 async 依赖和 event_loop/task/io 目录 |
+
+不要把 `parser` 或 `async` 直接当作独立模板类型。
+
 ## Generation mapping
 
 Copy the selected directory into the project root and preserve the filenames. Replace package placeholders only when they exist in the template.
@@ -57,6 +66,12 @@ For a WASM project, also run:
 ```bash
 moon check --target wasm
 moon test --target wasm
+```
+
+If the toolchain supports `wasm-gc`, also run:
+
+```bash
+moon check --target wasm-gc
 ```
 
 If the toolchain is unavailable, report the toolchain error and do not claim that the scaffold passed validation.

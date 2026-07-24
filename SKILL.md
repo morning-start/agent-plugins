@@ -24,41 +24,24 @@ description: "MoonBit 工程化开发技能。用户做架构决策和 API 设�
 
 **用户做决策，Agent 做执行。**
 
-## 技能列表
+## 技能列表与路由
 
-### 对话模式 (4 个)
+完整流程和状态说明见 `references/orchestration.md`。这里仅保留入口路由：
 
-| 技能 | 入口条件 | 合并了 |
-|------|---------|--------|
-| `plan/` | 用户说「我要做 X」 | clarify + design |
-| `scaffold/` | 设计方案确定后 | — |
-| `implement/` | 骨架生成后 | 内置 debug |
-| `evaluate/` | 实现完成后 | evaluate + publish |
+| 用户意图 | 技能 |
+|---------|------|
+| 开始新项目、规划架构 | `plan/` |
+| 生成项目骨架 | `scaffold/` |
+| 写代码、修 bug、重构 | `implement/` |
+| 检查、审查、安全审计 | `verify/` |
+| 验收、发布、部署 | `evaluate/` |
 
-### 原子能力 (1 个)
-
-| 能力 | 入口条件 | 合并了 |
-|------|---------|--------|
-| `verify/` | 需要验证/审查/审计 | review + verify + moon-audit |
-
-## 编排
-
-```
-用户说"我要做 X"
-    │
-    ▼
-plan(SKILL.md) ──→ scaffold(SKILL.md) ──→ implement(SKILL.md) ──→ evaluate(SKILL.md)
-    │                     │                     │
-    │                     │                     └── debug 内置 (3 次后问用户)
-    │                     │
-    │                     └── 模板: templates/{type}/
-    │
-    └── 参考: references/patterns/, references/idioms.md, references/commands.md
-```
-
-阶段切换时调用 `verify/` 做门禁检查。
+每个技能的详细输入、动作、输出和下一步，见对应的 `skills/{name}/SKILL.md`。
 
 ## 启动方式
+
+用户只需描述 MoonBit 目标。Agent 从 `plan/` 开始；已有项目或直接修 bug 时，按用户意图进入对应技能。
+
 
 ```bash
 # 用户说:

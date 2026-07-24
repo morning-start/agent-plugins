@@ -36,6 +36,18 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 | async | 需要哪些高层服务(HTTP/WebSocket/fs)？需要 TLS？目标 native-only |
 | lib | 核心功能？API 最小表面？目标 native,wasm,js |
 
+项目可以同时具备多个能力，不要强行压缩成单一类型。记录：
+
+```json
+{
+  "primary_type": "cli",
+  "capabilities": ["parser", "async"],
+  "targets": ["native"]
+}
+```
+
+`primary_type` 决定脚手架；`capabilities` 决定依赖、目录和测试；`targets` 决定验证矩阵。
+
 ## 执行流程
 
 ### 1. 分类 + 追问

@@ -3,38 +3,112 @@
   "evals": [
     {
       "id": 1,
+      "name": "new-parser-project",
       "prompt": "I want to build a TOML parser in MoonBit. It should parse TOML 1.0 files and serialize them back to TOML strings. Target platform is native only.",
-      "expected_output": "MoonBit project with TOML parser: plan/ (requirements + architecture), scaffold/ (skeleton), implement/ (TDD), verify/ (gate passed), evaluate/ (README + CI)",
+      "expected_output": "Plan a parser project, select a primary type plus capabilities, scaffold, implement with TDD, verify, and evaluate.",
+      "assertions": [
+        "classifies primary_type as lib or parser-capable project",
+        "records parser capability and native target",
+        "does not claim implementation or verification before execution",
+        "routes to scaffold after plan confirmation"
+      ],
+      "should_trigger": true,
       "files": []
     },
     {
       "id": 2,
+      "name": "cli-with-exclusion",
       "prompt": "Help me write a MoonBit CLI tool that counts source lines in all .mbt files recursively and excludes _build directories.",
-      "expected_output": "MoonBit CLI project: plan/ (CLI parameter design), scaffold/ (cli skeleton), implement/ (TDD), verify/ (gate passed), evaluate/ (README + CI)",
+      "expected_output": "Plan CLI parameters and exclusions, scaffold the cli template, then use TDD and native verification.",
+      "assertions": [
+        "classifies primary_type as cli",
+        "captures recursive traversal and _build exclusion as requirements",
+        "selects native target",
+        "does not invent a parser-only or wasm project"
+      ],
+      "should_trigger": true,
       "files": []
     },
     {
       "id": 3,
+      "name": "cffi-binding",
       "prompt": "I need to wrap a C library called libfoo in MoonBit. It has about 20 functions for image processing.",
-      "expected_output": "MoonBit native FFI binding project: plan/ (four-layer FFI architecture), scaffold/ (c-ffi skeleton), implement/ (L0 outward bindings), verify/ (gate passed + optional ASan)",
+      "expected_output": "Plan a native c-ffi project with ownership and ABI decisions, scaffold the complete FFI template, implement from L0 outward, and verify native safety.",
+      "assertions": [
+        "classifies primary_type as c-ffi",
+        "asks about ABI, ownership, allocation, and free semantics",
+        "does not claim wrapper.c or validation exists without checking files",
+        "requires native verification"
+      ],
+      "should_trigger": true,
       "files": []
     },
     {
       "id": 4,
+      "name": "direct-debug",
       "prompt": "I wrote a MoonBit JSON parser but it is failing on nested objects. The error is type mismatch: expected Object but got Array. Help me debug this.",
-      "expected_output": "Debug built into implement: collect failure info, classify, diagnose, fix, and re-verify. Ask the user after three failed attempts.",
+      "expected_output": "Use implement's debug flow: reproduce, classify, diagnose, make a minimal fix, and re-verify. Ask the user after three failed attempts.",
+      "assertions": [
+        "does not force a new-project plan",
+        "collects the failing test or check output first",
+        "uses a bounded repair loop",
+        "re-runs the focused test and broader verification after a fix"
+      ],
+      "should_trigger": true,
       "files": []
     },
     {
       "id": 5,
+      "name": "release-readiness",
       "prompt": "I just finished implementing my MoonBit package. Check if it is ready for publishing.",
-      "expected_output": "verify/ gate (fmt + check + test + info + moon-audit), then evaluate/ (README.mbt.md + CI + publication checklist)",
+      "expected_output": "Run verify's gate first, then evaluate publication readiness, documentation, CI, version, and user approval.",
+      "assertions": [
+        "runs or requests verify before publication preparation",
+        "checks fmt, type check, tests, package info, and security status",
+        "does not claim publish_ready before checks pass",
+        "keeps version confirmation as a user decision"
+      ],
+      "should_trigger": true,
       "files": []
     },
     {
       "id": 6,
+      "name": "security-review",
       "prompt": "Review my MoonBit HTTP server code for security issues.",
-      "expected_output": "verify/ runs the moon-audit pipeline, reports security findings, and applies safe automatic fixes where possible.",
+      "expected_output": "Run verify's security audit, report findings with file and rule evidence, and only apply safe mechanical fixes.",
+      "assertions": [
+        "routes to verify rather than plan or scaffold",
+        "checks moon-audit availability and reports if unavailable",
+        "does not silently auto-edit public API or security-sensitive behavior",
+        "reports findings and residual risk"
+      ],
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "syntax-question-near-miss",
+      "prompt": "What is the current MoonBit syntax for a StringView slice, with a tiny code example? Do not modify a project.",
+      "expected_output": "Answer from the idioms/reference material without starting the engineering pipeline.",
+      "assertions": [
+        "does not scaffold or create files",
+        "does not require plan or evaluate",
+        "answers the narrow API question with a current example"
+      ],
+      "should_trigger": false,
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "non-moonbit-release-near-miss",
+      "prompt": "Our Node.js service is ready to release. Please inspect its npm package metadata and draft a release checklist.",
+      "expected_output": "Do not route this to the MoonBit pipeline; use the repository's general Node.js workflow if available.",
+      "assertions": [
+        "does not invoke MoonBit plan, scaffold, or verify",
+        "does not run moon commands",
+        "recognizes that the request is outside this skill's domain"
+      ],
+      "should_trigger": false,
       "files": []
     }
   ]

@@ -37,7 +37,7 @@
 ┌──────────────────────────────────────────────┐
 │ scaffold(SKILL.md) — 项目脚手架               │
 │ 输入: project_type + 包名                     │
-│ 输出: 项目骨架 (moon.mod.json + src/)          │
+│ 输出: 项目骨架 (moon.mod + moon.pkg + src/)    │
 │ 验证: moon check + moon test                  │
 │ 路由: → implement                             │
 └──────────────────┬───────────────────────────┘

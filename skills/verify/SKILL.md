@@ -31,22 +31,24 @@ moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 | lib | `moon test --target native` | `moon check --target all` 跨平台 |
 | cli | `moon test --target native` | CLI 输出/退出码测试 |
 | c-ffi | `moon check --target native` | ASan 验证（可选） |
-| wasm | `moon test --target wasm` | WASM 运行时 test |
-| parser | `moon test --target native` | 官方测试套件合规率 |
+| wasm | `moon test --target wasm` | `moon check --target wasm` + `moon check --target wasm-gc`，WASM 运行时 test |
 | async | `moon test --target native` | 并发测试 |
 
-## 代码审查项目（自动修复）
+## 代码审查项目
 
-| 检查 | 合格 | 修复 |
-|------|------|------|
-| 可选值 | `T?` 而非 `Option[T]` | 自动替换 |
-| 字符串参数 | `StringView` 而非 `String` | 自动替换 |
-| 错误处理 | 正确使用 `Result`/`suberror` | 自动修正 |
-| 自定义错误 | `derive(Debug, Eq, ToJson)` | 自动添加 |
-| 可见性 | 只导出外部需要的 | 移除不必要的 `pub` |
-| 空 catch | 无 `catch { _ => () }` | 添加日志或重新抛出 |
-| 资源管理 | `with_closed_*` RAII 模式 | 包装为 RAII |
+默认先报告问题，不直接修改代码。只有**不涉及 public API、ABI、导出符号、所有权或依赖**的机械性修复，才可以自动应用。
 
+| 检查 | 合格 | 默认动作 |
+|------|------|---------|
+| 可选值 | `T?` 而非 `Option[T]` | 报告，需确认后替换 |
+| 字符串参数 | `StringView` 而非 `String` | 报告；公开函数不自动替换 |
+| 错误处理 | 正确使用 `Result`/`suberror` | 报告并给出建议 |
+| 自定义错误 | `derive(Debug, Eq, ToJson)` | 仅内部类型可自动修复 |
+| 可见性 | 只导出外部需要的 | 涉及 `pub` 时只报告 |
+| 空 catch | 无 `catch { _ => () }` | 报告并给出建议 |
+| 资源管理 | `with_closed_*` RAII 模式 | FFI/资源代码只报告 |
+
+自动修复后必须重新运行 fmt、check、test，并输出变更摘要。涉及 public API、ABI、WASM 导出或 C 所有权时，停止自动修复并请求用户确认。
 ## 安全审计（moon-audit）
 
 ```bash
