@@ -9,35 +9,60 @@ description: "Initialize a MoonBit project with git hooks for quality gates. Use
 
 为 MoonBit 项目配置本地质量门禁。**Agent 检测项目→创建钩子→配置 git→验证可用。** 检查按阶段划分，成本低的放 pre-commit，成本高的放 pre-push。
 
-## 检查阶段划分
+## 三档检测体系
+
+MoonBit 项目的检测分为三档，init 技能自动配置 L1/L2，L3 由 `moonbit-verify` 技能单独调用：
 
 ```
-git commit ──→ pre-commit ──→ moon fmt --check          (格式，< 1s)
-                           └─→ moon check --target native (类型，< 3s)
-
-git push ────→ pre-push ────→ moon test --target native  (测试，取决于项目)
-                           └─→ moon-audit --fail-on-error (安全审计，可选)
+┌─ L1 轻度检测（pre-commit hook）──────────────────────┐
+│ 触发: git commit                                      │
+│ 内容: moon fmt --check + moon check --target native    │
+│ 速度: < 5s，不阻塞高频提交                             │
+│ 阻断: 必须通过                                         │
+├─ L2 深度检查（pre-push hook）─────────────────────────┤
+│ 触发: git push                                        │
+│ 内容: moon test + moon-audit --fail-on-error           │
+│ 速度: 取决于项目大小，允许较慢                          │
+│ 阻断: 必须通过                                         │
+├─ L3 全面检查（moonbit-verify 技能）───────────────────│
+│ 触发: 用户手动调用                                     │
+│ 内容: 代码审查 + 安全审计 + 架构调整检查                │
+│ 阻断: 报告问题，用户判断                                │
+└───────────────────────────────────────────────────────┘
 ```
 
-| 阶段 | 触发时机 | 检查内容 | 速度要求 | 阻断级别 |
-|------|---------|---------|---------|---------|
-| pre-commit | `git commit` | `moon fmt --check` + `moon check --target native --warn-list +73` | 快速（< 5s） | 必须通过 |
-| pre-push | `git push` | `moon test --target native` + `moon-audit --fail-on-error .` | 允许较慢 | 必须通过 |
-
-**设计原则**：pre-commit 只做最轻量的检查，不阻塞高频提交；pre-push 做完整测试和安全审计，确保不把坏代码推到远端。
+**设计原则**：L1 只做最轻量的检查，不阻塞高频提交；L2 做完整测试和安全审计，确保不把坏代码推到远端；L3 做全量深度扫描，用户需要时手动触发。
 
 ## 执行流程
 
 ### 1. 检测项目
 
 ```bash
-# 确认是 MoonBit 项目
-test -f moon.mod && echo "MoonBit: OK" || echo "MoonBit: MISSING"
+# 确认是 MoonBit 项目（优先检测新格式 moon.mod）
+test -f moon.mod && echo "MoonBit (new format): OK" || echo "MoonBit: CHECKING_OLD"
+
+# 兼容旧格式 moon.mod.json（废弃，应迁移）
+if [ ! -f moon.mod ] && [ -f moon.mod.json ]; then
+  echo "⚠️  DEPRECATED: moon.mod.json detected. Please migrate to moon.mod format."
+  echo "   新格式已自动迁移: 运行 moon fmt 即可自动转换"
+  echo "   moon.mod.json → moon.mod"
+  echo "   moon.pkg.json → moon.pkg"
+fi
+
 # 确认是 git 仓库
 git rev-parse --git-dir >/dev/null 2>&1 && echo "Git: OK" || echo "Git: MISSING"
 ```
 
-不是 MoonBit 项目或不是 git 仓库时，提示用户并中止。
+不是 MoonBit 项目（新旧格式都没有）或不是 git 仓库时，提示用户并中止。
+
+### 1.1 旧格式兼容策略
+
+| 格式 | 状态 | 动作 |
+|------|------|------|
+| `moon.mod` + `moon.pkg` | 当前格式 | 正常使用 |
+| `moon.mod.json` + `moon.pkg.json` | **已废弃** | 显示迁移警告，建议运行 `moon fmt` 自动迁移 |
+| 混合存在（新旧格式都有） | 过渡状态 | 优先使用新格式，忽略旧格式 |
+| 仅旧格式 | 旧项目 | 提示迁移，但继续配置 hooks |
 
 ### 2. 创建钩子脚本
 
@@ -141,7 +166,8 @@ bash .githooks/pre-commit
 
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| 不是 MoonBit 项目 | 缺少 `moon.mod` | 提示用户先 `moon new` 或进入正确目录 |
+| 不是 MoonBit 项目 | 缺少 `moon.mod`（含旧格式 `moon.mod.json`） | 提示用户先 `moon new` 或进入正确目录 |
+| 旧格式 `moon.mod.json` | 发现旧格式元数据文件 | 提示运行 `moon fmt` 自动迁移，继续配置 hooks |
 | 不是 git 仓库 | `git rev-parse` 失败 | 提示用户先 `git init` |
 | `moon` 命令不可用 | command not found | 提示安装 MoonBit 工具链 |
 | `moon-audit` 不可用 | command not found | 提示 `moon add minie135/moon-audit`，非阻断 |

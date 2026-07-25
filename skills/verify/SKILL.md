@@ -1,26 +1,61 @@
 ---
 name: moonbit-verify
-description: "Run the MoonBit verification gate — code review, type check, tests, security audit in one pass. Use whenever the user says 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass', or before claiming any work is done. Type-aware: runs verification pipeline, code review, and security audit. Agent runs checks, applies auto-fixes, presents results. User decides if acceptable. Do NOT skip this before claiming done — always verify first."
+description: "Run the MoonBit verification gate — three-tier detection: L1 (light: fmt+check, auto in git hooks), L2 (deep: test+audit, auto in git hooks), L3 (full: code review+security audit+architecture review, user-initiated). Use whenever the user says 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass', or before claiming any work is done. Agent runs checks, applies auto-fixes, presents results. User decides if acceptable. Do NOT skip this before claiming done — always verify first."
 ---
 
-# Verify — 验证门禁（含代码审查 + 安全审计）
+# Verify — 三档检测门禁
 
 ## 职责
 
-一站式验证管道：**代码审查 → 验证门禁 → 安全审计**。Agent 全自动执行，用户做最终判断。
+一站式验证管道，分为三档递增检测。**L1/L2 自动触发（git hooks），L3 用户手动调用。** Agent 全自动执行，用户做最终判断。
 
-## 验证管道（全量）
+## 三档检测体系
+
+```
+┌─────────────────────────────────────────────────────┐
+│ L1 轻度检测 — 随时做，常做常看                        │
+│ 触发: git commit（pre-commit hook）                  │
+│ 内容: moon fmt --check + moon check --target native  │
+│ 速度: < 5s，不阻塞高频提交                            │
+│ 阻断: 必须通过                                       │
+├─────────────────────────────────────────────────────┤
+│ L2 深度检查 — 提交时做                                │
+│ 触发: git push（pre-push hook）                      │
+│ 内容: moon test + moon-audit --fail-on-error         │
+│ 速度: 取决于项目大小，允许较慢                        │
+│ 阻断: 必须通过                                       │
+├─────────────────────────────────────────────────────┤
+│ L3 全面检查 — 用户单独调用时做                        │
+│ 触发: 用户手动调用 moonbit-verify 技能               │
+│ 内容: 代码审查 + 安全审计 + 架构调整检查              │
+│ 特点: 全量扫描，含架构审查、API 稳定性、跨平台兼容    │
+│ 阻断: 报告问题，用户判断                              │
+└─────────────────────────────────────────────────────┘
+```
+
+**关键区别**：L1/L2 是自动化门禁（init 技能配置），L3 是深度诊断（用户主动调用）。L3 包含了 L1/L2 的所有检查，外加代码审查和架构调整。
+
+## L3 全面检查（本技能核心）
+
+当用户调用 `moonbit-verify` 时，执行以下全量管道：
+
+### 1. 代码审查 + 自动修复
 
 ```bash
-# 1. 代码审查 + 自动修复
 moon check --warn-list +73          # 类型检查，含警告
 moon fmt --check                     # 格式检查（失败则 moon fmt 自动修复）
+```
 
-# 2. 验证门禁
+### 2. 验证门禁
+
+```bash
 moon test --target native            # 测试全部通过
 moon info --target native            # 公共 API 稳定性
+```
 
-# 3. 安全审计
+### 3. 安全审计
+
+```bash
 moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 ```
 
@@ -52,6 +87,7 @@ moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 | `unused_mut` 语义 | `mut` 仅在变量重新赋值时需要，push/mutate 不需要 | 谨慎添加/移除 `mut`，需验证 push/mutate 场景 |
 
 自动修复后必须重新运行 fmt、check、test，并输出变更摘要。涉及 public API、ABI、WASM 导出或 C 所有权时，停止自动修复并请求用户确认。
+
 ## 安全审计（moon-audit）
 
 ```bash
