@@ -20,7 +20,7 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit.sh\"",
             "async": false,
-            "description": "Pre-commit gate: moon fmt --check + moon check + moon-audit"
+            "description": "Pre-commit gate: moon fmt --check + moon check"
           }
         ]
       }
