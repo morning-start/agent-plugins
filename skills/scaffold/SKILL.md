@@ -15,7 +15,7 @@ Create a minimal, buildable MoonBit project before implementation. The user choo
 | --- | --- | --- |
 | `lib` | `templates/lib/` | `moon.mod`, `moon.pkg`, `lib.mbt`, `test.mbt` |
 | `cli` | `templates/cli/` | `moon.mod`, `moon.pkg`, `main.mbt`, `test.mbt` |
-| `c-ffi` | `templates/c-ffi/` | `moon.mod`, `moon.pkg`, `ffi.mbt` |
+| `c-ffi` | `templates/c-ffi/` | `moon.mod`, `moon.pkg`, `ffi.mbt`, `lib.mbt`, `test.mbt`, `wrapper.c`, `README.mbt.md` |
 | `wasm` | `templates/wasm/` | `moon.mod`, `moon.pkg`, `ffi.mbt`, `test.mbt` |
 
 All templates use the current MoonBit metadata format (`moon.mod` and `moon.pkg`). Do not generate the obsolete `.json` metadata filenames.
