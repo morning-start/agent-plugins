@@ -1,5 +1,5 @@
 ---
-name: plan
+name: moonbit-plan
 description: "Plan a MoonBit project — figure out requirements, architecture, and API surface before writing code. Use this FIRST whenever the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first. Agent asks targeted questions, presents architecture options, user decides direction. This is the entry point for all MoonBit development work."
 ---
 
@@ -138,4 +138,4 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 
 ## 下一步
 
-计划确认后，进入 `scaffold/` 生成项目骨架。如果用户已有一个项目，可以直接进入 `implement/`。
+计划确认后，进入 `moonbit-scaffold` 生成项目骨架。如果用户已有一个项目，可以直接进入 `moonbit-implement`。

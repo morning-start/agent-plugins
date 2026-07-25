@@ -1,5 +1,5 @@
 ---
-name: verify
+name: moonbit-verify
 description: "Run the MoonBit verification gate — code review, type check, tests, security audit in one pass. Use whenever the user says 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass', or before claiming any work is done. Type-aware: runs verification pipeline, code review, and security audit. Agent runs checks, applies auto-fixes, presents results. User decides if acceptable. Do NOT skip this before claiming done — always verify first."
 ---
 
@@ -98,4 +98,4 @@ moon-audit remediate -o fixes.md .   # 修复建议
 
 ## 下一步
 
-验证通过后，进入 `evaluate/` 做最终验收和发布准备。如果验证失败，回到 `implement/` 修复问题。
+验证通过后，进入 `moonbit-evaluate` 做最终验收和发布准备。如果验证失败，回到 `moonbit-implement` 修复问题。

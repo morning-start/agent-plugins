@@ -19,7 +19,7 @@ escape_for_json() {
     printf '%s' "$s"
 }
 
-session_context="<EXTREMELY_IMPORTANT>\nYou have the MoonBit skill loaded.\n\n**Below is the full content of the plan skill - your entry point for MoonBit development:**\n\n${skill_escaped}\n</EXTREMELY_IMPORTANT>"
+session_context="<EXTREMELY_IMPORTANT>\nYou have the MoonBit skill loaded.\n\n**Below is the full content of the moonbit-plan skill - your entry point for MoonBit development:**\n\n${skill_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output for Claude Code
 echo "{\"additionalContext\": \"$session_context\"}"

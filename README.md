@@ -5,14 +5,15 @@
 ## 工作流
 
 ```text
-plan → scaffold → implement → verify → evaluate
+moonbit-init → moonbit-plan → moonbit-scaffold → moonbit-implement → moonbit-verify → moonbit-evaluate
 ```
 
-- `plan/`：澄清需求、选择主类型和能力、设计架构与 API
-- `scaffold/`：从 `templates/` 生成最小可验证项目
-- `implement/`：按任务执行 TDD；调试包含有限修复循环
-- `verify/`：格式、类型、测试、API 信息和安全审计门禁
-- `evaluate/`：最终验收、README/CI 准备和发布清单
+- `moonbit-init`：配置 git hooks（pre-commit: fmt + check；pre-push: test + audit）
+- `moonbit-plan`：澄清需求、选择主类型和能力、设计架构与 API
+- `moonbit-scaffold`：从 `templates/` 生成最小可验证项目
+- `moonbit-implement`：按任务执行 TDD；调试包含有限修复循环
+- `moonbit-verify`：格式、类型、测试、API 信息和安全审计门禁
+- `moonbit-evaluate`：最终验收、README/CI 准备和发布清单
 
 ## 支持类型
 

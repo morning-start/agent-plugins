@@ -1,5 +1,5 @@
 ---
-name: scaffold
+name: moonbit-scaffold
 description: "Generate a MoonBit project skeleton from the repository templates. Use for project creation, initialization, or when moon.mod is missing. The user confirms the project type and package name; the agent copies and validates the matching template before implementation."
 ---
 
@@ -99,4 +99,4 @@ If the toolchain is unavailable, report the toolchain error and do not claim tha
 | MoonBit command unavailable | Report the toolchain prerequisite; do not report validation success. |
 | Validation failure | Show the failing command and return to plan or implementation. |
 
-After the scaffold is validated, continue with `implement/`.
+After the scaffold is validated, continue with `moonbit-implement`.

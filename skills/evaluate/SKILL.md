@@ -1,5 +1,5 @@
 ---
-name: evaluate
+name: moonbit-evaluate
 description: "Final evaluation and publication for MoonBit projects. Use whenever the user says 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after verification passes. Agent delegates to verify/ for gate checks, then generates README.mbt.md with executable docs, CI configuration, and publication checklist. User decides whether to publish. This is the LAST step before publishing — make sure verify/ passed first."
 ---
 
@@ -26,9 +26,9 @@ description: "Final evaluation and publication for MoonBit projects. Use wheneve
 
 ### 1. 委托 verify/ 做全量门禁
 
-不重复验证管道——**先调用 `verify/` 技能**，确保 fmt + check + test + moon-audit + info 全部通过。
+不重复验证管道——**先调用 `moonbit-verify` 技能**，确保 fmt + check + test + moon-audit + info 全部通过。
 
-如果 verify 失败，返回 implement/ 修复，不继续发布。
+如果 verify 失败，返回 moonbit-implement 修复，不继续发布。
 
 ### 2. 生成 README 文档
 
@@ -87,7 +87,7 @@ jobs:
 
 ## 下一步
 
-发布完成或用户说"再改"后，回到 `implement/` 继续任务。
+发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。
 
 ## 输出
 
@@ -105,4 +105,4 @@ jobs:
 
 ## 下一步
 
-发布完成或用户说"再改"后，回到 `implement/` 继续任务。
+发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。

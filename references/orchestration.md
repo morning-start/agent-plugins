@@ -12,11 +12,12 @@
     ▼
 ┌── 关键词匹配 ─────────────────────────────────┐
 │                                                │
-├─ "build" "create" "new" "写" "做" "开发"       │──→ 开发管线 (plan → scaffold → implement → evaluate)
-├─ "debug" "fix" "error" "fail" "bug"           │──→ implement 内置 debug
-├─ "review" "check" "audit" "quality" "security" │──→ verify 技能
-├─ "publish" "release" "deploy" "发布"           │──→ evaluate 技能
-├─ "test" "verify" "pass"                       │──→ verify 技能
+├─ "init" "setup" "hooks" "githooks" "initialize"  │──→ moonbit-init 技能
+├─ "build" "create" "new" "写" "做" "开发"          │──→ 开发管线 (moonbit-plan → moonbit-scaffold → moonbit-implement → moonbit-evaluate)
+├─ "debug" "fix" "error" "fail" "bug"           │──→ moonbit-implement 内置 debug
+├─ "review" "check" "audit" "quality" "security" │──→ moonbit-verify 技能
+├─ "publish" "release" "deploy" "发布"           │──→ moonbit-evaluate 技能
+├─ "test" "verify" "pass"                       │──→ moonbit-verify 技能
 └─ 其他                                          │──→ 问用户
 ```
 
@@ -65,8 +66,9 @@
 
 | 技能 | 触发场景 | 合并了 |
 |------|---------|--------|
-| `verify/` | 审查、验证、安全审计 | review + verify + moon-audit |
-| `scaffold/` | 生成项目骨架 | — |
+| `moonbit-init` | 初始化项目、配置 git hooks | — |
+| `moonbit-verify` | 审查、验证、安全审计 | review + verify + moon-audit |
+| `moonbit-scaffold` | 生成项目骨架 | — |
 
 ## 管线状态
 
