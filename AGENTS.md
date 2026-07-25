@@ -22,9 +22,12 @@ moonbit-skills/
 │   ├── idioms.md          # MoonBit 惯用写法 + API 速查
 │   └── commands.md        # MoonBit 命令参考
 ├── hooks/                 ← 钩子注入
-│   ├── hooks.json
-│   ├── session-start
-│   └── run-hook.cmd
+│   ├── hooks.json          # Claude Code 钩子配置 (SessionStart/PreCommit/PreCompletion)
+│   ├── pre-commit.sh       # 快速检查：fmt + type check
+│   ├── pre-push.sh         # 重量级检查：test + security audit
+│   ├── pre-completion.sh   # 完成前全量检查：fmt + check + test + audit
+│   ├── session-start       # 会话启动：注入 moonbit-plan 技能上下文
+│   └── run-hook.cmd        # Windows 钩子执行器
 ├── templates/             ← 模板
 │   ├── lib/
 │   ├── cli/
