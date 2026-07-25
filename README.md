@@ -12,13 +12,14 @@
 "开始写代码吧"                                   → 自动触发 moonbit-implement
 "检查一下代码有没有问题"                          → 自动触发 moonbit-verify
 "准备发布了"                                     → 自动触发 moonbit-evaluate
+"记住这个 bug，下次别再踩坑了"                    → 自动触发 moonbit-learn
 ```
 
 **不需要手动指定技能名**，Agent 会根据你的意图自动路由。你只需要像和同事对话一样描述需求。
 
 ---
 
-## 六个技能：什么时候用哪个？
+## 七个技能：什么时候用哪个？
 
 ### 1. moonbit-init — 给项目装上质量门禁
 
@@ -230,6 +231,47 @@
 
 ---
 
+### 7. moonbit-learn — 从错误中学习，自我优化
+
+**能力**：遇到 bug 时不存档，直接更新技能文件。分析错误原因 → 归类 → 修改对应的技能或参考文件，让 skill 系统持续进化。编译器报错会记录错误码到 `references/error-codes.json`，方便下次快速查表修复。
+
+**什么时候用**：
+- `moonbit-implement` 中 3 次自动修复都失败了，用户介入解决了问题 — 自动触发
+- 发现了一个新的 MoonBit 语言陷阱，之前没遇到过
+- 用户说"记住这个"、"更新一下 skill"
+- 发现某个技能文档有遗漏或错误，想补充
+
+**什么时候不要用**：
+- 只是一个拼写错误或低级失误 — 不值得更新技能文件
+- 问题还没搞清楚原因 — 先弄清楚再说
+- 同一个知识点已经存在 — 更新补充，不重复创建
+
+**怎么用得好**：
+- bug 修复后顺手说一句"记住这个"，Agent 就会自动分析归类，直接更新对应文件
+- 不用手动指定更新哪个文件，Agent 会根据 bug 类别自动决定
+- 如果你发现 Agent 反复犯同一个错误，说明之前的更新没到位，手动触发一次 `moonbit-learn` 检查
+
+**直接更新目标（不存档）**：
+
+| 类别 | 示例 | 更新到哪里 |
+|------|------|-----------|
+| type-error | `String[i]` 返回 `UInt16` 不是 `Char` | `skills/implement/SKILL.md` 常见错误速查表 |
+| api-misuse | `@json.parse` 返回 `Json` 不是 `Result` | `references/idioms.md` 对应 API 章节 |
+| idiom | `Option[T]` vs `T?` 的选择 | `references/idioms.md` 惯用写法章节 |
+| ffi-pitfall | C 内存管理、所有权 | `references/patterns/c-ffi.md` |
+| wasm-pitfall | `extern "wasm"` 声明 | `references/patterns/wasm.md` |
+| toolchain | 命令参数、版本兼容 | `references/commands.md` |
+| logic-error | 空值未处理、边界遗漏 | `skills/implement/SKILL.md` TDD 策略 |
+
+**编译器错误码**：如果 bug 来自 `moon check` 报错，错误码会追加到 `references/error-codes.json`，下次遇到相同错误码直接查表修复。
+
+**已知缺陷**：
+- 只追加不删除，如果某个知识点后来被证明是错的，需要手动清理
+- 不会自动判断是否"值得更新"——低级错误也可能被更新，靠用户控制
+- 更新目标文件时保持原有格式，但如果目标文件格式本身不规范，更新可能不美观
+
+---
+
 ## 典型工作流
 
 ### 场景一：从零开始一个新项目
@@ -278,6 +320,16 @@ Agent：跑 fmt + check + test + moon-audit，报告所有问题
 Agent：检测项目 → 创建 .githooks/ → 配置 git → 验证可用
 ```
 
+### 场景五：踩坑后自我进化
+
+```
+你："这个 bug 是因为 String[i] 返回 UInt16 不是 Char，帮我记住"
+    ↓ moonbit-learn
+Agent：分析 → 归类为 type-error → 直接更新 skills/implement/SKILL.md 的常见错误速查表
+    → 如果是编译器报错，追加错误码到 references/error-codes.json
+    → 下次 implement 时，Agent 自动参考，避免重犯
+```
+
 ---
 
 ## 常见问题
@@ -300,6 +352,7 @@ plan 阶段 Agent 会引导你，你只需要描述想做什么。implement 阶�
 - `moonbit-scaffold`：生成新文件，不覆盖已有文件
 - `moonbit-implement`：写代码，但每步都展示给你看
 - `moonbit-verify`：默认只报告问题，不自动改代码（除非你让改）
+- `moonbit-learn`：直接更新技能文件（追加内容，不删除），可选记录编译器错误码
 - `moonbit-evaluate`：生成文档和 CI 配置，不改业务代码
 
 ### Windows 能用吗？

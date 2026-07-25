@@ -10,17 +10,19 @@
 moonbit-skills/
 ├── AGENTS.md              ← this file
 ├── SKILL.md               ← main entry: 协作模型 + 技能入口
-├── skills/                ← 6 个核心技能
+├── skills/                ← 7 个核心技能
 │   ├── init/SKILL.md      # moonbit-init: 项目初始化 + git hooks 配置
 │   ├── plan/SKILL.md      # moonbit-plan: 需求澄清 + 设计决策
 │   ├── implement/SKILL.md # moonbit-implement: TDD 实现 (内置 debug)
+│   ├── learn/SKILL.md     # moonbit-learn: 从 bug 中学习，自我进化
 │   ├── evaluate/SKILL.md  # moonbit-evaluate: 评估验收 + 发布准备
 │   ├── scaffold/SKILL.md  # moonbit-scaffold: 项目脚手架
 │   └── verify/SKILL.md    # moonbit-verify: 验证门禁 (含 review + moon-audit)
 ├── references/            ← 知识库
 │   ├── patterns/         # 各类型架构模式 (cli, c-ffi, wasm, parser, async, lib)
 │   ├── idioms.md          # MoonBit 惯用写法 + API 速查
-│   └── commands.md        # MoonBit 命令参考
+│   ├── commands.md        # MoonBit 命令参考
+│   └── error-codes.json   # 编译器错误码 → 修复方案速查
 ├── hooks/                 ← 钩子注入
 │   ├── hooks.json          # Claude Code 钩子配置 (SessionStart/PreCommit/PreCompletion)
 │   ├── pre-commit.sh       # 快速检查：fmt + type check
@@ -48,6 +50,9 @@ moonbit-skills/
     ├── moonbit-plan: Agent 问清楚 + 展示方案 → 用户决定架构 + 设计 API
     ├── moonbit-scaffold: Agent 生成骨架 → 用户确认
     ├── moonbit-implement: Agent 逐个任务 TDD → 用户审查/调整
+    │   └── 失败时内置 debug: 3 次自动修复 → 问用户
+    │       └── 用户介入后 → moonbit-learn: 吸收错误，更新技能
+    ├── moonbit-verify: Agent 全量门禁检查 → 用户判断
     └── moonbit-evaluate: Agent 验证 → 用户判断"好了"或"再改"
 ```
 
@@ -55,6 +60,7 @@ moonbit-skills/
 
 ## Key Constraints
 
-- `skills/` 包含 6 个核心技能，每个自包含：何时用、做什么、用户 vs Agent 角色
+- `skills/` 包含 7 个核心技能，每个自包含：何时用、做什么、用户 vs Agent 角色
 - `references/` 是知识库，不是技能 — Agent 参考用，不直接执行
+- `references/error-codes.json` 是编译器错误码速查 — `moonbit-learn` 自动维护
 - `templates/` 是脚手架模板，按类型分目录

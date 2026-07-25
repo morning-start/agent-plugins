@@ -15,6 +15,7 @@
 ├─ "init" "setup" "hooks" "githooks" "initialize"  │──→ moonbit-init 技能
 ├─ "build" "create" "new" "写" "做" "开发"          │──→ 开发管线 (moonbit-plan → moonbit-scaffold → moonbit-implement → moonbit-evaluate)
 ├─ "debug" "fix" "error" "fail" "bug"           │──→ moonbit-implement 内置 debug
+├─ "learn" "记住" "教训" "记录" "更新技能" "update skill" │──→ moonbit-learn 技能
 ├─ "review" "check" "audit" "quality" "security" │──→ moonbit-verify 技能
 ├─ "publish" "release" "deploy" "发布"           │──→ moonbit-evaluate 技能
 ├─ "test" "verify" "pass"                       │──→ moonbit-verify 技能
@@ -69,6 +70,7 @@
 | `moonbit-init` | 初始化项目、配置 git hooks | — |
 | `moonbit-verify` | 审查、验证、安全审计 | review + verify + moon-audit |
 | `moonbit-scaffold` | 生成项目骨架 | — |
+| `moonbit-learn` | 吸收错误、更新技能、自我进化 | — |
 
 ## 管线状态
 
