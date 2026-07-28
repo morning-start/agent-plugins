@@ -9,8 +9,8 @@
 ```
 moonbit-skills/
 ├── AGENTS.md              ← this file
-├── SKILL.md               ← main entry: 协作模型 + 技能入口
-├── skills/                ← 7 个核心技能
+├── skills/                ← 7 个核心技能 + 1 个引导入口
+│   ├── using-moonbit-skills/SKILL.md ← 引导入口（alwaysApply），自动路由到正确技能
 │   ├── init/SKILL.md      # moonbit-init: 项目初始化 + git hooks 配置
 │   ├── plan/SKILL.md      # moonbit-plan: 需求澄清 + 设计决策
 │   ├── implement/SKILL.md # moonbit-implement: TDD 实现 (内置 debug)
