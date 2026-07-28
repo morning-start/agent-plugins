@@ -14,33 +14,54 @@ PLUGIN_JSONS = [
     ROOT / ".kimi-plugin" / "plugin.json",
 ]
 
-# Gemini uses a different filename but same structural fields
-EXTRA_DESCRIPTORS = [
-    ROOT / "gemini-extension.json",
-]
+# Gemini uses a different filename with different fields
+GEMINI_DESCRIPTOR = ROOT / "gemini-extension.json"
 
-# Fields that must be identical across all plugin descriptors
-SYNC_FIELDS = ("name", "repository", "version")
+# OpenCode uses opencode.json
+OPENCODE_DESCRIPTOR = ROOT / ".opencode" / "opencode.json"
+
+# Pi uses package.json
+PI_DESCRIPTOR = ROOT / "package.json"
+
+# Fields that must be identical across all plugin.json descriptors
+SYNC_FIELDS = ("name", "version", "description")
+
+# Fields that must be identical across plugin.json descriptors (excluding Gemini)
+PLUGIN_ONLY_SYNC_FIELDS = ("repository", "license", "skills")
 
 
-def collect_descriptors() -> list[tuple[Path, dict]]:
-    """Load all plugin descriptors, returning (path, data) pairs."""
+def collect_descriptors() -> tuple[list[tuple[Path, dict]], dict | None, dict | None, dict | None]:
+    """Load all descriptors, returning (plugin_jsons, gemini, opencode, pi)."""
     result = []
     for path in PLUGIN_JSONS:
         if path.exists():
             result.append((path, json.loads(path.read_text(encoding="utf-8"))))
         else:
             print(f"⚠  Missing: {path}")
-    for path in EXTRA_DESCRIPTORS:
-        if path.exists():
-            result.append((path, json.loads(path.read_text(encoding="utf-8"))))
-        else:
-            print(f"⚠  Missing: {path}")
-    return result
+
+    gemini = None
+    if GEMINI_DESCRIPTOR.exists():
+        gemini = json.loads(GEMINI_DESCRIPTOR.read_text(encoding="utf-8"))
+    else:
+        print(f"⚠  Missing: {GEMINI_DESCRIPTOR}")
+
+    opencode = None
+    if OPENCODE_DESCRIPTOR.exists():
+        opencode = json.loads(OPENCODE_DESCRIPTOR.read_text(encoding="utf-8"))
+    else:
+        print(f"⚠  Missing: {OPENCODE_DESCRIPTOR}")
+
+    pi = None
+    if PI_DESCRIPTOR.exists():
+        pi = json.loads(PI_DESCRIPTOR.read_text(encoding="utf-8"))
+    else:
+        print(f"⚠  Missing: {PI_DESCRIPTOR}")
+
+    return result, gemini, opencode, pi
 
 
 def check_sync_fields(descriptors: list[tuple[Path, dict]]) -> list[str]:
-    """Check SYNC_FIELDS are identical across all descriptors."""
+    """Check SYNC_FIELDS are identical across all plugin.json descriptors."""
     failures = []
     for field in SYNC_FIELDS:
         values = {data.get(field) for _, data in descriptors}
@@ -49,8 +70,26 @@ def check_sync_fields(descriptors: list[tuple[Path, dict]]) -> list[str]:
     return failures
 
 
+def check_plugin_only_fields(descriptors: list[tuple[Path, dict]]) -> list[str]:
+    """Check PLUGIN_ONLY_SYNC_FIELDS are identical across plugin.json descriptors."""
+    failures = []
+    for field in PLUGIN_ONLY_SYNC_FIELDS:
+        if field == "skills":
+            # Claude Code doesn't support skills in its official schema
+            values = {
+                data.get(field)
+                for path, data in descriptors
+                if ".claude-plugin" not in str(path)
+            }
+        else:
+            values = {data.get(field) for _, data in descriptors}
+        if len(values) != 1:
+            failures.append(f"{field}: {sorted(values, key=str)}")
+    return failures
+
+
 def check_author(descriptors: list[tuple[Path, dict]]) -> list[str]:
-    """Check author name (or author.name) is consistent."""
+    """Check author name is consistent across all plugin.json descriptors."""
     failures = []
     authors = set()
     for _, data in descriptors:
@@ -65,41 +104,157 @@ def check_author(descriptors: list[tuple[Path, dict]]) -> list[str]:
 
 
 def check_hooks(descriptors: list[tuple[Path, dict]]) -> list[str]:
-    """Check hooks field consistency (gemini-extension.json may not need it)."""
+    """Check hooks field is declared in plugin.json files that support it."""
     failures = []
     for path, data in descriptors:
-        # Only plugin.json files are expected to declare hooks
-        if path.suffix == ".json" and "plugin" in path.name:
-            hooks_val = data.get("hooks")
-            expected = "hooks/hooks.json"
-            if hooks_val is not None and hooks_val != expected:
-                failures.append(f"{path}: hooks must point to {expected!r}, got {hooks_val!r}")
+        hooks_val = data.get("hooks")
+        expected = "hooks/hooks.json"
+        if hooks_val is None:
+            # Claude Code and Kimi Code should declare hooks
+            pname = path.parent.name
+            if pname in (".claude-plugin", ".kimi-plugin"):
+                failures.append(f"{path}: hooks field missing, expected {expected!r}")
+        elif hooks_val != expected:
+            failures.append(f"{path}: hooks must point to {expected!r}, got {hooks_val!r}")
+    return failures
+
+
+def check_gemini(gemini: dict | None) -> list[str]:
+    """Check Gemini CLI specific fields."""
+    failures = []
+    if gemini is None:
+        return failures
+    if "contextFileName" not in gemini:
+        failures.append("gemini-extension.json: missing contextFileName")
+    # Check no non-official fields are present
+    unofficial = {"author", "repository", "license", "skills", "homepage", "interface"}
+    found = unofficial & set(gemini.keys())
+    if found:
+        failures.append(f"gemini-extension.json: non-official fields: {sorted(found)}")
+    return failures
+
+
+def check_kimi_session_start(descriptors: list[tuple[Path, dict]]) -> list[str]:
+    """Check Kimi Code has sessionStart.skill configured."""
+    failures = []
+    for path, data in descriptors:
+        if ".kimi-plugin" in str(path):
+            ss = data.get("sessionStart")
+            if not isinstance(ss, dict) or not ss.get("skill"):
+                failures.append(f"{path}: missing sessionStart.skill")
+            break
+    return failures
+
+
+def check_kimi_interface(descriptors: list[tuple[Path, dict]]) -> list[str]:
+    """Check Kimi Code interface only contains official Kimi Code fields."""
+    failures = []
+    for path, data in descriptors:
+        if ".kimi-plugin" in str(path):
+            iface = data.get("interface")
+            if isinstance(iface, dict):
+                non_official = {"category", "capabilities"}
+                found = non_official & set(iface.keys())
+                if found:
+                    failures.append(f"{path}: interface contains non-official fields: {sorted(found)}")
+            break
+    return failures
+
+
+def check_interface_absence(descriptors: list[tuple[Path, dict]]) -> list[str]:
+    """Check non-Kimi platforms don't have interface field."""
+    failures = []
+    for path, data in descriptors:
+        if ".kimi-plugin" not in str(path):
+            if "interface" in data:
+                failures.append(f"{path}: interface field should not be present (not in official schema)")
+    return failures
+
+
+def check_opencode(opencode: dict | None) -> list[str]:
+    """Check OpenCode descriptor."""
+    failures = []
+    if opencode is None:
+        return failures
+    instructions = opencode.get("instructions", [])
+    if len(instructions) > 1:
+        failures.append(f"opencode.json: instructions should only contain the bootstrap skill, got {len(instructions)} entries")
+    if "plugin" not in opencode:
+        failures.append("opencode.json: missing plugin field")
+    return failures
+
+
+def check_pi(pi: dict | None) -> list[str]:
+    """Check Pi package.json descriptor."""
+    failures = []
+    if pi is None:
+        return failures
+    pi_config = pi.get("pi", {})
+    if "skills" not in pi_config:
+        failures.append("package.json: missing pi.skills field")
+    return failures
+
+
+def check_nested_codex() -> list[str]:
+    """Check nested Codex plugin is consistent with root."""
+    failures = []
+    nested = ROOT / "plugins" / "moonbit-skills" / ".codex-plugin" / "plugin.json"
+    root = ROOT / ".codex-plugin" / "plugin.json"
+    if not nested.exists():
+        failures.append(f"Missing nested: {nested}")
+        return failures
+    if not root.exists():
+        return failures
+    nested_data = json.loads(nested.read_text(encoding="utf-8"))
+    root_data = json.loads(root.read_text(encoding="utf-8"))
+    for field in ("name", "version", "description", "repository", "license"):
+        rv = root_data.get(field)
+        nv = nested_data.get(field)
+        if rv != nv:
+            failures.append(f"nested Codex {field}: root={rv!r}, nested={nv!r}")
     return failures
 
 
 def main() -> int:
-    descriptors = collect_descriptors()
-    if not descriptors:
+    plugin_descriptors, gemini, opencode, pi = collect_descriptors()
+    if not plugin_descriptors:
         print("No plugin descriptors found")
         return 0
 
     failures = []
-    failures.extend(check_sync_fields(descriptors))
-    failures.extend(check_author(descriptors))
-    failures.extend(check_hooks(descriptors))
+    failures.extend(check_sync_fields(plugin_descriptors))
+    failures.extend(check_plugin_only_fields(plugin_descriptors))
+    failures.extend(check_author(plugin_descriptors))
+    failures.extend(check_hooks(plugin_descriptors))
+    failures.extend(check_gemini(gemini))
+    failures.extend(check_kimi_session_start(plugin_descriptors))
+    failures.extend(check_kimi_interface(plugin_descriptors))
+    failures.extend(check_interface_absence(plugin_descriptors))
+    failures.extend(check_opencode(opencode))
+    failures.extend(check_pi(pi))
+    failures.extend(check_nested_codex())
 
     if failures:
-        print(f"Plugin metadata mismatch ({len(descriptors)} descriptors checked):")
+        total = len(plugin_descriptors) + (1 if gemini else 0) + (1 if opencode else 0) + (1 if pi else 0)
+        print(f"Plugin metadata mismatch ({total} descriptors checked):")
         print("\n".join(f"- {f}" for f in failures))
         return 1
 
     platforms = ", ".join(
         p.relative_to(ROOT).parent.as_posix()
-        for p, _ in descriptors
+        for p, _ in plugin_descriptors
     )
+    extras = []
+    if gemini:
+        extras.append("gemini-extension.json")
+    if opencode:
+        extras.append("opencode.json")
+    if pi:
+        extras.append("package.json")
     print(f"✅ Plugin metadata consistent across all platforms")
-    print(f"   {len(descriptors)} descriptors, {len(SYNC_FIELDS)} sync fields")
-    print(f"   Platforms: {platforms}")
+    print(f"   {len(plugin_descriptors)} plugin.json, {len(extras)} extra descriptors")
+    print(f"   {len(SYNC_FIELDS) + len(PLUGIN_ONLY_SYNC_FIELDS)} sync fields")
+    print(f"   Platforms: {platforms} + {', '.join(extras)}")
     return 0
 
 

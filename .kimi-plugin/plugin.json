@@ -1,7 +1,7 @@
 {
   "name": "moonbit-skills",
   "version": "0.1.0",
-  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline for Kimi Code",
+  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline",
   "author": {
     "name": "morning-start",
     "url": "https://github.com/morning-start"
@@ -9,10 +9,12 @@
   "repository": "https://github.com/morning-start/moonbit-skills",
   "license": "MIT",
   "skills": "./skills/",
+  "sessionStart": {
+    "skill": "using-moonbit-skills"
+  },
+  "hooks": "hooks/hooks.json",
   "interface": {
     "displayName": "MoonBit Skills",
-    "shortDescription": "9 skills covering the full MoonBit project lifecycle: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn.",
-    "category": "Development",
-    "capabilities": ["Interactive", "Read", "Write"]
+    "shortDescription": "9 skills: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn"
   }
 }

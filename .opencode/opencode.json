@@ -1,15 +1,6 @@
 {
   "plugin": ["./plugins"],
   "instructions": [
-    "skills/using-moonbit-skills/SKILL.md",
-    "skills/init/SKILL.md",
-    "skills/plan/SKILL.md",
-    "skills/writing-plans/SKILL.md",
-    "skills/scaffold/SKILL.md",
-    "skills/implement/SKILL.md",
-    "skills/code-review/SKILL.md",
-    "skills/verify/SKILL.md",
-    "skills/evaluate/SKILL.md",
-    "skills/learn/SKILL.md"
+    "skills/using-moonbit-skills/SKILL.md"
   ]
 }

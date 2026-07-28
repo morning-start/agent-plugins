@@ -8,11 +8,5 @@
   },
   "repository": "https://github.com/morning-start/moonbit-skills",
   "license": "MIT",
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "MoonBit Skills",
-    "shortDescription": "9 skills covering the full MoonBit project lifecycle: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn.",
-    "category": "Development",
-    "capabilities": ["Interactive", "Read", "Write"]
-  }
+  "skills": "./skills/"
 }

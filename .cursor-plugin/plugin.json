@@ -1,18 +1,11 @@
 {
   "name": "moonbit-skills",
   "version": "0.1.0",
-  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline for Cursor",
+  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline",
   "author": {
-    "name": "morning-start",
-    "url": "https://github.com/morning-start"
+    "name": "morning-start"
   },
   "repository": "https://github.com/morning-start/moonbit-skills",
   "license": "MIT",
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "MoonBit Skills",
-    "shortDescription": "9 skills covering the full MoonBit project lifecycle: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn.",
-    "category": "Development",
-    "capabilities": ["Interactive", "Read", "Write"]
-  }
+  "skills": "./skills/"
 }
