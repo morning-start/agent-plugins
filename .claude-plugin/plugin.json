@@ -5,5 +5,8 @@
   "author": {
     "name": "morning-start"
   },
-  "repository": "https://github.com/morning-start/moonbit-skills"
+  "repository": "https://github.com/morning-start/moonbit-skills",
+  "skills": [
+    "./skills/"
+  ]
 }

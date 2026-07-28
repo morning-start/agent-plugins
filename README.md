@@ -55,11 +55,12 @@ atomcode plugin trust moonbit-skills
 ### Claude Code
 
 ```bash
-# 方式一：交互式
+# 方式一：交互式（推荐）
 /claude plugin
 
 # 方式二：命令行
-/claude plugin install https://github.com/morning-start/moonbit-skills
+/claude plugin marketplace add https://github.com/morning-start/moonbit-skills
+/claude plugin install moonbit-skills@morning-start
 ```
 
 ### 装完之后的体验

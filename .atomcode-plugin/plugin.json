@@ -1,8 +1,9 @@
-{
+﻿{
   "name": "moonbit-skills",
   "description": "MoonBit development skill suite — collaborative design-to-publish pipeline",
-  "repository": "https://github.com/morning-start/moonbit-skills",
   "version": "0.1.0",
-  "author": "morning-start@foxmail.com",
-  "hooks": "hooks/hooks.json"
+  "author": {
+    "name": "morning-start"
+  },
+  "repository": "https://github.com/morning-start/moonbit-skills"
 }
