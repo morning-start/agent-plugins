@@ -129,13 +129,16 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 ```json
 {
   "status": "decided",
-  "project_type": "parser",
+  "primary_type": "parser",
+  "capabilities": ["lexer", "tokenizer"],
+  "targets": ["native"],
   "architecture": "recursive-descent-layered",
   "api_surface": ["pub fn parse(StringView) -> Result[Ast, ParseError]"],
-  "next": "scaffold"
+  "requirements_file": "docs/requirements.md",
+  "next": "writing-plans"
 }
 ```
 
 ## 下一步
 
-计划确认后，进入 `moonbit-scaffold` 生成项目骨架。如果用户已有一个项目，可以直接进入 `moonbit-implement`。
+计划确认后，进入 `moonbit-writing-plans` 将设计拆解为可执行任务。如果不需要分解（如小型改动），可以直接进入 `moonbit-scaffold` 生成项目骨架或 `moonbit-implement` 开始开发。

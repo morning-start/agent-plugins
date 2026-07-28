@@ -75,6 +75,18 @@ git rev-parse --git-dir >/dev/null 2>&1 && echo "Git: OK" || echo "Git: MISSING"
 │   └── pre-push      # 重量级检查入口
 ```
 
+先检查已有 hooks 配置：
+
+```bash
+# 检查现有 core.hooksPath
+EXISTING_HOOKS=$(git config core.hooksPath 2>/dev/null || echo "")
+if [ -n "$EXISTING_HOOKS" ]; then
+  echo "⚠️  Existing hooksPath detected: $EXISTING_HOOKS"
+  echo "   MoonBit hooks will be added alongside existing hooks."
+  echo "   Review the merged hook scripts before proceeding."
+fi
+```
+
 **pre-commit** 内容：
 ```bash
 #!/usr/bin/env bash
@@ -129,12 +141,16 @@ echo "=== Pre-push passed ==="
 ### 3. 配置 git
 
 ```bash
-# 设置 git 使用项目级 hooks 目录
-git config core.hooksPath .githooks
-
-# 验证配置
-git config core.hooksPath  # 应输出 .githooks
-```
+# 检查是否已有 hooksPath
+EXISTING_HOOKS=$(git config core.hooksPath 2>/dev/null || echo "")
+if [ -n "$EXISTING_HOOKS" ]; then
+  echo "⚠️  Existing hooksPath: $EXISTING_HOOKS"
+  echo "   Showing existing hooks and proposed MoonBit hooks for review."
+  echo "   User must confirm before overwriting."
+else
+  # 未设置 hooksPath，可以安全配置
+  git config core.hooksPath .githooks
+fi
 
 ### 4. 可选：安装 moon-audit
 

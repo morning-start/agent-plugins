@@ -60,9 +60,13 @@ description: "Use when learning from bugs and updating the MoonBit skill system.
 | logic-error | `skills/implement/SKILL.md` → 各类型 TDD 策略 | 追加验证重点 |
 
 **更新原则**：
-- 只追加，不删除已有内容
+- 遵循知识准入门：观察 → 复现 → 根因确认 → 适用范围判断 → 去重 → 用户批准 → 最小更新 → 验证
+- 用户修正优先于 Agent 推断
+- 项目专属知识不能写进全局 MoonBit 规则（写在项目 CLAUDE.md 中）
+- 可以更新、合并、删除旧条目，不得"只追加"
+- 先生成 learning proposal，再决定是否落盘
+- 每条知识带来源、验证命令、工具链版本和适用范围
 - 保持目标文件的原有结构和格式
-- 如果同一知识点已存在，更新（补充细节）而非重复创建
 - 更新后立即验证目标文件格式正确
 
 ### 4. 可选：记录错误码

@@ -68,7 +68,14 @@ If you catch yourself thinking any of these, you are violating TDD:
 进入 TDD 前，先检测项目类型：
 
 ```bash
-grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="lib"
+# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
+if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
+  PROJECT_TYPE="main"
+elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
+  PROJECT_TYPE="main"
+else
+  PROJECT_TYPE="lib"
+fi
 ```
 
 类型决定 TDD 验证链路的差异。
@@ -88,12 +95,12 @@ grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="l
 
 ```bash
 # 收集失败信息
-moon test --target native -- --show-output 2>&1 | tail -50
+moon test --target native 2>&1 | tail -50
 moon check --target native --warn-list +73 2>&1
-moon check --explain E#### 2>&1
+moon explain --diagnostic E#### 2>&1
 
 # 分类失败
-# 类型错误 → --explain 修复 | 断言失败 → 修正逻辑 | 运行时 panic → 检查空值/边界
+# 类型错误 → moon explain 修复 | 断言失败 → 修正逻辑 | 运行时 panic → 检查空值/边界
 # c-ffi: 检查 C 编译 | wasm: 检查 extern "wasm" 声明
 
 # 修复并验证
@@ -113,6 +120,17 @@ moon fmt --check && moon check --warn-list +73 && moon test
 | `match` 嵌套在 `+` 中报错 | MoonBit 不允许 `+` 操作数内直接嵌套 `match` | 先提取 `let part = match ... { ... }`，再拼接 |
 
 ## 快速任务模式
+
+当变更类型不适配完整 TDD 循环时，按以下路由执行验证：
+
+| 变更类型 | 必需证据 |
+|----------|----------|
+| **Bug Fix** | 先复现 bug，再证明复现消失 |
+| **New Behavior** | failing test → implementation → pass |
+| **Refactor** | 现有测试先绿，重构后仍绿 |
+| **Config / Hook** | 执行真实 hook 或配置 smoke test |
+| **Documentation** | 路径、命令和示例验证 |
+| **Scaffold** | 临时目录端到端生成测试 |
 
 | 场景 | 最小流程 |
 |------|---------|

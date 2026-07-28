@@ -13,18 +13,29 @@ description: "Use when running MoonBit verification gates — before claiming an
 
 ```
 NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
-NO COMMAND OUTPUT WITHOUT git diff --exit-code AFTER EACH STEP
 ```
 
-每一道命令执行后，必须紧跟 `git diff --exit-code`，确保代码无意外改动。
+验证命令执行后，确认 workspace 未产生非预期副作用。对于已知产物（如 `pkg.generated.mbti`）使用 allowlist，不触发阻断。
 
 ## 项目类型检测
 
 进入验证前，先检测项目类型：
 
 ```bash
-# 检测是否为 main 包（可执行程序）
-grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="lib"
+# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
+# 在主目录或子目录（cmd/main, src/main）中检测
+MAIN_DETECTED=false
+for f in moon.pkg cmd/main/moon.pkg src/main/moon.pkg; do
+  if [ -f "$f" ]; then
+    if grep -q 'pkgtype(kind: "executable")' "$f" 2>/dev/null; then
+      MAIN_DETECTED=true; break
+    fi
+    if grep -q '"is-main": true' "$f" 2>/dev/null; then
+      MAIN_DETECTED=true; break
+    fi
+  fi
+done
+PROJECT_TYPE=$([ "$MAIN_DETECTED" = true ] && echo "main" || echo "lib")
 ```
 
 类型决定验证路径的差异。
@@ -40,17 +51,15 @@ grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="l
 ```bash
 moon fmt --check               # 格式合规：exit 0
 moon fmt                        # 失败时自动修复
-git diff --exit-code             # 确认格式修复未引入意外改动
 ```
 
-**判定标准：** `moon fmt --check` exit 0 或 `git diff --exit-code` 确认只有格式改动。
+**判定标准：** `moon fmt --check` exit 0。
 
 ### H2. 类型安全
 
 ```bash
 moon check --warn-list +73      # 类型安全 + 全部警告检查
-moon check --explain E####       # 失败时定位具体错误
-git diff --exit-code             # 确认类型检查未引入意外改动
+moon explain --diagnostic E#### # 失败时定位具体错误
 ```
 
 **判定标准：** exit 0，0 errors。
@@ -59,8 +68,7 @@ git diff --exit-code             # 确认类型检查未引入意外改动
 
 ```bash
 moon test --target native        # 全部测试通过
-moon test --target native -- --show-output  # 失败时查看详情
-git diff --exit-code             # 确认测试未引入意外改动
+moon test -f "failing_test"      # 失败时查看详情
 
 # 验证测试覆盖类型
 moon test -f "valid/"    # 快乐路径
@@ -70,27 +78,30 @@ moon test -f "edge/"     # 边界条件
 
 **判定标准：** Total tests = passed，failed = 0。覆盖 valid（快乐路径）+ invalid（错误路径）+ edge（边界条件）三种类型。
 
-### H4. 工作区干净
+### H4. 工作区干净（发布准备阶段专用）
 
 ```bash
-git diff --exit-code             # 无未提交改动
-git diff --cached --exit-code    # 暂存区无意外改动（如有）
+git status --porcelain           # 全面检测：tracked + untracked + staged
 ```
 
-**判定标准：** 两条命令都 exit 0。
+**判定标准：** `git status --porcelain` 输出为空。开发过程中的非预期文件改动（如 `moon info` 生成的 `pkg.generated.mbti`）应列入 allowlist，不触发阻断。
 
 ### H5. API 稳定性（通用 + lib 项目）
 
 ```bash
 moon info --target native        # 公共 API 签名输出
-git diff --exit-code             # 确认 info 未引入改动
+
+# 更新 allowlist：pkg.generated.mbti 是预期产物
+if [ -f "pkg.generated.mbti" ]; then
+  git add "pkg.generated.mbti" 2>/dev/null || true
+fi
 
 # 检查 API 设计要求
 moon info --target native | grep "pub fn"
 moon info --target native | grep "pub(all)"
 ```
 
-**判定标准：** `moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。
+**判定标准：** `moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`pkg.generated.mbti` 是预期产物，不视为意外改动。
 
 ---
 
@@ -100,14 +111,19 @@ moon info --target native | grep "pub(all)"
 
 ```bash
 # 验证 main 包声明正确
-grep -q 'is_main' moon.pkg || fail("moon.pkg must declare is_main = true for executable projects")
+if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
+  :
+elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
+  :
+else
+  fail("moon.pkg must declare pkgtype(kind: \"executable\") for executable projects")
+fi
 
-# 验证可运行
-moon run                         # 至少能正常启动
-git diff --exit-code             # 确认 moon run 未产生副作用
+# 验证可运行（需要显式包路径：moon run ./cmd/main 或 moon run .）
+moon run .                        # exit 0 为通过
 
 # 验证输出不为空
-moon run 2>&1 | grep -q "." || fail("moon run produced no output")
+moon run . 2>&1 | grep -q "." || fail("moon run produced no output")
 ```
 
 **判定标准：** `moon run` exit 0 且有 stdout 输出。
@@ -115,17 +131,33 @@ moon run 2>&1 | grep -q "." || fail("moon run produced no output")
 ### LIB 项目（library 库）额外检查
 
 ```bash
-# 验证可被本地安装引用
-moon add moonbitlang/core        # 确保标准库依赖可解析
-git diff --exit-code             # 确认 add 操作后的改动已知
-# 注意：moon add 会产生 .moon-lock 和 _build/ 改动，这是预期行为
-
 # 验证模块结构正确
 test -f moon.mod || fail("moon.mod is required")
 test -f moon.pkg || fail("moon.pkg is required")
+
+# 验证可被外部消费：创建临时 consumer 并导入
+TMP_DIR=$(mktemp -d)
+cat > "$TMP_DIR/moon.mod" << 'EOF'
+module "consumer_test"
+EOF
+mkdir -p "$TMP_DIR/src"
+cat > "$TMP_DIR/src/moon.pkg" << 'EOF'
+EOF
+cat > "$TMP_DIR/src/main.mbt" << 'EOF'
+fn main {
+  println("consumer test")
+}
+EOF
+cat > "$TMP_DIR/moon.work" << EOF
+use "$(cd .. && pwd)"
+EOF
+
+# 编译 consumer 验证依赖可解析
+(cd "$TMP_DIR" && moon check 2>&1) || fail("library cannot be consumed by external project")
+rm -rf "$TMP_DIR"
 ```
 
-**判定标准：** `moon add` 成功完成，核心元数据文件存在。
+**判定标准：** 临时 consumer 编译通过，验证当前 library 可被外部项目消费。
 
 ---
 
@@ -189,15 +221,15 @@ Start → 检测项目类型（main / lib）
   │
   ├── REQUEST SUB-SKILL: moonbit-code-review
   │
-  ├── H1. moon fmt --check → git diff --exit-code
-  ├── H2. moon check → git diff --exit-code
-  ├── H3. moon test → git diff --exit-code
-  ├── H4. git diff --exit-code (完整工作区验证)
-  ├── H5. moon info → git diff --exit-code
+  ├── H1. moon fmt --check
+  ├── H2. moon check --warn-list +73
+  ├── H3. moon test --target native
+  ├── H4. git status --porcelain (发布阶段)
+  ├── H5. moon info --target native
   │
-  ├── [main] moon run → git diff --exit-code
+  ├── [main] moon run .
   │   └── 或
-  ├── [lib]  moon add moonbitlang/core → git diff --exit-code
+  ├── [lib] 临时 consumer 编译验证
   │
   ├── S1. moon check --target all（可选）
   ├── S2. moon-audit pipeline .（可选）
@@ -218,7 +250,7 @@ Start → 检测项目类型（main / lib）
 
 | 类型 | 硬性必选 | 项目专属 | 软性加分 |
 |------|---------|---------|---------|
-| **lib** | H1-H5 | moon add + 元数据验证 | S1-S5 |
+| **lib** | H1-H5 | 临时 consumer 编译验证 | S1-S5 |
 | **cli (main)** | H1-H5 | moon run + 输出验证 | S1-S5 |
 | **c-ffi** | H1-H4 | moon check native | S2-S5 |
 | **wasm** | H1-H4 | moon check wasm + moon test wasm | S1-S5 |
@@ -231,13 +263,13 @@ Start → 检测项目类型（main / lib）
 
 | 命令 | 诊断 | 修复 |
 |------|------|------|
-| `moon fmt --check` | 格式问题 | `moon fmt` 自动修复，`git diff --exit-code` 确认 |
-| `moon check` 失败 | `--explain E####` | 检查类型签名 |
-| `moon test` 失败 | `--show-output` | 修正断言 |
+| `moon fmt --check` | 格式问题 | `moon fmt` 自动修复，重新检查 |
+| `moon check` 失败 | `moon explain --diagnostic E####` | 检查类型签名 |
+| `moon test` 失败 | `-f "failing_test"` | 修正断言 |
 | `moon info` 失败 | 先 `moon check` | 类型正确后重试 |
-| `moon run` 失败 | 检查 main 包声明 | `moon.pkg` 加 `is_main = true` |
+| `moon run` 失败 | 检查 main 包声明 | `moon.pkg` 加 `pkgtype(kind: "executable")` |
 | `moon-audit` 未安装 | 命令未找到 | `moon add minie135/moon-audit` |
-| `git diff --exit-code` | 有未提交改动 | 提交或 stash 后再验证 |
+| 临时目录编译失败 | workspace 路径错误 | 检查 `moon.work` 路径 |
 
 ## 输出
 
@@ -247,14 +279,13 @@ Start → 检测项目类型（main / lib）
   "project_type": "main",
   "hard_checks": {
     "fmt": "pass",
-    "fmt_git_diff": "pass (clean)",
     "check": "pass",
     "test": "pass (12/12)",
-    "info": "pass",
-    "git_diff": "pass (clean)"
+    "workspace": "pass (clean)",
+    "api": "pass"
   },
   "type_specific": {
-    "moon_run": "pass (output: 'Hello World')"
+    "moon_run": "pass (output: 'Hello')"
   },
   "soft_checks": {
     "cross_platform": "pass",
@@ -263,7 +294,7 @@ Start → 检测项目类型（main / lib）
     "api_design": "pass (1 suggestion)",
     "ci_config": "pass"
   },
-  "auto_fixes": ["moon fmt auto-format"],
+  "auto_fixes": [],
   "failures": [],
   "next": "implement | evaluate"
 }

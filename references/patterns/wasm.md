@@ -28,11 +28,33 @@ src/
 └── README.mbt.md     # 可执行文档
 ```
 
-## 关键模板
-- `templates/wasm/moon.mod.json` — 目标: wasm,wasm-gc
-- `templates/wasm/moon.pkg.json` — 导入: moonbitlang/core
-- `templates/wasm/ffi.mbt` — WASM 内存操作
-- `templates/wasm/test.mbt` — WASM 测试
+## 目录结构
+```
+src/
+├── internal/
+│   ├── ffi/          # L0: 内联 WASM 指令
+│   │   ├── moon.pkg
+│   │   └── top.mbt   # store32, load32, malloc, free
+│   ├── raw/          # L1: WASI 绑定
+│   │   ├── moon.pkg
+│   │   └── raw.mbt
+│   └── moon.pkg
+├── lib.mbt           # L2: 公共 API
+├── moon.pkg          # 包配置
+├── lib_test.mbt      # 测试
+└── README.mbt.md     # 可执行文档
+```
+
+## 文件职责
+- `internal/ffi/top.mbt` — `extern "wasm"` 内联指令如 `store32`、`load32`
+- `internal/raw/` — WASI 绑定
+- `moon.pkg` — 目标配置 `wasm, wasm-gc`
+
+## 生成决策
+- `moon.mod` 定义模块名
+- `moon.pkg` 配置目标为 `wasm, wasm-gc`
+- `moon check --target wasm` + `moon check --target wasm-gc` 双路验证
+- 使用 `extern "wasm"` 内联语法，`Bytes::make` 模拟 malloc
 
 ## 测试策略
 - `moon test --target wasm` 为主

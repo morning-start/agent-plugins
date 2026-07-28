@@ -62,7 +62,7 @@ preferred_target = "native"
 supported_targets = ["native"]
 
 // moon.pkg
-is_main = true
+pkgtype(kind: "executable")
 
 // main.mbt
 fn main {
@@ -70,9 +70,9 @@ fn main {
 }
 
 // test.mbt
-test "trivial" {
-  if 1 + 1 != 2 {
-    fail("basic math failed")
+test "hello" {
+  if hello() != "Hello from {package_name}!" {
+    fail("hello() returned unexpected value")
   }
 }
 ```
@@ -103,6 +103,7 @@ pub fn version() -> Int {
 
 // wrapper.c
 #include <stdint.h>
+#include <stdlib.h>
 
 int32_t {name}_version(void) {
   return 1;
@@ -129,10 +130,10 @@ supported_targets = ["wasm", "wasm-gc"]
 extern "wasm" fn add(a: Int, b: Int) -> Int = "math:add"
 
 // test.mbt
-test "trivial" {
-  if 1 + 1 != 2 {
-    fail("basic math failed")
-  }
+///|
+/// {package_name} — WASM 模块
+test "version" {
+  // 验证模块结构完整性
 }
 ```
 

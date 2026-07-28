@@ -22,32 +22,20 @@ This is not negotiable. You cannot rationalize your way out of this.
 
 Announce with "Using [skill] to [purpose]" and follow the skill exactly.
 
-## Skill Priority
+## Skill Priority（互斥路由）
 
-When multiple skills apply, process skills come first, then implementation, then quality:
+When multiple skills match, route by intent:
 
-```
-User says "I want to build X"
-    │
-    ▼
-moonbit-plan (clarify + design)
-    │
-    ▼
-moonbit-scaffold (generate skeleton)     ← skip if project exists
-    │
-    ▼
-moonbit-implement (TDD + debug)
-    │
-    ▼
-moonbit-verify (quality gate)            ← L1/L2 auto, L3 manual
-    │
-    ▼
-moonbit-evaluate (release readiness)
-```
-
-- "Something is broken" → `moonbit-learn` if known, else `moonbit-implement` with debug
-- "Review this code" → `moonbit-code-review`
-- "Is this ready?" → `moonbit-verify`
+| 状态 / 意图 | 技能 |
+|-------------|------|
+| 新项目或未决定架构/API | `moonbit-plan` |
+| 设计已批准、需要任务分解 | `moonbit-writing-plans` |
+| 已有项目、需求明确、要写代码 | `moonbit-implement` |
+| 当前实现失败 | `moonbit-implement` (debug) |
+| 审查代码差异和设计问题 | `moonbit-code-review` |
+| 检查质量或完成状态 | `moonbit-verify` |
+| 发布准备 | `moonbit-evaluate` |
+| 从已定位问题中沉淀知识 | `moonbit-learn` |
 
 ## Trigger Matrix
 
@@ -56,9 +44,10 @@ moonbit-evaluate (release readiness)
 | "init", "setup", "hooks", "initialize" | "初始化", "设置", "钩子" | `moonbit-init` |
 | "build", "create", "new", "I want to make" | "我要做", "写一个", "创建", "开发" | `moonbit-plan` |
 | "plan", "design", "architecture" | "设计", "架构", "规划" | `moonbit-plan` |
+| "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
 | "scaffold", "generate", "skeleton" | "骨架", "模板", "生成" | `moonbit-scaffold` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
-| "review", "code review" | "审查", "评审" | `moonbit-code-review` |
+| "review", "code review", "audit" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
 | "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
@@ -94,9 +83,10 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 |-------|-------------|
 | `moonbit-init` | New project, setup git hooks, quality gates |
 | `moonbit-plan` | Clarify requirements, design architecture and API |
+| `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |
 | `moonbit-implement` | Write code via TDD (test → implement → verify) |
-| `moonbit-code-review` | Request code review between tasks |
+| `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |
-| `moonbit-evaluate` | Release readiness, README, CI config |
+| `moonbit-evaluate` | Release readiness, README preview, CI config preview |
 | `moonbit-learn` | Extract lessons from bugs, update skills |

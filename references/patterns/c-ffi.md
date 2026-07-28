@@ -30,10 +30,36 @@ src/
     └── prepare.py    # 供应商脚本
 ```
 
-## 关键模板
-- `templates/c-ffi/moon.mod.json` — 目标: native-only
-- `templates/c-ffi/moon.pkg` — native-stub 配置
-- `templates/c-ffi/ffi.mbt` — FFI 声明
+## 目录结构
+```
+src/
+├── wrapper.c         # ABI 归一化 + 内存管理
+├── ffi.mbt           # L0: extern "c" 声明
+├── raw/              # L1: 类型安全包装
+│   ├── moon.pkg
+│   └── raw.mbt
+├── lib.mbt           # L2: 公共 API
+├── io/               # L3: Traits (可选)
+│   ├── moon.pkg
+│   └── io.mbt
+├── moon.pkg          # native-stub 配置
+├── lib_test.mbt      # 测试
+├── README.mbt.md     # 可执行文档
+└── scripts/
+    └── prepare.py    # 供应商脚本
+```
+
+## 文件职责
+- `wrapper.c` — ABI 归一化层，需包含 `<stdlib.h>`、`<stdint.h>`
+- `ffi.mbt` — `extern "c"` 声明、`with_closed_*` RAII 包装
+- `raw/` — 类型安全包装层
+- `moon.pkg` — `native-stub` 配置
+
+## 生成决策
+- `moon.mod` 定义模块名
+- `moon.pkg` 使用 `native-stub` 配置
+- 目标 `native-only`：`moon check --target native`
+- 必须包含 `wrapper.c`（含 `#include <stdlib.h>`）
 
 ## 测试策略
 - ASan 验证（Address Sanitizer）

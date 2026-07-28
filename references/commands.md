@@ -5,11 +5,11 @@
 ```bash
 # 类型检查
 moon check --target native --warn-list +73
-# 失败: moon check --explain E####
+# 失败: moon explain --diagnostic E####
 
 # 运行测试
 moon test --target native
-# 失败: moon test --target native -- --show-output
+# 失败: moon test --target native -f "test_name"
 # 过滤: moon test --target native -f "test_name"
 
 # 格式化
@@ -224,5 +224,5 @@ moon check --warn-list +79
 
 ```bash
 # 查看具体错误码的详细解释
-moon check --explain E0002
+moon explain --diagnostic E0002
 ```

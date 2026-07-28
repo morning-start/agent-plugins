@@ -16,8 +16,21 @@ description: "Use when requesting code review between implementation tasks, afte
 ### 1. 收集变更
 
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)
-HEAD_SHA=$(git rev-parse HEAD)
+# 默认审查 working tree + staged diff
+# 如果任务已提交，使用 HEAD~1 对比
+if git rev-parse HEAD~1 >/dev/null 2>&1; then
+  BASE_SHA=$(git rev-parse HEAD~1)
+  HEAD_SHA=$(git rev-parse HEAD)
+  DIFF_CMD="git diff ${BASE_SHA}..${HEAD_SHA}"
+else
+  # 单 commit 或无 commit: 审查所有未提交变更
+  DIFF_CMD="git diff HEAD"
+fi
+
+# 如果有实施计划文件，记录任务开始时的 base
+if [ -f "docs/implementation-plan.md" ]; then
+  BASE_SHA=$(git log --oneline --reverse | head -1 | awk '{print $1}')
+fi
 ```
 
 ### 2. 逐项审查

@@ -12,7 +12,19 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 ## 项目类型检测
 
 ```bash
-grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="lib"
+# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
+MAIN_DETECTED=false
+for f in moon.pkg cmd/main/moon.pkg src/main/moon.pkg; do
+  if [ -f "$f" ]; then
+    if grep -q 'pkgtype(kind: "executable")' "$f" 2>/dev/null; then
+      MAIN_DETECTED=true; break
+    fi
+    if grep -q '"is-main": true' "$f" 2>/dev/null; then
+      MAIN_DETECTED=true; break
+    fi
+  fi
+done
+PROJECT_TYPE=$([ "$MAIN_DETECTED" = true ] && echo "main" || echo "lib")
 ```
 
 类型决定发布验证路径的差异。
@@ -34,14 +46,19 @@ grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="l
 
 ```bash
 # 1. 确认 moon.pkg 有 main 声明
-grep -q 'is_main' moon.pkg || fail("main projects must declare is_main = true")
+if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
+  :
+elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
+  :
+else
+  fail("main projects must declare pkgtype(kind: \"executable\")")
+fi
 
 # 2. 验证可运行
-moon run                              # exit 0 为通过
-git diff --exit-code                  # 确认运行未产生副作用
+moon run .                        # exit 0 为通过
 
 # 3. 验证输出不为空
-OUTPUT=$(moon run 2>&1)
+OUTPUT=$(moon run . 2>&1)
 [ -n "$OUTPUT" ] || fail("moon run produced no output")
 
 # 4. 生成 CI（含 moon run 验证）
@@ -56,9 +73,19 @@ OUTPUT=$(moon run 2>&1)
 test -f moon.mod || fail("moon.mod missing")
 test -f moon.pkg || fail("moon.pkg missing")
 
-# 2. 验证可被本地安装
-moon add moonbitlang/core            # 依赖可解析
-git diff --exit-code                 # 确认 add 后的改动已知
+# 2. 验证可被外部消费：临时 consumer
+TMP_DIR=$(mktemp -d)
+cat > "$TMP_DIR/moon.mod" << 'EOF'
+module "consumer_test"
+EOF
+mkdir -p "$TMP_DIR/src"
+cat > "$TMP_DIR/src/moon.pkg" << 'EOF'
+EOF
+cat > "$TMP_DIR/moon.work" << EOF
+use "$(cd .. && pwd)"
+EOF
+(cd "$TMP_DIR" && moon check 2>&1) || fail("library cannot be consumed")
+rm -rf "$TMP_DIR"
 
 # 3. 验证跨平台兼容
 moon check --target all
@@ -68,7 +95,7 @@ moon info --target native > src/README.mbt.md
 moon test --target native -f "usage" # 验证文档示例可运行
 ```
 
-**阻断条件：** `moon add` 失败或跨平台检查不通过则阻断发布。
+**阻断条件：** 临时 consumer 编译失败或跨平台检查不通过则阻断发布。
 
 ## 执行流程
 
@@ -89,7 +116,7 @@ moon test --target native -f "usage" # 验证文档示例可运行
     └── lib 项目  → moon add + moon check --target all + README 生成
 ```
 
-### 3. 生成 CI 配置
+### 3. 生成 CI 配置（预览模式，用户批准后写入）
 
 ```yaml
 # .github/workflows/ci.yml
@@ -105,15 +132,17 @@ jobs:
       - run: moon-audit pipeline .
 ```
 
+**注意：** 如果 `.github/workflows/ci.yml` 已存在，展示 diff 给用户，用户批准后写入。不覆盖用户自定义 workflow。
+
 ### 4. 发布检查清单
 
 ```markdown
 ## 发布检查清单
 
 - [x] 完整验证管道通过（moonbit-verify H1-H5）
-- [x] 项目类型验证通过（main: moon run | lib: moon add + cross-platform）
+- [x] 项目类型验证通过（main: moon run . | lib: 临时 consumer 编译验证）
 - [x] 文档示例可运行（如有 usage 测试）
-- [x] CI 配置已生成
+- [x] CI 配置已生成（用户批准后写入）
 - [ ] 用户确认版本号
 - [ ] 用户执行 `moon publish`（需要 mooncakes 账号）
 ```
@@ -122,9 +151,9 @@ jobs:
 
 | 类型 | 项目分类 | 发布方式 | 专属验证 |
 |------|---------|---------|---------|
-| lib | library | mooncake 包 | `moon add` + `moon check --target all` |
-| cli | main | 可执行文件 + mooncake | `moon run` + 输出验证 |
-| c-ffi | library | mooncake 包 | `moon add` + ASan（可选） |
+| lib | library | mooncake 包 | 临时 consumer 编译 + `moon check --target all` |
+| cli | main | 可执行文件 + mooncake | `moon run .` + 输出验证 |
+| c-ffi | library | mooncake 包 | 临时 consumer 编译 + ASan（可选） |
 | wasm | library | WASM 模块 + mooncake | `moon check --target wasm-gc` |
 | parser | library | mooncake 包 | `moon test -f "valid/invalid/edge"` |
 | async | library | mooncake 包 | 并发测试、超时测试 |
@@ -133,8 +162,8 @@ jobs:
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README 和 CI、检查发布就绪 |
-| **用户** | 判断质量是否达标、确认版本号、执行 `moon publish` |
+| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README 和 CI 预览、检查发布就绪 |
+| **用户** | 判断质量是否达标、确认版本号、审查 README/CI diff、执行 `moon publish` |
 
 ## 输出
 

@@ -13,11 +13,16 @@ src/
 └── README.mbt.md    # 可执行文档
 ```
 
-## 关键模板
-- `templates/cli/moon.mod.json` — 目标: native-only
-- `templates/cli/moon.pkg.json` — 导入: @argparse, @fs
-- `templates/cli/main.mbt` — CLI 入口
-- `templates/cli/test.mbt` — 集成测试
+## 文件职责
+- `main.mbt` — `fn main` 入口，使用 `@argparse` 解析参数
+- `lib.mbt` — 核心逻辑，被 main 引用
+- `moon.pkg` — `pkgtype(kind: "executable")` 声明
+- `lib_test.mbt` — 单元测试和集成测试
+
+## 生成决策
+- `moon.mod` 定义模块名和依赖
+- `moon.pkg` 使用 `pkgtype(kind: "executable")`（非 `is_main`）
+- 目标 `native-only`：`moon check --target native`、`moon run .`
 
 ## 测试策略
 - 单元测试核心逻辑

@@ -7,13 +7,14 @@
       "prompt": "I want to build a TOML parser in MoonBit. It should parse TOML 1.0 files and serialize them back to TOML strings. Target platform is native only.",
       "expected_output": "Plan a parser project, select a primary type plus capabilities, scaffold, implement with TDD, verify, and evaluate.",
       "assertions": [
-        "classifies primary_type as lib or parser-capable project",
-        "records parser capability and native target",
-        "does not claim implementation or verification before execution",
-        "routes to scaffold after plan confirmation"
+        "classifies primary_type lib or parser-capable project",
+        "records parser capability native target",
+        "does not claim implementation verification before execution",
+        "routes scaffold plan confirmation"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["plan", "scaffold", "implement", "verify", "evaluate"]
     },
     {
       "id": 2,
@@ -21,13 +22,14 @@
       "prompt": "Help me write a MoonBit CLI tool that counts source lines in all .mbt files recursively and excludes _build directories.",
       "expected_output": "Plan CLI parameters and exclusions, scaffold the cli template, then use TDD and native verification.",
       "assertions": [
-        "classifies primary_type as cli",
-        "captures recursive traversal and _build exclusion as requirements",
+        "classifies primary_type cli",
+        "captures recursive traversal _build exclusion requirements",
         "selects native target",
-        "does not invent a parser-only or wasm project"
+        "does not invent parser-only wasm project"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["plan", "scaffold", "implement", "verify"]
     },
     {
       "id": 3,
@@ -35,13 +37,14 @@
       "prompt": "I need to wrap a C library called libfoo in MoonBit. It has about 20 functions for image processing.",
       "expected_output": "Plan a native c-ffi project with ownership and ABI decisions, scaffold the complete FFI template, implement from L0 outward, and verify native safety.",
       "assertions": [
-        "classifies primary_type as c-ffi",
-        "asks about ABI, ownership, allocation, and free semantics",
+        "classifies primary_type c-ffi",
+        "asks about ABI, ownership, allocation, free semantics",
         "does not claim wrapper.c or validation exists without checking files",
         "requires native verification"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["plan", "scaffold", "implement", "verify"]
     },
     {
       "id": 4,
@@ -49,67 +52,148 @@
       "prompt": "I wrote a MoonBit JSON parser but it is failing on nested objects. The error is type mismatch: expected Object but got Array. Help me debug this.",
       "expected_output": "Use implement's debug flow: reproduce, classify, diagnose, make a minimal fix, and re-verify. Ask the user after three failed attempts.",
       "assertions": [
-        "does not force a new-project plan",
-        "collects the failing test or check output first",
-        "uses a bounded repair loop",
-        "re-runs the focused test and broader verification after a fix"
+        "does not force new-project plan",
+        "collects failing test check output first",
+        "uses bounded repair loop",
+        "re-runs focused test broader verification fix"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["implement"]
     },
     {
       "id": 5,
       "name": "release-readiness",
-      "prompt": "I just finished implementing my MoonBit package. Check if it is ready for publishing.",
-      "expected_output": "Run verify's gate first, then evaluate publication readiness, documentation, CI, version, and user approval.",
+      "prompt": "I have a MoonBit library that passed all tests. Can I publish it to mooncakes?",
+      "expected_output": "Run verify first, then evaluate: check API stability, cross-platform, security, CI completeness, and hand user version confirmation and publish.",
       "assertions": [
-        "runs or requests verify before publication preparation",
-        "checks fmt, type check, tests, package info, and security status",
+        "runs requests verify before publication preparation",
+        "checks fmt, type check, tests, package info, security status",
         "does not claim publish_ready before checks pass",
-        "keeps version confirmation as a user decision"
+        "keeps version confirmation user decision"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["verify", "evaluate"]
     },
     {
       "id": 6,
       "name": "security-review",
-      "prompt": "Review my MoonBit HTTP server code for security issues.",
-      "expected_output": "Run verify's security audit, report findings with file and rule evidence, and only apply safe mechanical fixes.",
+      "prompt": "Review this MoonBit library for security issues before we publish it.",
+      "expected_output": "Route to verify rather than plan or scaffold. Check moon-audit availability and report findings.",
       "assertions": [
-        "routes to verify rather than plan or scaffold",
-        "checks moon-audit availability and reports if unavailable",
-        "does not silently auto-edit public API or security-sensitive behavior",
-        "reports findings and residual risk"
+        "routes verify rather plan scaffold",
+        "checks moon-audit availability reports unavailable",
+        "not silently auto-edit public API or security-sensitive behavior",
+        "reports findings residual risk"
       ],
       "should_trigger": true,
-      "files": []
+      "files": [],
+      "skills": ["verify", "code-review"]
     },
     {
       "id": 7,
       "name": "syntax-question-near-miss",
-      "prompt": "What is the current MoonBit syntax for a StringView slice, with a tiny code example? Do not modify a project.",
-      "expected_output": "Answer from the idioms/reference material without starting the engineering pipeline.",
+      "prompt": "How do I define a recursive enum in MoonBit?",
+      "expected_output": "Answer the API question with a code example. Do not scaffold, plan, or create files.",
       "assertions": [
-        "does not scaffold or create files",
-        "does not require plan or evaluate",
-        "answers the narrow API question with a current example"
+        "does not scaffold create files",
+        "not require plan or evaluate",
+        "answers narrow API question current example"
       ],
       "should_trigger": false,
-      "files": []
+      "files": [],
+      "skills": []
     },
     {
       "id": 8,
       "name": "non-moonbit-release-near-miss",
-      "prompt": "Our Node.js service is ready to release. Please inspect its npm package metadata and draft a release checklist.",
-      "expected_output": "Do not route this to the MoonBit pipeline; use the repository's general Node.js workflow if available.",
+      "prompt": "I need to publish a Rust crate to crates.io. Can you help me set up CI?",
+      "expected_output": "Recognize the request is outside MoonBit skill domain. Do not invoke MoonBit plan, scaffold, or verify.",
       "assertions": [
-        "does not invoke MoonBit plan, scaffold, or verify",
-        "does not run moon commands",
-        "recognizes that the request is outside this skill's domain"
+        "does not invoke MoonBit plan, scaffold, verify",
+        "does not moon commands",
+        "recognizes request outside skill's domain"
       ],
       "should_trigger": false,
-      "files": []
+      "files": [],
+      "skills": []
+    },
+    {
+      "id": 9,
+      "name": "decompose-task-list",
+      "prompt": "I have a design doc for a MoonBit CLI tool that reads CSV files and outputs JSON. Please break it into implementation tasks.",
+      "expected_output": "Use writing-plans to decompose the design into executable tasks. Each task should be a behavior increment, not a time-boxed chunk.",
+      "assertions": [
+        "routes to writing-plans not implement or plan",
+        "each task is independently verifiable",
+        "no placeholder code in task descriptions",
+        "includes verify command and expected result per task"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["writing-plans"]
+    },
+    {
+      "id": 10,
+      "name": "review-between-tasks",
+      "prompt": "I just finished the lexer implementation. Can you review the code before I start the parser?",
+      "expected_output": "Use code-review between tasks. Collect working tree diff, review API surface, safety, and test coverage. Do not run full verify.",
+      "assertions": [
+        "routes to code-review not verify",
+        "collects working tree or staged diff",
+        "handles single-commit repos gracefully",
+        "focuses on semantic API safety test coverage",
+        "does not run full fmt check test suite"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["code-review"]
+    },
+    {
+      "id": 11,
+      "name": "learn-from-fix",
+      "prompt": "I just fixed the 3rd compilation error of the same type. How do I make sure I don't hit this again?",
+      "expected_output": "Use learn skill to extract the pattern. Generate a learning proposal for user review, not auto-edit skills.",
+      "assertions": [
+        "routes to learn not implement",
+        "generates proposal before updating any file",
+        "checks for existing knowledge before adding",
+        "includes root cause, fix command, toolchain version, scope"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["learn"]
+    },
+    {
+      "id": 12,
+      "name": "init-hooks-setup",
+      "prompt": "I just created a new MoonBit project. Set up git hooks for quality gates.",
+      "expected_output": "Use init to set up hooks. Check for existing hooksPath before overwriting. Copy from canonical hook files.",
+      "assertions": [
+        "routes to init",
+        "checks existing hooksPath before setting",
+        "does not overwrite existing hooks without user confirmation",
+        "copies from hooks/ not embedded inline code"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["init"]
+    },
+    {
+      "id": 13,
+      "name": "scaffold-cli-executable",
+      "prompt": "Generate a MoonBit CLI project skeleton for a file-renaming tool.",
+      "expected_output": "Scaffold a CLI project with pkgtype(kind: \"executable\"). Generate into temp dir and verify with moon fmt --check, moon check, moon test.",
+      "assertions": [
+        "generates pkgtype(kind: executable) not is_main",
+        "creates moon.pkg with correct format",
+        "generates test that verifies project behavior not 1+1",
+        "can verify with moon fmt check moon check moon test"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["scaffold"]
     }
   ]
 }

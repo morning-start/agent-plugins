@@ -14,63 +14,63 @@
 用户说"我要做 X"
     │
     ▼
-┌─────────────────────────────────────────────────┐
-│ using-moonbit-skills (alwaysApply, 路由入口)       │
-│ 检测 intent → 路由到正确技能                       │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ using-moonbit-skills (alwaysApply, 路由入口)          │
+│ 检测 intent → 路由到正确技能                          │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-plan — 需求澄清 + 设计决策                │
-│ 输出: project_type + 需求文档 + API 设计          │
-│ 用户介入: 选择架构模式 + 设计 API                  │
-│ 路由: → writing-plans 或 scaffold                 │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-plan — 需求澄清 + 设计决策                    │
+│ 输出: primary_type + capabilities + targets + API    │
+│ 用户介入: 选择架构模式 + 设计 API                      │
+│ 路由: → writing-plans 或 scaffold                     │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-writing-plans — 设计→可执行任务拆解        │
-│ 输出: task list (每任务含代码+测试+验证)           │
-│ 路由: → scaffold (新项目) / implement (已有项目)   │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-writing-plans — 设计→可执行任务拆解            │
+│ 输出: task list (每任务含行为增量+验证命令+预期结果)     │
+│ 路由: → scaffold (新项目) / implement (已有项目)       │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-scaffold — 动态生成项目骨架               │
-│ 方式: 按类型动态生成，不依赖预置模板               │
-│ 验证: moon fmt --check + moon check + moon test  │
-│ 路由: → implement                                │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-scaffold — 动态生成项目骨架                    │
+│ 方式: 按类型动态生成，不依赖预置模板                    │
+│ CLI: pkgtype(kind: "executable")                     │
+│ 验证: moon fmt --check + moon check + moon test      │
+│ 路由: → implement                                    │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-implement — TDD 实现                     │
-│ 每任务: RED(测试)→GREEN(实现)→VERIFY(全量)       │
-│ 每任务后: moonbit-code-review                    │
-│ 分类: main项目 + moon run / lib项目 + moon add   │
-│ Git: 每步后 git diff --exit-code                  │
-│ 路由: → verify                                   │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-implement — TDD 实现                          │
+│ 每任务: RED(测试)→GREEN(实现)→VERIFY(全量)            │
+│ 每任务后: moonbit-code-review                          │
+│ 分类: main项目 + moon run . / lib项目 + 临时 consumer  │
+│ 路由: → verify                                        │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-verify — 全量验证门禁                    │
-│ 硬性: H1-H5 (格式/类型/测试/info/工作区)          │
-│ 专属: main→moon run / lib→moon add              │
-│ 软性: S1-S5 (跨平台/安全/性能/API深度/CI)        │
-│ Git: 每步后 git diff --exit-code                  │
-│ 路由: → evaluate                                 │
-└─────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-verify — 全量验证门禁                          │
+│ 硬性: H1-H5 (格式/类型/测试/info/工作区)               │
+│ 专属: main→moon run . / lib→临时 consumer 编译验证     │
+│ 软性: S1-S5 (跨平台/安全/性能/API深度/CI)              │
+│ 路由: → evaluate                                      │
+└─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────┐
-│ moonbit-evaluate — 验收评估 + 发布准备            │
-│ 委托 verify + 类型专属验证 + CI/README 生成       │
-│ main: moon run + 输出验证                        │
-│ lib:  moon add + cross-platform                  │
-│ 用户介入: 判断"好了"或"再改"                      │
-│ 路由: 完成 或 → implement                         │
-└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ moonbit-evaluate — 验收评估 + 发布准备                 │
+│ 委托 verify + 类型专属验证 + CI/README 预览            │
+│ main: moon run . + 输出验证                           │
+│ lib: 临时 consumer 编译验证 + cross-platform           │
+│ CI/README: 预览模式，用户批准后写入                     │
+│ 用户介入: 判断"好了"或"再改"                           │
+│ 路由: 完成 或 → implement                              │
+└─────────────────────────────────────────────────────┘
 ```
 
 ### 独立技能（单次调用）
@@ -97,13 +97,13 @@
 
 | # | 要求 | 归属技能 | 命令 |
 |---|------|---------|------|
-| H1 | 代码格式一致性 | verify | `moon fmt --check` + `git diff --exit-code` |
+| H1 | 代码格式一致性 | verify | `moon fmt --check` |
 | H2 | 类型安全 | verify | `moon check --warn-list +73` |
 | H3 | 功能完整性 | verify | `moon test --target native` |
-| H4 | 工作区干净 | verify | `git diff --exit-code` |
+| H4 | 工作区干净 | verify | `git status --porcelain`（发布阶段） |
 | H5 | API 稳定性 | verify | `moon info --target native` |
-| H6 | [main] 可执行验证 | verify + evaluate | `moon run` + 输出验证 |
-| H7 | [lib] 包完整性 | verify + evaluate | `moon add moonbitlang/core` |
+| H6 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 |
+| H7 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 |
 | H8 | 类型专属验证 | implement | `moon check --target wasm` (wasm) 等 |
 
 ### 软性要求（可选，加分型）
@@ -123,19 +123,20 @@
 ## 项目类型分支
 
 ```
-检测 moon.pkg
+检测 moon.pkg（在主目录或 cmd/main 或 src/main 中）
     │
-    ├── grep -q 'is_main' == true  →  main（可执行程序）
+    ├── grep -q 'pkgtype(kind: "executable")' == true  →  main（可执行程序）
+    │   └── 兼容旧格式: grep -q '"is-main": true' == true →  main
     │       │
-    │       ├── implement: moon run 验证输出
-    │       ├── verify: H1-H5 + H6 moon run
-    │       └── evaluate: moon run + 输出非空 + CI 含 run
+    │       ├── implement: moon run . 验证输出
+    │       ├── verify: H1-H5 + H6 moon run .
+    │       └── evaluate: moon run . + 输出非空 + CI 含 run
     │
-    └── grep -q 'is_main' == false →  lib（library 库）
+    └── 都不是 → lib（library 库）
             │
             ├── implement: moon check --target all
-            ├── verify: H1-H5 + H7 moon add
-            └── evaluate: moon add + cross-platform + README 生成
+            ├── verify: H1-H5 + H7 临时 consumer 编译验证
+            └── evaluate: 临时 consumer + cross-platform + README 生成
 ```
 
 ---
@@ -144,7 +145,7 @@
 
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
 |-----------|---------|---------|---------|
-| SessionStart | startup/clear/compact | `hooks/session-start` | `skills/using-moonbit-skills/SKILL.md` |
+| SessionStart | startup/clear/compact | `hooks/session-start` (Bash) / `hooks/session-start.ps1` (Windows) | `skills/using-moonbit-skills/SKILL.md` |
 | PreCommit | git commit | `hooks/pre-commit.sh` | H1 + H2（fmt + check） |
 | PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H5 + S2 |
 
@@ -188,13 +189,15 @@ using-moonbit-skills (alwaysApply, 路由入口)
   "pipeline": "development",
   "phase": "implement",
   "project_type": "main",
-  "project_class": "main (executable)",
+  "primary_type": "parser",
+  "capabilities": ["lexer", "tokenizer"],
+  "targets": ["native"],
   "hard_checks": {
     "fmt": "pass",
     "check": "pass",
     "test": "pass (12/12)",
     "info": "pass",
-    "git_diff": "pass"
+    "workspace": "pass"
   },
   "type_specific": {
     "moon_run": "pass (output: 'Hello')"
