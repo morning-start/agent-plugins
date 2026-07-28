@@ -1,6 +1,6 @@
 ---
 name: moonbit-learn
-description: "Learn from bugs and update the skill system. Use when the user says 'learn', 'remember this', 'update the skill', or after moonbit-implement encounters a bug that needed human intervention. Agent analyzes the issue, updates the relevant skill or reference file directly — no bug archive, just absorption and improvement. Optionally records compiler error codes to references/error-codes.json for quick lookup."
+description: "Use when learning from bugs and updating the MoonBit skill system. Triggered by user phrases like 'learn', 'remember this', 'update the skill', or after moonbit-implement encounters a bug that required human intervention."
 ---
 
 # Learn — 吸收错误，自我优化

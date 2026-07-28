@@ -1,6 +1,6 @@
 ---
 name: moonbit-plan
-description: "Plan a MoonBit project — figure out requirements, architecture, and API surface before writing code. Use this FIRST whenever the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first. Agent asks targeted questions, presents architecture options, user decides direction. This is the entry point for all MoonBit development work."
+description: "Use FIRST before any MoonBit implementation work — when the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first."
 ---
 
 # Plan — 需求澄清 + 设计决策

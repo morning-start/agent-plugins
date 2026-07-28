@@ -1,7 +1,7 @@
 {
   "name": "moonbit-skills",
-  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline",
   "version": "0.1.0",
+  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline for Cursor",
   "author": {
     "name": "morning-start",
     "url": "https://github.com/morning-start"

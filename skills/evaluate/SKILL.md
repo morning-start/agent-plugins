@@ -1,6 +1,6 @@
 ---
 name: moonbit-evaluate
-description: "Final evaluation and publication for MoonBit projects. Use whenever the user says 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after verification passes. Agent delegates to verify/ for gate checks, then generates README.mbt.md with executable docs, CI configuration, and publication checklist. User decides whether to publish. This is the LAST step before publishing — make sure verify/ passed first."
+description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first."
 ---
 
 # Evaluate — 验收评估 + 发布准备

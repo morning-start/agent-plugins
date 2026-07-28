@@ -1,6 +1,6 @@
 ---
 name: moonbit-verify
-description: "Run the MoonBit verification gate — three-tier detection: L1 (light: fmt+check, auto in git hooks), L2 (deep: test+audit, auto in git hooks), L3 (full: code review+security audit+architecture review, user-initiated). Use whenever the user says 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass', or before claiming any work is done. Agent runs checks, applies auto-fixes, presents results. User decides if acceptable. Do NOT skip this before claiming done — always verify first."
+description: "Use when running MoonBit verification gates — before claiming any work is done. Triggered by user phrases like 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass'. Do NOT skip this before claiming done — always verify first."
 ---
 
 # Verify — 三档检测门禁
@@ -69,24 +69,11 @@ moon-audit pipeline .                # 14 条 CWE 规则静态扫描
 | wasm | `moon test --target wasm` | `moon check --target wasm` + `moon check --target wasm-gc`，WASM 运行时 test |
 | async | `moon test --target native` | 并发测试 |
 
-## 代码审查项目
+## 代码审查
 
-默认先报告问题，不直接修改代码。只有**不涉及 public API、ABI、导出符号、所有权或依赖**的机械性修复，才可以自动应用。
+委托给独立技能 **`moonbit-code-review`** 执行。先调用该技能做逐项审查，审查通过后再继续本技能的验证管道。
 
-| 检查 | 合格 | 默认动作 |
-|------|------|---------|
-| 可选值 | `T?` 而非 `Option[T]` | 报告，需确认后替换 |
-| 字符串参数 | `StringView` 而非 `String` | 报告；公开函数不自动替换 |
-| 错误处理 | 正确使用 `Result`/`suberror` | 报告并给出建议 |
-| 自定义错误 | `derive(Debug, Eq, ToJson)` | 仅内部类型可自动修复 |
-| 可见性 | 只导出外部需要的 | 涉及 `pub` 时只报告 |
-| 空 catch | 无 `catch { _ => () }` | 报告并给出建议 |
-| 资源管理 | `with_closed_*` RAII 模式 | FFI/资源代码只报告 |
-| 枚举可见性 | 跨包构造需 `pub(all) enum`，`pub enum` 不导出构造器 | 涉及枚举可见性变更时只报告 |
-| 跨包 struct 字面量 | 跨包只能用 `pub` 字段，通常需要提供构造器函数 | 结构体重构只报告 |
-| `unused_mut` 语义 | `mut` 仅在变量重新赋值时需要，push/mutate 不需要 | 谨慎添加/移除 `mut`，需验证 push/mutate 场景 |
-
-自动修复后必须重新运行 fmt、check、test，并输出变更摘要。涉及 public API、ABI、WASM 导出或 C 所有权时，停止自动修复并请求用户确认。
+**REQUIRED SUB-SKILL:** Use `moonbit-code-review` before proceeding with L3 checks.
 
 ## 安全审计（moon-audit）
 

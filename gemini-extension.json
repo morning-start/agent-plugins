@@ -1,0 +1,12 @@
+{
+  "name": "moonbit-skills",
+  "version": "0.1.0",
+  "description": "MoonBit development skill suite for Gemini CLI — collaborative design-to-publish pipeline",
+  "author": {
+    "name": "morning-start",
+    "url": "https://github.com/morning-start"
+  },
+  "repository": "https://github.com/morning-start/moonbit-skills",
+  "license": "MIT",
+  "skills": "./skills/"
+}

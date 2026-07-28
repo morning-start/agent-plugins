@@ -1,6 +1,6 @@
 ---
 name: moonbit-implement
-description: "Implement MoonBit features with TDD. Use whenever the user says 'implement', 'write code', 'add feature', 'make it work', 'fix this bug', 'refactor', or after the plan is done. Type-aware: different TDD strategies for lib, cli, c-ffi, wasm, parser, async. Agent does Red-Green-Verify per task, shows results to user. Debug is built-in: 3 auto-fix attempts then ask user. NOT a MoonBit syntax reference — refer to references/idioms.md for API details. Use this for ALL coding work, including debugging and refactoring."
+description: "Use when implementing MoonBit features, fixing bugs, or refactoring code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'refactor', or after a plan is approved."
 ---
 
 # Implement — TDD 实现
@@ -8,6 +8,51 @@ description: "Implement MoonBit features with TDD. Use whenever the user says 'i
 ## 职责
 
 逐任务实现功能。**Agent 做 TDD（Red-Green-Verify），每个任务完成后展示给用户看。** 调试失败自动修复，3 次失败后问用户。
+
+## The Iron Law
+
+```
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+```
+
+Write code before the test? **Delete it. Start over.**
+
+No exceptions:
+- Don't keep it as "reference"
+- Don't "adapt" it while writing tests
+- Don't look at it
+- Delete means delete
+
+Implement fresh from tests. Period.
+
+## Red Flags — STOP and Start Over
+
+If you catch yourself thinking any of these, you are violating TDD:
+
+- Code before test
+- Test after implementation
+- Test passes immediately (means you didn't watch it fail)
+- Can't explain why test failed
+- Tests added "later"
+- Rationalizing "just this once"
+- "I already manually tested it"
+- "Keep existing code as reference, write tests"
+- "Already spent X hours, deleting is wasteful"
+- "TDD is dogmatic, I'm being pragmatic"
+
+**All of these mean: Delete code. Start over with TDD.**
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
+| "I'll test after" | Tests written after pass immediately — which proves nothing. They may test the wrong thing. You never watched them fail. |
+| "Already manually tested" | Manual testing is ad-hoc: no record, no re-runs. |
+| "Deleting X hours is wasteful" | Sunk cost fallacy. Rewrite with TDD (high confidence) vs. keep untrustworthy code. |
+| "I need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "Test hard = design unclear" | Listen to test. Hard to test = hard to use. Simplify. |
+| "This is just a quick fix" | Quick fixes without tests break things. Write the test. |
 
 ## TDD 循环
 

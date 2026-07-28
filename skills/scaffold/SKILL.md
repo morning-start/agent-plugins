@@ -1,6 +1,6 @@
 ---
 name: moonbit-scaffold
-description: "Generate a MoonBit project skeleton from the repository templates. Use for project creation, initialization, or when moon.mod is missing. The user confirms the project type and package name; the agent copies and validates the matching template before implementation."
+description: "Use when generating a MoonBit project skeleton from templates. Triggered by user phrases like 'scaffold', 'generate', 'skeleton', or when moon.mod is missing and a new project needs file structure."
 ---
 
 # Scaffold - Project Skeleton

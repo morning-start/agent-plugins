@@ -1,6 +1,6 @@
 ---
 name: moonbit-init
-description: "Initialize a MoonBit project with git hooks for quality gates. Use when the user says 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', or when a new MoonBit project needs CI-style local checks. Agent detects project type, creates .githooks/, configures git, and optionally installs moon-audit. Checks are split by stage: pre-commit (fast: fmt + check) and pre-push (heavy: test + audit)."
+description: "Use when initializing a MoonBit project with git hooks for quality gates. Triggered by user phrases like 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', or when a new MoonBit project needs CI-style local checks."
 ---
 
 # Init — 项目初始化 + Git Hooks
