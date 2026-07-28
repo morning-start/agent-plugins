@@ -28,23 +28,6 @@ src/
 └── README.mbt.md     # 可执行文档
 ```
 
-## 目录结构
-```
-src/
-├── internal/
-│   ├── ffi/          # L0: 内联 WASM 指令
-│   │   ├── moon.pkg
-│   │   └── top.mbt   # store32, load32, malloc, free
-│   ├── raw/          # L1: WASI 绑定
-│   │   ├── moon.pkg
-│   │   └── raw.mbt
-│   └── moon.pkg
-├── lib.mbt           # L2: 公共 API
-├── moon.pkg          # 包配置
-├── lib_test.mbt      # 测试
-└── README.mbt.md     # 可执行文档
-```
-
 ## 文件职责
 - `internal/ffi/top.mbt` — `extern "wasm"` 内联指令如 `store32`、`load32`
 - `internal/raw/` — WASI 绑定

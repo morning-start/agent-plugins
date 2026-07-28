@@ -16,19 +16,6 @@ src/
 └── README.mbt.md     # 可执行文档
 ```
 
-## 架构
-```
-src/
-├── lib.mbt           # 公共 API（最小表面）
-├── <domain>.mbt      # 核心实现
-├── internal/         # 私有实现
-│   ├── moon.pkg
-│   └── helper.mbt
-├── moon.pkg          # 包配置
-├── lib_test.mbt      # 测试
-└── README.mbt.md     # 可执行文档
-```
-
 ## 文件职责
 - `lib.mbt` — 公共 API 入口，最小导出表面
 - `internal/` — 私有实现，不暴露给外部

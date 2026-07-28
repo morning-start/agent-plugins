@@ -95,16 +95,17 @@
 
 分布在 verify 和 evaluate 中，任何一项不通过则阻断：
 
-| # | 要求 | 归属技能 | 命令 |
-|---|------|---------|------|
-| H1 | 代码格式一致性 | verify | `moon fmt --check` |
-| H2 | 类型安全 | verify | `moon check --warn-list +73` |
-| H3 | 功能完整性 | verify | `moon test --target native` |
-| H4 | 工作区干净 | verify | `git status --porcelain`（发布阶段） |
-| H5 | API 稳定性 | verify | `moon info --target native` |
-| H6 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 |
-| H7 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 |
-| H8 | 类型专属验证 | implement | `moon check --target wasm` (wasm) 等 |
+| # | 要求 | 归属技能 | 命令 | 类型豁免 |
+|---|------|---------|------|---------|
+| H1 | 代码格式一致性 | verify | `moon fmt --check` | 无（所有项目类型必选） |
+| H2 | 类型安全 | verify | `moon check --warn-list +73` | 无（所有项目类型必选） |
+| H3 | 功能完整性 | verify | `moon test --target native` | 无（所有项目类型必选） |
+| H4 | 工作区干净 | verify | `git status --porcelain`（发布阶段） | 无（所有项目类型必选） |
+| H5 | API 稳定性 | verify | `moon info --target native` | c-ffi、wasm 豁免（无对外暴露的 MoonBit pub API） |
+| H6 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 | 仅 main 项目（cli）执行；lib 项目跳过 |
+| H7 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | 仅 lib/c-ffi/wasm/parser/async 执行；main 项目跳过 |
+
+> **类型豁免说明**：c-ffi 和 wasm 项目的主要对外接口是 C ABI 或 WASM 导出，MoonBit 层面的 `pub` API 不是发布契约的核心，因此豁免 H5。其发布验证以 H7（消费验证）+ 类型专属检查为准。详见 verify/SKILL.md 的「各类型验证全景」表。
 
 ### 软性要求（可选，加分型）
 
@@ -145,9 +146,10 @@
 
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
 |-----------|---------|---------|---------|
-| SessionStart | startup/clear/compact | `hooks/session-start` (Bash) / `hooks/session-start.ps1` (Windows) | `skills/using-moonbit-skills/SKILL.md` |
+| SessionStart | startup/clear/compact | `hooks/session-start` (Bash) / `hooks/run-hook.cmd` + `hooks/session-start.nu` (Windows) | `skills/using-moonbit-skills/SKILL.md` |
 | PreCommit | git commit | `hooks/pre-commit.sh` | H1 + H2（fmt + check） |
-| PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H5 + S2 |
+| PrePush | git push | `hooks/pre-push.sh` | H3 + S2（test + audit） |
+| PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H3 + H5 + S2（H4 仅发布阶段） |
 
 ---
 

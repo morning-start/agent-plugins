@@ -129,7 +129,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 ### 3. moonbit-writing-plans — 把设计变成可执行任务
 
-**能力**：将 plan 阶段确认的设计拆解为一个个 2-5 分钟的 TDD 实现任务，每任务含完整代码、测试、验证步骤。
+**能力**：将 plan 阶段确认的设计拆解为一个个可独立验证的 TDD 实现任务，每任务含完整代码、测试、验证步骤。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
@@ -146,7 +146,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 | 类型 | 项目分类 | 生成内容 |
 |------|---------|---------|
 | lib | library | moon.mod, moon.pkg, lib.mbt, test.mbt |
-| cli | main | moon.mod, moon.pkg (is_main), main.mbt, test.mbt |
+| cli | main | moon.mod, moon.pkg (pkgtype(kind: "executable")), main.mbt, test.mbt |
 | c-ffi | library | moon.mod, moon.pkg, ffi.mbt, lib.mbt, wrapper.c |
 | wasm | library | moon.mod, moon.pkg, ffi.mbt, test.mbt |
 
@@ -189,13 +189,13 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 | # | 要求 | 命令 | 阻断 |
 |---|------|------|------|
-| H1 | 格式一致性 | `moon fmt --check` + `git diff --exit-code` | 是 |
+| H1 | 格式一致性 | `moon fmt --check` | 是 |
 | H2 | 类型安全 | `moon check --warn-list +73` | 是 |
 | H3 | 功能完整 | `moon test --target native` | 是 |
-| H4 | API 稳定 | `moon info --target native` | 是 |
-| H5 | 工作区干净 | `git diff --exit-code` | 是 |
+| H4 | 工作区干净 | `git status --porcelain` | 是（发布阶段） |
+| H5 | API 稳定性 | `moon info --target native` | 是 |
 | H6 | 可执行验证（main） | `moon run` | 是 |
-| H7 | 本地安装验证（lib） | `moon add moonbitlang/core` | 是 |
+| H7 | 本地消费验证（lib） | 临时 consumer 编译验证 | 是 |
 
 **软性要求（加分项，可选）：**
 
@@ -205,7 +205,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 | S2 | 安全审计 | `moon-audit pipeline .` |
 | S3 | 性能基线 | 测试时间对比 |
 | S4 | API 深度检查 | StringView/T?/错误处理 |
-| S5 | CI 完整性 | `.github/workflows/ci.yml`
+| S5 | CI 完整性 | `.github/workflows/ci.yml` |
 
 ### 8. moonbit-evaluate — 验收 + 发布准备
 
@@ -223,7 +223,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
-| implement 3 次修复失败后用户介入解决；发现新的 MoonBit 语言陷阱；用户说"记住这个" | 只是拼写错误；问题还没搞清楚原因；知识点已存在 | 修复后说"记住这个"自动触发；不用手动指定更新哪个文件 | 只追加不删除；不会判断值不值得更新 |
+| implement 3 次修复失败后用户介入解决；发现新的 MoonBit 语言陷阱；用户说"记住这个" | 只是拼写错误；问题还没搞清楚原因；知识点已存在 | 修复后说"记住这个"自动触发；不用手动指定更新哪个文件 | 需用户确认根因后才写入；不删除已有条目（仅追加/合并/更新） |
 
 | 类别 | 示例 | 更新目标 |
 |------|------|---------|
@@ -261,7 +261,7 @@ Plan → [Writing-Plans] → Scaffold → Implement → [Code-Review] → Verify
 - `moonbit-implement`：写代码，但每步都展示给你看
 - `moonbit-code-review`：只报告问题，机械性问题可自动修复
 - `moonbit-verify`：默认只报告问题，不自动改（除非你让改）
-- `moonbit-learn`：直接更新技能文件（追加不删除）
+- `moonbit-learn`：直接更新技能文件（可追加/合并/更新，需用户确认根因）
 - `moonbit-evaluate`：生成文档和 CI，不改业务代码
 
 ### 支持哪些 AI Agent 平台？
