@@ -19,6 +19,43 @@
 
 ---
 
+## 安装方式（AI Agent Plugin）
+
+本仓库可作为 **AtomCode** 和 **Claude Code** 的插件安装，装完后 7 个技能自动注册到 `/` 菜单。
+
+### AtomCode
+
+```bash
+# 方式一：交互式（推荐）
+# 在 TUI 中输入 /plugin → Add marketplace → 输入仓库 URL → 选中安装
+/plugin
+
+# 方式二：命令行
+/plugin marketplace add https://github.com/moonbit-community/moonbit-skills
+/plugin install moonbit-skills@moonbit-skills
+
+# 信任 hooks（可选，不信任不影响技能使用）
+atomcode plugin trust moonbit-skills
+```
+
+### Claude Code
+
+```bash
+# 方式一：交互式
+/claude plugin
+
+# 方式二：命令行
+/claude plugin install https://github.com/moonbit-community/moonbit-skills
+```
+
+### 装完之后的体验
+
+- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 7 个带命名空间的 skill
+- Agent（模型）也可以通过 `use_skill` 工具自动调用这些技能，不需要手动选
+- 当你说"我要做一个 MoonBit 项目"时，技能会自动触发，从 `moonbit-plan` 开始引导对话
+
+---
+
 ## 七个技能：什么时候用哪个？
 
 ### 1. moonbit-init — 给项目装上质量门禁
