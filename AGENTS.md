@@ -21,7 +21,7 @@
 
 | 来源 | 权威范围 |
 |---|---|
-| `skills/using-moonbit-skills/SKILL.md` | SessionStart 引导入口和初始意图识别；完整路由以本文件“请求路由”为准 |
+| `skills/using-moonbit-skills/SKILL.md` | SessionStart 引导入口、初始意图识别和用户意图→技能的完整路由表 |
 | `skills/*/SKILL.md` | 对应任务的执行步骤、停止条件、输出契约和恢复策略 |
 | `references/orchestration.md` | 完整管线、技能依赖和状态模型 |
 | `references/commands.md`、`references/idioms.md`、`references/patterns/` | MoonBit 命令、惯用法和项目类型模式 |
@@ -32,27 +32,32 @@
 
 ## 请求路由
 
-行动前先读取 `skills/using-moonbit-skills/SKILL.md`，再按下表读取与意图匹配的技能。若引导入口未列出某个技能，以本表补全路由；若用户直接指定技能，优先使用该技能。
+**路由权威**为 `skills/using-moonbit-skills/SKILL.md` 的「Skill Priority」和「Trigger Matrix」。本文件不维护路由映射表，避免与引导入口漂移。
 
-| 用户意图 | 使用技能 | 核心结果 |
+**路由原则**（契约性约束）：
+
+- 行动前先读取 `skills/using-moonbit-skills/SKILL.md`，按其路由表匹配用户意图到对应技能。
+- 若用户直接指定技能，优先使用该技能，跳过路由匹配。
+- 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
+- 推荐的新项目路径：`plan → writing-plans → scaffold → implement ↔ code-review → verify → evaluate`。
+- 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
+- 不得跳过当前技能定义的硬性门禁。
+
+## 技能职责边界
+
+以下为契约性职责划分，用于路由歧义时消歧，不重复具体触发条件：
+
+| 技能 | 职责边界 | 不可越权 |
 |---|---|---|
-| 初始化项目、配置 hooks | `moonbit-init` | 项目级质量门禁可用 |
-| 澄清需求、设计架构或 API | `moonbit-plan` | 用户批准的设计决策 |
-| 把既有设计拆成任务 | `moonbit-writing-plans` | 可执行、可验证的任务清单 |
-| 生成新项目骨架 | `moonbit-scaffold` | 动态生成的最小可构建骨架 |
-| 新功能、修 bug、重构 | `moonbit-implement` | 按 TDD 完成的实现 |
-| 审查代码 | `moonbit-code-review` | 按严重程度排序的发现 |
-| 检查质量或完成状态 | `moonbit-verify` | 带命令证据的门禁结果 |
-| 发布验收 | `moonbit-evaluate` | 发布准备结果，由用户决定是否发布 |
-| 从已定位问题中沉淀知识 | `moonbit-learn` | 去重后更新对应技能或参考资料 |
-
-推荐的新项目路径：
-
-```text
-plan → writing-plans → scaffold → implement ↔ code-review → verify → evaluate
-```
-
-允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。不得跳过当前技能定义的硬性门禁。
+| `moonbit-init` | 项目级质量门禁配置 | 不负责项目内容生成 |
+| `moonbit-plan` | 需求澄清、架构和 API 设计决策 | 不写实现代码 |
+| `moonbit-writing-plans` | 设计→可执行任务拆解 | 不写实现代码 |
+| `moonbit-scaffold` | 按已批准设计动态生成项目骨架 | 不依赖预置模板，不覆盖用户文件 |
+| `moonbit-implement` | TDD 实现、修复、重构 | 无失败测试不写实现代码 |
+| `moonbit-code-review` | 任务间代码审查 | 不发布、不声称完成 |
+| `moonbit-verify` | 全量验证门禁 | 不声称完成除非有新鲜证据 |
+| `moonbit-evaluate` | 验收评估和发布准备 | 不跳过 verify，不替用户决定版本号 |
+| `moonbit-learn` | 从已定位问题中沉淀知识 | 未确认根因不写入，不重复创建 |
 
 ## 仓库工作规则
 
