@@ -33,6 +33,33 @@ MoonBit 项目的检测分为三档，init 技能自动配置 L1/L2，L3 由 `mo
 
 **设计原则**：L1 只做最轻量的检查，不阻塞高频提交；L2 做完整测试和安全审计，确保不把坏代码推到远端；L3 做全量深度扫描，用户需要时手动触发。
 
+## The Iron Law
+
+```
+NO HOOKS WITHOUT PROJECT VERIFICATION
+```
+
+安装 hooks 前必须确认：是 MoonBit 项目（moon.mod 存在）、是 git 仓库、hooks 脚本来源正确。不得在非 MoonBit 项目或非 git 仓库中安装 hooks。
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the init contract:
+
+- 不检测项目类型就直接复制 hooks
+- 覆盖已有的 hooksPath 而不询问用户
+- 在非 MoonBit 项目中强行安装 hooks
+- 内联 hooks 脚本内容而非从仓库 `hooks/` 复制
+- 跳过验证步骤（"hooks 肯定能跑"）
+
+**All of these mean: Stop. Verify the project first.**
+
+## 停止条件
+
+- 不是 MoonBit 项目（无 moon.mod 且无 moon.mod.json）→ 提示用户创建项目
+- 不是 git 仓库 → 提示用户 `git init`
+- `moon` 命令不可用 → 提示安装 MoonBit 工具链
+- 已有 hooksPath 且用户拒绝覆盖 → 保留现有配置，标记为 blocked
+
 ## 执行流程
 
 ### 1. 检测项目
@@ -87,56 +114,22 @@ if [ -n "$EXISTING_HOOKS" ]; then
 fi
 ```
 
-**pre-commit** 内容：
+从仓库的 `hooks/` 目录复制对应脚本到项目的 `.githooks/` 目录（不内联脚本内容，避免与仓库脚本漂移）：
+
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-echo "=== MoonBit Pre-Commit ==="
-
-if [ ! -f moon.mod ]; then
-  echo "Not a MoonBit project, skipping"
-  exit 0
-fi
-
-echo "→ moon fmt --check"
-moon fmt --check
-echo "✅ Format check passed"
-
-echo "→ moon check --target native --warn-list +73"
-moon check --target native --warn-list +73
-echo "✅ Type check passed"
-
-echo "=== Pre-commit passed ==="
+# 从技能仓库 hooks/ 目录复制规范脚本到项目 .githooks/
+mkdir -p .githooks
+cp hooks/pre-commit.sh .githooks/pre-commit
+cp hooks/pre-push.sh .githooks/pre-push
+chmod +x .githooks/pre-commit .githooks/pre-push
 ```
 
-**pre-push** 内容：
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+脚本职责（详见 `hooks/pre-commit.sh` 与 `hooks/pre-push.sh`）：
 
-echo "=== MoonBit Pre-Push ==="
+- `pre-commit.sh`：L1 检测 — `moon fmt --check` + `moon check --target native --warn-list +73`
+- `pre-push.sh`：L2 检测 — `moon test --target native` + `moon-audit`（支持 `MOONBIT_STRICT_AUDIT` 环境变量）
 
-if [ ! -f moon.mod ]; then
-  echo "Not a MoonBit project, skipping"
-  exit 0
-fi
-
-echo "→ moon test --target native"
-moon test --target native
-echo "✅ Tests passed"
-
-if command -v moon-audit >/dev/null 2>&1; then
-  echo "→ moon-audit --fail-on-error ."
-  moon-audit --fail-on-error .
-  echo "✅ Security audit passed"
-else
-  echo "⚠️  moon-audit not installed, skipping security audit"
-  echo "   Install: moon add minie135/moon-audit"
-fi
-
-echo "=== Pre-push passed ==="
-```
+> **不要内联脚本内容**。仓库 `hooks/` 中的脚本是唯一权威来源；内联副本会与之漂移。
 
 ### 3. 配置 git
 
@@ -151,6 +144,7 @@ else
   # 未设置 hooksPath，可以安全配置
   git config core.hooksPath .githooks
 fi
+```
 
 ### 4. 可选：安装 moon-audit
 
@@ -170,6 +164,8 @@ bash .githooks/pre-commit
 ```
 
 ## 各项目类型差异
+
+> **注意**：当前 hooks 模板（`pre-commit.sh`、`pre-push.sh`）统一使用 `--target native`。wasm 项目需手动将 hooks 中的目标改为 `--target wasm`。
 
 | 类型 | pre-commit | pre-push |
 |------|-----------|----------|
