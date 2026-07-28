@@ -11,7 +11,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "MoonBit Skills",
-    "shortDescription": "7 skills covering the full MoonBit project lifecycle: init, plan, scaffold, implement, verify, evaluate, learn.",
+    "shortDescription": "9 skills covering the full MoonBit project lifecycle: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn.",
     "category": "Development",
     "capabilities": ["Interactive", "Read", "Write"]
   }
