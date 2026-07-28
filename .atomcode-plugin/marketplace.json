@@ -1,0 +1,10 @@
+﻿{
+  "name": "morning-start",
+  "plugins": [
+    {
+      "name": "moonbit-skills",
+      "source": ".",
+      "description": "MoonBit development skill suite — collaborative design-to-publish pipeline"
+    }
+  ]
+}
