@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "bash hooks/post-tool-verify.sh",
+        "timeout": 30000
+      }
+    ]
+  }
+}

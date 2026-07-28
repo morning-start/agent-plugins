@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "write|edit|write_file|edit_file|str_replace_editor|create_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/post-tool-verify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

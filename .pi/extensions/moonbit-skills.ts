@@ -5,13 +5,30 @@
  * context at startup and after compaction, mirroring the SessionStart hook
  * behavior on Claude Code / Cursor / Kimi Code.
  *
+ * Also performs post-tool verification: after write/edit modifies a .mbt
+ * file, runs lightweight MoonBit verification (fmt --check + check) and
+ * appends the result to the tool output.
+ *
  * Adapted from superpowers' Pi extension pattern.
+ *
+ * NOTE: The import path `@earendil-works/pi-coding-agent` is speculative —
+ * Pi's TypeScript extension API is not yet publicly documented. When Pi
+ * publishes official docs, verify and update the import path and event names
+ * (resources_discover, session_start, session_compact, agent_end, context,
+ * tool_result).
  */
 
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import {
+  isWriteTool,
+  isMoonBitFile,
+  findMoonProjectRoot,
+  runVerification,
+  formatVerificationSuffix,
+} from "../../hooks/shared/verify-moonbit.ts";
 
 const EXTREMELY_IMPORTANT_MARKER = "<EXTREMELY_IMPORTANT>";
 const BOOTSTRAP_MARKER = "moonbit-skills:using-moonbit-skills bootstrap for pi";
@@ -42,6 +59,7 @@ export default function moonbitSkillsPiExtension(pi: ExtensionAPI) {
     injectBootstrap = false;
   });
 
+  // Bootstrap injection on context event
   pi.on("context", async (event) => {
     if (!injectBootstrap) return;
     if (event.messages.some(messageContainsBootstrap)) return;
@@ -63,6 +81,29 @@ export default function moonbitSkillsPiExtension(pi: ExtensionAPI) {
         ...event.messages.slice(insertAt),
       ],
     };
+  });
+
+  // Post-tool verification: after write/edit on .mbt files
+  pi.on("tool_result", async (event) => {
+    if (!isWriteTool(event.toolName) || event.isError) return;
+
+    const input = event.input as Record<string, unknown>;
+    const filePath = String(input.file_path ?? input.path ?? "");
+    if (!filePath || !isMoonBitFile(filePath)) return;
+
+    const projectRoot = findMoonProjectRoot(filePath);
+    if (!projectRoot) return;
+
+    const results = await runVerification(projectRoot);
+    const { text, isError } = formatVerificationSuffix(results);
+
+    const content = event.content.map((c) => {
+      if (c.type === "text" && typeof c.text === "string") {
+        return { ...c, text: c.text + text };
+      }
+      return c;
+    });
+    return { content, isError };
   });
 }
 

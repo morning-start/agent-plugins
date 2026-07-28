@@ -7,11 +7,17 @@
  *
  * OMP only discovers hooks/pre/*.ts and hooks/post/*.ts — shell scripts
  * in the parent hooks/ directory are invisible to OMP.
+ *
+ * NOTE: The import path `@oh-my-pi/pi-coding-agent/extensibility/hooks` is
+ * speculative — OMP's TypeScript hook API is not yet publicly documented.
+ * When OMP publishes official docs, verify and update the import path
+ * and event names (session_start, session_before_compact, turn_end, context).
  */
 
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
 
 const BOOTSTRAP_MARKER = "moonbit-skills:using-moonbit-skills bootstrap for omp";

@@ -28,11 +28,22 @@ PI_DESCRIPTOR = ROOT / "package.json"
 # Pi extension file
 PI_EXTENSION = ROOT / ".pi" / "extensions" / "moonbit-skills.ts"
 
-# OMP TypeScript hook for session bootstrap
-OMP_HOOK = ROOT / "hooks" / "pre" / "session-start.ts"
+# OMP TypeScript hooks
+OMP_PRE_HOOK = ROOT / "hooks" / "pre" / "session-start.ts"
+OMP_POST_HOOK = ROOT / "hooks" / "post" / "verify-moonbit.ts"
 
 # OMP commands directory
 OMP_COMMANDS_DIR = ROOT / "commands"
+
+# Shared verification modules
+SHARED_VERIFY_TS = ROOT / "hooks" / "shared" / "verify-moonbit.ts"
+SHARED_VERIFY_SH = ROOT / "hooks" / "post-tool-verify.sh"
+
+# Platform-specific post-tool hook configs
+CODEX_HOOKS = ROOT / ".codex-plugin" / "hooks.json"
+CURSOR_HOOKS = ROOT / ".cursor-plugin" / "hooks.json"
+GEMINI_SETTINGS = ROOT / ".gemini" / "settings.json"
+OPENCODE_PLUGIN = ROOT / ".opencode" / "plugins" / "moonbit-verify.ts"
 
 # Fields that must be identical across all plugin.json descriptors
 SYNC_FIELDS = ("name", "version", "description")
@@ -209,6 +220,11 @@ def check_pi(pi: dict | None) -> list[str]:
         failures.append("package.json: missing pi.extensions field")
     elif not PI_EXTENSION.exists():
         failures.append(f"package.json: pi.extensions points to {PI_EXTENSION.name} but file does not exist")
+    else:
+        ext_content = PI_EXTENSION.read_text(encoding="utf-8")
+        if "session_start" not in ext_content:
+            failures.append(f"Pi extension: session_start handler not found in {PI_EXTENSION.relative_to(ROOT)}")
+        # Note: tool_result and shared/verify-moonbit checks are in check_post_tool_hooks()
     return failures
 
 
@@ -233,12 +249,24 @@ def check_nested_codex() -> list[str]:
 
 
 def check_omp() -> list[str]:
-    """Check OMP TypeScript hook and commands exist."""
+    """Check OMP TypeScript hooks and commands exist."""
     failures = []
-    if not OMP_HOOK.exists():
-        failures.append(f"OMP hook missing: {OMP_HOOK.relative_to(ROOT)}")
-    elif "session_start" not in OMP_HOOK.read_text(encoding="utf-8"):
-        failures.append(f"OMP hook: session_start handler not found in {OMP_HOOK.relative_to(ROOT)}")
+
+    # Pre-hook: session start bootstrap
+    if not OMP_PRE_HOOK.exists():
+        failures.append(f"OMP pre-hook missing: {OMP_PRE_HOOK.relative_to(ROOT)}")
+    elif "session_start" not in OMP_PRE_HOOK.read_text(encoding="utf-8"):
+        failures.append(f"OMP pre-hook: session_start handler not found in {OMP_PRE_HOOK.relative_to(ROOT)}")
+
+    # Post-hook: post-tool verification
+    if not OMP_POST_HOOK.exists():
+        failures.append(f"OMP post-hook missing: {OMP_POST_HOOK.relative_to(ROOT)}")
+    else:
+        post_content = OMP_POST_HOOK.read_text(encoding="utf-8")
+        if "tool_result" not in post_content:
+            failures.append(f"OMP post-hook: tool_result handler not found in {OMP_POST_HOOK.relative_to(ROOT)}")
+        if "shared/verify-moonbit" not in post_content:
+            failures.append(f"OMP post-hook: must import shared verification module in {OMP_POST_HOOK.relative_to(ROOT)}")
 
     if not OMP_COMMANDS_DIR.exists():
         failures.append(f"OMP commands directory missing: {OMP_COMMANDS_DIR.relative_to(ROOT)}")
@@ -246,6 +274,88 @@ def check_omp() -> list[str]:
         cmd_files = list(OMP_COMMANDS_DIR.glob("*.md"))
         if not cmd_files:
             failures.append(f"OMP commands directory empty: {OMP_COMMANDS_DIR.relative_to(ROOT)}")
+    return failures
+
+
+def check_post_tool_hooks() -> list[str]:
+    """Check post-tool verification hooks are configured on all platforms."""
+    failures = []
+
+    # Shared modules must exist
+    if not SHARED_VERIFY_TS.exists():
+        failures.append(f"Shared TS verify module missing: {SHARED_VERIFY_TS.relative_to(ROOT)}")
+    if not SHARED_VERIFY_SH.exists():
+        failures.append(f"Shared shell verify script missing: {SHARED_VERIFY_SH.relative_to(ROOT)}")
+
+    # Claude Code + Kimi Code: hooks.json must have PostToolUse event
+    hooks_json_path = ROOT / "hooks" / "hooks.json"
+    if hooks_json_path.exists():
+        hooks_data = json.loads(hooks_json_path.read_text(encoding="utf-8"))
+        hooks = hooks_data.get("hooks", {})
+        if "PostToolUse" not in hooks:
+            failures.append("hooks/hooks.json: missing PostToolUse event (Claude Code + Kimi Code)")
+        else:
+            # Verify it references post-tool-verify.sh
+            post_hooks = hooks["PostToolUse"]
+            found_verify = False
+            for entry in post_hooks:
+                for h in entry.get("hooks", []):
+                    cmd = h.get("command", "")
+                    if "post-tool-verify" in cmd:
+                        found_verify = True
+                        break
+            if not found_verify:
+                failures.append("hooks/hooks.json: PostToolUse does not reference post-tool-verify.sh")
+    else:
+        failures.append("hooks/hooks.json: file missing")
+
+    # Codex CLI: .codex-plugin/hooks.json must have PostToolUse
+    if CODEX_HOOKS.exists():
+        codex_data = json.loads(CODEX_HOOKS.read_text(encoding="utf-8"))
+        codex_hooks = codex_data.get("hooks", {})
+        if "PostToolUse" not in codex_hooks:
+            failures.append(f"{CODEX_HOOKS.relative_to(ROOT)}: missing PostToolUse event")
+    else:
+        failures.append(f"{CODEX_HOOKS.relative_to(ROOT)}: file missing")
+
+    # Cursor: .cursor-plugin/hooks.json must have afterFileEdit
+    if CURSOR_HOOKS.exists():
+        cursor_data = json.loads(CURSOR_HOOKS.read_text(encoding="utf-8"))
+        cursor_hooks = cursor_data.get("hooks", {})
+        if "afterFileEdit" not in cursor_hooks:
+            failures.append(f"{CURSOR_HOOKS.relative_to(ROOT)}: missing afterFileEdit event")
+    else:
+        failures.append(f"{CURSOR_HOOKS.relative_to(ROOT)}: file missing")
+
+    # Gemini CLI: .gemini/settings.json must have AfterTool
+    if GEMINI_SETTINGS.exists():
+        gemini_data = json.loads(GEMINI_SETTINGS.read_text(encoding="utf-8"))
+        gemini_hooks = gemini_data.get("hooks", {})
+        if "AfterTool" not in gemini_hooks:
+            failures.append(f"{GEMINI_SETTINGS.relative_to(ROOT)}: missing AfterTool event")
+    else:
+        failures.append(f"{GEMINI_SETTINGS.relative_to(ROOT)}: file missing")
+
+    # OpenCode: .opencode/plugins/moonbit-verify.ts must exist with tool.execute.after
+    if OPENCODE_PLUGIN.exists():
+        plugin_content = OPENCODE_PLUGIN.read_text(encoding="utf-8")
+        if "tool.execute.after" not in plugin_content:
+            failures.append(f"{OPENCODE_PLUGIN.relative_to(ROOT)}: missing tool.execute.after handler")
+        if "shared/verify-moonbit" not in plugin_content:
+            failures.append(f"{OPENCODE_PLUGIN.relative_to(ROOT)}: must import shared verification module")
+    else:
+        failures.append(f"{OPENCODE_PLUGIN.relative_to(ROOT)}: file missing")
+
+    # Pi: extension must have tool_result handler
+    if PI_EXTENSION.exists():
+        ext_content = PI_EXTENSION.read_text(encoding="utf-8")
+        if "tool_result" not in ext_content:
+            failures.append(f"{PI_EXTENSION.relative_to(ROOT)}: missing tool_result handler")
+        if "shared/verify-moonbit" not in ext_content:
+            failures.append(f"{PI_EXTENSION.relative_to(ROOT)}: must import shared verification module")
+    else:
+        failures.append(f"{PI_EXTENSION.relative_to(ROOT)}: file missing")
+
     return failures
 
 
@@ -268,6 +378,7 @@ def main() -> int:
     failures.extend(check_pi(pi))
     failures.extend(check_nested_codex())
     failures.extend(check_omp())
+    failures.extend(check_post_tool_hooks())
 
     if failures:
         total = len(plugin_descriptors) + (1 if gemini else 0) + (1 if opencode else 0) + (1 if pi else 0)
