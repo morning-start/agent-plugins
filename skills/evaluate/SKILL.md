@@ -9,23 +9,37 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 
 最终验收 + 发布准备。**Agent 委托 verify 做门禁→按项目类型执行专属验证→生成文档/CI→用户决定是否发布。**
 
+## The Iron Law
+
+```
+NO PUBLISH WITHOUT FULL VERIFICATION
+```
+
+发布前必须通过 `moonbit-verify` 全量门禁（H1-H5）+ 类型专属验证。任何硬性检查失败则阻断发布，不得跳过。
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the evaluate contract:
+
+- 跳过 verify 直接做发布准备（"刚才已经跑过测试了"）
+- 替用户决定版本号
+- 未展示 CI/README diff 就直接写入
+- 覆盖用户已有的 CI 配置而不询问
+- verify 失败后仍声称"可以发布"
+
+**All of these mean: Stop. Re-run verify first.**
+
+## 停止条件
+
+- verify 硬性检查（H1-H5）未通过 → 返回 implement 修复，不继续发布
+- 用户未确认版本号 → 等待用户输入
+- 临时 consumer 编译失败（lib 项目）→ 报告错误，阻断发布
+- `moon run` 失败或输出为空（main 项目）→ 报告错误，阻断发布
+- 用户说"再改改" → 返回 implement
+
 ## 项目类型检测
 
-```bash
-# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
-MAIN_DETECTED=false
-for f in moon.pkg cmd/main/moon.pkg src/main/moon.pkg; do
-  if [ -f "$f" ]; then
-    if grep -q 'pkgtype(kind: "executable")' "$f" 2>/dev/null; then
-      MAIN_DETECTED=true; break
-    fi
-    if grep -q '"is-main": true' "$f" 2>/dev/null; then
-      MAIN_DETECTED=true; break
-    fi
-  fi
-done
-PROJECT_TYPE=$([ "$MAIN_DETECTED" = true ] && echo "main" || echo "lib")
-```
+检测逻辑详见 [`references/type-detection.md`](../references/type-detection.md)，与 verify 共用同一份检测逻辑，避免漂移。
 
 类型决定发布验证路径的差异。
 
@@ -39,20 +53,14 @@ PROJECT_TYPE=$([ "$MAIN_DETECTED" = true ] && echo "main" || echo "lib")
 | 代码格式正确 | `moon fmt --check` | 是 |
 | 类型检查无警告 | `moon check --warn-list +73` | 是 |
 | 所有测试通过 | `moon test --target native` | 是 |
-| 无意外改动 | `git diff --exit-code` | 是 |
+| 无意外改动 | `git status --porcelain` | 是 |
 | 用户确认版本号 | 用户输入 | 是 |
 
 ### MAIN 项目（可执行程序）专属验证
 
 ```bash
-# 1. 确认 moon.pkg 有 main 声明
-if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
-  :
-elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
-  :
-else
-  fail("main projects must declare pkgtype(kind: \"executable\")")
-fi
+# 1. 项目类型检测：见 references/type-detection.md（与 verify 共用，避免漂移）
+# main 项目进入此分支后，执行以下验证：
 
 # 2. 验证可运行
 moon run .                        # exit 0 为通过
@@ -73,20 +81,7 @@ OUTPUT=$(moon run . 2>&1)
 test -f moon.mod || fail("moon.mod missing")
 test -f moon.pkg || fail("moon.pkg missing")
 
-# 2. 验证可被外部消费：临时 consumer
-TMP_DIR=$(mktemp -d)
-cat > "$TMP_DIR/moon.mod" << 'EOF'
-module "consumer_test"
-EOF
-mkdir -p "$TMP_DIR/src"
-cat > "$TMP_DIR/src/moon.pkg" << 'EOF'
-EOF
-cat > "$TMP_DIR/moon.work" << EOF
-use "$(cd .. && pwd)"
-EOF
-(cd "$TMP_DIR" && moon check 2>&1) || fail("library cannot be consumed")
-rm -rf "$TMP_DIR"
-
+# 2. 验证可被外部消费：临时 consumer 编译验证脚本见 references/type-detection.md（与 verify 共用，避免漂移）
 # 3. 验证跨平台兼容
 moon check --target all
 
@@ -201,3 +196,14 @@ jobs:
 ## 下一步
 
 发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| verify 未通过 | 硬性检查失败 | 返回 `moonbit-implement` 修复 |
+| `moon run` 失败 | main 包声明或代码错误 | 检查 `moon.pkg` 的 `pkgtype(kind: "executable")`，修复后重试 |
+| 临时 consumer 编译失败 | 库依赖不可解析 | 检查 `moon.mod` 和模块结构，修复后重试 |
+| `moon check --target all` 失败 | 跨平台兼容问题 | 报告失败的目标平台，用户决定是否继续 |
+| CI 配置已存在 | 用户拒绝覆盖 | 展示 diff，用户批准后合并 |
+| `moon-audit` 不可用 | 命令未找到 | `moon add minie135/moon-audit`，非阻断 |

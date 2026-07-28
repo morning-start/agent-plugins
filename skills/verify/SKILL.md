@@ -7,7 +7,7 @@ description: "Use when running MoonBit verification gates — before claiming an
 
 ## 职责
 
-一站式验证管道，覆盖代码质量、API 设计、性能、安全、CI 完整性六大维度。**按项目类型（main可执行程序 / library库）分路径校验。** L1/L2 自动触发（git hooks），L3 全面检查（用户手动调用）。
+一站式验证管道，覆盖代码质量、工作区干净、API 设计、性能、安全、CI 完整性六大维度。**按项目类型（main可执行程序 / library库）分路径校验。** L1/L2 自动触发（git hooks），L3 全面检查（用户手动调用）。
 
 ## The Iron Law
 
@@ -17,26 +17,28 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 验证命令执行后，确认 workspace 未产生非预期副作用。对于已知产物（如 `pkg.generated.mbti`）使用 allowlist，不触发阻断。
 
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the verify contract:
+
+- 声称"看起来没问题"而不执行命令（"刚才跑过了"）
+- 跳过失败的硬性检查（"H4 只是工作区检查，不重要"）
+- 用旧结果替代新鲜验证（"上次跑的时候通过了"）
+- 自动修复涉及 public API 的问题而不报告
+- 不区分 main/lib 项目类型，统一用一套验证
+
+**All of these mean: Stop. Run fresh verification.**
+
+## 停止条件
+
+- 任一硬性检查（H1-H5）失败 → 阻断，修复后重跑
+- 类型专属检查（H6/H7）失败 → 阻断，报告具体错误
+- 验证命令产生非预期副作用（allowlist 外的文件改动）→ 报告，由用户决定
+- 工具链不可用（`moon` 命令缺失）→ 报告，不声称验证通过
+
 ## 项目类型检测
 
-进入验证前，先检测项目类型：
-
-```bash
-# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
-# 在主目录或子目录（cmd/main, src/main）中检测
-MAIN_DETECTED=false
-for f in moon.pkg cmd/main/moon.pkg src/main/moon.pkg; do
-  if [ -f "$f" ]; then
-    if grep -q 'pkgtype(kind: "executable")' "$f" 2>/dev/null; then
-      MAIN_DETECTED=true; break
-    fi
-    if grep -q '"is-main": true' "$f" 2>/dev/null; then
-      MAIN_DETECTED=true; break
-    fi
-  fi
-done
-PROJECT_TYPE=$([ "$MAIN_DETECTED" = true ] && echo "main" || echo "lib")
-```
+进入验证前，先检测项目类型。检测逻辑详见 [`references/type-detection.md`](../references/type-detection.md)，此处不再重复以避免漂移。
 
 类型决定验证路径的差异。
 
@@ -58,7 +60,7 @@ moon fmt                        # 失败时自动修复
 ### H2. 类型安全
 
 ```bash
-moon check --warn-list +73      # 类型安全 + 全部警告检查
+moon check --warn-list +73      # 类型安全 + 启用 E0073 无条件递归警告
 moon explain --diagnostic E#### # 失败时定位具体错误
 ```
 
@@ -107,19 +109,13 @@ moon info --target native | grep "pub(all)"
 
 ## 项目类型专属硬性要求
 
-### MAIN 项目（可执行程序）额外检查
+### H6. MAIN 项目（可执行程序）额外检查
 
 ```bash
-# 验证 main 包声明正确
-if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
-  :
-elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
-  :
-else
-  fail("moon.pkg must declare pkgtype(kind: \"executable\") for executable projects")
-fi
+# 项目类型检测：见 references/type-detection.md（与 evaluate 共用，避免漂移）
+# main 项目进入此分支后，执行以下验证：
 
-# 验证可运行（需要显式包路径：moon run ./cmd/main 或 moon run .）
+# 验证可运行（moon run . 运行当前目录主包；若主包在子目录则用 moon run ./cmd/main）
 moon run .                        # exit 0 为通过
 
 # 验证输出不为空
@@ -128,33 +124,15 @@ moon run . 2>&1 | grep -q "." || fail("moon run produced no output")
 
 **判定标准：** `moon run` exit 0 且有 stdout 输出。
 
-### LIB 项目（library 库）额外检查
+### H7. LIB 项目（library 库）额外检查
 
 ```bash
 # 验证模块结构正确
 test -f moon.mod || fail("moon.mod is required")
 test -f moon.pkg || fail("moon.pkg is required")
 
-# 验证可被外部消费：创建临时 consumer 并导入
-TMP_DIR=$(mktemp -d)
-cat > "$TMP_DIR/moon.mod" << 'EOF'
-module "consumer_test"
-EOF
-mkdir -p "$TMP_DIR/src"
-cat > "$TMP_DIR/src/moon.pkg" << 'EOF'
-EOF
-cat > "$TMP_DIR/src/main.mbt" << 'EOF'
-fn main {
-  println("consumer test")
-}
-EOF
-cat > "$TMP_DIR/moon.work" << EOF
-use "$(cd .. && pwd)"
-EOF
-
-# 编译 consumer 验证依赖可解析
-(cd "$TMP_DIR" && moon check 2>&1) || fail("library cannot be consumed by external project")
-rm -rf "$TMP_DIR"
+# 临时 consumer 编译验证脚本见 references/type-detection.md（与 evaluate 共用，避免漂移）
+# 执行该脚本验证当前 library 可被外部项目消费
 ```
 
 **判定标准：** 临时 consumer 编译通过，验证当前 library 可被外部项目消费。

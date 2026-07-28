@@ -42,6 +42,13 @@ If you catch yourself thinking any of these, you are violating TDD:
 
 **All of these mean: Delete code. Start over with TDD.**
 
+## 停止条件
+
+- 3 次自动修复全部失败 → 停止，向用户展示失败历史和当前状态，请求方向
+- 变更涉及 public API、ABI、WASM 导出或 C 所有权 → 停止自动修复，请求用户确认
+- 工具链报错无法通过 `moon explain` 解决 → 报告错误码和上下文，请求用户介入
+- 测试无法编写（设计缺陷导致不可测试）→ 报告问题，建议回到 plan 重新设计 API
+
 ## Common Rationalizations
 
 | Excuse | Reality |
@@ -65,18 +72,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 
 ## 项目类型检测
 
-进入 TDD 前，先检测项目类型：
-
-```bash
-# 检测项目类型：优先 pkgtype(kind: "executable") 新格式，兼容旧 "is-main": true
-if grep -q 'pkgtype(kind: "executable")' moon.pkg 2>/dev/null; then
-  PROJECT_TYPE="main"
-elif grep -q '"is-main": true' moon.pkg 2>/dev/null; then
-  PROJECT_TYPE="main"
-else
-  PROJECT_TYPE="lib"
-fi
-```
+进入 TDD 前，先检测项目类型。检测逻辑详见 [`references/type-detection.md`](../references/type-detection.md)，与 verify 共用同一份检测逻辑，避免漂移。
 
 类型决定 TDD 验证链路的差异。
 
@@ -85,7 +81,7 @@ fi
 | 类型 | 项目分类 | 验证目标 | 额外验证 |
 |------|---------|---------|---------|
 | lib | library | `moon test --target native` | `moon check --target all` 跨平台 |
-| cli | main | `moon test --target native` | `moon run` 验证可执行 + stdout 输出 |
+| cli | main | `moon test --target native` | `moon run .` 验证可执行 + stdout 输出 |
 | c-ffi | library | `moon check --target native` | — |
 | wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` |
 | parser | library | `moon test --target native` | valid/invalid/edge 分类测试 |
@@ -110,14 +106,7 @@ moon fmt --check && moon check --warn-list +73 && moon test
 
 ## 常见类型错误速查
 
-| 现象 | 原因 | 修复 |
-|------|------|------|
-| `String[i]` 类型不匹配 | `String[i]` 返回 `UInt16`（编码点数值），不是 `Char` | 用 `Char::from_int(s[i].to_int())` 转换后再使用 |
-| `Json` 没有 `unwrap` 方法 | `@json.parse` 返回 `Json`，不是 `Result` | 直接使用 `@json.parse(s)`，错误处理用 `try/catch` |
-| `Error` 构造器歧义 | 多个枚举同名变体 | 用 `Type::Variant` 显式消歧：`FinishReason::Error` |
-| Char→String 得到数字 | `UInt16.to_string()` 输出数值字符串 | 先 `Char::from_int(s[i].to_int())`，再插值 `"\{ch}"` |
-| `for (k, v) in map` 解析错误 | `for` 循环不支持元组解构 | `for entry in map { match entry { (k, v) => ... } }` |
-| `match` 嵌套在 `+` 中报错 | MoonBit 不允许 `+` 操作数内直接嵌套 `match` | 先提取 `let part = match ... { ... }`，再拼接 |
+常见类型陷阱（如 `String[i]` 返回 `UInt16` 而非 `Char`、`@json.parse` 返回 `Json` 而非 `Result`、同名枚举构造器歧义、`for` 不支持元组解构、`match` 嵌套在 `+` 中等）详见 `references/idioms.md` 的"常见陷阱"章节，此处不再重复以避免漂移。
 
 ## 快速任务模式
 
@@ -157,6 +146,20 @@ moon fmt --check && moon check --warn-list +73 && moon test
   "next": "implement | evaluate"
 }
 ```
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| `moon test -f "test_name"` 失败 | 断言不匹配或实现逻辑错误 | 检查 inspect! 期望内容，修正实现；3 次失败后停止问用户 |
+| `moon check` 类型错误 | 类型签名不匹配、未推断、不可达分支 | `moon explain --diagnostic E####` 定位，按错误码查 `references/error-codes.json` |
+| `moon fmt --check` 失败 | 格式不规范 | `moon fmt` 自动修复，重新检查 |
+| `moon run .` 失败（main 项目） | main 包声明缺失或运行时 panic | 检查 `moon.pkg` 的 `pkgtype(kind: "executable")`，排查边界/空值 |
+| 临时 consumer 编译失败（lib 项目） | 对外 API 不完整或导出符号不可达 | 检查 `pub` 可见性、跨包构造器是否用 `pub(all) enum` |
+| 3 次自动修复全部失败 | 理解偏差或设计缺陷 | 停止，向用户展示失败历史，请求方向或回到 `moonbit-plan` 重新设计 |
+| 变更涉及 public API/ABI/WASM 导出/C 所有权 | 影响发布契约 | 停止自动修复，请求用户确认后再继续 |
+| 工具链报错且 `moon explain` 无法解决 | 编译器内部错误或工具链 bug | 报告错误码和上下文，请求用户介入 |
+| 测试无法编写（设计缺陷） | 不可测试的 API 设计 | 报告问题，建议回到 `moonbit-plan` 简化 API |
 
 ## 下一步
 
