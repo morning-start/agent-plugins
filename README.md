@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills — 你决策，Agent 执行。7 个 AI Agent 技能覆盖 MoonBit 项目全生命周期。">
+  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills — 你决策，Agent 执行。9 个 AI Agent 技能覆盖 MoonBit 项目全生命周期。">
 </p>
 
-这套技能帮助你在 AI Agent（AtomCode、Claude Code、Codex 等）的辅助下开发 MoonBit 项目。**你负责做决策，Agent 负责写代码、跑测试、修 bug。**
+这套技能帮助你在 AI Agent（AtomCode、Claude Code、Codex、Cursor 等）的辅助下开发 MoonBit 项目。**你负责做决策，Agent 负责写代码、跑测试、修 bug。**
 
 ---
 
 <p align="center">
-  <img src="./assets/readme/workflow.svg" width="100%" alt="5 个典型工作流场景：从零开始、修复 bug、代码质量检查、配置 git hooks、自我进化">
+  <img src="./assets/readme/workflow.svg" width="100%" alt="完整开发管线：plan → writing-plans → scaffold → implement(code-review) → verify → evaluate + 独立技能 init/learn">
 </p>
 
 ---
@@ -21,7 +21,9 @@
 ```
 "帮我初始化这个 MoonBit 项目，配好 git hooks"   → 自动触发 moonbit-init
 "我想写一个 TOML 解析器"                         → 自动触发 moonbit-plan
+"帮我拆成实现任务"                                → 自动触发 moonbit-writing-plans
 "开始写代码吧"                                   → 自动触发 moonbit-implement
+"审查一下这段代码"                                → 自动触发 moonbit-code-review
 "检查一下代码有没有问题"                          → 自动触发 moonbit-verify
 "准备发布了"                                     → 自动触发 moonbit-evaluate
 "记住这个 bug，下次别再踩坑了"                    → 自动触发 moonbit-learn
@@ -32,19 +34,15 @@
 ---
 
 <p align="center">
-  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 作为 AI Agent 插件安装，装完即用">
+  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 支持 7 个 AI Agent 平台，装完即用">
 </p>
 
-本仓库可作为 **AtomCode** 和 **Claude Code** 的插件安装，装完后 7 个技能自动注册到 `/` 菜单。
+本仓库可作为多种 AI Agent 的插件安装，装完后 9 个技能自动注册到 `/` 菜单。
 
 ### AtomCode
 
 ```bash
 # 方式一：交互式（推荐）
-# 在 TUI 中输入 /plugin → Add marketplace → 输入仓库 URL → 选中安装
-/plugin
-
-# 方式二：命令行
 /plugin marketplace add https://github.com/morning-start/moonbit-skills
 /plugin install moonbit-skills@moonbit-skills
 
@@ -55,24 +53,51 @@ atomcode plugin trust moonbit-skills
 ### Claude Code
 
 ```bash
-# 方式一：交互式（推荐）
-/claude plugin
+# 官方市场（推荐）
+/plugin install moonbit-skills@claude-plugins-official
 
-# 方式二：命令行
-/claude plugin marketplace add https://github.com/morning-start/moonbit-skills
-/claude plugin install moonbit-skills@morning-start
+# 或自定义市场
+/plugin marketplace add https://github.com/morning-start/moonbit-skills
+/plugin install moonbit-skills@morning-start
+```
+
+### Cursor
+
+```bash
+# 在 Cursor Agent 聊天中安装
+/add-plugin moonbit-skills
+```
+
+### Codex CLI / Codex App
+
+```bash
+# 在 Codex CLI 中搜索安装
+/plugins → 搜索 "moonbit-skills" → Install Plugin
+```
+
+### Kimi Code
+
+```bash
+# 在 Kimi Code 插件管理器中安装
+/plugins → 市场 → moonbit-skills → 安装
+```
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/morning-start/moonbit-skills
 ```
 
 ### 装完之后的体验
 
-- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 7 个带命名空间的 skill
+- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 9 个带命名空间的 skill
 - Agent（模型）也可以通过 `use_skill` 工具自动调用这些技能，不需要手动选
 - 当你说"我要做一个 MoonBit 项目"时，技能会自动触发，从 `moonbit-plan` 开始引导对话
 
 ---
 
 <p align="center">
-  <img src="./assets/readme/section-skills.svg" width="100%" alt="七个技能详解 — init, plan, scaffold, implement, verify, evaluate, learn">
+  <img src="./assets/readme/section-skills.svg" width="100%" alt="九个技能详解 — init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn">
 </p>
 
 ### 1. moonbit-init — 给项目装上质量门禁
@@ -89,7 +114,7 @@ atomcode plugin trust moonbit-skills
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
-| 新项目没想好架构；模糊想法需梳理；多方案决策 | 已有设计方案只想写代码（跳到 implement）；修小 bug；简单改代码 | 描述尽量具体；"我不确定"没问题—Agent 给选项；对 API 有想法直接说 | 需求太模糊会问很多问题；不支持 GUI 设计；架构基于内置模式 |
+| 新项目没想好架构；模糊想法需梳理；多方案决策 | 已有设计方案只想写代码（跳到 writing-plans）；修小 bug；简单改代码 | 描述尽量具体；"我不确定"没问题—Agent 给选项；对 API 有想法直接说 | 需求太模糊会问很多问题；不支持 GUI 设计；架构基于内置模式 |
 
 **项目类型识别：**
 
@@ -102,7 +127,15 @@ atomcode plugin trust moonbit-skills
 | "HTTP 服务" | async | 高层服务？TLS？ |
 | "库/lib/包" | lib | 核心功能？API 最小表面？ |
 
-### 3. moonbit-scaffold — 生成项目骨架
+### 3. moonbit-writing-plans — 把设计变成可执行任务
+
+**能力**：将 plan 阶段确认的设计拆解为一个个 2-5 分钟的 TDD 实现任务，每任务含完整代码、测试、验证步骤。
+
+| 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
+|-----------|---------------|-----------|---------|
+| plan 结束后需要拆任务；复杂功能需分步实现；团队需可追溯的执行计划 | 只有一个人快速迭代；任务已经是原子粒度；频繁变更设计 | 在 plan 完成后自动触发；审视每个任务粒度是否合适 | 依赖 plan 的质量；任务粒度需用户确认 |
+
+### 4. moonbit-scaffold — 生成项目骨架
 
 **能力**：根据 plan 阶段确认的项目类型，从模板生成最小可构建的项目骨架。
 
@@ -117,9 +150,9 @@ atomcode plugin trust moonbit-skills
 | c-ffi | `templates/c-ffi/` | moon.mod, moon.pkg, ffi.mbt |
 | wasm | `templates/wasm/` | moon.mod, moon.pkg, ffi.mbt, test.mbt |
 
-### 4. moonbit-implement — TDD 方式写代码
+### 5. moonbit-implement — TDD 方式写代码
 
-**能力**：Agent 按 TDD 逐个任务实现功能：先写测试 → 写实现 → 验证，失败时自动修复（最多 3 次）。
+**能力**：Agent 按 TDD 逐个任务实现功能：先写测试 → 写实现 → 验证，失败时自动修复（最多 3 次）。内置 **Iron Law**（无测试不写代码）和 **Red Flags** 约束机制防止走捷径。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
@@ -136,9 +169,17 @@ atomcode plugin trust moonbit-skills
 | parser | valid/invalid/edge 三类用例 |
 | async | 协程测试、超时、取消 |
 
-### 5. moonbit-verify — 一站式质量检查
+### 6. moonbit-code-review — 代码审查门禁
 
-**能力**：跑全量验证管道 — 代码审查 + 格式检查 + 类型检查 + 测试 + 安全审计。
+**能力**：在每个实现任务完成后执行代码审查，按严重程度（Critical / Important / Minor）分类报告问题，自动修复机械性问题。
+
+| 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
+|-----------|---------------|-----------|---------|
+| 每个 implement 任务完成后；合并前做最终审查；不确定代码质量 | 还在实现过程中；已经通过 verify 全量检查 | 在 implement 每任务后自动触发；快速定位规范问题 | 自动修复限于机械性问题；不适用于架构级审查 |
+
+### 7. moonbit-verify — 一站式质量检查
+
+**能力**：跑全量验证管道 — 格式检查 + 类型检查 + 测试 + 安全审计。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
@@ -146,13 +187,14 @@ atomcode plugin trust moonbit-skills
 
 | 步骤 | 命令 | 做什么 |
 |------|------|--------|
-| 代码审查 | `moon check --warn-list +73` | 惯用写法、潜在问题 |
+| 代码审查 | 委托 `moonbit-code-review` | 逐项代码规范检查 |
 | 格式检查 | `moon fmt --check` | 代码风格一致性 |
+| 类型检查 | `moon check --warn-list +73` | 类型安全 + 警告 |
 | 单元测试 | `moon test --target native` | 全部测试通过 |
 | API 稳定性 | `moon info --target native` | 公共 API 无意外变更 |
 | 安全审计 | `moon-audit pipeline .` | 14 条 CWE 规则扫描 |
 
-### 6. moonbit-evaluate — 验收 + 发布准备
+### 8. moonbit-evaluate — 验收 + 发布准备
 
 **能力**：做最终验收，生成 README 文档和 CI 配置，准备发布。
 
@@ -162,7 +204,7 @@ atomcode plugin trust moonbit-skills
 
 **发布前检查清单：** `moon test` ✓ → `moon info` ✓ → 版本号确认 → `moon publish`
 
-### 7. moonbit-learn — 从错误中学习，自我优化
+### 9. moonbit-learn — 从错误中学习，自我优化
 
 **能力**：遇到 bug 时不存档，直接分析原因 → 归类 → 更新对应的技能或参考文件，让技能系统持续进化。
 
@@ -181,12 +223,18 @@ atomcode plugin trust moonbit-skills
 ---
 
 <p align="center">
-  <img src="./assets/readme/section-faq.svg" width="100%" alt="常见问题 — 技能管线、使用门槛、Windows 兼容性">
+  <img src="./assets/readme/section-faq.svg" width="100%" alt="常见问题 — 技能管线、使用门槛、Windows 兼容性、多平台支持">
 </p>
 
 ### 我必须要按顺序走完所有技能吗？
 
-不需要。技能管线是推荐流程，不是强制流程。你可以跳过 scaffold（项目已存在）、跳过 plan（已想清楚）、在 implement 和 verify 之间来回迭代、不需要发布则永远不用 evaluate。
+不需要。技能管线是推荐流程，不是强制流程：
+
+```
+Plan → [Writing-Plans] → Scaffold → Implement → [Code-Review] → Verify → Evaluate
+```
+
+你可以跳过 scaffold（项目已存在）、跳过 plan（已想清楚）、在 implement 和 verify 之间来回迭代、不需要发布则永远不用 evaluate。Code-review 在每 implement 任务后自动执行。
 
 ### 我不是 MoonBit 专家，能用到什么程度？
 
@@ -195,15 +243,29 @@ atomcode plugin trust moonbit-skills
 ### 这些技能会改我的代码吗？
 
 - `moonbit-plan`：只生成文档，不改代码
+- `moonbit-writing-plans`：只生成计划文档，不改代码
 - `moonbit-scaffold`：生成新文件，不覆盖已有
 - `moonbit-implement`：写代码，但每步都展示给你看
+- `moonbit-code-review`：只报告问题，机械性问题可自动修复
 - `moonbit-verify`：默认只报告问题，不自动改（除非你让改）
 - `moonbit-learn`：直接更新技能文件（追加不删除）
 - `moonbit-evaluate`：生成文档和 CI，不改业务代码
 
+### 支持哪些 AI Agent 平台？
+
+| 平台 | 安装方式 |
+|------|---------|
+| AtomCode | 插件市场安装 |
+| Claude Code | 官方市场 / 自定义市场 |
+| Cursor | `/add-plugin` |
+| Codex CLI / Codex App | `/plugins` 市场 |
+| Kimi Code | 插件管理器 |
+| Gemini CLI | `gemini extensions install` |
+| OpenCode | 指令引用 |
+
 ### Windows 能用吗？
 
-大部分可以。git hooks 脚本是 bash 的，Windows 上需要 Git Bash 或 WSL 才能执行。
+大部分可以。git hooks 脚本是 bash 的，Windows 上需要 Git Bash 或 WSL 才能执行。插件安装和技能使用不受影响。
 
 ### 需要安装什么前置条件？
 
