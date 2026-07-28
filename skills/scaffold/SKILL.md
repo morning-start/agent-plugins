@@ -11,6 +11,33 @@ description: "Use when generating a MoonBit project skeleton. Triggered by user 
 
 **核心原则：拒绝固定模板，按需动态生成。**
 
+## The Iron Law
+
+```
+NO TEMPLATES — DYNAMICALLY GENERATE
+```
+
+禁止使用预置模板文件。所有项目文件必须根据 `project_type` 和 `package_name` 动态生成，确保内容与 MoonBit 工具链版本和用户配置一致。
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the scaffold contract:
+
+- 复制模板文件而非动态生成
+- 覆盖用户已有的文件而不询问
+- 生成后不验证（"骨架肯定没问题"）
+- 用占位符填充未确认的值（"TODO: 填入包名"）
+- 生成的代码包含过时语法（如 `module "xxx"` 旧格式）
+
+**All of these mean: Stop. Generate fresh from the type definition.**
+
+## 停止条件
+
+- 项目类型未知（不在 lib/cli/c-ffi/wasm 中）→ 让用户从列表中选择
+- `moon` 命令不可用 → 报告工具链缺失，不声称验证通过
+- 占位符替换不完整 → 检查生成文件，确保 `{` 字符无残留
+- 验证失败（fmt/check/test 任一不通过）→ 显示失败命令，不继续
+
 ## 生成流程
 
 ### 1. 确认输入
@@ -154,7 +181,7 @@ test "version" {
 
 ```bash
 moon fmt --check
-moon check --target native
+moon check --target native --warn-list +73
 moon test --target native
 ```
 

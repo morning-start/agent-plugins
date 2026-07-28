@@ -19,6 +19,25 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 设计完成后直接跳进实现？**停下来。先写计划。**
 
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the writing-plans contract:
+
+- 任务中用占位符代替实际代码（"TODO: 实现解析逻辑"）
+- 任务粒度过大（"实现整个解析器"）
+- 用"参照 task 2"代替具体接口签名
+- 跳过验证步骤（"这个任务不需要测试"）
+- 不标注文件操作类型（Create/Modify/Test）
+
+**All of these mean: Stop. Make each task independently verifiable.**
+
+## 停止条件
+
+- 设计文档（plan 输出）未确认 → 等待 plan 完成
+- 任务拆解后用户认为粒度不合适 → 调整后重新输出
+- 需求中存在无法拆解的模糊点 → 标记为 blocked，请求澄清
+- 计划文档保存失败（目录不存在）→ 创建 `docs/plans/` 目录，重试
+
 ## 输入
 
 从 `moonbit-plan` 输出获取：
@@ -130,3 +149,13 @@ src/
 ## 下一步
 
 计划确认后，进入 `moonbit-implement` 开始逐个任务实现。
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| 设计文档不存在 | 缺少 `docs/requirements.md` | 提示先执行 `moonbit-plan` |
+| 任务拆解不完整 | 用户指出遗漏 | 补充缺失任务，重新编号 |
+| 计划文档保存失败 | 目录不存在 | 创建 `docs/plans/` 目录 |
+| 任务间依赖不清晰 | 用户无法确定执行顺序 | 标注依赖关系，按拓扑排序 |
+| API 签名不明确 | plan 输出信息不足 | 回到 plan 补充 API 细节 |

@@ -16,6 +16,14 @@ IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
 This is not negotiable. You cannot rationalize your way out of this.
 </EXTREMELY-IMPORTANT>
 
+## The Iron Law
+
+```
+ALWAYS CHECK SKILL BEFORE ANY ACTION
+```
+
+在任何响应或操作之前，必须先检查是否有匹配的技能。包括澄清问题、探索代码库、文件检查。如果技能存在，必须使用。
+
 ## The Rule
 
 **Invoke relevant skills BEFORE any response or action** — including clarifying questions, codebase exploration, or file checks. If it turns out wrong for the situation, you don't have to use it.
@@ -47,7 +55,7 @@ When multiple skills match, route by intent:
 | "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
 | "scaffold", "generate", "skeleton" | "骨架", "模板", "生成" | `moonbit-scaffold` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
-| "review", "code review", "audit" | "审查", "评审", "检查" | `moonbit-code-review` |
+| "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
 | "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
@@ -68,6 +76,21 @@ These thoughts mean STOP — you are rationalizing:
 | "I don't need a skill for this" | If a skill exists, use it. |
 | "Let me gather information first" | Skills tell you HOW to gather information. |
 | "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+
+## 停止条件
+
+- 无法匹配任何技能且不属于 MoonBit 领域 → 声明 "This scenario is not covered by current skills"，建议提交 issue
+- 匹配到技能但技能文件不可用 → 报告缺失的技能，回退到 references/ 知识库
+- 多个技能同时匹配且无法通过优先级消歧 → 列出匹配的技能，让用户选择
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| 路由匹配失败 | 触发词不明确或多义 | 展示候选技能列表，让用户选择 |
+| 目标技能文件不存在 | 技能路径错误 | 回退到 `references/` 知识库，标记缺失技能 |
+| 技能加载后执行失败 | 技能内部错误 | 报告失败技能和原因，尝试降级方案 |
+| 意图识别错误 | 用户说"不是这个意思" | 重新分类，使用修正后的技能 |
 
 ## Pipeline (recommended flow)
 

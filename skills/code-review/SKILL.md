@@ -11,6 +11,31 @@ description: "Use when requesting code review between implementation tasks, afte
 
 **核心原则：早审查，常审查。** 每个 implement 任务完成后都做一次审查。
 
+## The Iron Law
+
+```
+REVIEW REAL CODE, NOT ASSUMPTIONS
+```
+
+审查必须基于实际代码和 diff，不审查假设或想象中的实现。**Critical 问题必须在继续下一个任务前处理或由用户明确接受。**
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the review contract:
+
+- 跳过测试审查（"测试都通过了，不用看测试质量"）
+- 只看测试是否通过，不看代码质量、可读性与设计
+- 未检查公共 API 变更（`pub` 可见性、导出符号、ABI）
+- 审查想象中的代码而非实际 diff
+- 把 Critical 问题降级为 Minor 以"先继续"
+
+**All of these mean: Stop. Re-scope the review.**
+
+## 停止条件
+
+- 发现 **Critical** 问题（编译错误、测试失败）时立即停止自动修复，报告给用户，由用户决定下一步。
+- 发现涉及 public API、ABI、WASM 导出或 C 所有权变更时停止自动修复，请求用户确认。
+
 ## 审查流程
 
 ### 1. 收集变更
@@ -101,3 +126,14 @@ moon test --target native
 ## 下一步
 
 审查通过后，可以进入 `moonbit-verify` 做全量门禁检查，或返回 `moonbit-implement` 继续下一个任务。
+
+## 错误恢复
+
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| `git diff` 为空 | 无变更可审查 | 确认任务已完成，跳过审查 |
+| `moon fmt --check` 失败 | 格式问题 | `moon fmt` 自动修复，重新检查 |
+| `moon check` 失败 | 类型错误 | `moon explain --diagnostic E####` 定位 |
+| `moon test` 失败 | 测试回归 | 对比上一次通过的测试结果，回滚或修复 |
+| 审查范围过大 | diff 超过 500 行 | 建议拆分为多个小任务分别审查 |
+| 自动修复引入新问题 | 修复后验证失败 | 回滚修复，仅报告问题，由用户手动处理 |

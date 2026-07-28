@@ -48,6 +48,33 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 
 `primary_type` 决定脚手架；`capabilities` 决定依赖、目录和测试；`targets` 决定验证矩阵。
 
+## The Iron Law
+
+```
+NO CODE WITHOUT APPROVED DESIGN
+```
+
+设计未获用户批准前，不得写任何实现代码。架构决策、API 签名、目标平台必须由用户确认。
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the plan contract:
+
+- 跳过分类直接给方案（"看起来就是个 CLI 工具"）
+- 替用户做架构决策（"我帮你选了递归下降"）
+- 不展示选项对比，只给一个方案
+- 用户说"随便"就直接决定
+- 需求模糊时不追问，凭猜测填充
+
+**All of these mean: Stop. Ask the user.**
+
+## 停止条件
+
+- 需求完全无法分类（不属于 cli/c-ffi/wasm/parser/async/lib 任一类型）→ 展示类型矩阵，让用户选择
+- 用户无法决定架构方向 → 列出每个选项的优缺点，等待用户决策
+- 用户描述的 API 自相矛盾 → 指出矛盾点，请求澄清
+- 缺少关键信息（如包名、目标平台）且用户无法提供 → 标记为 blocked
+
 ## 执行流程
 
 ### 1. 分类 + 追问

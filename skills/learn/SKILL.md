@@ -20,6 +20,34 @@ description: "Use when learning from bugs and updating the MoonBit skill system.
 | 用户指出一个之前没见过的 MoonBit 陷阱 | 手动触发 |
 | 发现技能文档有遗漏或错误 | 手动触发 |
 
+## The Iron Law
+
+```
+NO MEMORY WITHOUT ROOT CAUSE
+```
+
+记录知识前必须确认根因。未复现、未确认根因、未去重的知识点不得写入技能文件。每条知识带来源、验证命令、工具链版本和适用范围。
+
+## Red Flags — STOP and Re-evaluate
+
+If you catch yourself doing any of these, you are violating the learn contract:
+
+- 未复现就记录（"大概是因为 X"）
+- 不检查去重就直接追加（"先记下来再说"）
+- 项目专属知识写入全局 skills（应写在项目 CLAUDE.md）
+- 不生成 learning proposal 就直接落盘
+- 更新后不验证目标文件格式
+
+**All of these mean: Stop. Confirm root cause first.**
+
+## 停止条件
+
+- 知识点已存在且无补充价值 → 跳过，不重复创建
+- 根因未确认 → 等待更多信息，不猜测写入
+- 更新目标文件不存在 → 检查路径，不创建新文件
+- 更新破坏文件格式 → 回滚，重新编辑
+- 用户拒绝 learning proposal → 跳过
+
 ## 执行流程
 
 ### 1. 分析
@@ -76,19 +104,55 @@ description: "Use when learning from bugs and updating the MoonBit skill system.
 ```json
 {
   "code": "E0123",
+  "warning_name": "错误的英文标识名",
+  "category": "type-error",
+  "severity": "error",
   "desc": "两句话描述错误含义",
-  "fix": "一句话修复方案"
+  "fix": "一句话修复方案",
+  "url": "https://docs.moonbitlang.cn/language/error_codes/E0123.html",
+  "example": "简短的代码示例（可选）"
 }
 ```
 
 **error-codes.json 格式规范**：
 - 数组结构，每个元素是一个错误码对象
-- 按 `code` 字段排序（新错误码追加到末尾）
+- 按 `code` 字段排序（新错误码追加到对应位置，保持升序）
 - `code`：编译器错误码（如 E0001、E0101）
-- `desc`：错误描述（中文，简洁）
+- `warning_name`：错误的英文标识名（如 unused_function、type_mismatch）
+- `category`：错误类别，可选值（完整列表见 `references/error-codes.json` 现有条目）：
+  - `unused`：未使用相关警告
+  - `type-error`：类型错误
+  - `type-inference`：类型推断相关
+  - `pattern-matching`：模式匹配相关
+  - `syntax`：语法错误
+  - `name-resolution`：名称解析错误
+  - `visibility`：可见性错误
+  - `module`：模块相关错误
+  - `ffi`：FFI 相关错误
+  - `wasm`：WASM 相关错误
+  - `style`：代码风格警告
+  - `logic`：逻辑警告
+  - `compatibility`：兼容性警告
+- `severity`：严重程度，`error` 或 `warning`
+- `desc`：错误描述（中文，简洁清晰）
 - `fix`：修复方案（一句话，可操作）
+- `url`：官方文档链接（可选，优先补充）
+- `example`：简短的错误示例代码（可选）
 
 **目的**：下次遇到相同错误码时，Agent 可以快速查表定位修复，而不需要重新分析。非编译器报错（逻辑错误、API 误用等）不需要记录错误码。
+
+**更新流程**：
+1. 检查错误码是否已存在（按 `code` 字段查找）
+2. 若不存在，按上述格式追加新条目
+3. 若已存在但信息不完整，补充缺失字段
+4. 更新后用 Python 验证 JSON 格式：
+   ```bash
+   python -c "import json; json.load(open('references/error-codes.json', encoding='utf-8'))"
+   ```
+   Windows PowerShell 中若单引号不兼容，使用：
+   ```powershell
+   python -c "import json; json.load(open('references/error-codes.json', encoding='utf-8'))"
+   ```
 
 ### 5. 验证
 
