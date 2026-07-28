@@ -1,0 +1,10 @@
+{
+  "name": "moonbit-community",
+  "plugins": [
+    {
+      "name": "moonbit-skills",
+      "source": "local",
+      "description": "MoonBit development skill suite — collaborative design-to-publish pipeline"
+    }
+  ]
+}
