@@ -24,7 +24,10 @@ moon info --target native
 ## 运行命令
 
 ```bash
-# 运行主包
+# 运行主包（当前目录）
+moon run .
+
+# 运行子目录中的主包
 moon run cmd/main
 
 # 从标准输入运行代码（快速实验）
