@@ -7,7 +7,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # All platform plugin descriptors that use plugin.json format
+# OMP uses root plugin.json (Claude-Code-compatible layout)
 PLUGIN_JSONS = [
+    ROOT / "plugin.json",  # OMP
     ROOT / ".claude-plugin" / "plugin.json",
     ROOT / ".codex-plugin" / "plugin.json",
     ROOT / ".cursor-plugin" / "plugin.json",
@@ -22,6 +24,15 @@ OPENCODE_DESCRIPTOR = ROOT / ".opencode" / "opencode.json"
 
 # Pi uses package.json
 PI_DESCRIPTOR = ROOT / "package.json"
+
+# Pi extension file
+PI_EXTENSION = ROOT / ".pi" / "extensions" / "moonbit-skills.ts"
+
+# OMP TypeScript hook for session bootstrap
+OMP_HOOK = ROOT / "hooks" / "pre" / "session-start.ts"
+
+# OMP commands directory
+OMP_COMMANDS_DIR = ROOT / "commands"
 
 # Fields that must be identical across all plugin.json descriptors
 SYNC_FIELDS = ("name", "version", "description")
@@ -75,11 +86,12 @@ def check_plugin_only_fields(descriptors: list[tuple[Path, dict]]) -> list[str]:
     failures = []
     for field in PLUGIN_ONLY_SYNC_FIELDS:
         if field == "skills":
-            # Claude Code doesn't support skills in its official schema
+            # Claude Code and OMP don't have a skills field in their schema
+            # (OMP discovers skills/ directory automatically)
             values = {
                 data.get(field)
                 for path, data in descriptors
-                if ".claude-plugin" not in str(path)
+                if ".claude-plugin" not in str(path) and path.parent != ROOT
             }
         else:
             values = {data.get(field) for _, data in descriptors}
@@ -111,6 +123,7 @@ def check_hooks(descriptors: list[tuple[Path, dict]]) -> list[str]:
         expected = "hooks/hooks.json"
         if hooks_val is None:
             # Claude Code and Kimi Code should declare hooks
+            # OMP (root plugin.json) uses TypeScript hooks, not shell hooks
             pname = path.parent.name
             if pname in (".claude-plugin", ".kimi-plugin"):
                 failures.append(f"{path}: hooks field missing, expected {expected!r}")
@@ -185,13 +198,17 @@ def check_opencode(opencode: dict | None) -> list[str]:
 
 
 def check_pi(pi: dict | None) -> list[str]:
-    """Check Pi package.json descriptor."""
+    """Check Pi package.json descriptor and extension file."""
     failures = []
     if pi is None:
         return failures
     pi_config = pi.get("pi", {})
     if "skills" not in pi_config:
         failures.append("package.json: missing pi.skills field")
+    if "extensions" not in pi_config or not pi_config["extensions"]:
+        failures.append("package.json: missing pi.extensions field")
+    elif not PI_EXTENSION.exists():
+        failures.append(f"package.json: pi.extensions points to {PI_EXTENSION.name} but file does not exist")
     return failures
 
 
@@ -215,6 +232,23 @@ def check_nested_codex() -> list[str]:
     return failures
 
 
+def check_omp() -> list[str]:
+    """Check OMP TypeScript hook and commands exist."""
+    failures = []
+    if not OMP_HOOK.exists():
+        failures.append(f"OMP hook missing: {OMP_HOOK.relative_to(ROOT)}")
+    elif "session_start" not in OMP_HOOK.read_text(encoding="utf-8"):
+        failures.append(f"OMP hook: session_start handler not found in {OMP_HOOK.relative_to(ROOT)}")
+
+    if not OMP_COMMANDS_DIR.exists():
+        failures.append(f"OMP commands directory missing: {OMP_COMMANDS_DIR.relative_to(ROOT)}")
+    else:
+        cmd_files = list(OMP_COMMANDS_DIR.glob("*.md"))
+        if not cmd_files:
+            failures.append(f"OMP commands directory empty: {OMP_COMMANDS_DIR.relative_to(ROOT)}")
+    return failures
+
+
 def main() -> int:
     plugin_descriptors, gemini, opencode, pi = collect_descriptors()
     if not plugin_descriptors:
@@ -233,6 +267,7 @@ def main() -> int:
     failures.extend(check_opencode(opencode))
     failures.extend(check_pi(pi))
     failures.extend(check_nested_codex())
+    failures.extend(check_omp())
 
     if failures:
         total = len(plugin_descriptors) + (1 if gemini else 0) + (1 if opencode else 0) + (1 if pi else 0)

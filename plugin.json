@@ -1,0 +1,11 @@
+{
+  "name": "moonbit-skills",
+  "version": "0.1.0",
+  "description": "MoonBit development skill suite — collaborative design-to-publish pipeline",
+  "author": {
+    "name": "morning-start"
+  },
+  "homepage": "https://github.com/morning-start/moonbit-skills",
+  "repository": "https://github.com/morning-start/moonbit-skills",
+  "license": "MIT"
+}
