@@ -1,7 +1,0 @@
-pkgtype(kind: "executable")
-
-import {
-  "moonbitlang/core",
-  "moonbitlang/core/argparse",
-  "moonbitlang/core/fs",
-}

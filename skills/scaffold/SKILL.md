@@ -1,59 +1,155 @@
 ---
 name: moonbit-scaffold
-description: "Use when generating a MoonBit project skeleton from templates. Triggered by user phrases like 'scaffold', 'generate', 'skeleton', or when moon.mod is missing and a new project needs file structure."
+description: "Use when generating a MoonBit project skeleton. Triggered by user phrases like 'scaffold', 'generate', 'skeleton', or when moon.mod is missing and a new project needs file structure. Dynamically generates project files based on type and user choices — no pre-made templates."
 ---
 
-# Scaffold - Project Skeleton
+# Scaffold — 动态生成项目骨架
 
-## Responsibility
+## 职责
 
-Create a minimal, buildable MoonBit project before implementation. The user chooses the project type and package name. The agent copies the template, applies those names, and runs the type-aware checks.
+根据 plan 阶段确认的项目类型和配置，**动态生成**最小可构建的 MoonBit 项目骨架。不依赖预置模板，按需生成每一份文件。
 
-## Supported templates
+**核心原则：拒绝固定模板，按需动态生成。**
 
-| Type | Template | Files |
-| --- | --- | --- |
-| `lib` | `templates/lib/` | `moon.mod`, `moon.pkg`, `lib.mbt`, `test.mbt` |
-| `cli` | `templates/cli/` | `moon.mod`, `moon.pkg`, `main.mbt`, `test.mbt` |
-| `c-ffi` | `templates/c-ffi/` | `moon.mod`, `moon.pkg`, `ffi.mbt`, `lib.mbt`, `test.mbt`, `wrapper.c`, `README.mbt.md` |
-| `wasm` | `templates/wasm/` | `moon.mod`, `moon.pkg`, `ffi.mbt`, `test.mbt` |
+## 生成流程
 
-All templates use the current MoonBit metadata format (`moon.mod` and `moon.pkg`). Do not generate the obsolete `.json` metadata filenames.
-
-## Inputs
-
-Confirm these values before copying files:
+### 1. 确认输入
 
 ```text
 project_type: lib | cli | c-ffi | wasm
-package_name: MoonBit package name
-target: native | wasm | js, as supported by the selected type
+package_name: MoonBit 包名（如 username/package）
+target: native | wasm | js | wasm-gc
+capabilities: [parser, async, ...]（可选）
 ```
 
-能力型项目的降级规则：
+### 2. 按类型动态生成
 
-| capability | primary_type | 额外动作 |
-|------------|--------------|----------|
-| `parser` | `lib` 或 `cli` | 使用对应模板，再创建 lexer/tokenize/parser/validate 分层 |
-| `async` | `lib` 或 `cli` | 使用对应模板，再添加 async 依赖和 event_loop/task/io 目录 |
+#### lib
 
-不要把 `parser` 或 `async` 直接当作独立模板类型。
+```moonbit
+// moon.mod
+name = "{package_name}"
+version = "0.1.0"
+preferred_target = "native"
+supported_targets = ["native", "wasm", "js"]
 
-## Generation mapping
+// moon.pkg（空文件，无 import，scaffold 后用户按需添加）
 
-Copy the selected directory into the project root and preserve the filenames. Replace package placeholders only when they exist in the template.
+// lib.mbt
+///|
+/// {package_name} — 主模块
+pub fn hello() -> String {
+  "Hello from {package_name}!"
+}
 
-```text
-templates/{type}/moon.mod  -> moon.mod
-templates/{type}/moon.pkg  -> moon.pkg
-templates/{type}/*.mbt     -> matching source files
+// test.mbt
+///|
+/// {package_name} — 测试
+test "hello" {
+  if hello() != "Hello from {package_name}!" {
+    fail("hello() returned unexpected value")
+  }
+}
 ```
 
-Do not invent `wrapper.c`, `prepare.py`, or nested source paths unless the selected project explicitly requires them and the user approves the additional files.
+#### cli
 
-## Validation
+```moonbit
+// moon.mod
+name = "{package_name}"
+version = "0.1.0"
+preferred_target = "native"
+supported_targets = ["native"]
 
-Run the checks from the generated project directory:
+// moon.pkg
+is_main = true
+
+// main.mbt
+fn main {
+  println("Hello from {package_name}!")
+}
+
+// test.mbt
+test "trivial" {
+  if 1 + 1 != 2 {
+    fail("basic math failed")
+  }
+}
+```
+
+#### c-ffi
+
+```moonbit
+// moon.mod
+name = "{package_name}"
+version = "0.1.0"
+preferred_target = "native"
+supported_targets = ["native"]
+
+// moon.pkg（空文件）
+
+// ffi.mbt
+///|
+extern "c" fn {name}_version() -> Int = "{name}_version"
+
+///|
+extern "c" fn {name}_free(ptr: #owned Unit) -> Unit = "{name}_free"
+
+// lib.mbt
+///|
+pub fn version() -> Int {
+  {name}_version()
+}
+
+// wrapper.c
+#include <stdint.h>
+
+int32_t {name}_version(void) {
+  return 1;
+}
+
+void {name}_free(void* ptr) {
+  free(ptr);
+}
+```
+
+#### wasm
+
+```moonbit
+// moon.mod
+name = "{package_name}"
+version = "0.1.0"
+preferred_target = "wasm"
+supported_targets = ["wasm", "wasm-gc"]
+
+// moon.pkg（空文件）
+
+// ffi.mbt
+///|
+extern "wasm" fn add(a: Int, b: Int) -> Int = "math:add"
+
+// test.mbt
+test "trivial" {
+  if 1 + 1 != 2 {
+    fail("basic math failed")
+  }
+}
+```
+
+### 3. 能力扩展
+
+当项目包含 `parser` 或 `async` 能力时，在基础结构上追加：
+
+| 能力 | 追加文件 |
+|------|---------|
+| `parser` | `tokenize.mbt`, `parser.mbt`, `validate.mbt` |
+| `async` | `event_loop.mbt`, `task.mbt`, `io.mbt` |
+
+### 4. 替换占位符
+
+生成文件后，将文件内所有 `{package_name}` 和 `{name}` 替换为用户确认的实际值。
+
+### 5. 验证
 
 ```bash
 moon fmt --check
@@ -61,42 +157,53 @@ moon check --target native
 moon test --target native
 ```
 
-For a WASM project, also run:
-
+WASM 项目额外运行：
 ```bash
 moon check --target wasm
 moon test --target wasm
 ```
 
-If the toolchain supports `wasm-gc`, also run:
+如果工具链不可用，报告工具链错误，不声称验证通过。
 
-```bash
-moon check --target wasm-gc
-```
+## 动态生成 vs 预置模板
 
-If the toolchain is unavailable, report the toolchain error and do not claim that the scaffold passed validation.
+| 维度 | 预置模板（旧方案） | 动态生成（当前方案） |
+|------|------------------|-------------------|
+| 文件来源 | `templates/{type}/*` | 按类型在代码中定义 |
+| 灵活性 | 仓库自带的固定文件 | 可根据工具链版本调整 |
+| 维护成本 | 每个类型需独立维护文件 | 集中维护，易更新 |
+| 版本追踪 | 文件级别 | 代码级别 |
+| 可扩展性 | 新类型需新建目录 | 新类型只需追加生成逻辑 |
 
-## Output
+## 输出
 
 ```json
 {
   "status": "scaffolded | blocked",
-  "project_type": "lib",
-  "package_name": "example/package",
-  "template": "templates/lib/",
-  "files_created": ["moon.mod", "moon.pkg", "lib.mbt", "test.mbt"],
-  "validation": {"fmt": "passed", "check": "passed", "test": "passed"},
+  "project_type": "cli",
+  "package_name": "username/my-tool",
+  "files_created": [
+    "moon.mod", "moon.pkg",
+    "main.mbt", "test.mbt"
+  ],
+  "validation": {
+    "fmt": "passed",
+    "check": "passed",
+    "test": "passed"
+  },
   "next": "implement"
 }
 ```
 
-## Failure recovery
+## 错误恢复
 
-| Failure | Action |
-| --- | --- |
-| Unknown project type | Ask the user to choose one of the supported types. |
-| Template missing | Report the missing path and stop before implementation. |
-| MoonBit command unavailable | Report the toolchain prerequisite; do not report validation success. |
-| Validation failure | Show the failing command and return to plan or implementation. |
+| 问题 | 动作 |
+|------|------|
+| 未知项目类型 | 让用户从 lib/cli/c-ffi/wasm 中选择 |
+| `moon` 命令不可用 | 报告工具链前置需求，不声称验证成功 |
+| 验证失败 | 显示失败命令，返回 plan 或 implement |
+| 占位符替换不完整 | 检查生成后文件，确保 `{` 字符无残留 |
 
-After the scaffold is validated, continue with `moonbit-implement`.
+## 下一步
+
+验证通过后，进入 `moonbit-implement` 开始逐个任务实现。

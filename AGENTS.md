@@ -30,11 +30,6 @@ moonbit-skills/
 │   ├── pre-completion.sh   # 完成前全量检查：fmt + check + test + audit
 │   ├── session-start       # 会话启动：注入 moonbit-plan 技能上下文
 │   └── run-hook.cmd        # Windows 钩子执行器
-├── templates/             ← 模板
-│   ├── lib/
-│   ├── cli/
-│   ├── c-ffi/
-│   └── wasm/
 ├── .claude-plugin/        ← Claude Code 插件
 ├── .codex-plugin/         ← Codex 插件
 ├── evals/                 ← 评估
