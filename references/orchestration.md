@@ -2,75 +2,184 @@
 
 ## 入口
 
-所有用户请求从 `skills/using-moonbit-skills/SKILL.md` 进入。加载后定位到 `skills/plan/SKILL.md` 开始对话。
+所有用户请求从 `skills/using-moonbit-skills/SKILL.md` 进入。该引导技能在 SessionStart 时通过 `hooks/session-start` 注入到 agent 系统提示中。
 
-## 分类矩阵
+---
 
-```
-用户输入
-    │
-    ▼
-┌── 关键词匹配 ─────────────────────────────────┐
-│                                                │
-├─ "init" "setup" "hooks" "githooks" "initialize"  │──→ moonbit-init 技能
-├─ "build" "create" "new" "写" "做" "开发"          │──→ 开发管线 (moonbit-plan → moonbit-scaffold → moonbit-implement → moonbit-evaluate)
-├─ "debug" "fix" "error" "fail" "bug"           │──→ moonbit-implement 内置 debug
-├─ "learn" "记住" "教训" "记录" "更新技能" "update skill" │──→ moonbit-learn 技能
-├─ "review" "check" "audit" "quality" "security" │──→ moonbit-verify 技能
-├─ "publish" "release" "deploy" "发布"           │──→ moonbit-evaluate 技能
-├─ "test" "verify" "pass"                       │──→ moonbit-verify 技能
-└─ 其他                                          │──→ 问用户
-```
+## 技能全景
 
-## 开发管线（完整流程）
+### 开发管线（推荐流程）
 
 ```
 用户说"我要做 X"
     │
     ▼
-┌──────────────────────────────────────────────┐
-│ plan(skills/plan/SKILL.md) — 需求澄清 + 设计决策          │
-│ 输入: 用户原始描述                             │
-│ 输出: project_type + 需求文档 + 架构决策       │
-│ 用户介入: 选择架构模式 + 设计 API              │
-│ 路由: → scaffold                              │
-└──────────────────┬───────────────────────────┘
-                   ▼
-┌──────────────────────────────────────────────┐
-│ scaffold(skills/scaffold/SKILL.md) — 项目脚手架               │
-│ 输入: project_type + 包名                     │
-│ 输出: 项目骨架 (moon.mod + moon.pkg + src/)    │
-│ 验证: moon check + moon test                  │
-│ 路由: → implement                             │
-└──────────────────┬───────────────────────────┘
-                   ▼
-┌──────────────────────────────────────────────┐
-│ implement(skills/implement/SKILL.md) — TDD 实现                │
-│ 输入: 任务列表 + API 设计                      │
-│ 输出: 完成的代码 + 通过的测试                   │
-│ 内置 debug: 3 次自动修复 → 问用户方向          │
-│ 验证: 每任务 Red-Green-Verify                  │
-│ 路由: → evaluate                              │
-│ 阶段门禁: 调用 moonbit-verify 做全量检查            │
-└──────────────────┬───────────────────────────┘
-                   ▼
-┌──────────────────────────────────────────────┐
-│ evaluate(skills/evaluate/SKILL.md) — 验收评估 + 发布准备       │
-│ 输入: 验证通过的代码                           │
-│ 输出: README.mbt.md + CI 配置 + 发布就绪      │
-│ 用户介入: 判断"好了"或"再改"                   │
-│ 路由: 完成 (approved) 或 → implement (再改)   │
-└──────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│ using-moonbit-skills (alwaysApply, 路由入口)       │
+│ 检测 intent → 路由到正确技能                       │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-plan — 需求澄清 + 设计决策                │
+│ 输出: project_type + 需求文档 + API 设计          │
+│ 用户介入: 选择架构模式 + 设计 API                  │
+│ 路由: → writing-plans 或 scaffold                 │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-writing-plans — 设计→可执行任务拆解        │
+│ 输出: task list (每任务含代码+测试+验证)           │
+│ 路由: → scaffold (新项目) / implement (已有项目)   │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-scaffold — 动态生成项目骨架               │
+│ 方式: 按类型动态生成，不依赖预置模板               │
+│ 验证: moon fmt --check + moon check + moon test  │
+│ 路由: → implement                                │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-implement — TDD 实现                     │
+│ 每任务: RED(测试)→GREEN(实现)→VERIFY(全量)       │
+│ 每任务后: moonbit-code-review                    │
+│ 分类: main项目 + moon run / lib项目 + moon add   │
+│ Git: 每步后 git diff --exit-code                  │
+│ 路由: → verify                                   │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-verify — 全量验证门禁                    │
+│ 硬性: H1-H5 (格式/类型/测试/info/工作区)          │
+│ 专属: main→moon run / lib→moon add              │
+│ 软性: S1-S5 (跨平台/安全/性能/API深度/CI)        │
+│ Git: 每步后 git diff --exit-code                  │
+│ 路由: → evaluate                                 │
+└─────────────────┬───────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────┐
+│ moonbit-evaluate — 验收评估 + 发布准备            │
+│ 委托 verify + 类型专属验证 + CI/README 生成       │
+│ main: moon run + 输出验证                        │
+│ lib:  moon add + cross-platform                  │
+│ 用户介入: 判断"好了"或"再改"                      │
+│ 路由: 完成 或 → implement                         │
+└─────────────────────────────────────────────────┘
 ```
 
-## 独立技能（单次调用）
+### 独立技能（单次调用）
 
-| 技能 | 触发场景 | 合并了 |
-|------|---------|--------|
-| `moonbit-init` | 初始化项目、配置 git hooks | — |
-| `moonbit-verify` | 审查、验证、安全审计 | review + verify + moon-audit |
-| `moonbit-scaffold` | 生成项目骨架 | — |
-| `moonbit-learn` | 吸收错误、更新技能、自我进化 | — |
+| 技能 | 触发场景 | 类型 |
+|------|---------|------|
+| `moonbit-init` | 初始化项目、配置 git hooks | 独立 |
+| `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
+| `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
+| `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
+| `moonbit-implement` | TDD 实现 + Iron Law + debug | 管线核心 |
+| `moonbit-code-review` | 任务间代码审查 | 任务间门禁 |
+| `moonbit-verify` | 全量六维验证门禁 | 管线检查点 |
+| `moonbit-evaluate` | 验收评估 + 发布准备 | 管线终点 |
+| `moonbit-learn` | 吸收错误、更新技能 | 独立 |
+
+---
+
+## 硬性 vs 软性分类
+
+### 硬性要求（必选，阻断型）
+
+分布在 verify 和 evaluate 中，任何一项不通过则阻断：
+
+| # | 要求 | 归属技能 | 命令 |
+|---|------|---------|------|
+| H1 | 代码格式一致性 | verify | `moon fmt --check` + `git diff --exit-code` |
+| H2 | 类型安全 | verify | `moon check --warn-list +73` |
+| H3 | 功能完整性 | verify | `moon test --target native` |
+| H4 | 工作区干净 | verify | `git diff --exit-code` |
+| H5 | API 稳定性 | verify | `moon info --target native` |
+| H6 | [main] 可执行验证 | verify + evaluate | `moon run` + 输出验证 |
+| H7 | [lib] 包完整性 | verify + evaluate | `moon add moonbitlang/core` |
+| H8 | 类型专属验证 | implement | `moon check --target wasm` (wasm) 等 |
+
+### 软性要求（可选，加分型）
+
+分布在 verify 的 S1-S5 中，不阻断发布：
+
+| # | 要求 | 归属技能 | 命令 |
+|---|------|---------|------|
+| S1 | 跨平台兼容 | verify | `moon check --target all` |
+| S2 | 安全审计 | verify | `moon-audit pipeline .` |
+| S3 | 性能基线 | verify | 测试执行时间对比 |
+| S4 | API 深度检查 | verify | 参数类型/可见性/错误处理审查 |
+| S5 | CI 配置完整性 | verify | `.github/workflows/ci.yml` 校验 |
+
+---
+
+## 项目类型分支
+
+```
+检测 moon.pkg
+    │
+    ├── grep -q 'is_main' == true  →  main（可执行程序）
+    │       │
+    │       ├── implement: moon run 验证输出
+    │       ├── verify: H1-H5 + H6 moon run
+    │       └── evaluate: moon run + 输出非空 + CI 含 run
+    │
+    └── grep -q 'is_main' == false →  lib（library 库）
+            │
+            ├── implement: moon check --target all
+            ├── verify: H1-H5 + H7 moon add
+            └── evaluate: moon add + cross-platform + README 生成
+```
+
+---
+
+## hooks 关联
+
+| Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
+|-----------|---------|---------|---------|
+| SessionStart | startup/clear/compact | `hooks/session-start` | `skills/using-moonbit-skills/SKILL.md` |
+| PreCommit | git commit | `hooks/pre-commit.sh` | H1 + H2（fmt + check） |
+| PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H5 + S2 |
+
+---
+
+## 技能间依赖关系
+
+```
+using-moonbit-skills (alwaysApply, 路由入口)
+    │
+    ├── moonbit-init（无依赖）
+    ├── moonbit-plan（无依赖）
+    │    │
+    │    ├── moonbit-writing-plans（依赖 plan 输出）
+    │    │    │
+    │    │    ├── moonbit-scaffold（依赖 plan 输出类型）
+    │    │    │    │
+    │    │    │    └── moonbit-implement（依赖 plan+scaffold）
+    │    │    │         │
+    │    │    │         ├── → moonbit-code-review（每任务后）
+    │    │    │         │
+    │    │    │         └── → moonbit-verify（全量后）
+    │    │    │              │
+    │    │    │              └── → moonbit-evaluate（verify 通过后）
+    │    │    │
+    │    │    └── moonbit-implement（已有项目，跳过 scaffold）
+    │    │
+    │    └── moonbit-scaffold（直接 scaffold）
+    │
+    ├── moonbit-code-review（无依赖，可任何时候调用）
+    ├── moonbit-verify（依赖 implement 完成）
+    └── moonbit-learn（无依赖，可任何时候调用）
+```
+
+---
 
 ## 管线状态
 
@@ -78,18 +187,37 @@
 {
   "pipeline": "development",
   "phase": "implement",
+  "project_type": "main",
+  "project_class": "main (executable)",
+  "hard_checks": {
+    "fmt": "pass",
+    "check": "pass",
+    "test": "pass (12/12)",
+    "info": "pass",
+    "git_diff": "pass"
+  },
+  "type_specific": {
+    "moon_run": "pass (output: 'Hello')"
+  },
+  "soft_checks": {
+    "cross_platform": "skipped (main project)",
+    "security": "pass (0 findings)",
+    "perf": "pass (1.2s)"
+  },
   "progress": {
     "plan": "completed",
+    "writing_plans": "completed",
     "scaffold": "completed",
     "implement": "in_progress (task 4/13)",
+    "code_review": "completed (per task)",
     "verify": "pending",
     "evaluate": "pending"
   },
-  "project_type": "parser",
-  "user_interventions": 2,
   "next": "implement:task-5"
 }
 ```
+
+---
 
 ## 回落链
 
@@ -104,6 +232,8 @@
 ```
 
 例如：
-- `moon-audit` 未安装 → 跳过安全审查，提示用户安装
+- `moon-audit` 未安装 → 跳过 S2，提示用户安装
 - `c-ffi` 项目无 C 编译器 → 提示安装 GCC/Clang，中止
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
+- `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
+- 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`

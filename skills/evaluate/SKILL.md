@@ -7,36 +7,86 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 
 ## 职责
 
-最终验收 + 发布准备。**Agent 委托 verify/ 做门禁→生成文档/CI→用户决定是否发布。**
+最终验收 + 发布准备。**Agent 委托 verify 做门禁→按项目类型执行专属验证→生成文档/CI→用户决定是否发布。**
+
+## 项目类型检测
+
+```bash
+grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="lib"
+```
+
+类型决定发布验证路径的差异。
 
 ## 验收标准
 
-发布前必须满足以下条件：
+### 通用硬性要求（所有项目类型）
 
-| 条件 | 检查方式 | 是否阻断 |
-|------|---------|---------|
-| 所有测试通过 | `moon test --target native` | 是 |
-| 类型检查无警告 | `moon check --warn-list +73` | 是 |
+| 条件 | 检查方式 | 阻断 |
+|------|---------|------|
+| 完整验证通过 | 委托 `moonbit-verify` 的 H1-H5 | 是 |
 | 代码格式正确 | `moon fmt --check` | 是 |
-| 安全扫描无 error | `moon-audit --fail-on-error .` | 推荐 |
-| 有可运行文档示例 | 测试含 usage 标签 | 否 |
+| 类型检查无警告 | `moon check --warn-list +73` | 是 |
+| 所有测试通过 | `moon test --target native` | 是 |
+| 无意外改动 | `git diff --exit-code` | 是 |
 | 用户确认版本号 | 用户输入 | 是 |
+
+### MAIN 项目（可执行程序）专属验证
+
+```bash
+# 1. 确认 moon.pkg 有 main 声明
+grep -q 'is_main' moon.pkg || fail("main projects must declare is_main = true")
+
+# 2. 验证可运行
+moon run                              # exit 0 为通过
+git diff --exit-code                  # 确认运行未产生副作用
+
+# 3. 验证输出不为空
+OUTPUT=$(moon run 2>&1)
+[ -n "$OUTPUT" ] || fail("moon run produced no output")
+
+# 4. 生成 CI（含 moon run 验证）
+```
+
+**阻断条件：** `moon run` 失败或输出为空则阻断发布。
+
+### LIB 项目（library 库）专属验证
+
+```bash
+# 1. 确认元数据文件完整
+test -f moon.mod || fail("moon.mod missing")
+test -f moon.pkg || fail("moon.pkg missing")
+
+# 2. 验证可被本地安装
+moon add moonbitlang/core            # 依赖可解析
+git diff --exit-code                 # 确认 add 后的改动已知
+
+# 3. 验证跨平台兼容
+moon check --target all
+
+# 4. 生成 README 文档（lib 专属）
+moon info --target native > src/README.mbt.md
+moon test --target native -f "usage" # 验证文档示例可运行
+```
+
+**阻断条件：** `moon add` 失败或跨平台检查不通过则阻断发布。
 
 ## 执行流程
 
-### 1. 委托 verify/ 做全量门禁
+### 1. 委托 verify 做全量门禁
 
-不重复验证管道——**先调用 `moonbit-verify` 技能**，确保 fmt + check + test + moon-audit + info 全部通过。
+调用 `moonbit-verify` 技能，确保硬性要求 H1-H5 全部通过。如果 verify 失败，返回 `moonbit-implement` 修复，不继续发布。
 
-如果 verify 失败，返回 moonbit-implement 修复，不继续发布。
+### 2. 项目类型专属验证
 
-### 2. 生成 README 文档
-
-从 `moon info` 提取公共 API 签名，生成 `src/README.mbt.md`（含可执行示例）：
-
-```bash
-moon info --target native > src/README.mbt.md
-moon test --target native -f "usage"   # 验证文档示例可运行
+```
+委托 verify 通过
+    │
+    ▼
+检测项目类型
+    │
+    ├── main 项目 → moon run + 输出验证 + CI 含 run
+    │
+    └── lib 项目  → moon add + moon check --target all + README 生成
 ```
 
 ### 3. 生成 CI 配置
@@ -60,8 +110,9 @@ jobs:
 ```markdown
 ## 发布检查清单
 
-- [x] 完整验证管道通过
-- [x] 文档示例可运行
+- [x] 完整验证管道通过（moonbit-verify H1-H5）
+- [x] 项目类型验证通过（main: moon run | lib: moon add + cross-platform）
+- [x] 文档示例可运行（如有 usage 测试）
 - [x] CI 配置已生成
 - [ ] 用户确认版本号
 - [ ] 用户执行 `moon publish`（需要 mooncakes 账号）
@@ -69,33 +120,48 @@ jobs:
 
 ## 各类型发布策略
 
-| 类型 | 发布方式 | CI 验证命令 |
-|------|---------|------------|
-| lib | mooncake 包 | `moon check --target all` |
-| cli | 可执行文件 + mooncake | `moon test --target native` |
-| c-ffi | mooncake 包（含 native-stub） | `moon check --target native` + ASan |
-| wasm | WASM 模块 + mooncake | `moon test --target wasm` |
-| parser | mooncake 包 | `moon test --target native` + 合规率 |
-| async | mooncake 包 | `moon test --target native` |
+| 类型 | 项目分类 | 发布方式 | 专属验证 |
+|------|---------|---------|---------|
+| lib | library | mooncake 包 | `moon add` + `moon check --target all` |
+| cli | main | 可执行文件 + mooncake | `moon run` + 输出验证 |
+| c-ffi | library | mooncake 包 | `moon add` + ASan（可选） |
+| wasm | library | WASM 模块 + mooncake | `moon check --target wasm-gc` |
+| parser | library | mooncake 包 | `moon test -f "valid/invalid/edge"` |
+| async | library | mooncake 包 | 并发测试、超时测试 |
 
 ## 用户 vs Agent 分工
 
 | 谁 | 做什么 |
 |---|--------|
-| Agent | 委托 verify 做门禁、生成 README 和 CI、检查发布就绪 |
-| 用户 | 判断质量是否达标、确认版本号、执行 `moon publish` |
-
-## 下一步
-
-发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。
+| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README 和 CI、检查发布就绪 |
+| **用户** | 判断质量是否达标、确认版本号、执行 `moon publish` |
 
 ## 输出
 
 ```json
 {
   "status": "approved | needs_fix",
+  "project_type": "main",
+  "verification": "pass (H1-H5 all green)",
+  "type_specific": {
+    "moon_run": "pass (output: 'Hello World')"
+  },
+  "files_created": [".github/workflows/ci.yml"],
+  "publish_ready": true,
+  "user_decision": "approved",
+  "next": "publish | implement"
+}
+```
+
+```json
+{
+  "status": "approved | needs_fix",
   "project_type": "lib",
-  "verification": "pass",
+  "verification": "pass (H1-H5 all green)",
+  "type_specific": {
+    "moon_add": "pass",
+    "cross_platform": "pass (native+wasm)"
+  },
   "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml"],
   "publish_ready": true,
   "user_decision": "approved",

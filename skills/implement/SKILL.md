@@ -63,16 +63,26 @@ If you catch yourself thinking any of these, you are violating TDD:
 └─ 失败 → 自动诊断 (debug 内置, 3 次上限 → 问用户)
 ```
 
+## 项目类型检测
+
+进入 TDD 前，先检测项目类型：
+
+```bash
+grep -q 'is_main' moon.pkg 2>/dev/null && PROJECT_TYPE="main" || PROJECT_TYPE="lib"
+```
+
+类型决定 TDD 验证链路的差异。
+
 ## 各类型 TDD 策略
 
-| 类型 | 验证目标 | 重点 |
-|------|---------|------|
-| lib | `moon test --target native` | 公共 API 覆盖、边界情况、错误处理 |
-| cli | `moon test --target native` | 命令解析、参数传递、标准 I/O |
-| c-ffi | `moon check --target native` | 从 L0(L1) 向外写，内存安全 |
-| wasm | `moon test --target wasm` | 内存操作、边界值、WASI |
-| parser | `moon test --target native` | valid/invalid/edge 分类测试 |
-| async | `moon test --target native` | 协程测试、超时、取消 |
+| 类型 | 项目分类 | 验证目标 | 额外验证 |
+|------|---------|---------|---------|
+| lib | library | `moon test --target native` | `moon check --target all` 跨平台 |
+| cli | main | `moon test --target native` | `moon run` 验证可执行 + stdout 输出 |
+| c-ffi | library | `moon check --target native` | — |
+| wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` |
+| parser | library | `moon test --target native` | valid/invalid/edge 分类测试 |
+| async | library | `moon test --target native` | 并发测试、超时测试 |
 
 ## 调试内置（debug 集成）
 

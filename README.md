@@ -135,20 +135,20 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 |-----------|---------------|-----------|---------|
 | plan 结束后需要拆任务；复杂功能需分步实现；团队需可追溯的执行计划 | 只有一个人快速迭代；任务已经是原子粒度；频繁变更设计 | 在 plan 完成后自动触发；审视每个任务粒度是否合适 | 依赖 plan 的质量；任务粒度需用户确认 |
 
-### 4. moonbit-scaffold — 生成项目骨架
+### 4. moonbit-scaffold — 动态生成项目骨架
 
-**能力**：根据 plan 阶段确认的项目类型，从模板生成最小可构建的项目骨架。
+**能力**：根据 plan 阶段确认的项目类型，**动态生成**最小可构建的项目骨架，不依赖预置模板。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
-| plan 结束后需要生成项目文件；快速搭标准化结构 | 已有现成项目只加新功能（用 implement）；项目类型不确定（先 plan） | plan 阶段确定好包名和类型；生成后自动跑验证 | parser/async 不是独立类型；模板标准化，非常规结构不适用 |
+| plan 结束后需要生成项目文件；快速搭标准化结构 | 已有现成项目只加新功能（用 implement）；项目类型不确定（先 plan） | plan 阶段确定好包名和类型；生成后自动跑验证 | parser/async 不是独立类型；生成内容需用户确认 |
 
-| 类型 | 模板 | 生成内容 |
-|------|------|---------|
-| lib | `templates/lib/` | moon.mod, moon.pkg, lib.mbt, test.mbt |
-| cli | `templates/cli/` | moon.mod, moon.pkg, main.mbt, test.mbt |
-| c-ffi | `templates/c-ffi/` | moon.mod, moon.pkg, ffi.mbt |
-| wasm | `templates/wasm/` | moon.mod, moon.pkg, ffi.mbt, test.mbt |
+| 类型 | 项目分类 | 生成内容 |
+|------|---------|---------|
+| lib | library | moon.mod, moon.pkg, lib.mbt, test.mbt |
+| cli | main | moon.mod, moon.pkg (is_main), main.mbt, test.mbt |
+| c-ffi | library | moon.mod, moon.pkg, ffi.mbt, lib.mbt, wrapper.c |
+| wasm | library | moon.mod, moon.pkg, ffi.mbt, test.mbt |
 
 ### 5. moonbit-implement — TDD 方式写代码
 
@@ -177,22 +177,35 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 |-----------|---------------|-----------|---------|
 | 每个 implement 任务完成后；合并前做最终审查；不确定代码质量 | 还在实现过程中；已经通过 verify 全量检查 | 在 implement 每任务后自动触发；快速定位规范问题 | 自动修复限于机械性问题；不适用于架构级审查 |
 
-### 7. moonbit-verify — 一站式质量检查
+### 7. moonbit-verify — 全量六维检测门禁
 
-**能力**：跑全量验证管道 — 格式检查 + 类型检查 + 测试 + 安全审计。
+**能力**：跑全量验证管道 — 按硬性要求（H1-H7 阻断型）和软性要求（S1-S5 加分型）分层检测。区分 main（可执行程序）和 lib（library 库）两种验证路径。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
 | 写完代码确认无问题；PR 前最终检查；不确定质量想全面审查 | 只想格式化（`moon fmt`）；只想跑测试（`moon test`）；频繁检查太慢 | 每个 implement 任务完成后跑一次，不攒到最后 | 自动修复只限于机械性修改；安全审计需额外装 `moon-audit` |
 
-| 步骤 | 命令 | 做什么 |
-|------|------|--------|
-| 代码审查 | 委托 `moonbit-code-review` | 逐项代码规范检查 |
-| 格式检查 | `moon fmt --check` | 代码风格一致性 |
-| 类型检查 | `moon check --warn-list +73` | 类型安全 + 警告 |
-| 单元测试 | `moon test --target native` | 全部测试通过 |
-| API 稳定性 | `moon info --target native` | 公共 API 无意外变更 |
-| 安全审计 | `moon-audit pipeline .` | 14 条 CWE 规则扫描 |
+**硬性要求（必选，阻断型）：**
+
+| # | 要求 | 命令 | 阻断 |
+|---|------|------|------|
+| H1 | 格式一致性 | `moon fmt --check` + `git diff --exit-code` | 是 |
+| H2 | 类型安全 | `moon check --warn-list +73` | 是 |
+| H3 | 功能完整 | `moon test --target native` | 是 |
+| H4 | API 稳定 | `moon info --target native` | 是 |
+| H5 | 工作区干净 | `git diff --exit-code` | 是 |
+| H6 | 可执行验证（main） | `moon run` | 是 |
+| H7 | 本地安装验证（lib） | `moon add moonbitlang/core` | 是 |
+
+**软性要求（加分项，可选）：**
+
+| # | 要求 | 命令 |
+|---|------|------|
+| S1 | 跨平台兼容 | `moon check --target all` |
+| S2 | 安全审计 | `moon-audit pipeline .` |
+| S3 | 性能基线 | 测试时间对比 |
+| S4 | API 深度检查 | StringView/T?/错误处理 |
+| S5 | CI 完整性 | `.github/workflows/ci.yml`
 
 ### 8. moonbit-evaluate — 验收 + 发布准备
 

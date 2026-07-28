@@ -1,61 +1,115 @@
-# MoonBit Skill — Collaborative Development
+# MoonBit Skills — Agent Execution Contract
 
-## Mission
+## 使命
 
-用户做架构决策和 API 设计，Agent 做实现和验证。通过对话模式协作，不是流水线。
+本仓库为 MoonBit 开发提供跨 Agent 平台的技能、参考资料和质量门禁。
 
-## Layout
+- **用户**负责产品目标、架构取舍、公共 API 和发布决策。
+- **Agent**负责调查现状、提出有依据的选项、实现获准方案并提供新鲜验证证据。
+- 以对话协作为主；开发管线是推荐路径，不是必须完整执行的流水线。
 
+## 指令优先级与权威来源
+
+发生冲突时，按以下顺序执行：
+
+1. 用户在当前对话中的明确要求。
+2. 本文件的仓库级约束。
+3. 当前任务对应的 `skills/<name>/SKILL.md`。
+4. `references/` 中的背景知识和示例。
+
+各文件职责必须保持单一：
+
+| 来源 | 权威范围 |
+|---|---|
+| `skills/using-moonbit-skills/SKILL.md` | SessionStart 引导入口和初始意图识别；完整路由以本文件“请求路由”为准 |
+| `skills/*/SKILL.md` | 对应任务的执行步骤、停止条件、输出契约和恢复策略 |
+| `references/orchestration.md` | 完整管线、技能依赖和状态模型 |
+| `references/commands.md`、`references/idioms.md`、`references/patterns/` | MoonBit 命令、惯用法和项目类型模式 |
+| `hooks/` | 实际自动门禁行为；脚本实现优先于说明性文字 |
+| `README.md` | 面向使用者的安装、能力介绍和示例，不定义 Agent 执行规则 |
+
+不要在本文件复制上述文件中的长流程、完整命令表或目录树。需要细节时读取对应权威来源，避免多份说明漂移。
+
+## 请求路由
+
+行动前先读取 `skills/using-moonbit-skills/SKILL.md`，再按下表读取与意图匹配的技能。若引导入口未列出某个技能，以本表补全路由；若用户直接指定技能，优先使用该技能。
+
+| 用户意图 | 使用技能 | 核心结果 |
+|---|---|---|
+| 初始化项目、配置 hooks | `moonbit-init` | 项目级质量门禁可用 |
+| 澄清需求、设计架构或 API | `moonbit-plan` | 用户批准的设计决策 |
+| 把既有设计拆成任务 | `moonbit-writing-plans` | 可执行、可验证的任务清单 |
+| 生成新项目骨架 | `moonbit-scaffold` | 动态生成的最小可构建骨架 |
+| 新功能、修 bug、重构 | `moonbit-implement` | 按 TDD 完成的实现 |
+| 审查代码 | `moonbit-code-review` | 按严重程度排序的发现 |
+| 检查质量或完成状态 | `moonbit-verify` | 带命令证据的门禁结果 |
+| 发布验收 | `moonbit-evaluate` | 发布准备结果，由用户决定是否发布 |
+| 从已定位问题中沉淀知识 | `moonbit-learn` | 去重后更新对应技能或参考资料 |
+
+推荐的新项目路径：
+
+```text
+plan → writing-plans → scaffold → implement ↔ code-review → verify → evaluate
 ```
-moonbit-skills/
-├── AGENTS.md              ← this file
-├── skills/                ← 7 个核心技能 + 1 个引导入口
-│   ├── using-moonbit-skills/SKILL.md ← 引导入口（alwaysApply），自动路由到正确技能
-│   ├── init/SKILL.md      # moonbit-init: 项目初始化 + git hooks 配置
-│   ├── plan/SKILL.md      # moonbit-plan: 需求澄清 + 设计决策
-│   ├── implement/SKILL.md # moonbit-implement: TDD 实现 (内置 debug)
-│   ├── learn/SKILL.md     # moonbit-learn: 从 bug 中学习，自我进化
-│   ├── evaluate/SKILL.md  # moonbit-evaluate: 评估验收 + 发布准备
-│   ├── scaffold/SKILL.md  # moonbit-scaffold: 项目脚手架
-│   └── verify/SKILL.md    # moonbit-verify: 验证门禁 (含 review + moon-audit)
-├── references/            ← 知识库
-│   ├── patterns/         # 各类型架构模式 (cli, c-ffi, wasm, parser, async, lib)
-│   ├── idioms.md          # MoonBit 惯用写法 + API 速查
-│   ├── commands.md        # MoonBit 命令参考
-│   └── error-codes.json   # 编译器错误码 → 修复方案速查
-├── hooks/                 ← 钩子注入
-│   ├── hooks.json          # Claude Code 钩子配置 (SessionStart/PreCommit/PreCompletion)
-│   ├── pre-commit.sh       # 快速检查：fmt + type check
-│   ├── pre-push.sh         # 重量级检查：test + security audit
-│   ├── pre-completion.sh   # 完成前全量检查：fmt + check + test + audit
-│   ├── session-start       # 会话启动：注入 moonbit-plan 技能上下文
-│   └── run-hook.cmd        # Windows 钩子执行器
-├── .claude-plugin/        ← Claude Code 插件
-├── .codex-plugin/         ← Codex 插件
-├── evals/                 ← 评估
-└── scripts/               ← 自动化脚本
-```
 
-## 协作模型
+允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。不得跳过当前技能定义的硬性门禁。
 
-```
-用户说"我要做 X"
-    │
-    ├── moonbit-init: Agent 配置 git hooks → 项目就绪
-    ├── moonbit-plan: Agent 问清楚 + 展示方案 → 用户决定架构 + 设计 API
-    ├── moonbit-scaffold: Agent 生成骨架 → 用户确认
-    ├── moonbit-implement: Agent 逐个任务 TDD → 用户审查/调整
-    │   └── 失败时内置 debug: 3 次自动修复 → 问用户
-    │       └── 用户介入后 → moonbit-learn: 吸收错误，更新技能
-    ├── moonbit-verify: Agent 全量门禁检查 → 用户判断
-    └── moonbit-evaluate: Agent 验证 → 用户判断"好了"或"再改"
-```
+## 仓库工作规则
 
-**用户做决策，Agent 做执行。**
+### 动手前
 
-## Key Constraints
+1. 识别任务意图和项目类型，读取相关技能与必要的参考文件。
+2. 调查现有实现、调用点、测试和约定；禁止凭猜测创建第二套模式。
+3. 架构、公共 API 或范围存在实质性取舍时，向用户展示选项、影响和推荐方案，由用户决定。
+4. 只计划完成请求所必需的变更；不顺手扩展范围。
 
-- `skills/` 包含 7 个核心技能，每个自包含：何时用、做什么、用户 vs Agent 角色
-- `references/` 是知识库，不是技能 — Agent 参考用，不直接执行
-- `references/error-codes.json` 是编译器错误码速查 — `moonbit-learn` 自动维护
-- `templates/` 是脚手架模板，按类型分目录
+### 实施时
+
+- 优先修改现有文件；仅在职责明确且现有结构无法承载时新增文件。
+- `moonbit-scaffold` 必须按已批准设计动态生成文件，不依赖预置模板，不覆盖未获准的用户文件。
+- 功能、修复和重构遵循 `moonbit-implement` 的 TDD 与 Iron Law；测试必须覆盖可观察行为。
+- 每个实现任务后执行 `moonbit-code-review`；Critical 和 Important 问题必须在继续前处理或由用户明确接受。
+- 失败时保留真实命令和错误证据，按对应技能的有界恢复策略重试；不得伪造通过、降级为空实现或用占位符交付。
+- 将意外改动视为用户工作。不要覆盖、回滚或删除来源不明的改动；先缩小自己的修改范围。
+
+### 完成前
+
+- 运行覆盖实际变更路径的验证，不以“看起来正确”代替执行证据。
+- 只报告本轮实际运行的命令、结果和未验证风险；陈旧结果不能支撑完成声明。
+- 更新所有受影响的调用点、测试、技能说明和平台元数据；无影响的文件保持不动。
+- 硬性检查失败时状态必须为 blocked，给出根因、已尝试措施和安全的下一步，不能声称完成。
+
+## 验证契约
+
+MoonBit 项目的完整门禁以 `skills/verify/SKILL.md` 为唯一权威。至少包含通用硬性检查和项目类型专属检查：
+
+| 范围 | 必需证据 |
+|---|---|
+| 所有 MoonBit 项目 | 格式、类型检查、测试、工作区状态、公共 API 检查 |
+| main / CLI | `moon run` 成功且产生符合预期的有意义输出 |
+| library | 包结构与依赖解析验证 |
+| c-ffi / wasm / parser / async | 使用对应 `references/patterns/` 和技能定义的类型专属验证 |
+
+Hooks 只提供自动化子集，不能替代完整验证：
+
+- `hooks/pre-commit.sh`：快速格式与类型检查。
+- `hooks/pre-push.sh`：测试与可用时的安全审计。
+- `hooks/pre-completion.sh`：会话完成前的自动检查；以脚本退出码和实际输出为准。
+
+修改本技能仓库自身时，按变更范围执行针对性验证：
+
+- 插件描述或版本字段：`python scripts/check-plugin-metadata.py`。
+- JSON 文件：使用解析器验证语法。
+- Shell hooks：执行对应脚本或静态语法检查。
+- 技能或路由：运行 `evals/evals.json` 中相关场景可用的评估工具；若环境没有评估运行器，必须明确标记未运行。
+- 纯 Markdown：检查标题层级、链接/路径、命令和跨文件事实；不得声称通过未运行的代码测试。
+
+## 维护不变量
+
+- `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
+- `skills/` 当前包含 9 个核心技能和 1 个引导入口；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `references/` 是按需读取的知识库，不是可直接执行的技能。
+- `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
+- 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。
+- 安装与集成界面覆盖 AtomCode、Claude Code、Codex CLI / App、Cursor、Kimi Code、OpenCode、Pi 和 Gemini CLI；各平台的自动注入能力不同，修改共享元数据时保持对应描述文件一致。
+- 文档中的流程和检查编号只在其权威文件维护；其他文件使用引用和语义名称，不复制易漂移清单。
