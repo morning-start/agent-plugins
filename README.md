@@ -213,36 +213,41 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 |-----------|---------------|-----------|---------|
 | 每个 implement 任务完成后；合并前做最终审查；不确定代码质量 | 还在实现过程中；已经通过 verify 全量检查 | 在 implement 每任务后自动触发；快速定位规范问题 | 自动修复限于机械性问题；不适用于架构级审查 |
 
-### 11. moonbit-verify — 全量六维检测门禁
+### 11. moonbit-verify — 三级检测门禁
 
-**能力**：跑全量验证管道 — 按硬性要求（H1-H7 阻断型）和软性要求（S1-S6 加分型）分层检测。区分 main（可执行程序）和 lib（library 库）两种验证路径。
+**能力**：跑全量验证管道 — 按三级体系分层检测：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。区分 main（可执行程序）和 lib（library 库）两种验证路径。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
 | 写完代码确认无问题；PR 前最终检查；不确定质量想全面审查 | 只想格式化（`moon fmt`）；只想跑测试（`moon test`）；频繁检查太慢 | 每个 implement 任务完成后跑一次，不攒到最后 | 自动修复只限于机械性修改；安全审计需额外装 `moon-audit` |
 
-**硬性要求（必选，阻断型）：**
-
-| # | 要求 | 命令 | 阻断 |
-|---|------|------|------|
-| H1 | 格式一致性 | `moon fmt --check` | 是 |
-| H2 | 类型安全 | `moon check --warn-list +73` | 是 |
-| H3 | 功能完整 | `moon test --target native` | 是 |
-| H4 | 工作区干净 | `git status --porcelain` | 是（发布阶段） |
-| H5 | API 稳定性 | `moon info --target native` | 是 |
-| H6 | 可执行验证（main） | `moon run` | 是 |
-| H7 | 本地消费验证（lib） | 临时 consumer 编译验证 | 是 |
-
-**软性要求（加分项，可选）：**
+**基础测试（B — 所有项目必选）：**
 
 | # | 要求 | 命令 |
 |---|------|------|
-| S1 | 跨平台兼容 | `moon check --target all` |
-| S2 | 安全审计 | `moon-audit pipeline .` |
-| S3 | 性能基线 | 测试时间对比 |
-| S4 | API 深度检查 | StringView/T?/错误处理 |
-| S5 | CI 完整性 | `.github/workflows/ci.yml` |
-| S6 | 文档完整性 | pub fn docstring / README 示例 / CLI --help |
+| B1 | 格式一致性 | `moon fmt --check` |
+| B2 | 类型安全 | `moon check --warn-list +73` |
+| B3 | 功能完整 | `moon test`（目标由项目类型决定） |
+| B4 | 工作区干净 | `git status --porcelain`（发布阶段） |
+
+**Custom 测试（C — 按项目类型选择，属于该类型则必选）：**
+
+| # | 要求 | 命令 | 适用类型 |
+|---|------|------|---------|
+| C1 | API 稳定性 | `moon info --target native` | lib/cli/parser/async；c-ffi/wasm 豁免 |
+| C2 | 可执行验证（main） | `moon run` | main/cli 项目 |
+| C3 | 本地消费验证（lib） | 临时 consumer 编译验证 | lib/c-ffi/wasm/async/parser |
+
+**增强测试（E — 推荐但非阻断）：**
+
+| # | 要求 | 命令 |
+|---|------|------|
+| E1 | 跨平台兼容 | `moon check --target all` |
+| E2 | 安全审计 | `moon-audit pipeline .` |
+| E3 | 性能基线 | 测试时间对比 |
+| E4 | API 深度检查 | StringView/T?/错误处理 |
+| E5 | CI 完整性 | `.github/workflows/ci.yml` |
+| E6 | 文档完整性 | pub fn docstring / README 示例 / CLI --help |
 
 ### 12. moonbit-evaluate — 验收 + 发布准备
 
