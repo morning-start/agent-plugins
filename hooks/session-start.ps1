@@ -6,6 +6,8 @@ param(
 # Injects the using-moonbit-skills bootstrap into agent session
 
 $ErrorActionPreference = "Stop"
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $OutputEncoding
 
 if ($HookName -ne "session-start") {
     Write-Error "Unknown hook: $HookName"

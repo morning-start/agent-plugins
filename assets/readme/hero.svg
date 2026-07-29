@@ -62,7 +62,7 @@
     </text>
 
     <!-- Description -->
-    <text x="0" y="204" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">7 个 AI Agent 技能，覆盖 MoonBit 项目从规划到发布的</text>
+    <text x="0" y="204" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">12 个 AI Agent 技能，覆盖 MoonBit 项目从规划到发布的</text>
     <text x="0" y="228" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">完整生命周期。用自然语言描述需求，剩下的交给 Agent。</text>
 
     <!-- Decorative terminal prompt -->

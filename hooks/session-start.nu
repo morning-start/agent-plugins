@@ -4,7 +4,11 @@
 # Routes to the correct skill based on user intent
 
 # Get plugin root directory
-let script_dir = ($env.CURRENT_FILE | path dirname)
+let script_dir = if ($env.CURRENT_FILE? | is-not-empty) {
+    $env.CURRENT_FILE | path dirname
+} else {
+    (($env.CLAUDE_PLUGIN_ROOT? | default (pwd)) | path join "hooks")
+}
 let plugin_root = ($script_dir | path join "..")
 let skill_path = ($plugin_root | path join "skills" "using-moonbit-skills" "SKILL.md")
 
@@ -27,5 +31,5 @@ let output = if $is_cursor {
     { additionalContext: $session_context }
 }
 
-$output | to json --compact
+print ($output | to json)
 exit 0

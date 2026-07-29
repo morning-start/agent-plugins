@@ -57,7 +57,12 @@ if command -v moon-audit &>/dev/null; then
     FAILED=1
   fi
 else
-  echo "⚠️  moon-audit not installed, skipping"
+  if [ "$STRICT_AUDIT" = "1" ]; then
+    echo "❌ Security audit unavailable and MOONBIT_STRICT_AUDIT=1"
+    FAILED=1
+  else
+    echo "⚠️  moon-audit not installed, skipping"
+  fi
 fi
 
 # 5. Package info

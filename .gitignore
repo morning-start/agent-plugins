@@ -8,3 +8,7 @@ workspace/
 **/.mooncakes/
 **/.moonagent/
 docs/plans
+
+# Local Serena project memories are developer-machine state.
+.serena/memories/
+**/__pycache__/

@@ -37,7 +37,7 @@
 ---
 
 <p align="center">
-  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 支持 7 个 AI Agent 平台，装完即用">
+  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 支持 8 个 AI Agent 平台，装完即用">
 </p>
 
 本仓库可作为多种 AI Agent 的插件安装，装完后 12 个技能自动注册到 `/` 菜单。
@@ -314,7 +314,7 @@ Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Revi
 
 ### Windows 能用吗？
 
-大部分可以。git hooks 脚本是 bash 的，Windows 上需要 Git Bash 或 WSL 才能执行。插件安装和技能使用不受影响。
+大部分可以。仓库同时提供 Bash、Nushell 和 PowerShell 入口；Windows 可使用 Nushell/PowerShell 路径，Git hooks 仍建议通过 Git Bash 或 WSL 执行。插件安装和技能使用不受影响。
 
 ### 需要安装什么前置条件？
 

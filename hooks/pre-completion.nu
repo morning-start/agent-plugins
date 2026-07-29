@@ -60,7 +60,12 @@ if $has_audit {
         $failed = 1
     }
 } else {
-    print "⚠️  moon-audit not installed, skipping"
+    if $strict_audit == "1" {
+        print "❌ Security audit unavailable and MOONBIT_STRICT_AUDIT=1"
+        $failed = 1
+    } else {
+        print "⚠️  moon-audit not installed, skipping"
+    }
 }
 
 # 5. Package info
