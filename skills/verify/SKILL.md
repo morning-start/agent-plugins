@@ -158,6 +158,8 @@ moon-audit pipeline .            # 14 条 CWE 规则静态扫描
 moon-audit --fail-on-error .     # Error 级别漏洞时 exit 1
 ```
 
+检测到依赖变更时（`moon.mod` 或 `moon.pkg` 中的依赖条目变化），主动建议运行 `moon-audit` 审计新依赖。
+
 ### S3. 性能基线
 
 > 性能优化详见 [`moonbit-perform`](../perform/SKILL.md)。S3 提供粗粒度信号，perform 提供独立优化循环。
@@ -233,6 +235,8 @@ Start → 检测项目类型（main / lib）
 
 **硬性要求（H1-H5 + 类型专属）必须全部通过**，任意一项失败则阻断，修复后重跑。
 **软性要求（S1-S5）报告结果不阻断**，用户判断是否接受。
+
+> 如果存在 CI 配置（`.github/workflows/`），CI 可能发现本地遗漏的问题（跨平台兼容、集成测试、lint 差异）。CI 失败后回到 `moonbit-implement` 修复。
 
 ---
 

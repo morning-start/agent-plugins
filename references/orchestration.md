@@ -279,6 +279,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
 - `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
 - 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`
+- CI 本地通过后失败 → 回到 `moonbit-implement`，以 CI 失败日志作为诊断输入
 
 ### 设计回溯
 

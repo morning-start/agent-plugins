@@ -205,3 +205,4 @@ jobs:
 | `moon check --target all` 失败 | 跨平台兼容问题 | 报告失败的目标平台，用户决定是否继续 |
 | CI 配置已存在 | 用户拒绝覆盖 | 展示 diff，用户批准后合并 |
 | `moon-audit` 不可用 | 命令未找到 | `moon add minie135/moon-audit`，非阻断 |
+| 发布后发现问题 | 生产环境 bug | 创建 hotfix 分支 → `moonbit-implement` 修复 → `moonbit-verify` → 重新发布 → 回溯到主分支 |

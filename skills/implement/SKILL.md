@@ -181,12 +181,26 @@ moon fmt --check && moon check --warn-list +73 && moon test
 | **Config / Hook** | 执行真实 hook 或配置 smoke test |
 | **Documentation** | 路径、命令和示例验证 |
 | **Scaffold** | 临时目录端到端生成测试 |
+| **Dependency** | `moon add` → `moon check` → `moon test` → `moon-audit` |
 
 | 场景 | 最小流程 |
 |------|---------|
 | **Bug Fix** | 复现失败 → `moon ide peek-def` 定位 → 最小修复 → `moon check + test + fmt + info` |
 | **Refactor** | `moon ide rename` 语义重命名 → `moon check + test + fmt + info` (API 不变) |
 | **New Feature** | `moon ide doc` 发现现有 API → 添加实现 → 黑盒测试 → `moon check + test + fmt + info` |
+
+## 依赖管理契约
+
+当涉及依赖操作（`moon add` / `moon remove` / `moon update`）时，必须执行完整验证链：
+
+```
+moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变）→ moon-audit（安全审计）
+```
+
+- 依赖变更可能触发连锁重构（上游 breaking change），通知用户确认
+- 跨平台依赖（native/wasm-gc/js）可能有不同的支持度，`moon check --target all` 验证
+- `moon-audit` 未安装时提示 `moon add minie135/moon-audit`，不阻断
+- 任何步骤失败 → 调整依赖版本或代码结构 → 重新循环
 
 ## 用户 vs Agent 分工
 
@@ -233,3 +247,5 @@ moon fmt --check && moon check --warn-list +73 && moon test
 实现完成后，先调用 `moonbit-verify` 做全量门禁检查，然后进入 `moonbit-evaluate` 做最终验收和发布准备。
 
 如果用户请求的是调试/修复现有代码，不需要走完整管线——直接在当前项目上执行 TDD 循环即可。
+
+如果已验证的代码在 CI 中失败（跨平台、集成测试、lint），回到本技能修复。CI 失败日志作为诊断输入，定位根因后修复并重新验证。
