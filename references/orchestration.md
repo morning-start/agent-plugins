@@ -61,6 +61,20 @@
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
+│ moonbit-perform — 性能优化                            │
+│ 输出: 性能基线 + 优化实现 + 对比验证                    │
+│ 路由: ↔ implement（双向）；→ verify                    │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ moonbit-refactor — 重构                               │
+│ 输出: 重构后的代码（可观察行为不变）                     │
+│ 路由: ↔ implement（双向）；→ verify                    │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
 │ moonbit-verify — 全量验证门禁                          │
 │ 硬性: H1-H5 (格式/类型/测试/info/工作区)               │
 │ 专属: main→moon run . / lib→临时 consumer 编译验证     │
@@ -89,6 +103,8 @@
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
 | `moonbit-testing` | 测试设计、组织、写法、迭代 | 管线并行 |
+| `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
+| `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 管线并行 |
 | `moonbit-implement` | TDD 实现 + Iron Law + debug | 管线核心 |
 | `moonbit-code-review` | 任务间代码审查 | 任务间门禁 |
 | `moonbit-verify` | 全量六维验证门禁 | 管线检查点 |
@@ -173,6 +189,10 @@ using-moonbit-skills (alwaysApply, 路由入口)
     │    │    │         │
     │    │    │         ├── → moonbit-code-review（每任务后）
     │    │    │         │
+    │    │    │         ├── → moonbit-perform（可选，性能优化循环）
+    │    │    │         │
+    │    │    │         ├── → moonbit-refactor（可选，重构循环）
+    │    │    │         │
     │    │    │         └── → moonbit-verify（全量后）
     │    │    │              │
     │    │    │              └── → moonbit-evaluate（verify 通过后）
@@ -219,6 +239,8 @@ using-moonbit-skills (alwaysApply, 路由入口)
     "scaffold": "completed",
     "testing": "completed",
     "implement": "in_progress (task 4/13)",
+    "perform": "pending",
+    "refactor": "pending",
     "code_review": "completed (per task)",
     "verify": "pending",
     "evaluate": "pending"
@@ -247,3 +269,13 @@ using-moonbit-skills (alwaysApply, 路由入口)
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
 - `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
 - 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`
+
+### 设计回溯
+
+```
+设计回溯触发
+    │
+    ├── implement 发现 API 不可测 → 回到 plan
+    ├── perform 发现瓶颈是架构问题 → 回到 plan
+    └── refactor 发现坏味是设计缺陷 → 回到 plan
+```

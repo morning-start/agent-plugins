@@ -282,4 +282,111 @@
     <rect x="890" y="497" width="68" height="22" rx="11" fill="rgba(63,185,80,0.12)" stroke="#3FB950" stroke-width="0.6"/>
     <text x="924" y="512" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="600" fill="#3FB950" text-anchor="middle">✓ 测试就绪</text>
   </g>
+
+  <!-- ========================================== -->
+  <!-- ROW 6: 测试 -->
+  <!-- ========================================== -->
+  <g transform="translate(0, 0)">
+    <rect x="56" y="490" width="1088" height="68" rx="8" fill="#161B22" stroke="#21262D" stroke-width="1"/>
+
+    <!-- Scenario label -->
+    <rect x="68" y="498" width="20" height="20" rx="10" fill="#3FB950" fill-opacity="0.15"/>
+    <text x="78" y="512" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" font-weight="700" fill="#3FB950" text-anchor="middle">6</text>
+
+    <!-- User input -->
+    <rect x="100" y="498" width="260" height="20" rx="4" fill="#0D1117" stroke="#30363D" stroke-width="0.5"/>
+    <text x="108" y="513" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#7EE787">$</text>
+    <text x="128" y="513" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#E6EDF3">如何组织测试？帮我写测试代码</text>
+
+    <!-- Skill: testing -->
+    <g transform="translate(380, 502)">
+      <circle cx="8" cy="8" r="6" fill="url(#dot-green)"/>
+      <text x="22" y="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" fill="#E6EDF3">testing</text>
+    </g>
+
+    <!-- Sub-steps -->
+    <g transform="translate(420, 500)">
+      <rect x="0" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="8" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">策略设计</text>
+      <rect x="80" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="88" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">文件组织</text>
+      <rect x="156" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="164" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">编写测试</text>
+      <!-- arrow to implement -->
+      <line x1="218" y1="9" x2="240" y2="9" stroke="#30363D" stroke-width="1"/>
+      <polygon points="240,6 246,9 240,12" fill="#30363D"/>
+      <rect x="248" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="256" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">implement</text>
+    </g>
+
+    <!-- Result badge -->
+    <rect x="890" y="497" width="68" height="22" rx="11" fill="rgba(63,185,80,0.12)" stroke="#3FB950" stroke-width="0.6"/>
+    <text x="924" y="512" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="600" fill="#3FB950" text-anchor="middle">✓ 测试就绪</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ROW 7: 性能优化 -->
+  <!-- ========================================== -->
+  <g transform="translate(0, 0)">
+    <rect x="56" y="570" width="1088" height="68" rx="8" fill="#161B22" stroke="#21262D" stroke-width="1"/>
+
+    <rect x="68" y="578" width="20" height="20" rx="10" fill="#3FB950" fill-opacity="0.15"/>
+    <text x="78" y="592" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" font-weight="700" fill="#3FB950" text-anchor="middle">7</text>
+
+    <rect x="100" y="578" width="260" height="20" rx="4" fill="#0D1117" stroke="#30363D" stroke-width="0.5"/>
+    <text x="108" y="593" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#7EE787">$</text>
+    <text x="128" y="593" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#E6EDF3">性能有点慢，帮我优化一下</text>
+
+    <g transform="translate(380, 582)">
+      <circle cx="8" cy="8" r="6" fill="url(#dot-green)"/>
+      <text x="22" y="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" fill="#E6EDF3">perform</text>
+    </g>
+
+    <g transform="translate(430, 580)">
+      <rect x="0" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="8" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">测量基线</text>
+      <rect x="72" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="80" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">分析瓶颈</text>
+      <rect x="148" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="156" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">优化</text>
+      <rect x="204" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="212" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">对比验证</text>
+    </g>
+
+    <rect x="890" y="577" width="68" height="22" rx="11" fill="rgba(63,185,80,0.12)" stroke="#3FB950" stroke-width="0.6"/>
+    <text x="924" y="592" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="600" fill="#3FB950" text-anchor="middle">✓ 优化</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ROW 8: 重构 -->
+  <!-- ========================================== -->
+  <g transform="translate(0, 0)">
+    <rect x="56" y="650" width="1088" height="68" rx="8" fill="#161B22" stroke="#21262D" stroke-width="1"/>
+
+    <rect x="68" y="658" width="20" height="20" rx="10" fill="#3FB950" fill-opacity="0.15"/>
+    <text x="78" y="672" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" font-weight="700" fill="#3FB950" text-anchor="middle">8</text>
+
+    <rect x="100" y="658" width="260" height="20" rx="4" fill="#0D1117" stroke="#30363D" stroke-width="0.5"/>
+    <text x="108" y="673" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#7EE787">$</text>
+    <text x="128" y="673" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#E6EDF3">这段代码太乱了，帮我重构一下</text>
+
+    <g transform="translate(380, 662)">
+      <circle cx="8" cy="8" r="6" fill="url(#dot-green)"/>
+      <text x="22" y="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11" fill="#E6EDF3">refactor</text>
+    </g>
+
+    <g transform="translate(430, 660)">
+      <rect x="0" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="8" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">识别坏味</text>
+      <rect x="72" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="80" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">确认测试</text>
+      <rect x="148" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="156" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">小步重构</text>
+      <rect x="204" y="0" height="18" rx="4" fill="#1A2E23" stroke="#3FB950" stroke-width="0.4" stroke-opacity="0.4"/>
+      <text x="212" y="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#3FB950">回归验证</text>
+    </g>
+
+    <rect x="890" y="657" width="68" height="22" rx="11" fill="rgba(63,185,80,0.12)" stroke="#3FB950" stroke-width="0.6"/>
+    <text x="924" y="672" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="600" fill="#3FB950" text-anchor="middle">✓ 清理</text>
+  </g>
 </svg>

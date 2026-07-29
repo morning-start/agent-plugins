@@ -49,7 +49,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 - 3 次自动修复全部失败 → 停止，向用户展示失败历史和当前状态，请求方向
 - 变更涉及 public API、ABI、WASM 导出或 C 所有权 → 停止自动修复，请求用户确认
 - 工具链报错无法通过 `moon explain` 解决 → 报告错误码和上下文，请求用户介入
-- 测试无法编写（设计缺陷导致不可测试）→ 报告问题，建议回到 plan 重新设计 API
+- 测试无法编写（设计缺陷导致不可测试）→ **触发设计回溯**，回到 `moonbit-plan` 重新设计 API（详见 [plan 的设计回溯章节](../plan/SKILL.md#设计回溯)）
 
 ## Common Rationalizations
 
@@ -71,6 +71,8 @@ If you catch yourself thinking any of these, you are violating TDD:
 ├─ GREEN:  写最小实现 → moon test -f "test_name" (预期: 通过)
 ├─ VERIFY: 全量验证 → moon fmt --check + moon check --warn-list +73 + moon test
 └─ 失败 → 自动诊断 (debug 内置, 3 次上限 → 问用户)
+
+设计回溯触发条件: API 不可测、架构假设错误、依赖不兼容 → 回到 plan（详见 [plan 设计回溯](../plan/SKILL.md#设计回溯)）
 ```
 
 ## 项目类型检测
@@ -164,7 +166,7 @@ moon fmt --check && moon check --warn-list +73 && moon test
 | 3 次自动修复全部失败 | 理解偏差或设计缺陷 | 停止，向用户展示失败历史，请求方向或回到 `moonbit-plan` 重新设计 |
 | 变更涉及 public API/ABI/WASM 导出/C 所有权 | 影响发布契约 | 停止自动修复，请求用户确认后再继续 |
 | 工具链报错且 `moon explain` 无法解决 | 编译器内部错误或工具链 bug | 报告错误码和上下文，请求用户介入 |
-| 测试无法编写（设计缺陷） | 不可测试的 API 设计 | 报告问题，建议回到 `moonbit-plan` 简化 API |
+| 测试无法编写（设计缺陷） | 不可测试的 API 设计 | **触发设计回溯**，回到 `moonbit-plan` 重新设计 API |
 
 ## 下一步
 

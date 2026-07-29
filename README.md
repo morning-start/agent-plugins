@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills — 你决策，Agent 执行。10 个 AI Agent 技能覆盖 MoonBit 项目全生命周期。">
+  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills — 你决策，Agent 执行。12 个 AI Agent 技能覆盖 MoonBit 项目全生命周期。">
 </p>
 
 这套技能帮助你在 AI Agent（AtomCode、Claude Code、Codex、Cursor 等）的辅助下开发 MoonBit 项目。**你负责做决策，Agent 负责写代码、跑测试、修 bug。**
@@ -24,6 +24,8 @@
 "帮我拆成实现任务"                                → 自动触发 moonbit-writing-plans
 "如何写测试"                                     → 自动触发 moonbit-testing
 "开始写代码吧"                                   → 自动触发 moonbit-implement
+"性能优化"                                        → 自动触发 moonbit-perform
+"重构这段代码"                                    → 自动触发 moonbit-refactor
 "审查一下这段代码"                                → 自动触发 moonbit-code-review
 "检查一下代码有没有问题"                          → 自动触发 moonbit-verify
 "准备发布了"                                     → 自动触发 moonbit-evaluate
@@ -38,7 +40,7 @@
   <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 支持 7 个 AI Agent 平台，装完即用">
 </p>
 
-本仓库可作为多种 AI Agent 的插件安装，装完后 10 个技能自动注册到 `/` 菜单。
+本仓库可作为多种 AI Agent 的插件安装，装完后 12 个技能自动注册到 `/` 菜单。
 
 ### AtomCode
 
@@ -91,14 +93,14 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 ### 装完之后的体验
 
-- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 10 个带命名空间的 skill
+- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 12 个带命名空间的 skill
 - Agent（模型）也可以通过 `use_skill` 工具自动调用这些技能，不需要手动选
 - 当你说"我要做一个 MoonBit 项目"时，技能会自动触发，从 `moonbit-plan` 开始引导对话
 
 ---
 
 <p align="center">
-  <img src="./assets/readme/section-skills.svg" width="100%" alt="十个技能详解 — init, plan, writing-plans, scaffold, testing, implement, code-review, verify, evaluate, learn">
+  <img src="./assets/readme/section-skills.svg" width="100%" alt="十二个技能详解 — init, plan, writing-plans, scaffold, testing, implement, perform, refactor, code-review, verify, evaluate, learn">
 </p>
 
 ### 1. moonbit-init — 给项目装上质量门禁
@@ -178,7 +180,23 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 | parser | valid/invalid/edge 三类用例 |
 | async | 协程测试、超时、取消 |
 
-### 7. moonbit-code-review — 代码审查门禁
+### 7. moonbit-perform — 性能优化
+
+**能力**：测量性能基线、定位瓶颈、优化实现、对比验证。独立迭代循环，不改变功能行为。
+
+| 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
+|-----------|---------------|-----------|---------|
+| 功能正确但性能不达标；需要对比优化方案；性能回归排查 | 功能还未实现（用 implement）；只跑测试（用 verify） | 先建立基线再优化；至少 5-10 次测量取最小值 | MoonBit 官方 bench 工具未发布，当前用计时手段 |
+
+### 8. moonbit-refactor — 重构
+
+**能力**：识别技术债务、确认测试覆盖、小步重构、回归验证。独立迭代循环，不改变可观察行为。
+
+| 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
+|-----------|---------------|-----------|---------|
+| 代码能跑但质量差；技术债务积累；坏味识别 | 新功能（用 implement）；性能优化（用 perform） | 测试全绿才能重构；每步独立验证 | 重构中可能发现 bug，记录后单独修 |
+
+### 9. moonbit-code-review — 代码审查门禁
 
 **能力**：在每个实现任务完成后执行代码审查，按严重程度（Critical / Important / Minor）分类报告问题，自动修复机械性问题。
 
@@ -186,7 +204,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 |-----------|---------------|-----------|---------|
 | 每个 implement 任务完成后；合并前做最终审查；不确定代码质量 | 还在实现过程中；已经通过 verify 全量检查 | 在 implement 每任务后自动触发；快速定位规范问题 | 自动修复限于机械性问题；不适用于架构级审查 |
 
-### 8. moonbit-verify — 全量六维检测门禁
+### 10. moonbit-verify — 全量六维检测门禁
 
 **能力**：跑全量验证管道 — 按硬性要求（H1-H7 阻断型）和软性要求（S1-S5 加分型）分层检测。区分 main（可执行程序）和 lib（library 库）两种验证路径。
 
@@ -216,7 +234,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 | S4 | API 深度检查 | StringView/T?/错误处理 |
 | S5 | CI 完整性 | `.github/workflows/ci.yml` |
 
-### 9. moonbit-evaluate — 验收 + 发布准备
+### 11. moonbit-evaluate — 验收 + 发布准备
 
 **能力**：做最终验收，生成 README 文档和 CI 配置，准备发布。
 
@@ -226,7 +244,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 **发布前检查清单：** `moon test` ✓ → `moon info` ✓ → 版本号确认 → `moon publish`
 
-### 10. moonbit-learn — 从错误中学习，自我优化
+### 12. moonbit-learn — 从错误中学习，自我优化
 
 **能力**：遇到 bug 时不存档，直接分析原因 → 归类 → 更新对应的技能或参考文件，让技能系统持续进化。
 
@@ -248,15 +266,19 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
   <img src="./assets/readme/section-faq.svg" width="100%" alt="常见问题 — 技能管线、使用门槛、Windows 兼容性、多平台支持">
 </p>
 
+### 发现设计问题怎么办？
+
+发现设计问题（API 不可测、架构假设错误、性能瓶颈是架构问题、技术债务是设计缺陷）可以触发**设计回溯**，回到 `moonbit-plan` 重新设计。implement/perform/refactor 都可触发。
+
 ### 我必须要按顺序走完所有技能吗？
 
 不需要。技能管线是推荐流程，不是强制流程：
 
 ```
-Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → Verify → Evaluate
+Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → [Perform ↔] → [Refactor ↔] → Verify → Evaluate
 ```
 
-注: Testing 为可选双向步骤，与 implement 并行或先于 implement。
+注: Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。设计回溯可从 implement/perform/refactor 回到 plan。
 
 你可以跳过 scaffold（项目已存在）、跳过 plan（已想清楚）、在 implement 和 verify 之间来回迭代、不需要发布则永远不用 evaluate。Code-review 在每 implement 任务后自动执行。
 
@@ -270,6 +292,8 @@ Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Revi
 - `moonbit-writing-plans`：只生成计划文档，不改代码
 - `moonbit-scaffold`：生成新文件，不覆盖已有
 - `moonbit-implement`：写代码，但每步都展示给你看
+- `moonbit-perform`：测量和优化性能，不改功能行为
+- `moonbit-refactor`：改善代码结构，不改可观察行为
 - `moonbit-code-review`：只报告问题，机械性问题可自动修复
 - `moonbit-verify`：默认只报告问题，不自动改（除非你让改）
 - `moonbit-learn`：直接更新技能文件（可追加/合并/更新，需用户确认根因）

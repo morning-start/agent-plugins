@@ -160,6 +160,8 @@ moon-audit --fail-on-error .     # Error 级别漏洞时 exit 1
 
 ### S3. 性能基线
 
+> 性能优化详见 [`moonbit-perform`](../perform/SKILL.md)。S3 提供粗粒度信号，perform 提供独立优化循环。
+
 ```bash
 # 记录测试执行时间
 moon test --target native 2>&1 | tail -3
@@ -249,6 +251,8 @@ Start → 检测项目类型（main / lib）
 | `moon run` 失败 | 检查 main 包声明 | `moon.pkg` 加 `pkgtype(kind: "executable")` |
 | `moon-audit` 未安装 | 命令未找到 | `moon add minie135/moon-audit` |
 | 临时目录编译失败 | workspace 路径错误 | 检查 `moon.work` 路径 |
+| 性能退化 | S3 检测到耗时显著增加 | 建议调用 `moonbit-perform` 优化 |
+| 重构回归 | refactor 后测试失败 | 回滚重构步骤，回到 `moonbit-refactor` |
 
 ## 输出
 
@@ -281,4 +285,4 @@ Start → 检测项目类型（main / lib）
 
 ## 下一步
 
-验证通过后，进入 `moonbit-evaluate` 做最终验收和发布准备。如果硬性检查失败，回到 `moonbit-implement` 修复问题。
+验证通过后，进入 `moonbit-evaluate` 做最终验收和发布准备。如果硬性检查失败，回到 `moonbit-implement` 修复问题。性能问题建议调用 `moonbit-perform`，技术债务建议调用 `moonbit-refactor`。

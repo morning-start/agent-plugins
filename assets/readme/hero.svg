@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="hero-title hero-desc">
   <title id="hero-title">MoonBit Skills — AI Agent 技能集</title>
-  <desc id="hero-desc">你决策，Agent 执行。10 个 AI Agent 技能覆盖 MoonBit 项目从规划到发布的完整生命周期。</desc>
+  <desc id="hero-desc">你决策，Agent 执行。12 个 AI Agent 技能覆盖 MoonBit 项目从规划到发布的完整生命周期。</desc>
 
   <defs>
     <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">

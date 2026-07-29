@@ -175,6 +175,41 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 }
 ```
 
+## 设计回溯
+
+当 implement/perform/refactor 发现以下问题时，回到 plan 重新设计：
+
+| 触发场景 | 来源技能 | 回溯动作 |
+|---|---|---|
+| API 不可测试 | implement | 重新设计 API，简化可测性 |
+| 架构假设错误 | implement | 重新评估架构模式 |
+| 依赖不兼容 | implement | 重新选择依赖或架构 |
+| 性能瓶颈是架构问题 | perform | 重新设计性能关键路径 |
+| 技术债务是设计缺陷 | refactor | 重新设计模块边界 |
+
+### 设计回溯流程
+
+1. 来源技能报告设计问题（停止条件触发）
+2. 进入 plan 的"设计修正"模式
+3. 重新评估架构决策（与用户确认）
+4. 更新 `docs/requirements.md`
+5. 进入 writing-plans 重新拆解任务
+6. 继续 implement
+
+### 设计回溯的输出
+
+```json
+{
+  "status": "design_revision",
+  "trigger": "api_untestable",
+  "source_skill": "implement",
+  "original_design": "...",
+  "revised_design": "...",
+  "user_confirmed": true,
+  "next": "writing-plans"
+}
+```
+
 ## 下一步
 
 计划确认后，进入 `moonbit-writing-plans` 将设计拆解为可执行任务。如果不需要分解（如小型改动），可以直接进入 `moonbit-scaffold` 生成项目骨架或 `moonbit-implement` 开始开发。

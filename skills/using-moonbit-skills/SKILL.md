@@ -41,6 +41,8 @@ When multiple skills match, route by intent:
 | 已有项目、需求明确、要写代码 | `moonbit-implement` |
 | 当前实现失败 | `moonbit-implement` (debug) |
 | 测试设计、组织、写法 | `moonbit-testing` |
+| 性能优化、瓶颈分析 | `moonbit-perform` |
+| 重构、技术债务、坏味 | `moonbit-refactor` |
 | 审查代码差异和设计问题 | `moonbit-code-review` |
 | 检查质量或完成状态 | `moonbit-verify` |
 | 发布准备 | `moonbit-evaluate` |
@@ -56,6 +58,8 @@ When multiple skills match, route by intent:
 | "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
 | "scaffold", "generate", "skeleton" | "骨架", "模板", "生成" | `moonbit-scaffold` |
 | "how to test", "write tests", "test organization" | "如何测试", "写测试", "测试组织", "补测试", "测试重构" | `moonbit-testing` |
+| "optimize performance", "benchmark", "profile" | "性能优化", "性能瓶颈", "测量", "基线对比" | `moonbit-perform` |
+| "refactor", "technical debt", "code smell" | "重构", "技术债务", "坏味", "清理代码" | `moonbit-refactor` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
@@ -97,10 +101,12 @@ These thoughts mean STOP — you are rationalizing:
 ## Pipeline (recommended flow)
 
 ```
-Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → Verify → Evaluate
+Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → [Perform ↔] → [Refactor ↔] → Verify → Evaluate
+                                       ↑                  │
+                                       └── 设计回溯 ───────┘
 ```
 
-注: Testing 为可选双向步骤，与 implement 并行或先于 implement。
+注: Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。设计回溯可从 implement/perform/refactor 回到 plan。
 
 Steps can be skipped — the pipeline is recommended, not mandatory. If the project already exists, skip scaffold. If no release is needed, skip evaluate.
 
@@ -113,6 +119,8 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |
 | `moonbit-testing` | Design tests, organize test files, iterate on test code |
+| `moonbit-perform` | Optimize performance with measurement-driven cycle |
+| `moonbit-refactor` | Refactor code with test protection, eliminate code smells |
 | `moonbit-implement` | Write code via TDD (test → implement → verify) |
 | `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |

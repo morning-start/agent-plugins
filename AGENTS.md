@@ -39,7 +39,8 @@
 - 行动前先读取 `skills/using-moonbit-skills/SKILL.md`，按其路由表匹配用户意图到对应技能。
 - 若用户直接指定技能，优先使用该技能，跳过路由匹配。
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
-- 推荐的新项目路径：`plan → writing-plans → scaffold → [testing ↔] implement ↔ code-review → verify → evaluate`。
+- 推荐的新项目路径：`plan ↔ writing-plans → scaffold → [testing ↔] implement ↔ code-review → [perform ↔] → [refactor ↔] → verify → evaluate`。
+- 注: `↔` 表示可触发设计回溯回到 plan
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的硬性门禁。
 
@@ -54,6 +55,8 @@
 | `moonbit-writing-plans` | 设计→可执行任务拆解 | 不写实现代码 |
 | `moonbit-scaffold` | 按已批准设计动态生成项目骨架 | 不依赖预置模板，不覆盖用户文件 |
 | `moonbit-testing` | 测试设计、组织、写法、迭代 | 不写实现代码，不运行门禁判定，不接管 implement 的 TDD Red 阶段执行 |
+| `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 不改变功能行为，不替代 verify 门禁 |
+| `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 不改变可观察行为，不替代 testing 测试设计 |
 | `moonbit-implement` | TDD 实现、修复、重构 | 无失败测试不写实现代码 |
 | `moonbit-code-review` | 任务间代码审查 | 不发布、不声称完成 |
 | `moonbit-verify` | 全量验证门禁 | 不声称完成除非有新鲜证据 |
@@ -113,7 +116,7 @@ Hooks 只提供自动化子集，不能替代完整验证：
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 10 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 12 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
 - `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。

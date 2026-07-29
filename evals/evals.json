@@ -224,6 +224,64 @@
       "should_trigger": true,
       "files": [],
       "skills": ["testing"]
+    },
+    {
+      "id": 16,
+      "name": "perform-bottleneck-analysis",
+      "prompt": "My MoonBit CLI is slow. Help me optimize performance.",
+      "expected_output": "Route to moonbit-perform. Establish baseline, analyze bottleneck, optimize with measurement.",
+      "assertions": [
+        "routes to perform not implement",
+        "establishes baseline before optimization",
+        "uses measurement-driven approach",
+        "does not change functional behavior"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["perform"]
+    },
+    {
+      "id": 17,
+      "name": "refactor-code-smells",
+      "prompt": "This function is 80 lines long and has duplicated logic. Help me refactor.",
+      "expected_output": "Route to moonbit-refactor. Ensure tests green, identify smells, small-step refactor.",
+      "assertions": [
+        "routes to refactor not implement",
+        "checks tests are green before refactoring",
+        "uses small-step refactoring",
+        "does not change public API"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["refactor"]
+    },
+    {
+      "id": 18,
+      "name": "design-backtrack-from-implement",
+      "prompt": "I'm implementing but the API I designed is impossible to test. What should I do?",
+      "expected_output": "Trigger design backtrack. Report to plan, redesign API for testability.",
+      "assertions": [
+        "triggers design backtrack to plan",
+        "does not force implementation",
+        "suggests API redesign"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["implement", "plan"]
+    },
+    {
+      "id": 19,
+      "name": "perform-architecture-bottleneck",
+      "prompt": "I've been optimizing this function but it's still slow. The bottleneck seems to be the overall architecture.",
+      "expected_output": "Trigger design backtrack from perform to plan. Report architecture issue.",
+      "assertions": [
+        "triggers design backtrack to plan",
+        "does not continue local optimization",
+        "reports architecture-level bottleneck"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["perform", "plan"]
     }
   ]
 }
