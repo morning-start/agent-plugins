@@ -9,7 +9,7 @@ skill 仓库自身架构演进（非 MoonBit 项目）
 当前管线是"线性+局部双向"：testing↔implement、implement↔code-review、verify→implement 回落已支持，但本质仍是线性推进。现代软件工程的三个关键迭代循环缺失：
 
 1. **设计回溯**：implement 发现 API 不可测/架构错误时，文字写"建议回到 plan"但管线图无回路
-2. **性能优化**：[performance.md](file:///e:/Workplace/Agent/moonbit-skills/references/patterns/performance.md) 已有基线对比工作流，但管线无入口
+2. **性能优化**：[performance.md](../references/patterns/performance.md) 已有基线对比工作流，但管线无入口
 3. **重构**：作为 implement 子任务，无法表达"独立技术债务管理"的关注点
 
 ## 核心问题
