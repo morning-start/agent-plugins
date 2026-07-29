@@ -91,6 +91,13 @@ NO OPTIMIZATION WITHOUT MEASUREMENT
 - perform 产出的变更由 code-review 审查性能改进有效性
 - code-review 检查是否有"过早优化"反模式
 
+## 与 refactor 的契约
+
+- perform 优化后若引入技术债务（内联展开、为速度牺牲可读性）→ 调用 `moonbit-refactor` 清理
+- perform 不负责代码可读性改善（不越界到 refactor）
+- refactor 重构后若影响热路径性能 → 调用 `moonbit-perform` 重新测量
+- 两者共享"不改变可观察行为"约束，但关注点不同：perform 关注性能特性，refactor 关注内部结构
+
 ## 用户 vs Agent 分工
 
 | 谁 | 做什么 |

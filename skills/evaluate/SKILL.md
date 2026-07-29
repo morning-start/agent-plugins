@@ -90,6 +90,19 @@ moon test --target native -f "usage" # 验证文档示例可运行
 
 **阻断条件：** 沿用 verify 的 H7 阻断条件；`moon check --target all` 失败也阻断发布。
 
+## 版本号决策指导
+
+用户确认版本号时，Agent 基于 SemVer 规范给出建议（不替用户决定）:
+
+| 变更类型 | 版本升级 | 判断依据 |
+|---------|---------|---------|
+| Breaking change（公共 API 签名变更、ABI 不兼容） | major | verify H5 检测到 pub fn 删除/签名变更 |
+| 新功能（新增 pub fn，向后兼容） | minor | verify H5 检测到新增 pub 符号 |
+| Bug fix / 内部优化（公共 API 不变） | patch | verify H5 确认 API 表面不变 |
+| 无代码变更（仅文档/CI） | 无升级 | — |
+
+Agent 输出建议版本号和升级类型，由用户最终确认。
+
 ## 执行流程
 
 ### 1. 委托 verify 做全量门禁
@@ -127,7 +140,39 @@ jobs:
 
 **注意：** 如果 `.github/workflows/ci.yml` 已存在，展示 diff 给用户，用户批准后写入。不覆盖用户自定义 workflow。
 
-### 4. 发布检查清单
+### 4. 生成 CHANGELOG 条目（预览模式，用户批准后写入）
+
+```markdown
+## [Unreleased] → [{version}] - {YYYY-MM-DD}
+
+### Added
+- {新增功能}
+
+### Changed
+- {变更项}
+
+### Fixed
+- {修复项}
+
+### Removed
+- {移除项}
+```
+
+**注意:** 遵循 Keep a Changelog 规范。如果 `CHANGELOG.md` 已存在，追加到 Unreleased 段落下；不存在则创建。展示 diff 给用户，用户批准后写入。
+
+### 5. 生成文档预览（lib 项目专属）
+
+```bash
+# 生成 API 文档预览（不写入仓库，仅展示）
+moon doc --target native --output /tmp/moonbit-doc-preview
+
+# 验证文档示例可运行（如有 usage 测试）
+moon test --target native -f "usage"
+```
+
+**注意:** `moon doc` 不可用时跳过此步骤，报告工具链缺失。文档预览不阻断发布，供用户决策。
+
+### 6. 发布检查清单
 
 ```markdown
 ## 发布检查清单
@@ -136,7 +181,9 @@ jobs:
 - [x] 项目类型验证通过（main: moon run . | lib: 临时 consumer 编译验证）
 - [x] 文档示例可运行（如有 usage 测试）
 - [x] CI 配置已生成（用户批准后写入）
-- [ ] 用户确认版本号
+- [x] CHANGELOG 条目已生成（用户批准后写入）
+- [x] API 文档预览已展示（lib 项目，moon doc 可用时）
+- [ ] 用户确认版本号（Agent 已给出 SemVer 建议）
 - [ ] 用户执行 `moon publish`（需要 mooncakes 账号）
 ```
 
@@ -155,8 +202,8 @@ jobs:
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README 和 CI 预览、检查发布就绪 |
-| **用户** | 判断质量是否达标、确认版本号、审查 README/CI diff、执行 `moon publish` |
+| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README/CI/CHANGELOG 预览、给出 SemVer 建议、检查发布就绪 |
+| **用户** | 判断质量是否达标、确认版本号（参考 Agent 建议）、审查 README/CI/CHANGELOG diff、执行 `moon publish` |
 
 ## 输出
 
@@ -167,6 +214,12 @@ jobs:
   "verification": "pass (H1-H5 all green)",
   "type_specific": {
     "moon_run": "pass (output: 'Hello World')"
+  },
+  "semver_suggestion": {
+    "bump_type": "patch",
+    "current": "0.3.2",
+    "suggested": "0.3.3",
+    "reason": "Bug fix，公共 API 不变"
   },
   "files_created": [".github/workflows/ci.yml"],
   "publish_ready": true,
@@ -184,7 +237,14 @@ jobs:
     "moon_add": "pass",
     "cross_platform": "pass (native+wasm)"
   },
-  "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml"],
+  "semver_suggestion": {
+    "bump_type": "minor",
+    "current": "0.3.2",
+    "suggested": "0.4.0",
+    "reason": "新增 2 个 pub fn，向后兼容"
+  },
+  "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml", "CHANGELOG.md"],
+  "doc_preview": "generated (/tmp/moonbit-doc-preview)",
   "publish_ready": true,
   "user_decision": "approved",
   "next": "publish | implement"
