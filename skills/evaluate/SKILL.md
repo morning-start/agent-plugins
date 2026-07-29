@@ -264,6 +264,8 @@ moon test --target native -f "usage"
 
 发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。
 
+如果用户说"和想要的不一样"或验收阶段发现设计方向偏差，**触发设计回溯**：回到 `moonbit-plan` 重新设计 API 或调整需求，不在此阶段绕路修复。
+
 ## 错误恢复
 
 | 问题 | 诊断 | 修复 |

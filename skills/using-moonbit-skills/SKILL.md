@@ -38,10 +38,12 @@ When multiple skills match, route by intent:
 |-------------|------|
 | 新项目或未决定架构/API | `moonbit-plan` |
 | 设计已批准、需要任务分解 | `moonbit-writing-plans` |
+| 生成项目骨架 | `moonbit-scaffold` |
+| 配置本地 git hooks 质量门禁 | `moonbit-init` |
+| CI/CD 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
+| 测试设计、组织、写法 | `moonbit-testing` |
 | 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
 | 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
-| 测试设计、组织、写法 | `moonbit-testing` |
-| CI/CD 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
 | 性能优化、瓶颈分析 | `moonbit-perform` |
 | 重构、技术债务、坏味 | `moonbit-refactor` |
 | 审查代码差异和设计问题 | `moonbit-code-review` |

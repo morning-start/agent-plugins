@@ -47,6 +47,22 @@
 │ 方式: 按类型动态生成，不依赖预置模板                    │
 │ CLI: pkgtype(kind: "executable")                     │
 │ 验证: moon fmt --check + moon check + moon test      │
+│ 路由: → init 或 testing 或 implement                           │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ moonbit-init — Git hooks 配置（L1 + L2 本地门禁）      │
+│ L1 pre-commit: fmt --check + check                    │
+│ L2 pre-push: test + audit                             │
+│ 路由: → ci                                            │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ moonbit-ci — CI/CD 基础设施（新项目首次提交前必配）     │
+│ 本地: commit-msg(Conventional Commits) + 安全扫描     │
+│ 远端: GitHub Actions 多 job 流水线                     │
 │ 路由: → testing 或 implement                           │
 └─────────────────┬───────────────────────────────────┘
                   │
@@ -109,8 +125,8 @@
 
 | 技能 | 触发场景 | 类型 |
 |------|---------|------|
-| `moonbit-init` | 初始化项目、配置 git hooks | 独立 |
-| `moonbit-ci` | CI/CD 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 独立 |
+| `moonbit-init` | 初始化项目、配置 git hooks | 管线步骤 |
+| `moonbit-ci` | CI/CD 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
 | `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
@@ -290,5 +306,6 @@ using-moonbit-skills (alwaysApply, 路由入口)
     │
     ├── implement 发现 API 不可测 → 回到 plan
     ├── perform 发现瓶颈是架构问题 → 回到 plan
-    └── refactor 发现坏味是设计缺陷 → 回到 plan
+    ├── refactor 发现坏味是设计缺陷 → 回到 plan
+    └── evaluate 用户不认可设计方向 → 回到 plan
 ```
