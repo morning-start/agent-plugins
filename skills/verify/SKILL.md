@@ -53,9 +53,10 @@ If you catch yourself doing any of these, you are violating the verify contract:
 ```bash
 moon fmt --check               # 格式合规：exit 0
 moon fmt                        # 失败时自动修复
+git diff --exit-code             # 确认格式修复后工作区干净
 ```
 
-**判定标准：** `moon fmt --check` exit 0。
+**判定标准：** `moon fmt --check` exit 0。若自动修复，`git diff --exit-code` 必须为 0 以确认修复后无残留差异。
 
 ### H2. 类型安全
 
@@ -88,22 +89,31 @@ git status --porcelain           # 全面检测：tracked + untracked + staged
 
 **判定标准：** `git status --porcelain` 输出为空。开发过程中的非预期文件改动（如 `moon info` 生成的 `pkg.generated.mbti`）应列入 allowlist，不触发阻断。
 
-### H5. API 稳定性（通用 + lib 项目）
+### H5. API 稳定性
+
+lib / cli / parser / async 项目必选。c-ffi 和 wasm 项目豁免（对外接口是 C ABI 或 WASM 导出，不依赖 MoonBit pub API）。
 
 ```bash
-moon info --target native        # 公共 API 签名输出
+# 类型检测前置：H5 仅对 lib/cli/parser/async 执行
+# c-ffi 和 wasm 跳过此检查（参照「各类型验证全景」表）
+if [ "$PROJECT_TYPE" != "c-ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
+  moon info --target native        # 公共 API 签名输出
 
-# 更新 allowlist：pkg.generated.mbti 是预期产物
-if [ -f "pkg.generated.mbti" ]; then
-  git add "pkg.generated.mbti" 2>/dev/null || true
+  # 自动比对待发布的 API 表面与 Git 中已记录的版本是否一致
+  git diff --exit-code pkg.generated.mbti
+
+  # 更新 allowlist：pkg.generated.mbti 是预期产物
+  if [ -f "pkg.generated.mbti" ]; then
+    git add "pkg.generated.mbti" 2>/dev/null || true
+  fi
+
+  # 检查 API 设计要求
+  moon info --target native | grep "pub fn"
+  moon info --target native | grep "pub(all)"
 fi
-
-# 检查 API 设计要求
-moon info --target native | grep "pub fn"
-moon info --target native | grep "pub(all)"
 ```
 
-**判定标准：** `moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`pkg.generated.mbti` 是预期产物，不视为意外改动。
+**判定标准：** lib/cli/parser/async 项目：`moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`git diff --exit-code pkg.generated.mbti` 必须为 0，确认已提交的 API 签名与当前一致。`pkg.generated.mbti` 是预期产物，不视为意外改动。c-ffi 和 wasm 项目跳过此检查，不阻断。
 
 ---
 
