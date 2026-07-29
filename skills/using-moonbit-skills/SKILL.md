@@ -101,12 +101,13 @@ These thoughts mean STOP — you are rationalizing:
 ## Pipeline (recommended flow)
 
 ```
-Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → [Perform ↔] → [Refactor ↔] → Verify → Evaluate
-                                       ↑                  │
-                                       └── 设计回溯 ───────┘
+Plan → [Spike (可选)] → [Writing-Plans] → Scaffold → [Testing ↔] Implement ↔ [Code-Review] → [Perform ↔] → [Refactor ↔] → Verify → Evaluate
+                                          ↑                    │
+                                          └──── 设计回溯 ──────┘
 ```
 
-注: Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。设计回溯可从 implement/perform/refactor 回到 plan。
+注: Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。Spike 为可选原型验证步骤，在 plan 之后、writing-plans 之前。设计回溯可从 implement/perform/refactor 回到 plan。
+Code-Review 支持多轮循环：未批准时回到 implement 修复，修复后自动再次触发 review。
 
 Steps can be skipped — the pipeline is recommended, not mandatory. If the project already exists, skip scaffold. If no release is needed, skip evaluate.
 

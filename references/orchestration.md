@@ -24,7 +24,14 @@
 │ moonbit-plan — 需求澄清 + 设计决策                    │
 │ 输出: primary_type + capabilities + targets + API    │
 │ 用户介入: 选择架构模式 + 设计 API                      │
-│ 路由: → writing-plans 或 scaffold                     │
+│ 路由: → Spike (可选) 或 writing-plans 或 scaffold                     │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ [Spike] 原型验证（可选）                              │
+│ 验证关键假设 → 丢弃代码 → 经验写入 writing-plans       │
+│ 路由: → writing-plans                                 │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
@@ -56,7 +63,7 @@
 │ 模式: Feature TDD | Bug Fix                          │
 │ Feature: RED(测试)→GREEN(实现)→VERIFY(全量)         │
 │ Bug Fix: REPRODUCE→DIAGNOSE→FIX→VERIFY→LEARN        │
-│ 每任务后: moonbit-code-review                          │
+│ 每任务后: moonbit-code-review（未批准则循环）              │
 │ Bug Fix 后: 自动触发 moonbit-learn                     │
 │ 分类: main项目 + moon run . / lib项目 + 临时 consumer  │
 │ 路由: → verify                                        │

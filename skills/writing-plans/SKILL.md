@@ -53,6 +53,11 @@ If you catch yourself doing any of these, you are violating the writing-plans co
 - `project_type` — lib/cli/c-ffi/wasm/parser/async
 - `architecture` — 架构模式
 - `api_surface` — API 签名列表
+
+如果 plan 阶段执行了 Spike 原型验证，还将 Spike 的经验纳入：
+- 可行性结论（假设成立/不成立/部分成立）
+- 关键发现（边界条件、性能特征、兼容性）
+- Spike 经验直接转化为 task 拆解中的验证重点
 - 需求文档（`docs/requirements.md`）
 
 ## 执行流程

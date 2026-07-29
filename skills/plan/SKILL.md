@@ -210,6 +210,43 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 }
 ```
 
+---
+
+## Spike 原型验证（可选）
+
+设计确定后，如果存在关键假设需要验证，可以在 writing-plans 之前增加可选 Spike 阶段。
+
+### 何时需要 Spike
+
+- **API 可用性验证**：不确定 API 设计是否好用，想快速写一段消费代码试试
+- **技术可行性验证**：不确定 FFI/WASM 边界能否工作
+- **性能假设验证**：不确定某算法的性能表现
+- **依赖评估**：不确定第三方库是否满足需求
+
+### Spike 契约
+
+1. 写**最小**的探索代码，只验证关键假设
+2. **验证完成即丢弃所有 Spike 代码**（不可进入版本控制）
+3. 产出物是经验——记录到 `writing-plans` 的任务拆解中
+4. Spike 代码不能被复用为生产代码（否则破坏 implement 的 Iron Law）
+
+### Spike 流程
+
+```
+┌─ IDENTIFY:  确认关键假设（哪些决策需要验证）
+├─ SPIKE:     写最小探索代码，验证假设
+├─ EVALUATE:  验证结果 → 假设成立/不成立/部分成立
+└─ DISCARD:   丢弃 Spike 代码，记录经验到 writing-plans
+```
+
+### 与 implement 的关系
+
+- Spike 代码不是生产代码，不遵循 TDD Iron Law
+- Spike 完成后必须丢弃所有代码，再从空的 implement 开始 TDD
+- Spike 的经验可以指导 writing-plans 的 task 拆分，但不可以直接进入代码
+
+---
+
 ## 下一步
 
 计划确认后，进入 `moonbit-writing-plans` 将设计拆解为可执行任务。如果不需要分解（如小型改动），可以直接进入 `moonbit-scaffold` 生成项目骨架或 `moonbit-implement` 开始开发。

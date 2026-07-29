@@ -115,15 +115,37 @@ moon test --target native
 
 | 严重度 | 定义 | 动作 |
 |--------|------|------|
-| **Critical** | 编译错误、测试失败 | 必须修复 |
-| **Important** | API 设计缺陷、性能问题、安全隐患 | 修复后继续 |
-| **Minor** | 代码风格、命名建议 | 记下稍后处理 |
+| **Critical** | 编译错误、测试失败 | 必须修复，修复后回到 code-review |
+| **Important** | API 设计缺陷、性能问题、安全隐患 | 建议修复，修复后回到 code-review |
+| **Minor** | 代码风格、命名建议 | 记下稍后处理，不阻断 |
+
+**多轮判断**：
+- Critical > 0 → 状态为 `changes_needed`，必须修复后才能再次审查
+- Critical = 0 且 Important > 0 → 状态为 `changes_needed`，建议修复；修复后回到 code-review；用户可显式接受风险后跳过
+- Critical = 0 且 Important = 0（或用户显式接受）→ 状态为 `approved`
+- review_round 递增（第 1 轮=1，第 2 轮=2...）
+- 连续 3 轮审查无改善（findings 总数未减少）→ 停止，请求用户介入
 
 ### 5. 自动修复
 
 自动修复后必须重新运行 fmt、check、test，并输出变更摘要。
 
 涉及 public API、ABI、WASM 导出或 C 所有权时，停止自动修复并请求用户确认。
+
+### 6. 多轮循环
+
+code-review 支持多轮审查，直到所有 Critical 和 Important 问题被解决或用户显式接受。
+
+```
+Round 1: review → changes_needed → implement (fix) → review
+Round 2: review → changes_needed → implement (fix) → review
+Round 3: ... → approved → verify
+```
+
+- 每轮输出 `changes_needed` 后，Agent 回到实现任务修复问题，修复完成后自动再次触发 code-review
+- 同一技能实例接管上下文，`review_round` 逐轮递增
+- 当 Critical = 0 且 Important = 0（或用户显式接受已知问题）时，标记 `approved`
+- 连续 3 轮审查 findings 总数未减少 → 审查循环无效，停止，请求用户介入
 
 ## 用户 vs Agent 分工
 
@@ -137,6 +159,8 @@ moon test --target native
 ```json
 {
   "status": "approved | changes_needed",
+  "review_round": 1,
+  "previous_round_findings": 0,
   "scope": "tasks 3-5",
   "findings": {
     "critical": 0,

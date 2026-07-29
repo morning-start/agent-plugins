@@ -39,7 +39,7 @@
 - 行动前先读取 `skills/using-moonbit-skills/SKILL.md`，按其路由表匹配用户意图到对应技能。
 - 若用户直接指定技能，优先使用该技能，跳过路由匹配。
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
-- 推荐的新项目路径：`plan ↔ writing-plans → scaffold → [testing ↔] implement ↔ code-review → [perform ↔] → [refactor ↔] → verify → evaluate`。
+- 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → [testing ↔] implement ↔ code-review → [perform ↔] → [refactor ↔] → verify → evaluate`。
 - 注: `↔` 表示可触发设计回溯回到 plan
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的硬性门禁。

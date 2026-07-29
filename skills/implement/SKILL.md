@@ -59,7 +59,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 | "I'll test after" | Tests written after pass immediately — which proves nothing. They may test the wrong thing. You never watched them fail. |
 | "Already manually tested" | Manual testing is ad-hoc: no record, no re-runs. |
 | "Deleting X hours is wasteful" | Sunk cost fallacy. Rewrite with TDD (high confidence) vs. keep untrustworthy code. |
-| "I need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "I need to explore first" | 在 plan 阶段使用 Spike 原型验证。验证后丢弃，再进入 TDD。 |
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. Simplify. |
 | "This is just a quick fix" | Quick fixes without tests break things. Write the test. |
 
