@@ -206,7 +206,7 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 
 ### 10. moonbit-verify — 全量六维检测门禁
 
-**能力**：跑全量验证管道 — 按硬性要求（H1-H7 阻断型）和软性要求（S1-S5 加分型）分层检测。区分 main（可执行程序）和 lib（library 库）两种验证路径。
+**能力**：跑全量验证管道 — 按硬性要求（H1-H7 阻断型）和软性要求（S1-S6 加分型）分层检测。区分 main（可执行程序）和 lib（library 库）两种验证路径。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
@@ -233,16 +233,17 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 | S3 | 性能基线 | 测试时间对比 |
 | S4 | API 深度检查 | StringView/T?/错误处理 |
 | S5 | CI 完整性 | `.github/workflows/ci.yml` |
+| S6 | 文档完整性 | pub fn docstring / README 示例 / CLI --help |
 
 ### 11. moonbit-evaluate — 验收 + 发布准备
 
-**能力**：做最终验收，生成 README 文档和 CI 配置，准备发布。
+**能力**：做最终验收，生成 README 文档、CI 配置和 CHANGELOG，给出 SemVer 版本号建议，准备发布。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
-| 功能开发完成准备发布；确认达到发布标准；生成文档和 CI | 代码还在开发中（先 verify）；内部使用不发布 | 确保 verify 全部通过再跑；生成的 README 需审查 | README 只列 API 签名不含教程；CI 只生成 GitHub Actions；不执行 `moon publish` |
+| 功能开发完成准备发布；确认达到发布标准；生成文档和 CI | 代码还在开发中（先 verify）；内部使用不发布 | 确保 verify 全部通过再跑；生成的 README/CI/CHANGELOG 需审查 | README 只列 API 签名不含教程；CI 只生成 GitHub Actions；不执行 `moon publish` |
 
-**发布前检查清单：** `moon test` ✓ → `moon info` ✓ → 版本号确认 → `moon publish`
+**发布前检查清单：** `moon test` ✓ → `moon info` ✓ → CI 配置 ✓ → CHANGELOG ✓ → SemVer 建议 ✓ → 版本号确认 → `moon publish`
 
 ### 12. moonbit-learn — 从错误中学习，自我优化
 

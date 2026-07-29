@@ -65,11 +65,13 @@
       "id": 5,
       "name": "release-readiness",
       "prompt": "I have a MoonBit library that passed all tests. Can I publish it to mooncakes?",
-      "expected_output": "Run verify first, then evaluate: check API stability, cross-platform, security, CI completeness, and hand user version confirmation and publish.",
+      "expected_output": "Run verify first, then evaluate: check API stability, cross-platform, security, CI completeness, generate CHANGELOG preview, give SemVer version suggestion, and hand user version confirmation and publish.",
       "assertions": [
         "runs requests verify before publication preparation",
         "checks fmt, type check, tests, package info, security status",
         "does not claim publish_ready before checks pass",
+        "generates CHANGELOG preview (Keep a Changelog format)",
+        "gives SemVer suggestion based on API changes (major/minor/patch)",
         "keeps version confirmation user decision"
       ],
       "should_trigger": true,

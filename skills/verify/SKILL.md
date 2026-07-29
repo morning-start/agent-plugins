@@ -245,12 +245,12 @@ Start → 检测项目类型（main / lib）
 
 | 类型 | 硬性必选 | 项目专属 | 软性加分 |
 |------|---------|---------|---------|
-| **lib** | H1-H5 | 临时 consumer 编译验证 | S1-S5 |
-| **cli (main)** | H1-H5 | moon run + 输出验证 | S1-S5 |
-| **c-ffi** | H1-H4 | moon check native | S2-S5 |
-| **wasm** | H1-H4 | moon check wasm + moon test wasm | S1-S5 |
-| **async** | H1-H5 | — | S1-S5 |
-| **parser** | H1-H5 | — | S1-S5 |
+| **lib** | H1-H5 | 临时 consumer 编译验证 | S1-S6 |
+| **cli (main)** | H1-H5 | moon run + 输出验证 | S1-S6 |
+| **c-ffi** | H1-H4 | moon check native | S2-S6 |
+| **wasm** | H1-H4 | moon check wasm + moon test wasm | S1-S6 |
+| **async** | H1-H5 | — | S1-S6 |
+| **parser** | H1-H5 | — | S1-S6 |
 
 ---
 

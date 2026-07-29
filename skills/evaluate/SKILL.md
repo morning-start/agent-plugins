@@ -221,7 +221,7 @@ moon test --target native -f "usage"
     "suggested": "0.3.3",
     "reason": "Bug fix，公共 API 不变"
   },
-  "files_created": [".github/workflows/ci.yml"],
+  "files_created": [".github/workflows/ci.yml", "CHANGELOG.md"],
   "publish_ready": true,
   "user_decision": "approved",
   "next": "publish | implement"

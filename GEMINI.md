@@ -25,5 +25,5 @@ The following skills are available in the `skills/` directory:
 ## Rules
 
 - Always check `skills/using-moonbit-skills/SKILL.md` before any MoonBit-related action
-- Follow the skill pipeline: plan → writing-plans → scaffold → [testing ↔] implement → [perform ↔] → [refactor ↔] → verify → evaluate
+- Follow the skill pipeline: plan → writing-plans → scaffold → [testing ↔] implement ↔ code-review → [perform ↔ refactor ↔] → verify → evaluate (`↔` = bidirectional dependency, includes design rollback to plan from implement/perform/refactor)
 - The user makes decisions; you execute
