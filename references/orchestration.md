@@ -95,9 +95,10 @@
                   ▼
 ┌─────────────────────────────────────────────────────┐
 │ moonbit-evaluate — 验收评估 + 发布准备                 │
-│ 委托 verify + 类型专属验证 + CI/README 预览            │
+│ 委托 verify + 类型专属验证 + CI/README 预览 + SemVer API Tag 比对 │
 │ main: moon run . + 输出验证                           │
 │ lib: 临时 consumer 编译验证 + cross-platform           │
+│ API: 比对 pkg.generated.mbti 与上一 Tag，自动建议 Major/Minor/Patch │
 │ CI/README: 预览模式，用户批准后写入                     │
 │ 用户介入: 判断"好了"或"再改"                           │
 │ 路由: 完成 或 → implement                              │
@@ -219,7 +220,9 @@ using-moonbit-skills (alwaysApply, 路由入口)
 
 ---
 
-## 管线状态
+## 管线持久化状态 (.moonbit-pipeline.json)
+
+在长周期或跨 Session / Context 压缩开发时，Agent 在项目根目录读写轻量级持久化状态文件 `.moonbit-pipeline.json`。由 `moonbit-writing-plans` 初始化，并由 `moonbit-implement` / `moonbit-verify` / `moonbit-evaluate` 实时更新：
 
 ```json
 {
@@ -229,6 +232,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
   "primary_type": "parser",
   "capabilities": ["lexer", "tokenizer"],
   "targets": ["native"],
+  "plan_file": "docs/plans/2026-07-29-parser-plan.md",
   "hard_checks": {
     "fmt": "pass",
     "check": "pass",
@@ -245,21 +249,17 @@ using-moonbit-skills (alwaysApply, 路由入口)
     "perf": "pass (1.2s)"
   },
   "progress": {
-    "plan": "completed",
-    "writing_plans": "completed",
-    "scaffold": "completed",
-    "testing": "completed",
-    "implement": "in_progress (task 4/13)",
-    "perform": "pending",
-    "refactor": "pending",
-    "code_review": "completed (per task)",
-    "verify": "pending",
-    "evaluate": "pending"
+    "total_tasks": 13,
+    "completed_tasks": 4,
+    "current_task": 5
   },
+  "last_updated": "2026-07-29T10:30:00Z",
   "next": "implement:task-5"
 }
 ```
 
+**Session 恢复机制**：
+当 Session 重新初始化或发生 Context 压缩重入时，Agent 若在根目录检测到 `.moonbit-pipeline.json`，优先读取该文件恢复进度断点，跳过重复的计划与探索逻辑。
 ---
 
 ## 回落链
@@ -280,7 +280,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
 - `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
 - 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`
-- CI 本地通过后失败 → 回到 `moonbit-implement`，以 CI 失败日志作为诊断输入
+- CI 本地通过后失败 → 回到 `moonbit-implement` (Bug Fix Mode)，使用 CI 日志接入规范 (Log Ingestion) 提取 target/错误码进行诊断与复现
 
 ### 设计回溯
 

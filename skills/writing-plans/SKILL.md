@@ -154,7 +154,25 @@ src/
 | **Agent** | 拆解任务、编写计划文档、确保可执行 |
 | **用户** | 审查计划、调整任务粒度、确认执行顺序 |
 
-## 输出
+## 持久化状态与输出
+
+计划文档生成后， Agent 必须在项目根目录初始化轻量级持久化状态文件 `.moonbit-pipeline.json`（用于多 Session / Context 压缩后的断点恢复）：
+
+```json
+{
+  "pipeline": "development",
+  "phase": "implement",
+  "plan_file": "docs/plans/2026-07-29-topic-plan.md",
+  "progress": {
+    "total_tasks": 7,
+    "completed_tasks": 0,
+    "current_task": 1
+  },
+  "last_updated": "2026-07-29T10:00:00Z"
+}
+```
+
+### 输出 JSON
 
 ```json
 {
@@ -162,6 +180,7 @@ src/
   "total_tasks": 7,
   "total_files": 5,
   "plan_file": "docs/plans/2026-07-28-parser-plan.md",
+  "state_file": ".moonbit-pipeline.json",
   "next": "implement"
 }
 ```

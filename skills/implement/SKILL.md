@@ -95,13 +95,22 @@ NO BUG FIX WITHOUT REGRESSION TEST FIRST
 ### Bug Fix 流程
 
 ```
-┌─ REPRODUCE:  写 regression test 复现 bug → moon test -f "regr_*" (预期: 失败)
-├─ DIAGNOSE:   定位根因（文件/函数/错误码）
-├─ FIX:        最小修复 → moon test -f "regr_*" (预期: 通过)
-├─ VERIFY:     全量测试 + fmt + check → 全部通过
-└─ LEARN:      自动触发 moonbit-learn，记录根因
+┌─ INGEST (可选): 若源自 CI 失败，接纳 ANSI/Raw CI 日志 → 提取 Target/测试名/错误码
+├─ REPRODUCE:    写 regression test 复现 bug → moon test --target <target> -f "regr_*" (预期: 失败)
+├─ DIAGNOSE:     定位根因（文件/函数/错误码）
+├─ FIX:          最小修复 → moon test --target <target> -f "regr_*" (预期: 通过)
+├─ VERIFY:       全量测试 + fmt + check + 跨平台校验 → 全部通过
+└─ LEARN:        自动触发 moonbit-learn，记录根因
 ```
 
+#### CI Failure Log Ingestion (CI 失败日志接入规范)
+当 Bug 来自远程/异步 CI 失败（GitHub Actions 等）时，按以下步骤解析并接入：
+1. **日志解析**：从用户粘贴或 CI 输出中提取 3 关键要素：
+   - 目标平台：`native` | `wasm` | `wasm-gc` | `js`
+   - 失败文件名/测试名：如 `test_foo_bar`
+   - 诊断码/堆栈：如 `E4053` 或 panic 信息
+2. **本地模拟复现**：使用目标平台命令在本地重现错误（如 `moon test --target wasm -f "test_foo"` 或 `moon check --target all`）。
+3. **构造 Regression Test**：将引发 CI 差异的场景收录为本地 `regr_*` 测试，确保本地亦能稳定触发红绿循环。
 ### Red Flags — STOP and Start Over
 
 - 没有 regression test 就定位代码（"我知道 bug 在哪"）
@@ -202,28 +211,40 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 - `moon-audit` 未安装时提示 `moon add minie135/moon-audit`，不阻断
 - 任何步骤失败 → 调整依赖版本或代码结构 → 重新循环
 
-## 用户 vs Agent 分工
+## 持久化状态与输出
 
-| 谁 | 做什么 |
-|---|--------|
-| Agent | 写测试、写实现、跑验证、诊断失败 |
-| 用户 | 审查结果、说「改这里」、卡住时给方向 |
+在每完成一个 Task（通过 RED → GREEN → VERIFY 并经 `code-review` 批准）后，Agent 必须更新根目录的 `.moonbit-pipeline.json` 文件：
 
-## 输出
+```json
+{
+  "pipeline": "development",
+  "phase": "implement",
+  "plan_file": "docs/plans/2026-07-29-topic-plan.md",
+  "progress": {
+    "total_tasks": 7,
+    "completed_tasks": 3,
+    "current_task": 4
+  },
+  "last_updated": "2026-07-29T10:30:00Z"
+}
+```
+
+### 输出 JSON
 
 ```json
 {
   "status": "done | paused",
   "mode": "feature | bugfix",
   "project_type": "lib",
-  "completed_tasks": ["task-1", "task-2"],
-  "current_task": "task-3",
+  "completed_tasks": ["task-1", "task-2", "task-3"],
+  "current_task": "task-4",
   "test_results": {"passed": 5, "failed": 0},
   "bugfix": {
     "regression_test": "regr_null_check",
     "root_cause": "空指针未检查",
     "fixed_file": "src/parser.mbt"
   },
+  "state_file": ".moonbit-pipeline.json",
   "next": "implement | evaluate | learn"
 }
 ```

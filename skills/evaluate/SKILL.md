@@ -92,17 +92,26 @@ moon test --target native -f "usage" # 验证文档示例可运行
 
 ## 版本号决策指导
 
-用户确认版本号时，Agent 基于 SemVer 规范给出建议（不替用户决定）:
+用户确认版本号时，Agent 自动比对当前公开 API 表面与上一 Tag 的签名差异，基于 SemVer 规范给出建议（不替用户决定）:
 
-| 变更类型 | 版本升级 | 判断依据 |
-|---------|---------|---------|
-| Breaking change（公共 API 签名变更、ABI 不兼容） | major | verify H5 检测到 pub fn 删除/签名变更 |
-| 新功能（新增 pub fn，向后兼容） | minor | verify H5 检测到新增 pub 符号 |
-| Bug fix / 内部优化（公共 API 不变） | patch | verify H5 确认 API 表面不变 |
-| 无代码变更（仅文档/CI） | 无升级 | — |
+```bash
+# 1. 获取上一 Release Tag
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
 
-Agent 输出建议版本号和升级类型，由用户最终确认。
+# 2. 比对公开 API 表面差异（pkg.generated.mbti）
+if [ -n "$LAST_TAG" ] && git cat-file -e "$LAST_TAG:pkg.generated.mbti" 2>/dev/null; then
+  git diff "$LAST_TAG:pkg.generated.mbti" pkg.generated.mbti
+fi
+```
 
+| 变更类型 | 版本升级 | 比对与判断依据 |
+|---------|---------|---------------|
+| **Breaking change** (破坏性变更) | **major** | 存在 `pub fn` / `pub type` 移除、变更为不可见、或参数/返回值签名变更 |
+| **Minor feature** (向后兼容新特性) | **minor** | 无破坏性修改，仅在 `pkg.generated.mbti` 中新增 `pub` 符号 |
+| **Bug fix / 内部优化** (内部变更) | **patch** | `pkg.generated.mbti` 签名全量一致，无 API 表面变化 |
+| **无代码变更** (仅文档/CI) | **无升级** | 仅 `README.md`、`.github/` 等非代码文件改动 |
+
+Agent 自动展示 API Signature Diff，给出建议版本号和升级类型，由用户最终确认。
 ## 执行流程
 
 ### 1. 委托 verify 做全量门禁
