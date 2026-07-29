@@ -15,7 +15,7 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 NO PUBLISH WITHOUT FULL VERIFICATION
 ```
 
-发布前必须通过 `moonbit-verify` 全量门禁（H1-H5）+ 类型专属验证。任何硬性检查失败则阻断发布，不得跳过。
+发布前必须通过 `moonbit-verify` 全量门禁（B1-B4 + C1）+ 类型专属验证。任何基础测试或 Custom 测试失败则阻断发布，不得跳过。
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -31,7 +31,7 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ## 停止条件
 
-- verify 硬性检查（H1-H5）未通过 → 返回 implement 修复，不继续发布
+- verify 基础测试（B1-B4）未通过 → 返回 implement 修复，不继续发布
 - 用户未确认版本号 → 等待用户输入
 - 临时 consumer 编译失败（lib 项目）→ 报告错误，阻断发布
 - `moon run` 失败或输出为空（main 项目）→ 报告错误，阻断发布
@@ -45,11 +45,11 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ## 验收标准
 
-### 通用硬性要求（所有项目类型）
+### 通用验证要求（所有项目类型）
 
 | 条件 | 检查方式 | 阻断 |
 |------|---------|------|
-| 完整验证通过 | 委托 `moonbit-verify` 的 H1-H5 | 是 |
+| 完整验证通过 | 委托 `moonbit-verify` 的 B1-B4 + C1 | 是 |
 | 代码格式正确 | `moon fmt --check` | 是 |
 | 类型检查无警告 | `moon check --warn-list +73` | 是 |
 | 所有测试通过 | `moon test --target native` | 是 |
@@ -58,7 +58,7 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ### MAIN 项目（可执行程序）专属验证
 
-main 项目的类型专属验证（H6：`moon run .` + 输出非空）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 H6 章节](../skills/verify/SKILL.md#h6-main-项目可执行程序额外检查)。
+main 项目的类型专属验证（C2：`moon run .` + 输出非空）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C2 章节](../skills/verify/SKILL.md#c2-main-项目可执行验证cli-项目必选)。
 
 evaluate 阶段在此之上追加：
 
@@ -67,19 +67,19 @@ evaluate 阶段在此之上追加：
 # 见下方"生成 CI 配置"章节
 ```
 
-**阻断条件：** 沿用 verify 的 H6 阻断条件（`moon run` 失败或输出为空则阻断发布）。
+**阻断条件：** 沿用 verify 的 C2 阻断条件（`moon run` 失败或输出为空则阻断发布）。
 
 ### LIB 项目（library 库）专属验证
 
-lib 项目的类型专属验证（H7：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 H7 章节](../skills/verify/SKILL.md#h7-lib-项目library库额外检查)。
+lib 项目的类型专属验证（C3：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C3 章节](../skills/verify/SKILL.md#c3-lib-项目消费验证libc-ffiwasmasyncparser-项目必选)。
 
 evaluate 阶段在此之上追加：
 
 ```bash
-# 验证跨平台兼容（evaluate 专属，verify S1 为软性，此处为硬性）
+# 验证跨平台兼容（evaluate 专属，verify E1 为增强，此处为硬性）
 moon check --target all
 
-# 检查文档同步（调用 verify 的 S6 文档完整性检查）
+# 检查文档同步（调用 verify 的 E6 文档完整性检查）
 # pub fn docstring 完整性、README 示例可运行、CLI --help 非空
 # 文档问题不阻断发布，但报告给用户决策
 
@@ -88,7 +88,7 @@ moon info --target native > src/README.mbt.md
 moon test --target native -f "usage" # 验证文档示例可运行
 ```
 
-**阻断条件：** 沿用 verify 的 H7 阻断条件；`moon check --target all` 失败也阻断发布。
+**阻断条件：** 沿用 verify 的 C3 阻断条件；`moon check --target all` 失败也阻断发布。
 
 ## 版本号决策指导
 
@@ -116,7 +116,7 @@ Agent 自动展示 API Signature Diff，给出建议版本号和升级类型，�
 
 ### 1. 委托 verify 做全量门禁
 
-调用 `moonbit-verify` 技能，确保硬性要求 H1-H5 全部通过。如果 verify 失败，返回 `moonbit-implement` 修复，不继续发布。
+调用 `moonbit-verify` 技能，确保基础测试 B1-B4 全部通过，Custom 测试 C1 通过。如果 verify 失败，返回 `moonbit-implement` 修复，不继续发布。
 
 ### 2. 项目类型专属验证
 
@@ -186,7 +186,7 @@ moon test --target native -f "usage"
 ```markdown
 ## 发布检查清单
 
-- [x] 完整验证管道通过（moonbit-verify H1-H5）
+- [x] 完整验证管道通过（moonbit-verify B1-B4 + C1）
 - [x] 项目类型验证通过（main: moon run . | lib: 临时 consumer 编译验证）
 - [x] 文档示例可运行（如有 usage 测试）
 - [x] CI 配置已生成（用户批准后写入）
@@ -220,7 +220,7 @@ moon test --target native -f "usage"
 {
   "status": "approved | needs_fix",
   "project_type": "main",
-  "verification": "pass (H1-H5 all green)",
+  "verification": "pass (B1-B4 + C1 all green)",
   "type_specific": {
     "moon_run": "pass (output: 'Hello World')"
   },
@@ -241,7 +241,7 @@ moon test --target native -f "usage"
 {
   "status": "approved | needs_fix",
   "project_type": "lib",
-  "verification": "pass (H1-H5 all green)",
+  "verification": "pass (B1-B4 + C1 all green)",
   "type_specific": {
     "moon_add": "pass",
     "cross_platform": "pass (native+wasm)"
@@ -270,7 +270,7 @@ moon test --target native -f "usage"
 
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| verify 未通过 | 硬性检查失败 | 返回 `moonbit-implement` 修复 |
+| verify 未通过 | 基础测试或 Custom 测试失败 | 返回 `moonbit-implement` 修复 |
 | `moon run` 失败 | main 包声明或代码错误 | 检查 `moon.pkg` 的 `pkgtype(kind: "executable")`，修复后重试 |
 | 临时 consumer 编译失败 | 库依赖不可解析 | 检查 `moon.mod` 和模块结构，修复后重试 |
 | `moon check --target all` 失败 | 跨平台兼容问题 | 报告失败的目标平台，用户决定是否继续 |

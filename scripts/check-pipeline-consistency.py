@@ -7,7 +7,7 @@ Verifies:
   - All skill frontmatter has name/description
   - Skill directory name matches frontmatter name
   - Skill count consistency across routing, orchestration, README
-  - S1-S6 consistency across verify, orchestration
+  - E1-E6 consistency across verify, orchestration
   - Document reference paths exist
   - Command parameters match references/commands.md definitions
   - No absolute local paths, no dead file:/// links
@@ -150,29 +150,29 @@ def check_skill_counts(skill_dirs):
     return errors
 
 
-def check_s6_consistency():
-    """Check S1-S6 consistency across verify and orchestration."""
+def check_e6_consistency():
+    """Check E1-E6 consistency across verify and orchestration."""
     errors = []
     verify_path = SKILLS_DIR / "verify" / "SKILL.md"
     orch_path = REFERENCES_DIR / "orchestration.md"
 
     if verify_path.exists():
         content = verify_path.read_text(encoding="utf-8")
-        # Find S6 reference in execution order
-        if "S6" not in content:
-            errors.append("verify/SKILL.md: Missing S6 reference")
+        # Find E6 reference in execution order
+        if "E6" not in content:
+            errors.append("verify/SKILL.md: Missing E6 reference")
 
     if orch_path.exists():
         content = orch_path.read_text(encoding="utf-8")
-        # Check S1-S6 in soft requirements
-        if "S1-S6" not in content:
-            errors.append("orchestration.md: Missing S1-S6 reference")
-        # Check S6 table row
-        if "S6" not in content:
-            errors.append("orchestration.md: Missing S6 table row")
+        # Check E1-E6 in enhanced test section
+        if "E1-E6" not in content:
+            errors.append("orchestration.md: Missing E1-E6 reference")
+        # Check E6 table row
+        if "E6" not in content:
+            errors.append("orchestration.md: Missing E6 table row")
         # Check panorama diagram
-        if "S1-S6" not in content:
-            errors.append("orchestration.md: Missing S1-S6 in panorama")
+        if "E1-E6" not in content:
+            errors.append("orchestration.md: Missing E1-E6 reference")
 
     return errors
 
@@ -293,13 +293,13 @@ def main():
     else:
         print("  PASS")
 
-    # 4. S1-S6 consistency
-    print("[4/6] Checking S1-S6 consistency...")
-    s6_errors = check_s6_consistency()
-    if s6_errors:
-        for e in s6_errors:
+    # 4. E1-E6 consistency
+    print("[4/6] Checking E1-E6 consistency...")
+    e6_errors = check_e6_consistency()
+    if e6_errors:
+        for e in e6_errors:
             print(f"  FAIL: {e}")
-        errors.extend(s6_errors)
+        errors.extend(e6_errors)
     else:
         print("  PASS")
 

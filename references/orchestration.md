@@ -141,36 +141,43 @@
 
 ---
 
-## 硬性 vs 软性分类
+## 三级检测体系
 
-### 硬性要求（必选，阻断型）
+分布在 verify 中，按三级分类组织：
 
-分布在 verify 和 evaluate 中，任何一项不通过则阻断：
+### 基础测试（B — 所有项目必选）
 
-| # | 要求 | 归属技能 | 命令 | 类型豁免 |
-|---|------|---------|------|---------|
-| H1 | 代码格式一致性 | verify | `moon fmt --check` | 无（所有项目类型必选） |
-| H2 | 类型安全 | verify | `moon check --warn-list +73` | 无（所有项目类型必选） |
-| H3 | 功能完整性 | verify | `moon test --target native` | 无（所有项目类型必选） |
-| H4 | 工作区干净 | verify | `git status --porcelain`（发布阶段） | 无（所有项目类型必选） |
-| H5 | API 稳定性 | verify | `moon info --target native` | c-ffi、wasm 豁免（无对外暴露的 MoonBit pub API） |
-| H6 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 | 仅 main 项目（cli）执行；lib 项目跳过 |
-| H7 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | 仅 lib/c-ffi/wasm/parser/async 执行；main 项目跳过 |
-
-> **类型豁免说明**：c-ffi 和 wasm 项目的主要对外接口是 C ABI 或 WASM 导出，MoonBit 层面的 `pub` API 不是发布契约的核心，因此豁免 H5。其发布验证以 H7（消费验证）+ 类型专属检查为准。详见 verify/SKILL.md 的「各类型验证全景」表。
-
-### 软性要求（可选，加分型）
-
-分布在 verify 的 S1-S6 中，不阻断发布：
+任何 MoonBit 项目均须通过，否则不能声称代码可用：
 
 | # | 要求 | 归属技能 | 命令 |
 |---|------|---------|------|
-| S1 | 跨平台兼容 | verify | `moon check --target all` |
-| S2 | 安全审计 | verify | `moon-audit pipeline .` |
-| S3 | 性能基线 | verify | 测试执行时间对比 |
-| S4 | API 深度检查 | verify | 参数类型/可见性/错误处理审查 |
-| S5 | CI 配置完整性 | verify | `.github/workflows/ci.yml` 校验 |
-| S6 | 文档完整性 | verify | pub fn docstring / README 示例 / CLI --help |
+| B1 | 代码格式一致性 | verify | `moon fmt --check` |
+| B2 | 类型安全 | verify | `moon check --warn-list +73` |
+| B3 | 功能完整性 | verify | `moon test`（目标由项目类型决定） |
+| B4 | 工作区干净 | verify | `git status --porcelain`（发布阶段） |
+
+### Custom 测试（C — 按项目类型选择）
+
+不同项目类型有不同验证标准，属于该类型则必选：
+
+| # | 要求 | 归属技能 | 命令 | 适用类型 |
+|---|------|---------|------|---------|
+| C1 | API 稳定性 | verify | `moon info --target native` + `git diff --exit-code` | lib/cli/parser/async；c-ffi/wasm 豁免 |
+| C2 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 | main/cli 项目 |
+| C3 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | lib/c-ffi/wasm/parser/async |
+
+### 增强测试（E1-E6 — 推荐但非阻断）
+
+推荐执行，报告结果供用户决策：
+
+| # | 要求 | 归属技能 | 命令 |
+|---|------|---------|------|
+| E1 | 跨平台兼容 | verify | `moon check --target all` |
+| E2 | 安全审计 | verify | `moon-audit pipeline .` |
+| E3 | 性能基线 | verify | 测试执行时间对比 |
+| E4 | API 深度检查 | verify | 参数类型/可见性/错误处理审查 |
+| E5 | CI 配置完整性 | verify | `.github/workflows/ci.yml` 校验 |
+| E6 | 文档完整性 | verify | pub fn docstring / README 示例 / CLI --help |
 
 ---
 
@@ -182,8 +189,8 @@
 
 | 类型 | implement | verify | evaluate |
 |------|-----------|--------|---------|
-| **main**（`pkgtype(kind: "executable")` 或旧 `"is-main": true`） | `moon run .` 验证输出 | H1-H5 + H6 `moon run .` | `moon run .` + 输出非空 + CI 含 run |
-| **lib**（都不是） | `moon check --target all` | H1-H5 + H7 临时 consumer 编译验证 | 临时 consumer + cross-platform + README 生成 |
+| **main**（`pkgtype(kind: "executable")` 或旧 `"is-main": true`） | `moon run .` 验证输出 | B1-B4 + C1 + C2 `moon run .` | `moon run .` + 输出非空 + CI 含 run |
+| **lib**（都不是） | `moon check --target all` | B1-B4 + C1 + C3 临时 consumer 编译验证 | 临时 consumer + cross-platform + README 生成 |
 
 ---
 
@@ -192,9 +199,9 @@
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
 |-----------|---------|---------|---------|
 | SessionStart | startup/clear/compact | `hooks/session-start`（Bash；Windows 可用 `run-hook.cmd` / PowerShell 入口） | `skills/using-moonbit-skills/SKILL.md` |
-| PreCommit | git commit | `hooks/pre-commit.sh` | H1 + H2（fmt + check） |
-| PrePush | git push | `hooks/pre-push.sh` | H3 + S2（test + audit） |
-| PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H3 + H5 + S2（H4 仅发布阶段） |
+| PreCommit | git commit | `hooks/pre-commit.sh` | B1 + B2（fmt + check） |
+| PrePush | git push | `hooks/pre-push.sh` | B3 + E2（test + audit） |
+| PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | B1-B3 + C1 + E2 |
 
 ---
 
