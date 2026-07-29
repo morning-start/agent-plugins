@@ -197,7 +197,8 @@ moon test --target native 2>&1 | tail -3
 ```
 Start → 检测项目类型（main / lib）
   │
-  ├── REQUEST SUB-SKILL: moonbit-code-review
+  ├── [可选] REQUEST SUB-SKILL: moonbit-code-review
+  │   （若 implement 阶段未做审查，verify 可委托；否则跳过）
   │
   ├── H1. moon fmt --check
   ├── H2. moon check --warn-list +73

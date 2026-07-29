@@ -30,6 +30,12 @@ const bootstrapSkillPath = resolve(skillsDir, "using-moonbit-skills", "SKILL.md"
 let cachedBootstrap: string | null | undefined;
 
 export default function (pi: HookAPI) {
+  // Runtime guard: OMP's TypeScript hook API is speculative (see file header).
+  // If the API shape doesn't match, degrade to no-op instead of crashing the session.
+  if (!pi || typeof pi.on !== "function") {
+    return;
+  }
+
   let injectBootstrap = true;
 
   pi.on("session_start", () => {

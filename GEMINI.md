@@ -14,6 +14,7 @@ The following skills are available in the `skills/` directory:
 - `writing-plans` — Break design into executable tasks
 - `scaffold` — Dynamically generate project skeleton
 - `implement` — TDD-based implementation
+- `testing` — Design tests, organize test files, iterate on test code
 - `code-review` — Code review gate between tasks
 - `verify` — Full verification pipeline
 - `evaluate` — Acceptance evaluation and release prep
@@ -22,5 +23,5 @@ The following skills are available in the `skills/` directory:
 ## Rules
 
 - Always check `skills/using-moonbit-skills/SKILL.md` before any MoonBit-related action
-- Follow the skill pipeline: plan → writing-plans → scaffold → implement → verify → evaluate
+- Follow the skill pipeline: plan → writing-plans → scaffold → [testing ↔] implement → verify → evaluate
 - The user makes decisions; you execute

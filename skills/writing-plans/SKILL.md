@@ -19,6 +19,15 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 设计完成后直接跳进实现？**停下来。先写计划。**
 
+### 可机械化自检
+
+- [ ] 已生成 `docs/plans/YYYY-MM-DD-{feature}-plan.md` 计划文件
+- [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
+- [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
+- [ ] 计划文件中无占位符（搜索 `TODO`、`TBD`、`参照`、`类似上面`）
+
+未满足以上任一 → Iron Law 触发：停止，先完善计划。
+
 ## Red Flags — STOP and Re-evaluate
 
 If you catch yourself doing any of these, you are violating the writing-plans contract:
@@ -83,6 +92,7 @@ src/
 - 产出: 函数签名、类型定义
 
 #### Step 1: 写会失败的测试
+  （测试组织决策遵循 `moonbit-testing` 契约，详见 [`references/testing.md`](../../references/testing.md)）
   ```moonbit
   test "描述" {
     let result = function(input)

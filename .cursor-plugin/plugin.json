@@ -6,6 +6,5 @@
     "name": "morning-start"
   },
   "repository": "https://github.com/morning-start/moonbit-skills",
-  "license": "MIT",
-  "skills": "./skills/"
+  "license": "MIT"
 }

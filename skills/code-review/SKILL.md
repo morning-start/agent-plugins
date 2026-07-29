@@ -19,6 +19,15 @@ REVIEW REAL CODE, NOT ASSUMPTIONS
 
 审查必须基于实际代码和 diff，不审查假设或想象中的实现。**Critical 问题必须在继续下一个任务前处理或由用户明确接受。**
 
+### 可机械化自检
+
+- [ ] 审查前已执行 `git diff` 或 `git status` 获取实际变更
+- [ ] 引用的代码片段来自 diff 输出，非记忆或猜测
+- [ ] Critical 问题分级基于可观察的编译/测试失败，非主观判断
+- [ ] 审查范围限定于 diff 涉及的文件，不扩散到未变更代码
+
+未满足以上任一 → Iron Law 触发：停止，重新收集 diff。
+
 ## Red Flags — STOP and Re-evaluate
 
 If you catch yourself doing any of these, you are violating the review contract:
@@ -35,6 +44,20 @@ If you catch yourself doing any of these, you are violating the review contract:
 
 - 发现 **Critical** 问题（编译错误、测试失败）时立即停止自动修复，报告给用户，由用户决定下一步。
 - 发现涉及 public API、ABI、WASM 导出或 C 所有权变更时停止自动修复，请求用户确认。
+- 自动修复失败 3 次 → 停止，向用户展示失败历史和当前状态，请求方向（与 `moonbit-implement` 的 3 次上限对齐）。
+
+## 与 verify S4 的分工
+
+`moonbit-code-review` 和 `moonbit-verify` 的 S4（API 深度检查）都涉及 API 设计审查，但分工不同：
+
+| 维度 | code-review（过程审查） | verify S4（终点检查） |
+|------|----------------------|---------------------|
+| 时机 | 每个 implement 任务后 | 全量验证阶段 |
+| 范围 | 当前 diff 涉及的新增/修改代码 | 整个项目的公共 API 表面 |
+| 目的 | 及早发现问题，防止扩散 | 终点把关，确保发布质量 |
+| 动作 | 报告 + 机械性自动修复 | 仅报告，由用户决策 |
+
+避免在 code-review 中重复 verify S4 的全量 API 检查；code-review 聚焦 diff 范围内的 API 变更。
 
 ## 审查流程
 
@@ -74,7 +97,7 @@ fi
 | 枚举可见性 | 跨包构造需 `pub(all) enum`，`pub enum` 不导出构造器 | 涉及枚举可见性变更时只报告 |
 | 跨包 struct 字面量 | 跨包只能用 `pub` 字段，通常需要提供构造器函数 | 结构体重构只报告 |
 | `unused_mut` 语义 | `mut` 仅在变量重新赋值时需要，push/mutate 不需要 | 谨慎添加/移除 `mut`，需验证 push/mutate 场景 |
-| 测试覆盖 | 新增功能有对应单元测试 | 报告缺失的测试 |
+| 测试覆盖 | 新增功能有对应单元测试，组织遵循 testing 契约 | 报告缺失的测试和不符合的组织 |
 
 ### 3. 运行验证
 

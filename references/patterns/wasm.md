@@ -40,9 +40,28 @@ src/
 - 使用 `extern "wasm"` 内联语法，`Bytes::make` 模拟 malloc
 
 ## 测试策略
+
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
 - `moon test --target wasm` 为主
-- WASM 运行时测试（wasmtime 等）
-- 内存泄漏检查
+
+示例结构:
+```
+src/
+├── internal/
+│   ├── ffi/          # L0: 内联 WASM 指令
+│   │   ├── moon.pkg
+│   │   └── top.mbt   # store32, load32, malloc, free
+│   ├── raw/          # L1: WASI 绑定
+│   │   ├── moon.pkg
+│   │   └── raw.mbt
+│   └── moon.pkg
+├── lib.mbt           # L2: 公共 API
+├── moon.pkg          # 包配置
+├── lib_test.mbt      # 测试
+└── README.mbt.md     # 可执行文档
+```
 
 ## 关键模式
 - `extern "wasm"` 内联语法

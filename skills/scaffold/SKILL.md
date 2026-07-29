@@ -17,7 +17,9 @@ description: "Use when generating a MoonBit project skeleton. Triggered by user 
 NO TEMPLATES — DYNAMICALLY GENERATE
 ```
 
-禁止使用预置模板文件。所有项目文件必须根据 `project_type` 和 `package_name` 动态生成，确保内容与 MoonBit 工具链版本和用户配置一致。
+禁止使用预置模板文件（如 `templates/*.txt`）。所有项目文件必须根据 `project_type` 和 `package_name` 动态生成，确保内容与 MoonBit 工具链版本和用户配置一致。
+
+> **区分**：下方"按类型动态生成"章节中的代码块是**生成逻辑示例**（agent 按此模式动态写入文件），不是模板文件。模板文件指 `templates/` 目录下的预置文件；本技能不存在此类文件。
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -72,6 +74,7 @@ pub fn hello() -> String {
 // test.mbt
 ///|
 /// {package_name} — 测试
+/// 测试组织决策遵循 moonbit-testing 契约，详见 references/testing.md
 test "hello" {
   if hello() != "Hello from {package_name}!" {
     fail("hello() returned unexpected value")
@@ -225,12 +228,12 @@ moon test --target wasm
 
 ## 错误恢复
 
-| 问题 | 动作 |
-|------|------|
-| 未知项目类型 | 让用户从 lib/cli/c-ffi/wasm 中选择 |
-| `moon` 命令不可用 | 报告工具链前置需求，不声称验证成功 |
-| 验证失败 | 显示失败命令，返回 plan 或 implement |
-| 占位符替换不完整 | 检查生成后文件，确保 `{` 字符无残留 |
+| 问题 | 诊断 | 修复 |
+|------|------|------|
+| 未知项目类型 | 不在 lib/cli/c-ffi/wasm 中 | 让用户从列表中选择 |
+| `moon` 命令不可用 | command not found | 报告工具链前置需求，不声称验证成功 |
+| 验证失败 | fmt/check/test 任一不通过 | 显示失败命令，返回 plan 或 implement |
+| 占位符替换不完整 | 生成文件中 `{` 字符残留 | 检查生成后文件，确保占位符全部替换 |
 
 ## 下一步
 

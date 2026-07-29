@@ -29,11 +29,31 @@ src/
 ```
 
 ## 测试策略
-- valid/invalid/edge 三类测试
-- 官方测试套件（如 toml-test）
-- 回归测试
-- 属性测试（QuickCheck）
-- `moon test --target native`
+
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
+- `lib_valid_test.mbt` + `lib_invalid_test.mbt` 按输入类别分文件
+
+示例结构:
+```
+src/
+├── internal/
+│   ├── tokenize/    # 词法分析器
+│   │   ├── moon.pkg
+│   │   ├── tokenize.mbt
+│   │   └── token.mbt
+│   └── moon.pkg
+├── parser.mbt       # 递归下降解析器
+├── lib.mbt          # 公共 API + 类型定义
+├── lib_utils.mbt    # 工具函数
+├── lib_to_string.mbt # 序列化
+├── moon.pkg
+├── lib_test.mbt     # 测试
+├── lib_valid_test.mbt   # 有效输入测试
+├── lib_invalid_test.mbt # 无效输入测试
+└── README.mbt.md    # 可执行文档
+```
 
 ## 关键模式
 - 两阶段设计: parse(全接受) → validate(语义检查)

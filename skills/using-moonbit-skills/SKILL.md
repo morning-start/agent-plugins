@@ -40,6 +40,7 @@ When multiple skills match, route by intent:
 | 设计已批准、需要任务分解 | `moonbit-writing-plans` |
 | 已有项目、需求明确、要写代码 | `moonbit-implement` |
 | 当前实现失败 | `moonbit-implement` (debug) |
+| 测试设计、组织、写法 | `moonbit-testing` |
 | 审查代码差异和设计问题 | `moonbit-code-review` |
 | 检查质量或完成状态 | `moonbit-verify` |
 | 发布准备 | `moonbit-evaluate` |
@@ -54,6 +55,7 @@ When multiple skills match, route by intent:
 | "plan", "design", "architecture" | "设计", "架构", "规划" | `moonbit-plan` |
 | "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
 | "scaffold", "generate", "skeleton" | "骨架", "模板", "生成" | `moonbit-scaffold` |
+| "how to test", "write tests", "test organization" | "如何测试", "写测试", "测试组织", "补测试", "测试重构" | `moonbit-testing` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
@@ -95,8 +97,10 @@ These thoughts mean STOP — you are rationalizing:
 ## Pipeline (recommended flow)
 
 ```
-Plan → [Writing-Plans] → Scaffold → Implement → [Code-Review] → Verify → Evaluate
+Plan → [Writing-Plans] → Scaffold → [Testing ↔] Implement → [Code-Review] → Verify → Evaluate
 ```
+
+注: Testing 为可选双向步骤，与 implement 并行或先于 implement。
 
 Steps can be skipped — the pipeline is recommended, not mandatory. If the project already exists, skip scaffold. If no release is needed, skip evaluate.
 
@@ -108,8 +112,21 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-plan` | Clarify requirements, design architecture and API |
 | `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |
+| `moonbit-testing` | Design tests, organize test files, iterate on test code |
 | `moonbit-implement` | Write code via TDD (test → implement → verify) |
 | `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |
 | `moonbit-evaluate` | Release readiness, README preview, CI config preview |
 | `moonbit-learn` | Extract lessons from bugs, update skills |
+
+## 路由后自检清单
+
+路由到目标技能后，agent 应在执行前自报以下信息，确保 Iron Law 可落地：
+
+- [ ] **目标技能**：已路由到 `moonbit-{skill}`
+- [ ] **Iron Law**：已读取并理解该技能的 Iron Law（复述核心约束）
+- [ ] **停止条件**：已确认本次任务的停止边界（如 3 次失败上限、用户确认点）
+- [ ] **验证命令**：已确认本次任务将执行的验证命令（如 `moon test`、`moon fmt --check`）
+- [ ] **输出契约**：已确认技能的 JSON 输出格式
+
+未完成自检 → 重新读取目标技能文件，补全理解后再行动。

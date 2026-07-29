@@ -1,6 +1,6 @@
 ---
 name: moonbit-implement
-description: "Use when implementing MoonBit features, fixing bugs, or refactoring code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'refactor', or after a plan is approved."
+description: "Use when implementing MoonBit features, fixing bugs, debugging, or refactoring code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'debug', 'error', 'fail', 'refactor', or after a plan is approved."
 ---
 
 # Implement — TDD 实现
@@ -16,6 +16,8 @@ NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
 Write code before the test? **Delete it. Start over.**
+
+测试组织决策必须遵循 `moonbit-testing` 契约。详见 [`testing/SKILL.md`](../testing/SKILL.md) 和 [`references/testing.md`](../../references/testing.md)。
 
 No exceptions:
 - Don't keep it as "reference"
@@ -65,6 +67,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 
 ```
 ┌─ RED:    写一个会失败的测试 → moon test -f "test_name" (预期: 失败)
+│          （测试组织遵循 moonbit-testing 决策）
 ├─ GREEN:  写最小实现 → moon test -f "test_name" (预期: 通过)
 ├─ VERIFY: 全量验证 → moon fmt --check + moon check --warn-list +73 + moon test
 └─ 失败 → 自动诊断 (debug 内置, 3 次上限 → 问用户)
@@ -77,6 +80,8 @@ If you catch yourself thinking any of these, you are violating TDD:
 类型决定 TDD 验证链路的差异。
 
 ## 各类型 TDD 策略
+
+> 测试文件组织和命名约定详见 `references/testing.md`，此处仅列出验证重点。
 
 | 类型 | 项目分类 | 验证目标 | 额外验证 |
 |------|---------|---------|---------|

@@ -43,10 +43,30 @@ src/
 - 必须包含 `wrapper.c`（含 `#include <stdlib.h>`）
 
 ## 测试策略
-- ASan 验证（Address Sanitizer）
-- 内存泄漏检查
-- 边界值测试
-- `moon test --target native`
+
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
+- 内存安全测试，alloc/free 对验证
+
+示例结构:
+```
+src/
+├── wrapper.c         # ABI 归一化 + 内存管理
+├── ffi.mbt           # L0: extern "c" 声明
+├── raw/              # L1: 类型安全包装
+│   ├── moon.pkg
+│   └── raw.mbt
+├── lib.mbt           # L2: 公共 API
+├── io/               # L3: Traits (可选)
+│   ├── moon.pkg
+│   └── io.mbt
+├── moon.pkg          # native-stub 配置
+├── lib_test.mbt      # 测试
+├── README.mbt.md     # 可执行文档
+└── scripts/
+    └── prepare.py    # 供应商脚本
+```
 
 ## 关键模式
 - `with_closed_*` RAII 资源管理

@@ -56,6 +56,15 @@ NO CODE WITHOUT APPROVED DESIGN
 
 设计未获用户批准前，不得写任何实现代码。架构决策、API 签名、目标平台必须由用户确认。
 
+### 可机械化自检
+
+- [ ] 已生成 `docs/requirements.md` 需求文档
+- [ ] 用户已明确确认 `primary_type`、`targets`、`api_surface`（记录确认来源）
+- [ ] 当前阶段未产出任何 `.mbt` 实现代码文件
+- [ ] 若已进入 implement，回头检查是否有 plan 跳过证据
+
+未满足以上任一 → Iron Law 触发：停止，先完成设计或回到 plan。
+
 ## Red Flags — STOP and Re-evaluate
 
 If you catch yourself doing any of these, you are violating the plan contract:

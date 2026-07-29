@@ -58,39 +58,33 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ### MAIN 项目（可执行程序）专属验证
 
+main 项目的类型专属验证（H6：`moon run .` + 输出非空）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 H6 章节](../skills/verify/SKILL.md#h6-main-项目可执行程序额外检查)。
+
+evaluate 阶段在此之上追加：
+
 ```bash
-# 1. 项目类型检测：见 references/type-detection.md（与 verify 共用，避免漂移）
-# main 项目进入此分支后，执行以下验证：
-
-# 2. 验证可运行
-moon run .                        # exit 0 为通过
-
-# 3. 验证输出不为空
-OUTPUT=$(moon run . 2>&1)
-[ -n "$OUTPUT" ] || fail("moon run produced no output")
-
-# 4. 生成 CI（含 moon run 验证）
+# 生成 CI（含 moon run 验证）
+# 见下方"生成 CI 配置"章节
 ```
 
-**阻断条件：** `moon run` 失败或输出为空则阻断发布。
+**阻断条件：** 沿用 verify 的 H6 阻断条件（`moon run` 失败或输出为空则阻断发布）。
 
 ### LIB 项目（library 库）专属验证
 
-```bash
-# 1. 确认元数据文件完整
-test -f moon.mod || fail("moon.mod missing")
-test -f moon.pkg || fail("moon.pkg missing")
+lib 项目的类型专属验证（H7：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 H7 章节](../skills/verify/SKILL.md#h7-lib-项目library库额外检查)。
 
-# 2. 验证可被外部消费：临时 consumer 编译验证脚本见 references/type-detection.md（与 verify 共用，避免漂移）
-# 3. 验证跨平台兼容
+evaluate 阶段在此之上追加：
+
+```bash
+# 验证跨平台兼容（evaluate 专属，verify S1 为软性，此处为硬性）
 moon check --target all
 
-# 4. 生成 README 文档（lib 专属）
+# 生成 README 文档（lib 专属）
 moon info --target native > src/README.mbt.md
 moon test --target native -f "usage" # 验证文档示例可运行
 ```
 
-**阻断条件：** 临时 consumer 编译失败或跨平台检查不通过则阻断发布。
+**阻断条件：** 沿用 verify 的 H7 阻断条件；`moon check --target all` 失败也阻断发布。
 
 ## 执行流程
 

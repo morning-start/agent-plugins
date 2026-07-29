@@ -25,9 +25,21 @@ src/
 - 目标 `native-only`：`moon check --target native`、`moon run .`
 
 ## 测试策略
-- 单元测试核心逻辑
-- 集成测试 CLI 输出
-- `moon test --target native` 为主
+
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
+- `lib_test.mbt` 含单元和集成测试
+
+示例结构:
+```
+src/
+├── main.mbt         # CLI 入口（@argparse）
+├── lib.mbt          # 核心逻辑
+├── moon.pkg         # 包配置（native-only）
+├── lib_test.mbt     # 测试
+└── README.mbt.md    # 可执行文档
+```
 
 ## 依赖
 - `moonbitlang/core/argparse` — 参数解析

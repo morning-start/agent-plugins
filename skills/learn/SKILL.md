@@ -28,6 +28,17 @@ NO MEMORY WITHOUT ROOT CAUSE
 
 记录知识前必须确认根因。未复现、未确认根因、未去重的知识点不得写入技能文件。每条知识带来源、验证命令、工具链版本和适用范围。
 
+### 可观察信号（机械化自检）
+
+"已确认根因"必须满足以下全部可观察信号，否则视为未确认：
+
+- [ ] **已复现**：bug 可通过具体命令重新触发（记录命令与输出片段）
+- [ ] **已定位**：能指出导致 bug 的具体文件/函数/行号或 MoonBit 错误码（如 `E0123`）
+- [ ] **已去重**：在目标文件中搜索关键词，确认无相同知识点（记录搜索命令）
+- [ ] **已验证修复**：修复后原复现命令不再触发 bug（记录修复前后对比）
+
+未满足以上任一信号 → Iron Law 触发：停止，等待更多信息，不猜测写入。
+
 ## Red Flags — STOP and Re-evaluate
 
 If you catch yourself doing any of these, you are violating the learn contract:
@@ -67,6 +78,7 @@ If you catch yourself doing any of these, you are violating the learn contract:
 ├─ type-error      → 类型系统陷阱 → 更新 implement 常见错误速查表
 ├─ api-misuse      → API 误用     → 更新 idioms.md 对应章节
 ├─ idiom           → 惯用写法     → 更新 idioms.md
+├─ test-pitfall    → 测试陷阱     → 更新 testing 常见错误速查表
 ├─ ffi-pitfall     → FFI 陷阱     → 更新 patterns/c-ffi.md
 ├─ wasm-pitfall    → WASM 陷阱    → 更新 patterns/wasm.md
 ├─ toolchain       → 工具链问题   → 更新 commands.md 或 error-codes.json
@@ -83,6 +95,7 @@ If you catch yourself doing any of these, you are violating the learn contract:
 | api-misuse | `references/idioms.md` → 对应 API 章节 | 追加陷阱说明 |
 | idiom | `references/idioms.md` → 惯用写法章节 | 追加示例 |
 | ffi-pitfall | `references/patterns/c-ffi.md` | 追加注意事项 |
+| test-pitfall | `skills/testing/SKILL.md` → 测试陷阱速查表 | 追加新行 |
 | wasm-pitfall | `references/patterns/wasm.md` | 追加注意事项 |
 | toolchain | `references/commands.md` 或 `references/error-codes.json` | 追加命令说明或错误码 |
 | logic-error | `skills/implement/SKILL.md` → 各类型 TDD 策略 | 追加验证重点 |
@@ -99,60 +112,11 @@ If you catch yourself doing any of these, you are violating the learn contract:
 
 ### 4. 可选：记录错误码
 
-如果 bug 来自 `moon check` 编译器报错，且该错误码尚未记录，追加到 `references/error-codes.json`：
+如果 bug 来自 `moon check` 编译器报错，且该错误码尚未记录，追加到 `references/error-codes.json`。
 
-```json
-{
-  "code": "E0123",
-  "warning_name": "错误的英文标识名",
-  "category": "type-error",
-  "severity": "error",
-  "desc": "两句话描述错误含义",
-  "fix": "一句话修复方案",
-  "url": "https://docs.moonbitlang.cn/language/error_codes/E0123.html",
-  "example": "简短的代码示例（可选）"
-}
-```
+**格式规范详见** [`references/error-codes-schema.md`](../references/error-codes-schema.md)（字段定义、category 可选值、维护流程、JSON 验证命令）。
 
-**error-codes.json 格式规范**：
-- 数组结构，每个元素是一个错误码对象
-- 按 `code` 字段排序（新错误码追加到对应位置，保持升序）
-- `code`：编译器错误码（如 E0001、E0101）
-- `warning_name`：错误的英文标识名（如 unused_function、type_mismatch）
-- `category`：错误类别，可选值（完整列表见 `references/error-codes.json` 现有条目）：
-  - `unused`：未使用相关警告
-  - `type-error`：类型错误
-  - `type-inference`：类型推断相关
-  - `pattern-matching`：模式匹配相关
-  - `syntax`：语法错误
-  - `name-resolution`：名称解析错误
-  - `visibility`：可见性错误
-  - `module`：模块相关错误
-  - `ffi`：FFI 相关错误
-  - `wasm`：WASM 相关错误
-  - `style`：代码风格警告
-  - `logic`：逻辑警告
-  - `compatibility`：兼容性警告
-- `severity`：严重程度，`error` 或 `warning`
-- `desc`：错误描述（中文，简洁清晰）
-- `fix`：修复方案（一句话，可操作）
-- `url`：官方文档链接（可选，优先补充）
-- `example`：简短的错误示例代码（可选）
-
-**目的**：下次遇到相同错误码时，Agent 可以快速查表定位修复，而不需要重新分析。非编译器报错（逻辑错误、API 误用等）不需要记录错误码。
-
-**更新流程**：
-1. 检查错误码是否已存在（按 `code` 字段查找）
-2. 若不存在，按上述格式追加新条目
-3. 若已存在但信息不完整，补充缺失字段
-4. 更新后用 Python 验证 JSON 格式：
-   ```bash
-   python -c "import json; json.load(open('references/error-codes.json', encoding='utf-8'))"
-   ```
-   Windows PowerShell 中若单引号不兼容，使用：
-   ```powershell
-   python -c "import json; json.load(open('references/error-codes.json', encoding='utf-8'))"
-   ```
+此处不再重复格式规范，避免与 references 漂移。
 
 ### 5. 验证
 

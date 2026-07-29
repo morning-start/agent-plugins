@@ -40,7 +40,14 @@
 │ 方式: 按类型动态生成，不依赖预置模板                    │
 │ CLI: pkgtype(kind: "executable")                     │
 │ 验证: moon fmt --check + moon check + moon test      │
-│ 路由: → implement                                    │
+│ 路由: → testing 或 implement                           │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ moonbit-testing — 测试设计与编写                       │
+│ 输出: 测试策略 + 文件组织 + 测试代码                    │
+│ 路由: ↔ implement（双向）                              │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
@@ -81,6 +88,7 @@
 | `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
+| `moonbit-testing` | 测试设计、组织、写法、迭代 | 管线并行 |
 | `moonbit-implement` | TDD 实现 + Iron Law + debug | 管线核心 |
 | `moonbit-code-review` | 任务间代码审查 | 任务间门禁 |
 | `moonbit-verify` | 全量六维验证门禁 | 管线检查点 |
@@ -123,22 +131,14 @@
 
 ## 项目类型分支
 
-```
-检测 moon.pkg（在主目录或 cmd/main 或 src/main 中）
-    │
-    ├── grep -q 'pkgtype(kind: "executable")' == true  →  main（可执行程序）
-    │   └── 兼容旧格式: grep -q '"is-main": true' == true →  main
-    │       │
-    │       ├── implement: moon run . 验证输出
-    │       ├── verify: H1-H5 + H6 moon run .
-    │       └── evaluate: moon run . + 输出非空 + CI 含 run
-    │
-    └── 都不是 → lib（library 库）
-            │
-            ├── implement: moon check --target all
-            ├── verify: H1-H5 + H7 临时 consumer 编译验证
-            └── evaluate: 临时 consumer + cross-platform + README 生成
-```
+项目类型检测逻辑详见 [`references/type-detection.md`](./type-detection.md)，verify 和 evaluate 共用同一份检测逻辑，避免漂移。此处不再重复检测代码。
+
+类型分支决定后续路径：
+
+| 类型 | implement | verify | evaluate |
+|------|-----------|--------|---------|
+| **main**（`pkgtype(kind: "executable")` 或旧 `"is-main": true`） | `moon run .` 验证输出 | H1-H5 + H6 `moon run .` | `moon run .` + 输出非空 + CI 含 run |
+| **lib**（都不是） | `moon check --target all` | H1-H5 + H7 临时 consumer 编译验证 | 临时 consumer + cross-platform + README 生成 |
 
 ---
 
@@ -165,7 +165,11 @@ using-moonbit-skills (alwaysApply, 路由入口)
     │    │    │
     │    │    ├── moonbit-scaffold（依赖 plan 输出类型）
     │    │    │    │
-    │    │    │    └── moonbit-implement（依赖 plan+scaffold）
+    │    │    │    ├── moonbit-testing（与 implement 双向依赖）
+    │    │    │    │    │
+    │    │    │    │    └── moonbit-implement（testing 提供组织决策，implement 遵循）
+    │    │    │    │
+    │    │    │    └── → moonbit-implement（依赖 plan+scaffold）
     │    │    │         │
     │    │    │         ├── → moonbit-code-review（每任务后）
     │    │    │         │
@@ -213,6 +217,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
     "plan": "completed",
     "writing_plans": "completed",
     "scaffold": "completed",
+    "testing": "completed",
     "implement": "in_progress (task 4/13)",
     "code_review": "completed (per task)",
     "verify": "pending",

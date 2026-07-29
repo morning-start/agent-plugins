@@ -1,5 +1,23 @@
 #!/usr/bin/env python3
-"""Check that plugin metadata across all platforms stays in sync."""
+"""Check that plugin metadata across all platforms stays in sync.
+
+Platform field whitelist (official schema only — non-official fields cause
+inconsistent behavior across platforms and must not be added):
+
+| Platform              | Allowed fields                                                |
+|-----------------------|---------------------------------------------------------------|
+| OMP (root plugin.json)| name, version, description, author{name}, homepage, repository, license |
+| Claude Code           | name, version, description, author{name}, homepage, repository, license, hooks |
+| Codex CLI             | name, version, description, author{name,url}, homepage, repository, license |
+| Cursor                | name, version, description, author{name}, repository, license |
+| Kimi Code             | name, version, description, author{name,url}, repository, license, sessionStart, hooks |
+| Gemini CLI           | name, version, description, contextFileName                   |
+| OpenCode             | plugin, instructions                                          |
+
+Non-official fields removed in this revision:
+- `skills` (Codex/Cursor/Kimi Code): platforms discover skills/ automatically
+- `interface` (Kimi Code): displayName/shortDescription are non-official
+"""
 
 import json
 from pathlib import Path
@@ -49,7 +67,9 @@ OPENCODE_PLUGIN = ROOT / ".opencode" / "plugins" / "moonbit-verify.ts"
 SYNC_FIELDS = ("name", "version", "description")
 
 # Fields that must be identical across plugin.json descriptors (excluding Gemini)
-PLUGIN_ONLY_SYNC_FIELDS = ("repository", "license", "skills")
+# Note: "skills" field is non-official and has been removed from all platforms.
+# Platforms discover skills/ directory automatically (OMP) or via sessionStart hook (Kimi Code).
+PLUGIN_ONLY_SYNC_FIELDS = ("repository", "license")
 
 
 def collect_descriptors() -> tuple[list[tuple[Path, dict]], dict | None, dict | None, dict | None]:
@@ -96,16 +116,7 @@ def check_plugin_only_fields(descriptors: list[tuple[Path, dict]]) -> list[str]:
     """Check PLUGIN_ONLY_SYNC_FIELDS are identical across plugin.json descriptors."""
     failures = []
     for field in PLUGIN_ONLY_SYNC_FIELDS:
-        if field == "skills":
-            # Claude Code and OMP don't have a skills field in their schema
-            # (OMP discovers skills/ directory automatically)
-            values = {
-                data.get(field)
-                for path, data in descriptors
-                if ".claude-plugin" not in str(path) and path.parent != ROOT
-            }
-        else:
-            values = {data.get(field) for _, data in descriptors}
+        values = {data.get(field) for _, data in descriptors}
         if len(values) != 1:
             failures.append(f"{field}: {sorted(values, key=str)}")
     return failures

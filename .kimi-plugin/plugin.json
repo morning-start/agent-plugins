@@ -8,13 +8,8 @@
   },
   "repository": "https://github.com/morning-start/moonbit-skills",
   "license": "MIT",
-  "skills": "./skills/",
   "sessionStart": {
     "skill": "using-moonbit-skills"
   },
-  "hooks": "hooks/hooks.json",
-  "interface": {
-    "displayName": "MoonBit Skills",
-    "shortDescription": "9 skills: init, plan, writing-plans, scaffold, implement, code-review, verify, evaluate, learn"
-  }
+  "hooks": "hooks/hooks.json"
 }

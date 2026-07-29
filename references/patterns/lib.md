@@ -27,9 +27,24 @@ src/
 - 目标 `native, wasm, js`：`moon check --target all`
 
 ## 测试策略
-- 单元测试覆盖所有公共函数
-- valid/invalid/edge 分类
-- `moon check --target all` 跨平台验证
+
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
+- 单个 `lib_test.mbt` 覆盖公共 API
+
+示例结构:
+```
+src/
+├── lib.mbt           # 公共 API（最小表面）
+├── <domain>.mbt      # 核心实现
+├── internal/         # 私有实现
+│   ├── moon.pkg
+│   └── helper.mbt
+├── moon.pkg          # 包配置
+├── lib_test.mbt      # 测试
+└── README.mbt.md     # 可执行文档
+```
 
 ## 参考项目
 - moonbitlang/core (674 文件, 56+ 包)

@@ -41,6 +41,13 @@ const bootstrapSkillPath = resolve(skillsDir, "using-moonbit-skills", "SKILL.md"
 let cachedBootstrap: string | null | undefined;
 
 export default function moonbitSkillsPiExtension(pi: ExtensionAPI) {
+  // Runtime guard: Pi's TypeScript extension API is speculative (see file header).
+  // If the API shape doesn't match, degrade to no-op instead of crashing the session.
+  if (!pi || typeof pi.on !== "function") {
+    console.warn("moonbit-skills: Pi extension API not available, extension disabled");
+    return;
+  }
+
   let injectBootstrap = true;
 
   pi.on("resources_discover", async () => ({

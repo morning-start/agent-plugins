@@ -91,6 +91,11 @@ test "memory_profile" {
 
 ## 基准测试组织
 
+测试文件组织和命名约定详见 [`references/testing.md`](../testing.md)。
+
+本项目类型要点:
+- `bench_test.mbt` 独立性能测试，`bench_` 前缀过滤
+
 ```
 src/
 ├── main.mbt              # 正常实现
