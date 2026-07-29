@@ -57,7 +57,7 @@
 | `moonbit-testing` | 测试设计、组织、写法、迭代 | 不写实现代码，不运行门禁判定，不接管 implement 的 TDD Red 阶段执行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 不改变功能行为，不替代 verify 门禁 |
 | `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 不改变可观察行为，不替代 testing 测试设计 |
-| `moonbit-implement` | TDD 实现、修复、重构 | 无失败测试不写实现代码 |
+| `moonbit-implement` | Feature TDD + Bug Fix Mode 双模式实现 | 无失败测试/无 regression test 不写实现代码 |
 | `moonbit-code-review` | 任务间代码审查 | 不发布、不声称完成 |
 | `moonbit-verify` | 全量验证门禁 | 不声称完成除非有新鲜证据 |
 | `moonbit-evaluate` | 验收评估和发布准备 | 不跳过 verify，不替用户决定版本号 |

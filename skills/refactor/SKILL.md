@@ -49,6 +49,7 @@ NO REFACTORING WITHOUT GREEN TESTS
 ├─ ENSURE TESTS:  确认测试覆盖 → moon test 全绿；覆盖不足先补测试（调用 testing）
 ├─ REFACTOR:      小步重构 → 单一坏味，单一手法
 ├─ VERIFY:        回归验证 → moon test + moon check + moon fmt --check
+├─ DOC:           模块结构或接口变更 → 同步更新内部设计文档/ADR
 └─ 循环:          还有坏味 → 继续；无坏味 → 停止
 ```
 

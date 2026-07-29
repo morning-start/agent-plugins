@@ -52,9 +52,12 @@
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
-│ moonbit-implement — TDD 实现                          │
-│ 每任务: RED(测试)→GREEN(实现)→VERIFY(全量)            │
+│ moonbit-implement — TDD 实现 / Bug 修复              │
+│ 模式: Feature TDD | Bug Fix                          │
+│ Feature: RED(测试)→GREEN(实现)→VERIFY(全量)         │
+│ Bug Fix: REPRODUCE→DIAGNOSE→FIX→VERIFY→LEARN        │
 │ 每任务后: moonbit-code-review                          │
+│ Bug Fix 后: 自动触发 moonbit-learn                     │
 │ 分类: main项目 + moon run . / lib项目 + 临时 consumer  │
 │ 路由: → verify                                        │
 └─────────────────┬───────────────────────────────────┘

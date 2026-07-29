@@ -49,6 +49,7 @@ NO OPTIMIZATION WITHOUT MEASUREMENT
 ├─ ANALYZE:    定位瓶颈 → 内联计时 + inspect! 输出中间状态
 ├─ OPTIMIZE:   改进实现 → 修改代码（不改变功能行为）
 ├─ RE-MEASURE: 对比验证 → diff before.txt after.txt
+├─ DOC:        配置/参数/行为变更 → 同步更新配置文档或使用说明
 └─ 循环:       有改进 → 继续；无改进 → 停止条件
 ```
 

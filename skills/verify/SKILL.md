@@ -192,6 +192,15 @@ moon test --target native 2>&1 | tail -3
 # 7. moon-audit pipeline .（推荐）
 ```
 
+### S6. 文档完整性
+
+| 检查项 | 合格标准 | 动作 |
+|--------|---------|------|
+| pub fn docstring | 每个导出的 pub fn 有 `///` comment | 报告缺失项 |
+| README 示例 | README 中的 usage 测试可运行 | 报告失败 |
+| CLI --help | `moon run . --help` 输出非空 (main 项目) | 报告缺失 |
+| docstring 格式 | `///` 注释无语法错误 | 报告格式问题 |
+
 ---
 
 ## 执行顺序

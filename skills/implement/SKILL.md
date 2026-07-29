@@ -75,6 +75,60 @@ If you catch yourself thinking any of these, you are violating TDD:
 设计回溯触发条件: API 不可测、架构假设错误、依赖不兼容 → 回到 plan（详见 [plan 设计回溯](../plan/SKILL.md#设计回溯)）
 ```
 
+---
+
+## Bug Fix Mode
+
+当用户请求是修复现有 bug（而非新增功能）时，进入 Bug Fix Mode，与 Feature TDD 模式并列。
+
+### The Iron Law (Bug Fix)
+
+```
+NO BUG FIX WITHOUT REGRESSION TEST FIRST
+```
+
+不写 regression test 就修 bug？**先写测试再修。** regression test 必须：
+1. **能复现 bug**：修之前跑是红的
+2. **能证明修复有效**：修之后跑是绿的
+3. 命名规则：`regr_{bug_id_or_desc}`，放在测试文件末尾
+
+### Bug Fix 流程
+
+```
+┌─ REPRODUCE:  写 regression test 复现 bug → moon test -f "regr_*" (预期: 失败)
+├─ DIAGNOSE:   定位根因（文件/函数/错误码）
+├─ FIX:        最小修复 → moon test -f "regr_*" (预期: 通过)
+├─ VERIFY:     全量测试 + fmt + check → 全部通过
+└─ LEARN:      自动触发 moonbit-learn，记录根因
+```
+
+### Red Flags — STOP and Start Over
+
+- 没有 regression test 就定位代码（"我知道 bug 在哪"）
+- 修完才写 regression test（"验证一下就行"）
+- regression test 一开始就绿（说明没复现真正的 bug）
+- 一次修多个不相关的 bug
+- 修复比最小改动大（顺手重构、顺手优化）
+
+### 停止条件
+
+- Bug 无法稳定复现 → 停止，请求用户提供更多信息或复现步骤
+- 根因跨多个模块或涉及公共 API → 报告影响范围，请求用户确认修复方向
+- Fix 引入回归（其他测试变红）→ 回滚 fix，重新诊断根因
+- 3 次修复全部失败 → 停止，请求用户介入
+
+### Bug Fix vs Feature TDD
+
+| 维度 | Feature TDD | Bug Fix Mode |
+|------|-------------|-------------|
+| 起点 | 新功能需求 | 已有代码行为异常 |
+| 第一个测试 | 描述期望行为（RED） | 复现异常行为（RED） |
+| 最小改动 | 实现新功能 | 修复根因，不改范围 |
+| 完成后 | 可选进入 code-review | 自动触发 moonbit-learn |
+| 设计回溯 | API 不可测时触发 | 架构缺陷导致无法修时触发 |
+
+---
+
 ## 项目类型检测
 
 进入 TDD 前，先检测项目类型。检测逻辑详见 [`references/type-detection.md`](../references/type-detection.md)，与 verify 共用同一份检测逻辑，避免漂移。
@@ -85,14 +139,14 @@ If you catch yourself thinking any of these, you are violating TDD:
 
 > 测试文件组织和命名约定详见 `references/testing.md`，此处仅列出验证重点。
 
-| 类型 | 项目分类 | 验证目标 | 额外验证 |
-|------|---------|---------|---------|
-| lib | library | `moon test --target native` | `moon check --target all` 跨平台 |
-| cli | main | `moon test --target native` | `moon run .` 验证可执行 + stdout 输出 |
-| c-ffi | library | `moon check --target native` | — |
-| wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` |
-| parser | library | `moon test --target native` | valid/invalid/edge 分类测试 |
-| async | library | `moon test --target native` | 并发测试、超时测试 |
+| 类型 | 项目分类 | 验证目标 | 额外验证 | 文档要求 |
+|------|---------|---------|---------|---------|
+| lib | library | `moon test --target native` | `moon check --target all` 跨平台 | pub fn 有 docstring |
+| cli | main | `moon test --target native` | `moon run .` 验证可执行 + stdout 输出 | README 用法示例与实际输出一致 |
+| c-ffi | library | `moon check --target native` | — | FFI 函数有使用说明 |
+| wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` | WASM 导出函数有文档 |
+| parser | library | `moon test --target native` | valid/invalid/edge 分类测试 | 输入格式有说明 |
+| async | library | `moon test --target native` | 并发测试、超时测试 | 并发模型有说明 |
 
 ## 调试内置（debug 集成）
 
@@ -146,11 +200,17 @@ moon fmt --check && moon check --warn-list +73 && moon test
 ```json
 {
   "status": "done | paused",
+  "mode": "feature | bugfix",
   "project_type": "lib",
   "completed_tasks": ["task-1", "task-2"],
   "current_task": "task-3",
   "test_results": {"passed": 5, "failed": 0},
-  "next": "implement | evaluate"
+  "bugfix": {
+    "regression_test": "regr_null_check",
+    "root_cause": "空指针未检查",
+    "fixed_file": "src/parser.mbt"
+  },
+  "next": "implement | evaluate | learn"
 }
 ```
 

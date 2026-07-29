@@ -161,13 +161,13 @@ gemini extensions install https://github.com/morning-start/moonbit-skills
 |-----------|---------------|-----------|---------|
 | 新项目设计测试策略；补测试；测试重构；不确定测试怎么组织 | 只想跑测试（用 verify）；还在实现中（用 implement） | 与 implement 配合：testing 设计 → implement 实现 | 不替代 implement 的 TDD Red 阶段执行 |
 
-### 6. moonbit-implement — TDD 方式写代码
+### 6. moonbit-implement — TDD 写代码 + Bug 修复
 
-**能力**：Agent 按 TDD 逐个任务实现功能：先写测试 → 写实现 → 验证，失败时自动修复（最多 3 次）。内置 **Iron Law**（无测试不写代码）和 **Red Flags** 约束机制防止走捷径。测试组织决策遵循 `moonbit-testing` 契约，详见 `references/testing.md`。
+**能力**：双模式实现。**Feature TDD** 模式：先写测试 → 写实现 → 验证，失败时自动修复（最多 3 次）。**Bug Fix 模式**：复现 → 诊断 → 修复 → 验证 → 自动学习。内置 **Iron Law**（无测试/无 regression test 不写代码）和 **Red Flags** 约束机制防止走捷径。测试组织决策遵循 `moonbit-testing` 契约，详见 `references/testing.md`。
 
 | 什么时候用 | 什么时候不要用 | 怎么用得好 | 已知缺陷 |
 |-----------|---------------|-----------|---------|
-| 写新功能；修 bug；重构代码；任何写 MoonBit 代码的场景 | 还在设计阶段（先用 plan）；只检查代码质量（用 verify） | 一次一个任务；每个任务完成后审查结果；3 次失败说明理解偏差，重新描述比死磕有效 | MoonBit 特性理解有限；`String[i]` 返回 `UInt16` 等常见陷阱；3 次上限对复杂问题可能不够 |
+| 写新功能；修 bug；调试失败；任何写 MoonBit 代码的场景 | 还在设计阶段（先用 plan）；只检查代码质量（用 verify） | 一次一个任务；每个任务完成后审查结果；3 次失败说明理解偏差，重新描述比死磕有效 | MoonBit 特性理解有限；`String[i]` 返回 `UInt16` 等常见陷阱；3 次上限对复杂问题可能不够 |
 
 **各类型 TDD 策略：**
 

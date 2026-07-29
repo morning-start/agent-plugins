@@ -38,8 +38,8 @@ When multiple skills match, route by intent:
 |-------------|------|
 | 新项目或未决定架构/API | `moonbit-plan` |
 | 设计已批准、需要任务分解 | `moonbit-writing-plans` |
-| 已有项目、需求明确、要写代码 | `moonbit-implement` |
-| 当前实现失败 | `moonbit-implement` (debug) |
+| 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
+| 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
 | 测试设计、组织、写法 | `moonbit-testing` |
 | 性能优化、瓶颈分析 | `moonbit-perform` |
 | 重构、技术债务、坏味 | `moonbit-refactor` |
@@ -65,7 +65,7 @@ When multiple skills match, route by intent:
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
 | "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
-| "debug", "fix", "error", "bug", "fail" | "调试", "修bug", "出错" | `moonbit-implement` (debug) |
+| "debug", "fix", "error", "bug", "fail" | "调试", "修bug", "出错" | `moonbit-implement` (Bug Fix Mode) |
 
 ## Red Flags
 

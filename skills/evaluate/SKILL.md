@@ -79,7 +79,11 @@ evaluate 阶段在此之上追加：
 # 验证跨平台兼容（evaluate 专属，verify S1 为软性，此处为硬性）
 moon check --target all
 
-# 生成 README 文档（lib 专属）
+# 检查文档同步（调用 verify 的 S6 文档完整性检查）
+# pub fn docstring 完整性、README 示例可运行、CLI --help 非空
+# 文档问题不阻断发布，但报告给用户决策
+
+# 生成/同步 README 文档（lib 专属）
 moon info --target native > src/README.mbt.md
 moon test --target native -f "usage" # 验证文档示例可运行
 ```

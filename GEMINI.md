@@ -13,7 +13,7 @@ The following skills are available in the `skills/` directory:
 - `plan` — Clarify requirements and design architecture
 - `writing-plans` — Break design into executable tasks
 - `scaffold` — Dynamically generate project skeleton
-- `implement` — TDD-based implementation
+- `implement` — TDD/Feature + Bug Fix Mode (dual-mode)
 - `testing` — Design tests, organize test files, iterate on test code
 - `perform` — Optimize performance with measurement-driven cycle
 - `refactor` — Refactor code with test protection, eliminate code smells

@@ -16,6 +16,7 @@ description: "Use when learning from bugs and updating the MoonBit skill system.
 | 触发条件 | 说明 |
 |---------|------|
 | 用户说"记住这个"、"更新一下 skill"、"学一下这个" | 手动触发 |
+| `moonbit-implement` 中 Bug Fix 验证通过后 | 自动触发 |
 | `moonbit-implement` 中 3 次自动修复全部失败，用户介入解决 | 自动触发 |
 | 用户指出一个之前没见过的 MoonBit 陷阱 | 手动触发 |
 | 发现技能文档有遗漏或错误 | 手动触发 |
