@@ -41,6 +41,7 @@ When multiple skills match, route by intent:
 | 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
 | 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
 | 测试设计、组织、写法 | `moonbit-testing` |
+| CI/CD 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
 | 性能优化、瓶颈分析 | `moonbit-perform` |
 | 重构、技术债务、坏味 | `moonbit-refactor` |
 | 审查代码差异和设计问题 | `moonbit-code-review` |
@@ -53,6 +54,7 @@ When multiple skills match, route by intent:
 | User says (English) | User says (中文) | Skill |
 |---|---|---|
 | "init", "setup", "hooks", "initialize" | "初始化", "设置", "钩子" | `moonbit-init` |
+| "ci", "github actions", "workflow", "continuous integration", "commit-msg" | "CI", "工作流", "持续集成", "commit message" | `moonbit-ci` |
 | "build", "create", "new", "I want to make" | "我要做", "写一个", "创建", "开发" | `moonbit-plan` |
 | "plan", "design", "architecture" | "设计", "架构", "规划" | `moonbit-plan` |
 | "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
@@ -116,6 +118,7 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | Skill | When to Use |
 |-------|-------------|
 | `moonbit-init` | New project, setup git hooks, quality gates |
+| `moonbit-ci` | CI/CD pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
 | `moonbit-plan` | Clarify requirements, design architecture and API |
 | `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |

@@ -110,6 +110,7 @@
 | 技能 | 触发场景 | 类型 |
 |------|---------|------|
 | `moonbit-init` | 初始化项目、配置 git hooks | 独立 |
+| `moonbit-ci` | CI/CD 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 独立 |
 | `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
@@ -174,7 +175,7 @@
 
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
 |-----------|---------|---------|---------|
-| SessionStart | startup/clear/compact | `hooks/session-start` (Bash) / `hooks/run-hook.cmd` + `hooks/session-start.nu` (Windows) | `skills/using-moonbit-skills/SKILL.md` |
+| SessionStart | startup/clear/compact | `hooks/session-start`（Bash；Windows 可用 `run-hook.cmd` / PowerShell 入口） | `skills/using-moonbit-skills/SKILL.md` |
 | PreCommit | git commit | `hooks/pre-commit.sh` | H1 + H2（fmt + check） |
 | PrePush | git push | `hooks/pre-push.sh` | H3 + S2（test + audit） |
 | PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | H1-H3 + H5 + S2（H4 仅发布阶段） |
