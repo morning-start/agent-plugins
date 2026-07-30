@@ -54,6 +54,7 @@
 | `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 不替代 verify 运行门禁；不负责部署执行（归 cd） |
 | `moonbit-cd`（新增） | 部署策略、制品管理、回滚预案、发布渠道 | 不替代 verify 门禁；不判定"可发布"（归 evaluate） |
 | `moonbit-docs`（新增） | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 不做发布前预览校验（归 evaluate） |
+| `moonbit-security`（新增） | 威胁建模、依赖漏洞扫描、安全设计审查 | 不替代 verify E2 最终审计门禁 |
 | `moonbit-plan` | 需求澄清、架构和 API 设计决策 | 不写实现代码 |
 | `moonbit-writing-plans` | 设计→可执行任务拆解 | 不写实现代码 |
 | `moonbit-scaffold` | 按已批准设计动态生成项目骨架 | 不依赖预置模板，不覆盖用户文件 |

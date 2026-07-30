@@ -12,6 +12,7 @@ The following skills are available in the `skills/` directory:
 - `init` — Set up git hooks for quality gates
 - `ci` — CI pipeline, GitHub Actions, local hooks enhancement
 - `docs` — Write and maintain API docs, README, CHANGELOG, ADRs
+- `security` — Threat modeling, security design review, dependency vulnerability scanning
 - `plan` — Clarify requirements and design architecture
 - `writing-plans` — Break design into executable tasks
 - `scaffold` — Dynamically generate project skeleton

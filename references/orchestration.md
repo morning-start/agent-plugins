@@ -137,6 +137,7 @@
 | `moonbit-init` | 初始化项目、配置 git hooks | 管线步骤 |
 | `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
 | `moonbit-docs` | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 管线步骤 |
+| `moonbit-security` | 威胁建模、依赖漏洞扫描、安全设计审查 | 管线步骤 |
 | `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
@@ -223,6 +224,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
     │
     ├── moonbit-init（无依赖）
     ├── moonbit-docs（无依赖，可任何时候调用）
+    ├── moonbit-security（无依赖，可任何时候调用）
     ├── moonbit-plan（无依赖）
     │    │
     │    ├── moonbit-writing-plans（依赖 plan 输出）

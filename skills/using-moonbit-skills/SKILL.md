@@ -42,6 +42,7 @@ When multiple skills match, route by intent:
 | 配置本地 git hooks 质量门禁 | `moonbit-init` |
 | CI 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
 | 文档编写、维护、更新 | `moonbit-docs` |
+| 安全设计审查、威胁建模 | `moonbit-security` |
 | 测试设计、组织、写法 | `moonbit-testing` |
 | 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
 | 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
@@ -69,7 +70,8 @@ When multiple skills match, route by intent:
 | "refactor", "technical debt", "code smell" | "重构", "技术债务", "坏味", "清理代码" | `moonbit-refactor` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
-| "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
+| "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量", "安全审查" | `moonbit-verify` |
+| "threat model", "security review", "secure design", "vulnerability" | "安全设计", "威胁建模", "安全审查", "漏洞扫描" | `moonbit-security` |
 | "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
 | "deploy", "rollout", "deployment", "rollback" | "部署", "回滚", "发布到生产" | `moonbit-cd`（evaluate 批准后） |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
@@ -126,6 +128,7 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-init` | New project, setup git hooks, quality gates |
 | `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
 | `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs |
+| `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning |
 | `moonbit-plan` | Clarify requirements, design architecture and API |
 | `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |
