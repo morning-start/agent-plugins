@@ -121,7 +121,7 @@ Hooks 只提供自动化子集，不能替代完整验证：
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 15 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 16 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
 - `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。
