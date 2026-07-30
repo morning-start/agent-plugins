@@ -60,7 +60,7 @@
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
-│ moonbit-ci — CI/CD 基础设施（新项目首次提交前必配）     │
+│ moonbit-ci — CI 基础设施（新项目首次提交前必配）     │
 │ 本地: commit-msg(Conventional Commits) + 安全扫描     │
 │ 远端: GitHub Actions 多 job 流水线                     │
 │ 路由: → testing 或 implement                           │
@@ -110,14 +110,23 @@
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
-│ moonbit-evaluate — 验收评估 + 发布准备                 │
-│ 委托 verify + 类型专属验证 + CI/README 预览 + SemVer API Tag 比对 │
+│ moonbit-evaluate — 验收评估 + 发布管理                    │
+│ 委托 verify + 类型专属验证 + CHANGELOG/Release Notes/回退预案 │
 │ main: moon run . + 输出验证                           │
 │ lib: 临时 consumer 编译验证 + cross-platform           │
 │ API: 比对 pkg.generated.mbti 与上一 Tag，自动建议 Major/Minor/Patch │
-│ CI/README: 预览模式，用户批准后写入                     │
+│ CI/CHANGELOG/Release Notes: 预览模式，用户批准后写入     │
 │ 用户介入: 判断"好了"或"再改"                           │
-│ 路由: 完成 或 → implement                              │
+│ 路由: → cd（部署） 或 → implement                      │
+└─────────────────┬───────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────┐
+│ moonbit-cd — 持续部署                                  │
+│ 部署策略: 蓝绿/金丝雀/滚动/直接发布                     │
+│ 制品管理: native binary / wasm / mooncake 包           │
+│ 回滚预案: 每个部署必须附带回滚计划                       │
+│ 路由: → 生产运行（或 hotfix → implement）               │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -126,7 +135,8 @@
 | 技能 | 触发场景 | 类型 |
 |------|---------|------|
 | `moonbit-init` | 初始化项目、配置 git hooks | 管线步骤 |
-| `moonbit-ci` | CI/CD 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
+| `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
+| `moonbit-docs` | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 管线步骤 |
 | `moonbit-plan` | 需求澄清、架构和 API 设计 | 管线入口 |
 | `moonbit-writing-plans` | 设计→任务拆解 | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架 | 管线步骤 |
@@ -136,7 +146,8 @@
 | `moonbit-implement` | TDD 实现 + Iron Law + debug | 管线核心 |
 | `moonbit-code-review` | 任务间代码审查 | 任务间门禁 |
 | `moonbit-verify` | 全量六维验证门禁 | 管线检查点 |
-| `moonbit-evaluate` | 验收评估 + 发布准备 | 管线终点 |
+| `moonbit-evaluate` | 验收评估 + 发布管理（changelog/release notes/回退预案） | 管线终点 |
+| `moonbit-cd` | 持续部署 + 制品管理 + 回滚执行 | 管线终点 |
 | `moonbit-learn` | 吸收错误、更新技能 | 独立 |
 
 ---
@@ -211,6 +222,7 @@
 using-moonbit-skills (alwaysApply, 路由入口)
     │
     ├── moonbit-init（无依赖）
+    ├── moonbit-docs（无依赖，可任何时候调用）
     ├── moonbit-plan（无依赖）
     │    │
     │    ├── moonbit-writing-plans（依赖 plan 输出）
@@ -231,7 +243,11 @@ using-moonbit-skills (alwaysApply, 路由入口)
     │    │    │         │
     │    │    │         └── → moonbit-verify（全量后）
     │    │    │              │
-    │    │    │              └── → moonbit-evaluate（verify 通过后）
+    │    │    │              ├── → moonbit-evaluate（verify 通过后）
+    │    │    │              │    │
+    │    │    │              │    └── → moonbit-cd（evaluate 批准后）
+    │    │    │              │
+    │    │    │              └── → moonbit-learn（bug fix 后自动触发）
     │    │    │
     │    │    └── moonbit-implement（已有项目，跳过 scaffold）
     │    │

@@ -1,6 +1,6 @@
 ---
 name: moonbit-evaluate
-description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first."
+description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first. After evaluation approval, delegate deployment to moonbit-cd."
 ---
 
 # Evaluate — 验收评估 + 发布准备
@@ -12,10 +12,10 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 ## The Iron Law
 
 ```
-NO PUBLISH WITHOUT FULL VERIFICATION
+NO PUBLISH WITHOUT FULL VERIFICATION AND ROLLBACK READINESS
 ```
 
-发布前必须通过 `moonbit-verify` 全量门禁（B1-B4 + C1）+ 类型专属验证。任何基础测试或 Custom 测试失败则阻断发布，不得跳过。
+发布前必须通过 `moonbit-verify` 全量门禁（B1-B4 + C1）+ 类型专属验证。任何基础测试或 Custom 测试失败则阻断发布，不得跳过。发布时必须附带回滚预案（评估发布回退路径）。
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -55,6 +55,8 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 | 所有测试通过 | `moon test --target native` | 是 |
 | 无意外改动 | `git status --porcelain` | 是 |
 | 用户确认版本号 | 用户输入 | 是 |
+| CHANGELOG 完整性 | 存在 Unreleased 条目且内容非空 | 是 |
+| 回滚预案已评估 | 发布回退路径已确认 | 是（lib 项目） / 否（cli 项目需确认） |
 
 ### MAIN 项目（可执行程序）专属验证
 
@@ -181,6 +183,66 @@ moon test --target native -f "usage"
 
 **注意:** `moon doc` 不可用时跳过此步骤，报告工具链缺失。文档预览不阻断发布，供用户决策。
 
+### 5a. 生成 Release Notes
+
+在 CHANGELOG 基础上，生成面向用户的 release notes（用户批准后使用）：
+
+```markdown
+# Release {version} — {date}
+
+## 亮点
+
+{主要功能或修复的一句话总结}
+
+## 变更详情
+
+{从 CHANGELOG Unreleased 条目自动生成的描述}
+
+## 升级指南
+
+{如有破坏性变更，给出迁移步骤}
+
+## 回退说明
+
+如遇到问题，可回退到上一版本：`{rollback_command}`
+```
+
+**约束**：
+- Release notes 在 CHANGELOG 基础上提炼，不重复全部条目
+- 破坏性变更必须包含迁移步骤
+- 生成后展示预览，用户批准后定稿
+
+### 5b. 评估回滚预案
+
+在发布前评估回退路径。lib 项目评估简单回退（mooncakes 版本回滚），cli 项目需要生成回滚策略：
+
+```bash
+# 记录当前和上一个发布 tag
+CURRENT_TAG="v{version}"
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+cat << ROLLBACK
+## 回退预案
+
+### 回退内容
+- 代码回退：\`git revert ${CURRENT_TAG}\`
+- 版本回退：回退到 \`${LAST_TAG}\`
+
+### 回退验证
+1. \`moon test --target native\`
+2. \`moon run .\`（main 项目）
+3. \`moon info --target native && git diff --exit-code\`
+
+### 参考
+详细回滚执行由 \`moonbit-cd\` 负责（参见 skills/cd/SKILL.md）
+ROLLBACK
+```
+
+**约束**：
+- lib 项目：确保 mooncakes 包的上一版本可恢复
+- cli 项目：执行回滚预案评估，但不替代 cd 的完整回滚计划
+- 评估结果写入发布检查清单
+
 ### 6. 发布检查清单
 
 ```markdown
@@ -192,8 +254,10 @@ moon test --target native -f "usage"
 - [x] CI 配置已生成（用户批准后写入）
 - [x] CHANGELOG 条目已生成（用户批准后写入）
 - [x] API 文档预览已展示（lib 项目，moon doc 可用时）
+- [x] Release notes 已生成（用户批准后定稿）
+- [x] 回滚预案已评估
 - [ ] 用户确认版本号（Agent 已给出 SemVer 建议）
-- [ ] 用户执行 `moon publish`（需要 mooncakes 账号）
+- [ ] 用户确认执行发布（或委托 moonbit-cd 部署）
 ```
 
 ## 各类型发布策略
@@ -211,8 +275,8 @@ moon test --target native -f "usage"
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README/CI/CHANGELOG 预览、给出 SemVer 建议、检查发布就绪 |
-| **用户** | 判断质量是否达标、确认版本号（参考 Agent 建议）、审查 README/CI/CHANGELOG diff、执行 `moon publish` |
+| **Agent** | 委托 verify 做门禁、类型专属验证、生成 README/CI/CHANGELOG/Release Notes 预览、给出 SemVer 建议、评估回滚预案、检查发布就绪 |
+| **用户** | 判断质量是否达标、确认版本号（参考 Agent 建议）、审查 README/CI/CHANGELOG/Release Notes diff、执行 `moon publish` 或委托 `moonbit-cd` 部署 |
 
 ## 输出
 
@@ -231,9 +295,11 @@ moon test --target native -f "usage"
     "reason": "Bug fix，公共 API 不变"
   },
   "files_created": [".github/workflows/ci.yml", "CHANGELOG.md"],
+  "release_notes": "generated",
+  "rollback_assessment": "pass (上一版本 v0.3.2 可回退)",
   "publish_ready": true,
   "user_decision": "approved",
-  "next": "publish | implement"
+  "next": "cd | publish | implement"
 }
 ```
 
@@ -254,15 +320,17 @@ moon test --target native -f "usage"
   },
   "files_created": ["src/README.mbt.md", ".github/workflows/ci.yml", "CHANGELOG.md"],
   "doc_preview": "generated (/tmp/moonbit-doc-preview)",
+  "release_notes": "generated",
+  "rollback_assessment": "pass (上一版本 v0.3.2 可回退)",
   "publish_ready": true,
   "user_decision": "approved",
-  "next": "publish | implement"
+  "next": "cd | publish | implement"
 }
 ```
 
 ## 下一步
 
-发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。
+发布完成或用户说"再改"后，回到 `moonbit-implement` 继续任务。如果用户选择部署，委托 `moonbit-cd` 执行部署。
 
 如果用户说"和想要的不一样"或验收阶段发现设计方向偏差，**触发设计回溯**：回到 `moonbit-plan` 重新设计 API 或调整需求，不在此阶段绕路修复。
 

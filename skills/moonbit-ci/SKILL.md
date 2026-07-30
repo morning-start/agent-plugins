@@ -1,13 +1,13 @@
 ---
 name: moonbit-ci
-description: "Use when setting up CI/CD for a MoonBit project — GitHub Actions workflows, local git hooks (pre-commit security scan, commit-msg Conventional Commits), branch protection rules, cross-platform test matrices, and deprecation warning interception. Triggered by user phrases like 'add CI', 'set up GitHub Actions', 'configure CI workflow', 'add commit-msg hook', 'add security scan', 'set up branch protection', 'CI pipeline', '自动化测试', '持续集成', 'configure pre-commit', 'conventional commits hook'. Also triggered when a MoonBit project lacks a .github/workflows directory or doesn't have local git hooks configured. Do NOT use for verification gate checks (use moonbit-verify) or release preparation (use moonbit-evaluate) — this skill is about BUILDING the pipeline infrastructure, not running it."
+description: "Use when setting up CI for a MoonBit project — GitHub Actions workflows, local git hooks (pre-commit security scan, commit-msg Conventional Commits), branch protection rules, cross-platform test matrices, and deprecation warning interception. Triggered by user phrases like 'add CI', 'set up GitHub Actions', 'configure CI workflow', 'add commit-msg hook', 'add security scan', 'set up branch protection', 'CI pipeline', '自动化测试', '持续集成', 'configure pre-commit', 'conventional commits hook'. Also triggered when a MoonBit project lacks a .github/workflows directory or doesn't have local git hooks configured. Do NOT use for verification gate checks (use moonbit-verify), release preparation (use moonbit-evaluate), or deployment (use moonbit-cd) — this skill is about BUILDING the CI pipeline infrastructure, not deployment."
 ---
 
 # CI — 持续集成与本地质量门禁
 
 ## 职责
 
-为 MoonBit 项目搭建完整 CI/CD 基础设施。覆盖三个层次：
+为 MoonBit 项目搭建完整 CI（持续集成）基础设施。覆盖三个层次：
 
 1. **本地 hooks** — pre-commit（安全扫描 + 格式化 + 类型检查 + 接口文件同步）、commit-msg（Conventional Commits）、pre-push（全量测试）
 2. **GitHub Actions CI** — 多 job 并行流水线（格式/编译/测试/安全/文档）
@@ -15,11 +15,14 @@ description: "Use when setting up CI/CD for a MoonBit project — GitHub Actions
 
 **不重复** `moonbit-init` 的基础 hooks 配置，而是在其之上增加安全扫描、commit-msg 校验和接口文件自动同步。
 
+**注意**：`moonbit-ci` 专注于 CI（构建/测试/分支保护），不再涵盖 CD（部署/回滚/制品管理）。CD 职责已拆分到 `moonbit-cd`，详见 [`skills/cd/SKILL.md`](../cd/SKILL.md)。
+
 ## 与其它技能的边界
 
 | 技能 | moonbit-ci 不做什么 |
 |------|-------------------|
 | `moonbit-init` | 不做基础 hooks 配置（init 已做）；ci 在其之上增强 |
+| `moonbit-cd` | 不做部署执行和回滚管理（cd 已拆分，专注持续部署） |
 | `moonbit-verify` | 不运行验证门禁；ci 只搭建流水线框架 |
 | `moonbit-evaluate` | 不做发布准备；ci 仅提供持续集成阶段 |
 

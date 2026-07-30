@@ -40,7 +40,8 @@ When multiple skills match, route by intent:
 | 设计已批准、需要任务分解 | `moonbit-writing-plans` |
 | 生成项目骨架 | `moonbit-scaffold` |
 | 配置本地 git hooks 质量门禁 | `moonbit-init` |
-| CI/CD 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
+| CI 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
+| 文档编写、维护、更新 | `moonbit-docs` |
 | 测试设计、组织、写法 | `moonbit-testing` |
 | 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
 | 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
@@ -49,6 +50,7 @@ When multiple skills match, route by intent:
 | 审查代码差异和设计问题 | `moonbit-code-review` |
 | 检查质量或完成状态 | `moonbit-verify` |
 | 发布准备 | `moonbit-evaluate` |
+| 部署执行、回滚管理 | `moonbit-cd` |
 | 从已定位问题中沉淀知识 | `moonbit-learn` |
 
 ## Trigger Matrix
@@ -57,6 +59,7 @@ When multiple skills match, route by intent:
 |---|---|---|
 | "init", "setup", "hooks", "initialize" | "初始化", "设置", "钩子" | `moonbit-init` |
 | "ci", "github actions", "workflow", "continuous integration", "commit-msg" | "CI", "工作流", "持续集成", "commit message" | `moonbit-ci` |
+| "docs", "documentation", "readme", "changelog", "docstring", "adr" | "文档", "README", "CHANGELOG", "docstring", "写文档" | `moonbit-docs` |
 | "build", "create", "new", "I want to make" | "我要做", "写一个", "创建", "开发" | `moonbit-plan` |
 | "plan", "design", "architecture" | "设计", "架构", "规划" | `moonbit-plan` |
 | "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
@@ -68,6 +71,7 @@ When multiple skills match, route by intent:
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量" | `moonbit-verify` |
 | "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
+| "deploy", "rollout", "deployment", "rollback" | "部署", "回滚", "发布到生产" | `moonbit-cd`（evaluate 批准后） |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
 | "debug", "fix", "error", "bug", "fail" | "调试", "修bug", "出错" | `moonbit-implement` (Bug Fix Mode) |
 
@@ -105,7 +109,7 @@ These thoughts mean STOP — you are rationalizing:
 ## Pipeline (recommended flow)
 
 ```
-Plan → [Spike (可选)] → [Writing-Plans] → Scaffold → [Testing ↔] Implement ↔ [Code-Review] → [Perform ↔ Refactor ↔] → Verify → Evaluate
+Plan → [Spike (可选)] → [Writing-Plans] → Scaffold → [Testing ↔] Implement ↔ [Code-Review] → [Perform ↔ Refactor ↔] → Verify → Evaluate → CD
                                           ↑                    │
                                           └──── 设计回溯 ──────┘
 ```
@@ -120,7 +124,8 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | Skill | When to Use |
 |-------|-------------|
 | `moonbit-init` | New project, setup git hooks, quality gates |
-| `moonbit-ci` | CI/CD pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
+| `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
+| `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs |
 | `moonbit-plan` | Clarify requirements, design architecture and API |
 | `moonbit-writing-plans` | Break design into executable implementation tasks |
 | `moonbit-scaffold` | Generate project skeleton from templates |
@@ -130,7 +135,8 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-implement` | Write code via TDD (test → implement → verify) |
 | `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |
-| `moonbit-evaluate` | Release readiness, README preview, CI config preview |
+| `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment |
+| `moonbit-cd` | Deployment execution, artifact management, rollback planning |
 | `moonbit-learn` | Extract lessons from bugs, update skills |
 
 ## 路由后自检清单

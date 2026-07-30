@@ -10,6 +10,8 @@ When the user asks about MoonBit development, check the bootstrap skill at `skil
 
 The following skills are available in the `skills/` directory:
 - `init` — Set up git hooks for quality gates
+- `ci` — CI pipeline, GitHub Actions, local hooks enhancement
+- `docs` — Write and maintain API docs, README, CHANGELOG, ADRs
 - `plan` — Clarify requirements and design architecture
 - `writing-plans` — Break design into executable tasks
 - `scaffold` — Dynamically generate project skeleton
@@ -19,11 +21,12 @@ The following skills are available in the `skills/` directory:
 - `refactor` — Refactor code with test protection, eliminate code smells
 - `code-review` — Code review gate between tasks
 - `verify` — Full verification pipeline
-- `evaluate` — Acceptance evaluation and release prep
+- `evaluate` — Acceptance evaluation, release prep, release notes, rollback assessment
+- `cd` — Deployment execution, artifact management, rollback planning
 - `learn` — Learn from bugs and update the skill system
 
 ## Rules
 
 - Always check `skills/using-moonbit-skills/SKILL.md` before any MoonBit-related action
-- Follow the skill pipeline: plan → writing-plans → scaffold → [testing ↔] implement ↔ code-review → [perform ↔ refactor ↔] → verify → evaluate (`↔` = bidirectional dependency, includes design rollback to plan from implement/perform/refactor)
+- Follow the skill pipeline: plan → writing-plans → scaffold → init → ci → [testing ↔] implement ↔ code-review → [perform ↔ refactor ↔] → verify → evaluate → cd (`↔` = bidirectional dependency, includes design rollback to plan from implement/perform/refactor)
 - The user makes decisions; you execute

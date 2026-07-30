@@ -39,7 +39,7 @@
 - 行动前先读取 `skills/using-moonbit-skills/SKILL.md`，按其路由表匹配用户意图到对应技能。
 - 若用户直接指定技能，优先使用该技能，跳过路由匹配。
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
-- 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate`。
+- 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate → cd`。
 - 注: `↔` 表示双向依赖（含设计回溯，可从 implement/perform/refactor/evaluate 回到 plan）
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。
@@ -51,7 +51,9 @@
 | 技能 | 职责边界 | 不可越权 |
 |---|---|---|
 | `moonbit-init` | 项目级质量门禁配置 | 不负责项目内容生成 |
-| `moonbit-ci` | CI/CD 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 不替代 verify 运行门禁 |
+| `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 不替代 verify 运行门禁；不负责部署执行（归 cd） |
+| `moonbit-cd`（新增） | 部署策略、制品管理、回滚预案、发布渠道 | 不替代 verify 门禁；不判定"可发布"（归 evaluate） |
+| `moonbit-docs`（新增） | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 不做发布前预览校验（归 evaluate） |
 | `moonbit-plan` | 需求澄清、架构和 API 设计决策 | 不写实现代码 |
 | `moonbit-writing-plans` | 设计→可执行任务拆解 | 不写实现代码 |
 | `moonbit-scaffold` | 按已批准设计动态生成项目骨架 | 不依赖预置模板，不覆盖用户文件 |
@@ -61,8 +63,8 @@
 | `moonbit-implement` | Feature TDD + Bug Fix Mode 双模式实现 | 无失败测试/无 regression test 不写实现代码 |
 | `moonbit-code-review` | 任务间代码审查 | 不发布、不声称完成 |
 | `moonbit-verify` | 三级验证门禁（基础/Custom/增强） | 不声称完成除非有新鲜证据 |
-| `moonbit-evaluate` | 验收评估和发布准备 | 不跳过 verify，不替用户决定版本号 |
-| `moonbit-learn` | 从已定位问题中沉淀知识 | NO MEMORY WITHOUT ROOT CAUSE：未确认根因不写入，不重复创建 |
+| `moonbit-evaluate`（扩展） | 验收评估 + 发布准备 + changelog/release notes/回退预案 | 不跳过 verify，不替用户决定版本号，不执行部署（归 cd） |
+| `moonbit-learn` | 从已定位问题中沉淀知识 + 生产事故 RCA | NO MEMORY WITHOUT ROOT CAUSE：未确认根因不写入，不重复创建 |
 
 ## 仓库工作规则
 
@@ -118,7 +120,7 @@ Hooks 只提供自动化子集，不能替代完整验证：
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 13 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 15 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
 - `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。
