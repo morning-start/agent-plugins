@@ -6,7 +6,7 @@ inconsistent behavior across platforms and must not be added):
 
 | Platform              | Allowed fields                                                |
 |-----------------------|---------------------------------------------------------------|
-| OMP (root plugin.json)| name, version, description, author{name}, homepage, repository, license |
+| OMP (root plugin.json + package.json)| name, version, description, author{name}, homepage, repository, license, omp.extensions |
 | Claude Code           | name, version, description, author{name}, homepage, repository, license, hooks |
 | Codex CLI             | name, version, description, author{name,url}, homepage, repository, license |
 | Cursor                | name, version, description, author{name}, repository, license |
@@ -25,9 +25,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # All platform plugin descriptors that use plugin.json format
-# OMP uses root plugin.json (Claude-Code-compatible layout)
+# OMP uses root plugin.json for shared metadata and package.json for runtime extensions
 PLUGIN_JSONS = [
-    ROOT / "plugin.json",  # OMP
+    ROOT / "plugin.json",  # OMP shared metadata
     ROOT / ".claude-plugin" / "plugin.json",
     ROOT / ".codex-plugin" / "plugin.json",
     ROOT / ".cursor-plugin" / "plugin.json",
@@ -220,7 +220,7 @@ def check_opencode(opencode: dict | None) -> list[str]:
 
 
 def check_pi(pi: dict | None) -> list[str]:
-    """Check Pi package.json descriptor and extension file."""
+    """Check Pi and OMP package.json descriptors and the Pi extension file."""
     failures = []
     if pi is None:
         return failures
@@ -259,9 +259,22 @@ def check_nested_codex() -> list[str]:
     return failures
 
 
-def check_omp() -> list[str]:
-    """Check OMP TypeScript hooks and commands exist."""
+def check_omp(pi: dict | None) -> list[str]:
+    """Check OMP package metadata, TypeScript hooks, and commands."""
     failures = []
+
+    if pi is None:
+        failures.append("package.json: missing OMP manifest")
+    else:
+        omp_config = pi.get("omp", {})
+        extensions = omp_config.get("extensions", [])
+        if not extensions:
+            failures.append("package.json: missing omp.extensions field")
+        else:
+            for entry in extensions:
+                entry_path = ROOT / entry
+                if not entry_path.exists():
+                    failures.append(f"package.json: omp.extensions entry missing: {entry}")
 
     # Pre-hook: session start bootstrap
     if not OMP_PRE_HOOK.exists():
@@ -388,7 +401,7 @@ def main() -> int:
     failures.extend(check_opencode(opencode))
     failures.extend(check_pi(pi))
     failures.extend(check_nested_codex())
-    failures.extend(check_omp())
+    failures.extend(check_omp(pi))
     failures.extend(check_post_tool_hooks())
 
     if failures:

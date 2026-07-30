@@ -8,10 +8,9 @@
  *
  * Shared verification logic is in hooks/shared/verify-moonbit.ts.
  *
- * NOTE: The import path `@oh-my-pi/pi-coding-agent/extensibility/hooks` is
- * speculative — OMP's TypeScript hook API is not yet publicly documented.
- * When OMP publishes official docs, verify and update the import path
- * and event name (tool_result).
+ * OMP provides the HookAPI and tool_result event used below.
+ * The hook is kept separate from the Pi extension so OMP can discover it
+ * through its native hooks/post/*.ts capability path.
  */
 
 import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";

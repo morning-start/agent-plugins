@@ -1,196 +1,225 @@
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills — 你决策，Agent 执行。13 个 AI Agent 技能覆盖 MoonBit 项目全生命周期。">
+  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills：面向 MoonBit 项目的 Agent 技能套件，覆盖从设计到验证的开发流程。">
 </p>
 
-这套技能帮助你在 AI Agent（AtomCode、Claude Code、Codex、Cursor 等）的辅助下开发 MoonBit 项目。**你负责做决策，Agent 负责写代码、跑测试、修 bug。**
+# MoonBit Skills
 
----
+面向 MoonBit 项目的 **Agent 技能套件与质量门禁**。
+
+你负责做设计决策，Agent 负责把决策变成任务、代码和验证证据。仓库提供 **13 个核心技能**，另有一个 bootstrap 技能负责入口路由。
+
+它不是 MoonBit 运行库，也不替代 MoonBit 编译器；它约束的是 Agent 如何理解需求、修改项目、处理失败并证明结果。
+
+## 你能得到什么
+
+| 目标 | 对应能力 |
+|---|---|
+| 先把需求说清楚 | `moonbit-plan`、`moonbit-writing-plans` 将目标拆成架构、API 和可验证任务 |
+| 按约束实现 | `moonbit-testing`、`moonbit-implement` 用测试先行和 Bug Fix 流程推进代码 |
+| 不把“看起来能用”当完成 | `moonbit-code-review`、`moonbit-verify`、hooks 和检查脚本提供质量证据 |
+| 让经验回到系统 | `moonbit-perform`、`moonbit-refactor`、`moonbit-learn` 支持优化、重构和知识沉淀 |
+
+核心原则：**决策由用户做，执行由 Agent 做，完成由新鲜证据证明。**
+
+## 30 秒开始
+
+### 1. 安装
+
+OMP 是最直接的插件安装方式：
+
+```bash
+omp plugin install https://github.com/morning-start/moonbit-skills.git
+```
+
+安装前准备：
+
+- MoonBit 工具链：`moon`
+- Git
+- 可选：`moon-audit`，用于增强安全审计
+
+### 2. 用自然语言提出第一个请求
+
+```text
+我想写一个只支持 native 的 TOML 解析器，先帮我设计 API 和测试策略。
+```
+
+典型路由是：
+
+```text
+moonbit-plan
+  → moonbit-writing-plans
+  → moonbit-testing / moonbit-scaffold
+  → moonbit-implement
+  → moonbit-code-review
+  → moonbit-verify
+  → moonbit-evaluate
+```
+
+不需要记住技能名。bootstrap 入口会根据意图路由；如果平台支持显式调用，也可以直接使用 `/skill:<name>` 或对应平台的 skill 菜单。
+
+### 常见请求
+
+| 你可以这样说 | 入口技能 |
+|---|---|
+| “我要做一个 MoonBit CLI” | `moonbit-plan` |
+| “帮我把这个设计拆成实现任务” | `moonbit-writing-plans` |
+| “如何组织测试，补上 invalid 和 edge 场景” | `moonbit-testing` |
+| “这个 bug 怎么复现和修复” | `moonbit-implement` 的 Bug Fix Mode |
+| “帮我检查格式、类型和测试” | `moonbit-verify` |
+| “准备发布了，帮我做验收” | `moonbit-evaluate` |
+
+## 工作管线
 
 <p align="center">
-  <img src="./assets/readme/workflow.svg" width="100%" alt="完整开发管线：plan → writing-plans → scaffold → init → ci → testing ↔ implement(code-review) → [perform ↔ refactor ↔] → verify → evaluate + 设计回溯 + learn">
+  <img src="./assets/readme/section-workflow.svg" width="100%" alt="典型工作流：从自然语言请求进入技能路由，再经过设计、实现、审查和验证。">
 </p>
 
----
+管线是推荐路径，不是必须走完的固定脚本：
+
+```text
+Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
+                                             ↕
+                                      Code-Review
+                                             ↓
+                              [Perform ↔ Refactor] → Verify → Evaluate
+                                             ↘ Learn
+```
+
+- 已有项目通常跳过 `scaffold`；已有质量门禁时可跳过 `init`/`ci`。
+- `testing` 与 `implement` 可以双向协作；测试策略不接管实现代码。
+- `perform` 和 `refactor` 是可选分支，但都必须回到验证。
+- 发现 API 不可测试、架构假设错误或设计缺陷时，可以回到 `plan`。
+
+## 13 个核心技能
 
 <p align="center">
-  <img src="./assets/readme/section-quickstart.svg" width="100%" alt="快速开始 — 用自然语言说需求，Agent 自动选择技能">
+  <img src="./assets/readme/section-skills.svg" width="100%" alt="13 个核心技能按设计、构建、质量和演进阶段组织。">
 </p>
 
-你只需要用自然语言描述你想做什么，Agent 会自动选择合适的技能：
+### 设计与准备
 
-```
-"帮我初始化这个 MoonBit 项目，配好 git hooks"   → 自动触发 moonbit-init
-"CI 怎么配"                                          → 自动触发 moonbit-ci
-"我想写一个 TOML 解析器"                         → 自动触发 moonbit-plan
-"帮我拆成实现任务"                                → 自动触发 moonbit-writing-plans
-"如何写测试"                                     → 自动触发 moonbit-testing
-"开始写代码吧"                                   → 自动触发 moonbit-implement
-"性能优化"                                        → 自动触发 moonbit-perform
-"重构这段代码"                                    → 自动触发 moonbit-refactor
-"审查一下这段代码"                                → 自动触发 moonbit-code-review
-"检查一下代码有没有问题"                          → 自动触发 moonbit-verify
-"准备发布了"                                     → 自动触发 moonbit-evaluate
-"记住这个 bug，下次别再踩坑了"                    → 自动触发 moonbit-learn
-```
+| 技能 | 作用 |
+|---|---|
+| `moonbit-plan` | 澄清需求，选择项目类型，确定架构、目标平台和 API |
+| `moonbit-writing-plans` | 把已确认设计拆成带验证命令的行为增量任务 |
+| `moonbit-scaffold` | 按项目类型动态生成骨架，不覆盖已有用户文件 |
 
-**不需要手动指定技能名**，Agent 会根据你的意图自动路由。你只需要像和同事对话一样描述需求。
+### 构建与审查
 
----
+| 技能 | 作用 |
+|---|---|
+| `moonbit-testing` | 设计测试策略、组织测试文件、补充 valid/invalid/edge 场景 |
+| `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码 |
+| `moonbit-code-review` | 在任务之间审查真实变更，处理 Critical/Important 问题 |
 
-<p align="center">
-  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式 — 支持 8 个 AI Agent 平台，装完即用">
-</p>
+### 工程质量
 
-本仓库可作为多种 AI Agent 的插件安装，装完后 13 个技能自动注册到 `/` 菜单。
+| 技能 | 作用 |
+|---|---|
+| `moonbit-init` | 配置本地 Git hooks 和质量门禁 |
+| `moonbit-ci` | 建立 GitHub Actions、commit message 校验和分支保护基础设施 |
+| `moonbit-verify` | 执行基础、Custom、增强三级验证 |
+| `moonbit-evaluate` | 验收发布准备、API 变化和 README/CI 预览 |
 
-### AtomCode
+### 性能与演进
 
-```bash
-# 方式一：交互式（推荐）
-/plugin marketplace add https://github.com/morning-start/moonbit-skills
-/plugin install moonbit-skills@moonbit-skills
+| 技能 | 作用 |
+|---|---|
+| `moonbit-perform` | 先测量基线，再分析瓶颈和验证优化结果 |
+| `moonbit-refactor` | 在测试保护下消除技术债务，不改变可观察行为 |
+| `moonbit-learn` | 从已定位根因中沉淀可复用的技能或错误知识 |
 
-# 信任 hooks（可选，不信任不影响技能使用）
-atomcode plugin trust moonbit-skills
-```
+`using-moonbit-skills` 是 bootstrap 入口，不计入上述 13 个核心技能。
 
-### Claude Code
+## 三级验证门禁
 
-```bash
-# 官方市场（推荐）
-/plugin install moonbit-skills@claude-plugins-official
+`moonbit-verify` 按项目类型选择检查路径。基础检查是所有 MoonBit 项目的共同底线。
 
-# 或自定义市场
-/plugin marketplace add https://github.com/morning-start/moonbit-skills
-/plugin install moonbit-skills@morning-start
-```
+| 层级 | 作用 | 典型检查 | 阻断 |
+|---|---|---|:---:|
+| **B：基础** | 格式、类型、功能和工作区状态 | `moon fmt --check`、`moon check --warn-list +73`、`moon test` | 是 |
+| **C：Custom** | 项目类型专属验证 | `moon run .`、`moon info`、临时 consumer 编译 | 是 |
+| **E：增强** | 为发布和决策补充信号 | 跨平台、安全、性能、API 深度、CI、文档 | 否 |
 
-### Cursor
+项目类型差异：
 
-```bash
-# 在 Cursor Agent 聊天中安装
-/add-plugin moonbit-skills
-```
+- `cli/main`：额外运行 `moon run .`，并确认 stdout 非空。
+- `lib/parser/async/c-ffi/wasm`：额外进行包结构和临时 consumer 编译验证。
+- `c-ffi`、`wasm`：不按普通 MoonBit `pub` API 做稳定性检查。
 
-### Codex CLI / Codex App
+完整门禁定义见 [`skills/verify/SKILL.md`](./skills/verify/SKILL.md) 和 [`references/orchestration.md`](./references/orchestration.md)。
 
-```bash
-# 在 Codex CLI 中搜索安装
-/plugins → 搜索 "moonbit-skills" → Install Plugin
-```
+## 支持的平台
 
-### Kimi Code
+技能内容统一位于 `skills/`；不同 Agent 平台通过原生 skill 发现、SessionStart 注入、插件 manifest 或平台 hooks 接入。
 
-```bash
-# 在 Kimi Code 插件管理器中安装
-/plugins → 市场 → moonbit-skills → 安装
-```
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/morning-start/moonbit-skills
-```
-
-### 装完之后的体验
-
-- `/` 菜单出现 `moonbit-skills:moonbit-plan`、`moonbit-skills:moonbit-implement` 等 13 个带命名空间的 skill
-- Agent（模型）也可以通过 `use_skill` 工具自动调用这些技能，不需要手动选
-- 当你说"我要做一个 MoonBit 项目"时，技能会自动触发，从 `moonbit-plan` 开始引导对话
-
----
-
-<p align="center">
-  <img src="./assets/readme/section-skills.svg" width="100%" alt="十三个技能速览 — 从设计到发布全流程覆盖">
-</p>
-
-整个管线由两个入口（init + ci）和一条主线（plan → implement → verify → evaluate）构成，中间穿插测试、审查、性能、重构和持续学习。
-
-| 阶段 | 技能 | 一句话能力 | 管线位置 |
-|:----:|:----:|-----------|:--------:|
-| 🏗️ | `moonbit-init` | 给项目装上 git hooks 质量门禁 | 新项目第一步 |
-| 🔁 | `moonbit-ci` | CI/CD：commit-msg 校验 + 安全扫描 + GitHub Actions | init 之后 |
-| 📐 | `moonbit-plan` | 澄清需求、选架构、定 API | 管线入口 |
-| 📝 | `moonbit-writing-plans` | 把设计拆成可独立验证的 TDD 任务 | plan 之后 |
-| 🏛️ | `moonbit-scaffold` | 按类型动态生成项目骨架 | writing-plans 之后 |
-| 🧪 | `moonbit-testing` | 设计测试策略、组织文件、编写测试 | 与 implement 配合 |
-| 💻 | `moonbit-implement` | TDD 写代码 / Bug 复现修复（Iron Law 约束） | 管线核心 |
-| ⚡ | `moonbit-perform` | 测量→分析→优化→对比，不改功能行为 | implement 之后（可选） |
-| 🧹 | `moonbit-refactor` | 识别坏味→小步重构→回归验证 | 同上（可选） |
-| 👁️ | `moonbit-code-review` | 每实现任务后按 Critical/Important/Minor 审查 | 每 implement 任务后 |
-| ✅ | `moonbit-verify` | 三级门禁：基础(B)必选 / Custom(C)按类型 / 增强(E)推荐 | 发布前必经 |
-| 📦 | `moonbit-evaluate` | 验收 + CHANGELOG + SemVer 建议 + CI 预览 | 管线终点 |
-| 🧠 | `moonbit-learn` | 分析根因 → 写入对应的技能或参考文件 | 任何时候 |
-
-> **不是每个项目都需要走完所有阶段**：已有项目跳过 `scaffold` / `init` / `ci`；设计清楚跳过 `plan`；不发布不用 `evaluate`。Code-review 在每个 implement 任务后自动执行。
-
-### 验证如何分级？
-
-`moonbit-verify` 按三级体系分层检测，不同项目类型走不同路径：
-
-| 层级 | 含义 | 内容 | 阻断 |
-|:----:|------|------|:----:|
-| **基础测试 B** | 所有 MoonBit 项目必选 | `moon fmt --check` · `moon check (+73)` · `moon test` · `git status --porcelain` | ✅ |
-| **Custom 测试 C** | 按项目类型选择 | C1 API 稳定性(lib/cli/parser/async) · C2 `moon run`(cli) · C3 消费验证(lib) | ✅ 按类型 |
-| **增强测试 E** | 推荐但不阻断 | 跨平台 · 安全审计 · 性能基线 · API 深度 · CI 完整性 · 文档 | ❌ |
-
----
-
-<p align="center">
-  <img src="./assets/readme/section-faq.svg" width="100%" alt="常见问题 — 技能管线、使用门槛、Windows 兼容性、多平台支持">
-</p>
-
-### 发现设计问题怎么办？
-
-发现设计问题（API 不可测、架构假设错误、性能瓶颈是架构问题、技术债务是设计缺陷、验收发现方向偏差）可以触发**设计回溯**，回到 `moonbit-plan` 重新设计。implement/perform/refactor/evaluate 都可触发。
-
-### 我必须要按顺序走完所有技能吗？
-
-不需要。技能管线是推荐流程，不是强制流程：
-
-```
-Plan → [Writing-Plans] → Scaffold → Init → CI → [Testing ↔] Implement → [Code-Review] → [Perform ↔] → [Refactor ↔] → Verify → Evaluate
-```
-
-注: Init/Ci 适用于新项目；Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。设计回溯可从 implement/perform/refactor/evaluate 回到 plan。
-
-你可以跳过 scaffold（项目已存在）、跳过 init/ci（已有 hooks 和 CI）、跳过 plan（已想清楚）、在 implement 和 verify 之间来回迭代、不需要发布则永远不用 evaluate。Code-review 在每 implement 任务后自动执行。
-
-### 我不是 MoonBit 专家，能用到什么程度？
-
-可以。plan 阶段 Agent 会引导你，你只需要描述想做什么。implement 阶段 Agent 写代码，你审查结果。不确定 API 设计时 Agent 给选项和建议。
-
-### 这些技能会改我的代码吗？
-
-- `moonbit-plan`：只生成文档，不改代码
-- `moonbit-writing-plans`：只生成计划文档，不改代码
-- `moonbit-scaffold`：生成新文件，不覆盖已有
-- `moonbit-implement`：写代码，但每步都展示给你看
-- `moonbit-perform`：测量和优化性能，不改功能行为
-- `moonbit-refactor`：改善代码结构，不改可观察行为
-- `moonbit-code-review`：只报告问题，机械性问题可自动修复
-- `moonbit-verify`：默认只报告问题，不自动改（除非你让改）
-- `moonbit-learn`：直接更新技能文件（可追加/合并/更新，需用户确认根因）
-- `moonbit-evaluate`：生成文档和 CI，不改业务代码
-
-### 支持哪些 AI Agent 平台？
+<details>
+<summary>安装方式</summary>
 
 | 平台 | 安装方式 |
-|------|---------|
-| AtomCode | 插件市场安装 |
-| Claude Code | 官方市场 / 自定义市场 |
-| Cursor | `/add-plugin` |
-| Codex CLI / Codex App | `/plugins` 市场 |
-| Kimi Code | 插件管理器 |
-| Gemini CLI | `gemini extensions install` |
-| OpenCode | 指令引用 |
+|---|---|
+| Oh My Pi (OMP) | `omp plugin install https://github.com/morning-start/moonbit-skills.git` |
+| AtomCode | `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再安装 `moonbit-skills` |
+| Claude Code | `/plugin install moonbit-skills@claude-plugins-official`，或添加自定义 marketplace |
+| Cursor | 在 Agent 聊天中执行 `/add-plugin moonbit-skills` |
+| Codex CLI / App | `/plugins` → 搜索 `moonbit-skills` → Install |
+| Kimi Code | `/plugins` → 市场 → `moonbit-skills` → 安装 |
+| Gemini CLI | `gemini extensions install https://github.com/morning-start/moonbit-skills` |
+| OpenCode | 使用 `.opencode/opencode.json` 中的 instructions 和 plugin 配置 |
 
-### Windows 能用吗？
+OMP/Pi 通过 `package.json` 的 `omp.extensions` / `pi.extensions` 注册扩展；`skills/`、`hooks/` 和 `commands/` 保持为可发现的插件内容。
 
-大部分可以。仓库同时提供 Bash、Nushell 和 PowerShell 入口；Windows 可使用 Nushell/PowerShell 路径，Git hooks 仍建议通过 Git Bash 或 WSL 执行。插件安装和技能使用不受影响。
+</details>
 
-### 需要安装什么前置条件？
+## 仓库结构
 
-- MoonBit 工具链（`moon` 命令可用）
-- Git
-- （可选）`moon-audit`：`moon add minie135/moon-audit`
+```text
+skills/                    13 个核心技能 + using-moonbit-skills 入口
+hooks/                     SessionStart、post-tool、Git hooks 和共享验证逻辑
+commands/                  平台可调用的命令入口
+references/                命令、惯用法、项目类型和编排参考
+scripts/                   元数据、流水线状态和仓库一致性检查
+evals/evals.json            路由与管线场景评估
+.github/workflows/          CI 配置
+```
+
+关键入口：
+
+- 路由入口：[`skills/using-moonbit-skills/SKILL.md`](./skills/using-moonbit-skills/SKILL.md)
+- 编排规则：[`references/orchestration.md`](./references/orchestration.md)
+- 评估场景：[`evals/evals.json`](./evals/evals.json)
+- 插件元数据：[`plugin.json`](./plugin.json)、[`package.json`](./package.json)
+
+## 常见问题
+
+### 必须按顺序使用所有技能吗？
+
+不需要。管线是推荐路径。已有项目可以直接从 `plan`、`testing`、`implement` 或 `verify` 开始；只在需求或架构发生变化时回到 `plan`。
+
+### 我不是 MoonBit 专家，也能用吗？
+
+可以。先用自然语言描述目标和约束，`moonbit-plan` 会询问项目类型、目标平台和 API 决策；后续技能负责把决定落实为任务和检查。
+
+### Agent 会直接修改我的代码吗？
+
+取决于技能。`plan`、`writing-plans`、`code-review`、`verify` 默认以设计或报告为主；`scaffold`、`implement`、`init`、`ci` 会在各自职责范围内写入文件。行为型技能会明确测试、失败恢复和停止条件。
+
+### Windows 支持如何？
+
+插件安装和技能使用不依赖 Unix shell。仓库同时提供 Bash、Nushell 和 PowerShell 入口；Git hooks 推荐使用 Git Bash 或 WSL，并应运行仓库的针对性检查确认环境差异。
+
+## 贡献与本地检查
+
+修改技能、路由、平台元数据或 hooks 后，至少运行：
+
+```bash
+python scripts/check-plugin-metadata.py
+python scripts/check-pipeline-consistency.py
+python -m py_compile scripts/check-plugin-metadata.py
+```
+
+如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应检查 [`evals/evals.json`](./evals/evals.json)。
+
+## 许可证
+
+MIT。详见 [`LICENSE`](./LICENSE)（如发行包未包含该文件，以仓库许可证声明为准）。

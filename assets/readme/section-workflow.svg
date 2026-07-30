@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="140" viewBox="0 0 1200 140" role="img" aria-labelledby="sw-title sw-desc">
   <title id="sw-title">典型工作流</title>
-  <desc id="sw-desc">从零开始、修 bug、代码检查、配置 hooks、自我进化 — 5 个完整场景实践。</desc>
+  <desc id="sw-desc">自然语言请求进入技能路由，再经过设计、实现、审查和验证。</desc>
   <rect width="1200" height="140" rx="16" fill="#0D1117" stroke="#21262D" stroke-width="1"/>
   <g transform="translate(56, 0)">
     <rect x="0" y="44" width="32" height="32" rx="8" fill="#3FB950" fill-opacity="0.15"/>

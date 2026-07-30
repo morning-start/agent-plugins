@@ -15,5 +15,10 @@
       "./.pi/extensions/moonbit-skills.ts"
     ],
     "skills": ["./skills"]
+  },
+  "omp": {
+    "extensions": [
+      "./.pi/extensions/moonbit-skills.ts"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="140" viewBox="0 0 1200 140" role="img" aria-labelledby="si-title si-desc">
   <title id="si-title">安装方式</title>
-  <desc id="si-desc">作为 AtomCode 或 Claude Code 插件安装，装完后 12 个技能自动注册。</desc>
+  <desc id="si-desc">作为 OMP、Pi 或其他 AI Agent 平台的插件安装，装完即用。</desc>
   <rect width="1200" height="140" rx="16" fill="#0D1117" stroke="#21262D" stroke-width="1"/>
   <g transform="translate(56, 0)">
     <rect x="0" y="44" width="32" height="32" rx="8" fill="#58A6FF" fill-opacity="0.15"/>

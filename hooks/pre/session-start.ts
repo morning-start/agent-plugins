@@ -8,10 +8,9 @@
  * OMP only discovers hooks/pre/*.ts and hooks/post/*.ts — shell scripts
  * in the parent hooks/ directory are invisible to OMP.
  *
- * NOTE: The import path `@oh-my-pi/pi-coding-agent/extensibility/hooks` is
- * speculative — OMP's TypeScript hook API is not yet publicly documented.
- * When OMP publishes official docs, verify and update the import path
- * and event names (session_start, session_before_compact, turn_end, context).
+ * OMP provides the HookAPI and lifecycle events used below.
+ * The hook is kept separate from the Pi extension so OMP can discover it
+ * through its native hooks/pre/*.ts capability path.
  */
 
 import { readFileSync } from "node:fs";
@@ -30,8 +29,8 @@ const bootstrapSkillPath = resolve(skillsDir, "using-moonbit-skills", "SKILL.md"
 let cachedBootstrap: string | null | undefined;
 
 export default function (pi: HookAPI) {
-  // Runtime guard: OMP's TypeScript hook API is speculative (see file header).
-  // If the API shape doesn't match, degrade to no-op instead of crashing the session.
+  // Runtime guard: tolerate older or incompatible hook runners without
+  // crashing the session.
   if (!pi || typeof pi.on !== "function") {
     return;
   }
