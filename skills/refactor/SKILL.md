@@ -92,7 +92,7 @@ NO REFACTORING WITHOUT GREEN TESTS
 ## 与 verify 的契约
 
 - refactor 产出的变更需通过 verify 确认无回归
-- verify 确认公共 API 未变（H5）
+- verify 确认公共 API 未变（C1）
 
 ## 与 perform 的契约
 

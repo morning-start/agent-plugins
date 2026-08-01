@@ -6,7 +6,7 @@
 
 面向 MoonBit 项目的 **Agent 技能套件与质量门禁**。
 
-你负责做设计决策，Agent 负责把决策变成任务、代码和验证证据。仓库提供 **17 个核心技能**，另有一个 bootstrap 技能负责入口路由。
+你负责做设计决策，Agent 负责把决策变成任务、代码和验证证据。仓库提供 **18 个核心技能**，另有一个 bootstrap 技能负责入口路由。
 
 它不是 MoonBit 运行库，也不替代 MoonBit 编译器；它约束的是 Agent 如何理解需求、修改项目、处理失败并证明结果。
 
@@ -94,10 +94,10 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 - `perform` 和 `refactor` 是可选分支，但都必须回到验证。
 - 发现 API 不可测试、架构假设错误或设计缺陷时，可以回到 `plan`。
 
-## 17 个核心技能
+## 18 个核心技能
 
 <p align="center">
-  <img src="./assets/readme/section-skills.svg" width="100%" alt="17 个核心技能按设计、构建、质量和演进阶段组织。">
+  <img src="./assets/readme/section-skills.svg" width="100%" alt="18 个核心技能按设计、构建、质量和演进阶段组织。">
 </p>
 
 ### 设计与准备
@@ -115,6 +115,7 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 | `moonbit-testing` | 设计测试策略、组织测试文件、决定测试时机（先行 vs 后补）、补充 valid/invalid/edge 场景 |
 | `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码；模块化小步实现；Git 提交契约（单任务用户确认/多任务授权提交） |
 | `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）、逐项验收、保质保量交付（交付后交用户确认） |
+| `moonbit-git` | 功能分支工作流（不在主分支直接修改）、提交契约、合并、worktree 并行（需用户同意） |
 | `moonbit-code-review` | 在任务之间审查真实变更（任务/模块粒度 + 验收项↔测试对应），处理 Critical/Important 问题 |
 
 ### 工程质量
@@ -137,7 +138,7 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 | `moonbit-refactor` | 在测试保护下消除技术债务，不改变可观察行为 |
 | `moonbit-learn` | 从已定位根因中沉淀可复用的技能或错误知识 |
 
-`using-moonbit-skills` 是 bootstrap 入口，不计入上述 17 个核心技能。
+`using-moonbit-skills` 是 bootstrap 入口，不计入上述 18 个核心技能。
 
 ## 三级验证门禁
 
@@ -182,7 +183,7 @@ OMP/Pi 通过 `package.json` 的 `omp.extensions` / `pi.extensions` 注册扩展
 ## 仓库结构
 
 ```text
-skills/                    17 个核心技能 + using-moonbit-skills 入口
+skills/                    18 个核心技能 + using-moonbit-skills 入口
 hooks/                     SessionStart、post-tool、Git hooks 和共享验证逻辑
 commands/                  平台可调用的命令入口
 references/                命令、惯用法、项目类型和编排参考

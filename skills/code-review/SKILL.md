@@ -46,18 +46,18 @@ If you catch yourself doing any of these, you are violating the review contract:
 - 发现涉及 public API、ABI、WASM 导出或 C 所有权变更时停止自动修复，请求用户确认。
 - 自动修复失败 3 次 → 停止，向用户展示失败历史和当前状态，请求方向（与 `moonbit-implement` 的 3 次上限对齐）。
 
-## 与 verify S4 的分工
+## 与 verify E4 的分工
 
-`moonbit-code-review` 和 `moonbit-verify` 的 S4（API 深度检查）都涉及 API 设计审查，但分工不同：
+`moonbit-code-review` 和 `moonbit-verify` 的 E4（API 设计深度检查）都涉及 API 设计审查，但分工不同：
 
-| 维度 | code-review（过程审查） | verify S4（终点检查） |
+| 维度 | code-review（过程审查） | verify E4（终点检查） |
 |------|----------------------|---------------------|
 | 时机 | 每个 implement 任务后 | 全量验证阶段 |
 | 范围 | 当前 diff 涉及的新增/修改代码 | 整个项目的公共 API 表面 |
 | 目的 | 及早发现问题，防止扩散 | 终点把关，确保发布质量 |
 | 动作 | 报告 + 机械性自动修复 | 仅报告，由用户决策 |
 
-避免在 code-review 中重复 verify S4 的全量 API 检查；code-review 聚焦 diff 范围内的 API 变更。
+避免在 code-review 中重复 verify E4 的全量 API 检查；code-review 聚焦 diff 范围内的 API 变更。
 
 ## 审查流程
 

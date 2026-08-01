@@ -395,6 +395,40 @@
       "should_trigger": true,
       "files": [],
       "skills": ["evaluate", "verify"]
+    },
+    {
+      "id": 27,
+      "name": "git-feature-branch-workflow",
+      "prompt": "I need to implement the validate module. Should I create a feature branch first? What about working on the parser in parallel?",
+      "expected_output": "Use moonbit-git: create a feature branch for the validate module, implement there, merge, then create a new branch for parser. For parallel work, ask user consent for worktree; if declined, implement sequentially. Never modify main directly.",
+      "assertions": [
+        "routes to git for branch workflow",
+        "creates feature branch instead of working on main",
+        "merges feature branch then creates new branch for next feature",
+        "asks user consent before using worktree for parallel work",
+        "falls back to sequential branch workflow without consent",
+        "never modifies main directly"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["git"]
+    },
+    {
+      "id": 28,
+      "name": "git-commit-authorization",
+      "prompt": "I finished a single task and it passed all acceptance items. Commit it to git.",
+      "expected_output": "Follow moonbit-git commit contract: single task → show acceptance checklist + diff and wait for user confirmation, do not auto-commit. If this is one task among many with explicit authorization and a git repo, commit on the feature branch with Conventional Commits.",
+      "assertions": [
+        "single task does not auto-commit without user confirmation",
+        "shows acceptance checklist and diff before any commit",
+        "multi-task commits only with user authorization",
+        "commits on feature branch not main",
+        "checks git repo exists before git operations",
+        "uses Conventional Commits message"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["git"]
     }
   ]
 }

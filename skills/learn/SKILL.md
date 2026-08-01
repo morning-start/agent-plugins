@@ -123,7 +123,7 @@ If you catch yourself doing any of these, you are violating the learn contract:
 
 如果 bug 来自 `moon check` 编译器报错，且该错误码尚未记录，追加到 `references/error-codes.json`。
 
-**格式规范详见** [`references/error-codes-schema.md`](../references/error-codes-schema.md)（字段定义、category 可选值、维护流程、JSON 验证命令）。
+**格式规范详见** [`references/error-codes-schema.md`](../../references/error-codes-schema.md)（字段定义、category 可选值、维护流程、JSON 验证命令）。
 
 此处不再重复格式规范，避免与 references 漂移。
 

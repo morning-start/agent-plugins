@@ -41,7 +41,7 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ## 项目类型检测
 
-检测逻辑详见 [`references/type-detection.md`](../references/type-detection.md)，与 verify 共用同一份检测逻辑，避免漂移。
+检测逻辑详见 [`references/type-detection.md`](../../references/type-detection.md)，与 verify 共用同一份检测逻辑，避免漂移。
 
 类型决定发布验证路径的差异。
 
@@ -80,7 +80,7 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 
 ### MAIN 项目（可执行程序）专属验证
 
-main 项目的类型专属验证（C2：`moon run .` + 输出非空）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C2 章节](../skills/verify/SKILL.md#c2-main-项目可执行验证cli-项目必选)。
+main 项目的类型专属验证（C2：`moon run .` + 输出非空）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C2 章节](../verify/SKILL.md#c2-main-项目可执行验证cli-项目必选)。
 
 evaluate 阶段在此之上追加：
 
@@ -93,7 +93,7 @@ evaluate 阶段在此之上追加：
 
 ### LIB 项目（library 库）专属验证
 
-lib 项目的类型专属验证（C3：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C3 章节](../skills/verify/SKILL.md#c3-lib-项目消费验证libffiwasmasyncparser-项目必选)。
+lib 项目的类型专属验证（C3：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C3 章节](../verify/SKILL.md#c3-lib-项目消费验证libffiwasmasyncparser-项目必选)。
 
 evaluate 阶段在此之上追加：
 

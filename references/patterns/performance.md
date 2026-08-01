@@ -125,7 +125,7 @@ diff /tmp/bench_before.txt /tmp/bench_after.txt
 
 ## 与 verify 集成
 
-- `verify` S3 检查项记录测试时间，可作为性能回归的粗粒度信号。
+- `verify` E3 检查项记录测试时间，可作为性能回归的粗粒度信号。
 - 若 bench_test.mbt 的耗时显著退化（> 20%），应在 code-review 阶段提示。
 - 性能基线数据不纳入硬性门禁，避免环境噪声导致误报。
 
