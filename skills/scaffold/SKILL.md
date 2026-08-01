@@ -35,7 +35,7 @@ If you catch yourself doing any of these, you are violating the scaffold contrac
 
 ## 停止条件
 
-- 项目类型未知（不在 lib/cli/c-ffi/wasm 中）→ 让用户从列表中选择
+- 项目类型未知（不在 lib/cli/ffi/wasm 中）→ 让用户从列表中选择
 - `moon` 命令不可用 → 报告工具链缺失，不声称验证通过
 - 占位符替换不完整 → 检查生成文件，确保 `{` 字符无残留
 - 验证失败（fmt/check/test 任一不通过）→ 显示失败命令，不继续
@@ -45,7 +45,7 @@ If you catch yourself doing any of these, you are violating the scaffold contrac
 ### 1. 确认输入
 
 ```text
-project_type: lib | cli | c-ffi | wasm
+project_type: lib | cli | ffi | wasm
 package_name: MoonBit 包名（如 username/package）
 target: native | wasm | js | wasm-gc
 capabilities: [parser, async, ...]（可选）
@@ -107,7 +107,7 @@ test "hello" {
 }
 ```
 
-#### c-ffi
+#### ffi
 
 ```moonbit
 // moon.mod
@@ -230,7 +230,7 @@ moon test --target wasm
 
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| 未知项目类型 | 不在 lib/cli/c-ffi/wasm 中 | 让用户从列表中选择 |
+| 未知项目类型 | 不在 lib/cli/ffi/wasm 中 | 让用户从列表中选择 |
 | `moon` 命令不可用 | command not found | 报告工具链前置需求，不声称验证成功 |
 | 验证失败 | fmt/check/test 任一不通过 | 显示失败命令，返回 plan 或 implement |
 | 占位符替换不完整 | 生成文件中 `{` 字符残留 | 检查生成后文件，确保占位符全部替换 |

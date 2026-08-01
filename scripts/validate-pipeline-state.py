@@ -21,7 +21,7 @@ SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "..", "schemas", "moonbit-
 
 VALID_PHASES = {"plan", "writing-plans", "scaffold", "testing", "implement",
                 "review", "perform", "refactor", "verify", "evaluate"}
-VALID_PROJECT_TYPES = {"lib", "cli", "c-ffi", "wasm", "parser", "async"}
+VALID_PROJECT_TYPES = {"lib", "cli", "ffi", "wasm", "parser", "async"}
 VALID_TARGETS = {"native", "wasm", "wasm-gc", "js"}
 VALID_PIPELINES = {"development", "bugfix", "spike"}
 

@@ -195,9 +195,9 @@
 
 | # | 要求 | 归属技能 | 命令 | 适用类型 |
 |---|------|---------|------|---------|
-| C1 | API 稳定性 | verify | `moon info --target native` + `git diff --exit-code` | lib/cli/parser/async；c-ffi/wasm 豁免 |
+| C1 | API 稳定性 | verify | `moon info --target native` + `git diff --exit-code` | lib/cli/parser/async；ffi/wasm 豁免 |
 | C2 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 | main/cli 项目 |
-| C3 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | lib/c-ffi/wasm/parser/async |
+| C3 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | lib/ffi/wasm/parser/async |
 
 ### 增强测试（E1-E6 — 推荐但非阻断）
 
@@ -339,7 +339,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
 
 例如：
 - `moon-audit` 未安装 → 跳过 S2，提示用户安装
-- `c-ffi` 项目无 C 编译器 → 提示安装 GCC/Clang，中止
+- `ffi` 项目无 C 编译器 → 提示安装 GCC/Clang，中止
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
 - `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
 - 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`

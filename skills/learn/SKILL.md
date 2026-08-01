@@ -84,7 +84,7 @@ If you catch yourself doing any of these, you are violating the learn contract:
 ├─ test-pitfall    → 测试陷阱     → 更新 testing 常见错误速查表
 ├─ perf-pitfall     → 性能陷阱     → 更新 perform 常见错误速查表
 ├─ refactor-pitfall → 重构陷阱     → 更新 refactor 常见错误速查表
-├─ ffi-pitfall     → FFI 陷阱     → 更新 patterns/c-ffi.md
+├─ ffi-pitfall     → FFI 陷阱     → 更新 patterns/ffi.md
 ├─ wasm-pitfall    → WASM 陷阱    → 更新 patterns/wasm.md
 ├─ toolchain       → 工具链问题   → 更新 commands.md 或 error-codes.json
 ├─ logic-error     → 逻辑错误     → 更新 implement TDD 策略
@@ -101,7 +101,7 @@ If you catch yourself doing any of these, you are violating the learn contract:
 | type-error | `skills/implement/SKILL.md` → 常见类型错误速查表 | 追加新行 |
 | api-misuse | `references/idioms.md` → 对应 API 章节 | 追加陷阱说明 |
 | idiom | `references/idioms.md` → 惯用写法章节 | 追加示例 |
-| ffi-pitfall | `references/patterns/c-ffi.md` | 追加注意事项 |
+| ffi-pitfall | `references/patterns/ffi.md` | 追加注意事项 |
 | test-pitfall | `skills/testing/SKILL.md` → 测试陷阱速查表 | 追加新行 |
 | perf-pitfall | `skills/perform/SKILL.md` → 错误恢复表 | 追加新行 |
 | refactor-pitfall | `skills/refactor/SKILL.md` → 错误恢复表 | 追加新行 |

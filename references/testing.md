@@ -26,7 +26,7 @@
 
 | 类型 | 测试文件组织 |
 |---|---|
-| lib / cli / wasm / c-ffi | `lib_test.mbt`（黑盒单元测试） |
+| lib / cli / wasm / ffi | `lib_test.mbt`（黑盒单元测试） |
 | parser | `lib_test.mbt` + `lib_valid_test.mbt` + `lib_invalid_test.mbt` |
 | performance | `lib_test.mbt` + `bench_test.mbt`（命名前缀 `bench_`） |
 

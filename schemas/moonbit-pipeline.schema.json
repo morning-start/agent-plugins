@@ -34,7 +34,7 @@
     },
     "project_type": {
       "type": "string",
-      "enum": ["lib", "cli", "c-ffi", "wasm", "parser", "async"],
+      "enum": ["lib", "cli", "ffi", "wasm", "parser", "async"],
       "description": "MoonBit project type"
     },
     "primary_type": {

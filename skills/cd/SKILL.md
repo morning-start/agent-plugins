@@ -63,7 +63,7 @@ If you catch yourself doing any of these, you are violating the CD contract:
 | **lib** | mooncake 包 | 直接发布（单一版本） | mooncakes.io |
 | **cli** | native binary | 金丝雀 / 滚动更新 | GitHub Releases + 包管理器 |
 | **wasm** | wasm 模块 | 蓝绿部署 | CDN + 版本化管理 |
-| **c-ffi** | 动态库/静态库 | 滚动更新 | 包管理器 + 版本化 |
+| **ffi** | 动态库/静态库 | 滚动更新 | 包管理器 + 版本化 |
 | **parser/async** | mooncake 包 | 直接发布（单一版本） | mooncakes.io |
 
 ## 执行流程
@@ -96,7 +96,7 @@ git status --porcelain | head -5
 | **直接发布** | lib / 低风险 | < 1 min | 低 |
 | **金丝雀** | cli / 需要生产验证 | 2-5 min | 中 |
 | **蓝绿部署** | wasm / 高可用要求 | < 30s | 低 |
-| **滚动更新** | c-ffi / 多实例服务 | 5-15 min | 中 |
+| **滚动更新** | ffi / 多实例服务 | 5-15 min | 中 |
 
 **金丝雀部署流程示例（cli 项目）：**
 

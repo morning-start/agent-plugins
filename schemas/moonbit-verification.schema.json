@@ -25,7 +25,7 @@
     },
     "project_type": {
       "type": "string",
-      "enum": ["lib", "cli", "c-ffi", "wasm", "parser", "async"]
+      "enum": ["lib", "cli", "ffi", "wasm", "parser", "async"]
     },
     "targets": {
       "type": "array",

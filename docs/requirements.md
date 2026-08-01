@@ -82,7 +82,7 @@ testing（设计）→ implement（实现，TDD 循环不变）→ verify（验�
 
 ### patterns 提取（6 项）
 
-- `references/patterns/lib.md`、`cli.md`、`wasm.md`、`c-ffi.md`、`parser.md`、`performance.md`
+- `references/patterns/lib.md`、`cli.md`、`wasm.md`、`ffi.md`、`parser.md`、`performance.md`
 - 测试章节改为引用 `references/testing.md`
 
 ### 用户文档与资产（2 项）

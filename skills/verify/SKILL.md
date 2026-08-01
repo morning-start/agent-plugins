@@ -10,7 +10,7 @@ description: "Use when running MoonBit verification gates — before claiming an
 一站式验证管道，按三级体系分层检测：
 
 - **基础测试（B）** — 所有 MoonBit 项目必选，通过后才能声称代码可用
-- **Custom 测试（C）** — 按项目类型选择：lib/cli/wasm/c-ffi 各有专属验证
+- **Custom 测试（C）** — 按项目类型选择：lib/cli/wasm/ffi 各有专属验证
 - **增强测试（E）** — 推荐但非阻断，报告结果供用户决策
 
 按项目类型分路径校验。L1/L2 自动触发（git hooks），L3 全面检查（用户手动调用）。
@@ -97,12 +97,12 @@ git status --porcelain           # 全面检测：tracked + untracked + staged
 
 ### H5. API 稳定性
 
-lib / cli / parser / async 项目必选。c-ffi 和 wasm 项目豁免（对外接口是 C ABI 或 WASM 导出，不依赖 MoonBit pub API）。
+lib / cli / parser / async 项目必选。ffi 和 wasm 项目豁免（对外接口是 C ABI 或 WASM 导出，不依赖 MoonBit pub API）。
 
 ```bash
 # 类型检测前置：H5 仅对 lib/cli/parser/async 执行
-# c-ffi 和 wasm 跳过此检查（参照「各类型验证全景」表）
-if [ "$PROJECT_TYPE" != "c-ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
+# ffi 和 wasm 跳过此检查（参照「各类型验证全景」表）
+if [ "$PROJECT_TYPE" != "ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
   moon info --target native        # 公共 API 签名输出
 
   # 自动比对待发布的 API 表面与 Git 中已记录的版本是否一致
@@ -119,7 +119,7 @@ if [ "$PROJECT_TYPE" != "c-ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
 fi
 ```
 
-**判定标准：** lib/cli/parser/async 项目：`moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`git diff --exit-code pkg.generated.mbti` 必须为 0，确认已提交的 API 签名与当前一致。`pkg.generated.mbti` 是预期产物，不视为意外改动。c-ffi 和 wasm 项目跳过此检查，不阻断。
+**判定标准：** lib/cli/parser/async 项目：`moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`git diff --exit-code pkg.generated.mbti` 必须为 0，确认已提交的 API 签名与当前一致。`pkg.generated.mbti` 是预期产物，不视为意外改动。ffi 和 wasm 项目跳过此检查，不阻断。
 
 ---
 
@@ -129,12 +129,12 @@ fi
 
 ### C1. API 稳定性（lib/cli/parser/async 项目必选）
 
-c-ffi 和 wasm 项目豁免（对外接口是 C ABI 或 WASM 导出，不依赖 MoonBit pub API）。
+ffi 和 wasm 项目豁免（对外接口是 C ABI 或 WASM 导出，不依赖 MoonBit pub API）。
 
 ```bash
 # 类型检测前置：C1 仅对 lib/cli/parser/async 执行
-# c-ffi 和 wasm 跳过此检查
-if [ "$PROJECT_TYPE" != "c-ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
+# ffi 和 wasm 跳过此检查
+if [ "$PROJECT_TYPE" != "ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
   moon info --target native        # 公共 API 签名输出
   git diff --exit-code pkg.generated.mbti
   if [ -f "pkg.generated.mbti" ]; then
@@ -145,7 +145,7 @@ if [ "$PROJECT_TYPE" != "c-ffi" ] && [ "$PROJECT_TYPE" != "wasm" ]; then
 fi
 ```
 
-**判定标准：** lib/cli/parser/async 项目：`moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`git diff --exit-code pkg.generated.mbti` 必须为 0。c-ffi 和 wasm 跳过此检查，不阻断。
+**判定标准：** lib/cli/parser/async 项目：`moon info` 输出与预期 API 表面一致，无意外新增/删除的 `pub` 符号。`git diff --exit-code pkg.generated.mbti` 必须为 0。ffi 和 wasm 跳过此检查，不阻断。
 
 ### C2. MAIN 项目可执行验证（cli 项目必选）
 
@@ -154,9 +154,9 @@ moon run .                        # exit 0 为通过
 moon run . 2>&1 | grep -q "." || fail("moon run produced no output")
 ```
 
-**判定标准：** `moon run` exit 0 且有 stdout 输出。lib/wasm/c-ffi/async/parser 跳过此检查。
+**判定标准：** `moon run` exit 0 且有 stdout 输出。lib/wasm/ffi/async/parser 跳过此检查。
 
-### C3. LIB 项目消费验证（lib/c-ffi/wasm/async/parser 项目必选）
+### C3. LIB 项目消费验证（lib/ffi/wasm/async/parser 项目必选）
 
 ```bash
 test -f moon.mod || fail("moon.mod is required")
@@ -237,7 +237,7 @@ moon test 2>&1 | tail -3
 ## 执行顺序
 
 ```
-Start → 检测项目类型（main / lib / wasm / c-ffi / parser / async）
+Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
   │
   ├── [可选] REQUEST SUB-SKILL: moonbit-code-review
   │   （若 implement 阶段未做审查，verify 可委托；否则跳过）
@@ -276,7 +276,7 @@ Start → 检测项目类型（main / lib / wasm / c-ffi / parser / async）
 |------|--------------|-----------------|--------------|
 | **lib** | B1-B4 | C1 + C3 | E1-E6 |
 | **cli (main)** | B1-B4 | C1 + C2 | E1-E6 |
-| **c-ffi** | B1-B4 | C3 | E2-E6 |
+| **ffi** | B1-B4 | C3 | E2-E6 |
 | **wasm** | B1-B4 | C3 | E1-E6 |
 | **async** | B1-B4 | C1 + C3 | E1-E6 |
 | **parser** | B1-B4 | C1 + C3 | E1-E6 |

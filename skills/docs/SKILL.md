@@ -63,7 +63,7 @@ If you catch yourself doing any of these, you are violating the docs contract:
 |------|---------|
 | **lib** | pub fn docstring + README + CHANGELOG + ADR（按需） |
 | **cli** | README + CLI --help + CHANGELOG + ADR（按需） |
-| **c-ffi** | FFI 绑定说明 + 编译依赖 + 平台兼容性 |
+| **ffi** | FFI 绑定说明 + 编译依赖 + 平台兼容性 |
 | **wasm** | WASM 接口文档 + 运行时要求 |
 | **parser** | 语言/格式规范文档 + 示例 |
 | **async** | 并发模型说明 + 超时/错误行为 |

@@ -50,7 +50,7 @@ If you catch yourself doing any of these, you are violating the writing-plans co
 ## 输入
 
 从 `moonbit-plan` 输出获取：
-- `project_type` — lib/cli/c-ffi/wasm/parser/async
+- `project_type` — lib/cli/ffi/wasm/parser/async
 - `architecture` — 架构模式
 - `api_surface` — API 签名列表
 

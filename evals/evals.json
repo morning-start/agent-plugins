@@ -33,11 +33,11 @@
     },
     {
       "id": 3,
-      "name": "cffi-binding",
+      "name": "ffi-binding",
       "prompt": "I need to wrap a C library called libfoo in MoonBit. It has about 20 functions for image processing.",
-      "expected_output": "Plan a native c-ffi project with ownership and ABI decisions, scaffold the complete FFI template, implement from L0 outward, and verify native safety.",
+      "expected_output": "Plan a native ffi project with ownership and ABI decisions, scaffold the complete FFI template, implement from L0 outward, and verify native safety.",
       "assertions": [
-        "classifies primary_type c-ffi",
+        "classifies primary_type ffi",
         "asks about ABI, ownership, allocation, free semantics",
         "does not claim wrapper.c or validation exists without checking files",
         "requires native verification"

@@ -171,7 +171,7 @@ bash .githooks/pre-commit
 |------|-----------|----------|
 | lib | `moon check --target native` | `moon test --target native` |
 | cli | `moon check --target native` | `moon test --target native` |
-| c-ffi | `moon check --target native` | `moon test --target native`（如有） |
+| ffi | `moon check --target native` | `moon test --target native`（如有） |
 | wasm | `moon check --target wasm` + `moon check --target wasm-gc` | `moon test --target wasm` |
 
 ## 错误恢复

@@ -73,7 +73,7 @@ evaluate 阶段在此之上追加：
 
 ### LIB 项目（library 库）专属验证
 
-lib 项目的类型专属验证（C3：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C3 章节](../skills/verify/SKILL.md#c3-lib-项目消费验证libc-ffiwasmasyncparser-项目必选)。
+lib 项目的类型专属验证（C3：临时 consumer 编译验证）已在 `moonbit-verify` 中定义，详见 [`verify/SKILL.md` 的 C3 章节](../skills/verify/SKILL.md#c3-lib-项目消费验证libffiwasmasyncparser-项目必选)。
 
 evaluate 阶段在此之上追加：
 
@@ -266,7 +266,7 @@ ROLLBACK
 |------|---------|---------|---------|
 | lib | library | mooncake 包 | 临时 consumer 编译 + `moon check --target all` |
 | cli | main | 可执行文件 + mooncake | `moon run .` + 输出验证 |
-| c-ffi | library | mooncake 包 | 临时 consumer 编译 + ASan（可选） |
+| ffi | library | mooncake 包 | 临时 consumer 编译 + ASan（可选） |
 | wasm | library | WASM 模块 + mooncake | `moon check --target wasm-gc` |
 | parser | library | mooncake 包 | `moon test -f "valid/invalid/edge"` |
 | async | library | mooncake 包 | 并发测试、超时测试 |

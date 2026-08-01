@@ -150,8 +150,8 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 项目类型差异：
 
 - `cli/main`：额外运行 `moon run .`，并确认 stdout 非空。
-- `lib/parser/async/c-ffi/wasm`：额外进行包结构和临时 consumer 编译验证。
-- `c-ffi`、`wasm`：不按普通 MoonBit `pub` API 做稳定性检查。
+- `lib/parser/async/ffi/wasm`：额外进行包结构和临时 consumer 编译验证。
+- `ffi`、`wasm`：不按普通 MoonBit `pub` API 做稳定性检查。
 
 完整门禁定义见 [`skills/verify/SKILL.md`](./skills/verify/SKILL.md) 和 [`references/orchestration.md`](./references/orchestration.md)。
 

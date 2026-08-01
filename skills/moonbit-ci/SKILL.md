@@ -339,7 +339,7 @@ gh api repos/:owner/:repo/branches/master/protection 2>/dev/null \
 | **lib** | fmt + check + test + api + security | cross-platform | pre-commit + commit-msg + pre-push |
 | **cli** | fmt + check + test + run + api + security | moon run 验证 | 同上 |
 | **wasm** | fmt + check + test-native + test-wasm + security | wasm/wasm-gc 双目标 | pre-commit 用 `--target wasm` |
-| **c-ffi** | fmt + check + test + security | C 编译检查 | pre-commit 含 C 源码检查 |
+| **ffi** | fmt + check + test + security | C 编译检查 | pre-commit 含 C 源码检查 |
 | **parser** | fmt + check + test + api + security | valid/invalid/edge 分类 | pre-commit 含 fixture 验证 |
 | **async** | fmt + check + test + api + security | 并发/超时测试 | pre-commit 含 timeout 检查 |
 

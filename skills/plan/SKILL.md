@@ -17,7 +17,7 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
     ▼
 关键词匹配:
 ├─ "CLI" "命令行" "工具"          → cli
-├─ "FFI" "C 绑定" "extern"        → c-ffi
+├─ "FFI" "C 绑定" "extern"        → ffi
 ├─ "WASM" "WASI" "wasm"           → wasm
 ├─ "解析" "parser" "TOML" "JSON"  → parser
 ├─ "异步" "HTTP" "网络"           → async
@@ -30,7 +30,7 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 | 类型 | 追问 |
 |------|------|
 | cli | 命令/子命令？参数格式？标准 I/O？目标 native-only |
-| c-ffi | 链接哪个 C 库？API 数量？alloc/free 对？目标 native-only |
+| ffi | 链接哪个 C 库？API 数量？alloc/free 对？目标 native-only |
 | wasm | WASI 版本？需要哪些 WASI 调用？目标 wasm/wasm-gc |
 | parser | 解析什么格式？版本？需要序列化？有官方测试套件？ |
 | async | 需要哪些高层服务(HTTP/WebSocket/fs)？需要 TLS？目标 native-only |
@@ -79,7 +79,7 @@ If you catch yourself doing any of these, you are violating the plan contract:
 
 ## 停止条件
 
-- 需求完全无法分类（不属于 cli/c-ffi/wasm/parser/async/lib 任一类型）→ 展示类型矩阵，让用户选择
+- 需求完全无法分类（不属于 cli/ffi/wasm/parser/async/lib 任一类型）→ 展示类型矩阵，让用户选择
 - 用户无法决定架构方向 → 列出每个选项的优缺点，等待用户决策
 - 用户描述的 API 自相矛盾 → 指出矛盾点，请求澄清
 - 缺少关键信息（如包名、目标平台）且用户无法提供 → 标记为 blocked
@@ -96,7 +96,7 @@ If you catch yourself doing any of these, you are violating the plan contract:
 
 **项目类型 → 推荐架构**
 - `cli`: `main.mbt` (@argparse) + `lib.mbt`，native-only
-- `c-ffi`: 四层 FFI (L0 extern → L1 raw → L2 public → L3 traits)，`with_closed_*` RAII
+- `ffi`: 四层 FFI (L0 extern → L1 raw → L2 public → L3 traits)，`with_closed_*` RAII
 - `wasm`: 四层 FFI，`extern "wasm"` + 内存操作，目标 wasm/wasm-gc
 - `parser`: 递归下降 + 分层（lexer → tokenize → parser → validate）
 - `async`: 异步运行时（event_loop → task → io → socket → http）
@@ -118,7 +118,7 @@ pub fn parse(input: StringView) -> Result[Ast, ParseError]
 # Requirements: {project_name}
 
 ## 项目类型
-{cli | c-ffi | wasm | parser | async | lib}
+{cli | ffi | wasm | parser | async | lib}
 
 ## 核心功能
 1. {功能1}

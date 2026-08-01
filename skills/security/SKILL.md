@@ -169,7 +169,7 @@ pub fn audit_log(action : String, user : String, resource : String, result : Str
 | **lib** | 输入验证、反序列化安全、API 权限设计 |
 | **cli** | 环境变量注入、文件路径遍历、子进程安全 |
 | **wasm** | 宿主环境安全边界、内存安全、沙箱逃逸 |
-| **c-ffi** | 缓冲区溢出、指针安全、C 库已知漏洞 |
+| **ffi** | 缓冲区溢出、指针安全、C 库已知漏洞 |
 | **parser** | ReDoS、输入大小限制、编码处理 |
 | **async** | 竞争条件、死锁、资源泄露 |
 

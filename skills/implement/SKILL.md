@@ -152,7 +152,7 @@ NO BUG FIX WITHOUT REGRESSION TEST FIRST
 |------|---------|---------|---------|---------|
 | lib | library | `moon test --target native` | `moon check --target all` 跨平台 | pub fn 有 docstring |
 | cli | main | `moon test --target native` | `moon run .` 验证可执行 + stdout 输出 | README 用法示例与实际输出一致 |
-| c-ffi | library | `moon check --target native` | — | FFI 函数有使用说明 |
+| ffi | library | `moon check --target native` | — | FFI 函数有使用说明 |
 | wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` | WASM 导出函数有文档 |
 | parser | library | `moon test --target native` | valid/invalid/edge 分类测试 | 输入格式有说明 |
 | async | library | `moon test --target native` | 并发测试、超时测试 | 并发模型有说明 |
@@ -167,7 +167,7 @@ moon explain --diagnostic E#### 2>&1
 
 # 分类失败
 # 类型错误 → moon explain 修复 | 断言失败 → 修正逻辑 | 运行时 panic → 检查空值/边界
-# c-ffi: 检查 C 编译 | wasm: 检查 extern "wasm" 声明
+# ffi: 检查 C 编译 | wasm: 检查 extern "wasm" 声明
 
 # 修复并验证
 moon test --target native -f "failing_test"

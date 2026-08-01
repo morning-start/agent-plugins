@@ -101,7 +101,7 @@ MoonBit 项目的完整门禁以 `skills/verify/SKILL.md` 为唯一权威，按�
 | 所有 MoonBit 项目 | 格式、类型检查、测试、工作区状态（B1-B4） |
 | main / CLI | B1-B4 + C1/C2：`moon run` 成功且输出非空 |
 | library | B1-B4 + C1/C3：包结构与临时 consumer 编译验证 |
-| c-ffi / wasm / parser / async | B1-B4 + C3：对应 `references/patterns/` 和技能定义的类型专属验证 |
+| ffi / wasm / parser / async | B1-B4 + C3：对应 `references/patterns/` 和技能定义的类型专属验证 |
 
 Hooks 只提供自动化子集，不能替代完整验证：
 

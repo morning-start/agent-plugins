@@ -111,7 +111,7 @@ pub fn handle_request(req : Request, trace : SpanContext) -> Response {
 | **lib** | 库本身不直接输出可观测数据；但 API 设计应预留 trace_id 参数 |
 | **cli** | 结构化日志（事件驱动输出）+ 可选进度指标；`--verbose` 和 `--json-logs` 参数 |
 | **wasm** | 结构化日志（通过宿主环境输出的 console/trace）；指标通过宿主 API 暴露 |
-| **c-ffi** | 随宿主语言的可观测性策略走；MoonBit 层记录结构化日志 |
+| **ffi** | 随宿主语言的可观测性策略走；MoonBit 层记录结构化日志 |
 | **parser** | 输入大小、解析耗时指标；失败的输入样本日志 |
 | **async** | 关键路径追踪（每个 await 点记录耗时）；goroutine/协程池指标 |
 

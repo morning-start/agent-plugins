@@ -115,7 +115,7 @@ NO TEST CODE WITHOUT TEST STRATEGY
 |---|---|---|---|
 | lib | `lib_test.mbt` | valid/invalid/edge | 公共 API 覆盖 |
 | cli | `lib_test.mbt` | 单元+集成 | 命令解析、stdout |
-| c-ffi | `lib_test.mbt` | 内存安全 | alloc/free 对 |
+| ffi | `lib_test.mbt` | 内存安全 | alloc/free 对 |
 | wasm | `lib_test.mbt` | 内存操作 | WASI 调用边界 |
 | parser | `lib_valid_test.mbt` + `lib_invalid_test.mbt` | valid/invalid/edge | 官方测试套件 |
 | async | `lib_test.mbt` | 并发/超时 | 协程取消 |
