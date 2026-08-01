@@ -20,10 +20,13 @@ from datetime import datetime, timezone
 SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "..", "schemas", "moonbit-pipeline.schema.json")
 
 VALID_PHASES = {"plan", "writing-plans", "scaffold", "testing", "implement",
-                "review", "perform", "refactor", "verify", "evaluate"}
+                "review", "perform", "refactor", "verify", "evaluate",
+                "cd", "learn", "incident"}
+VALID_STATUSES = {"pending", "in_progress", "blocked", "approved", "completed",
+                  "deployed", "rolled_back"}
 VALID_PROJECT_TYPES = {"lib", "cli", "ffi", "wasm", "parser", "async"}
 VALID_TARGETS = {"native", "wasm", "wasm-gc", "js"}
-VALID_PIPELINES = {"development", "bugfix", "spike"}
+VALID_PIPELINES = {"development", "bugfix", "spike", "release"}
 
 
 def load_json(path):
@@ -39,45 +42,47 @@ def load_json(path):
 
 
 def validate_state(state, schema_data=None):
-    """Validate a pipeline state object. Returns list of errors."""
+    """Validate pipeline state against the checked-in schema contract."""
     errors = []
 
     if not isinstance(state, dict):
         return ["Root must be a JSON object"]
 
-    # Required fields
-    for field in ("schema_version", "pipeline", "phase", "project_type", "targets", "last_updated"):
+    required_fields = (schema_data or {}).get(
+        "required",
+        ("schema_version", "pipeline", "phase", "status", "project_type", "targets", "last_updated"),
+    )
+    for field in required_fields:
         if field not in state:
             errors.append(f"Missing required field: {field}")
+
+    if schema_data:
+        allowed = set(schema_data.get("properties", {}))
+        unknown = sorted(set(state) - allowed)
+        errors.extend(f"Unknown field: {field}" for field in unknown)
 
     if errors:
         return errors
 
-    # schema_version
-    sv = state["schema_version"]
-    if not isinstance(sv, int) or sv < 1:
-        errors.append(f"schema_version must be integer >= 1, got {sv!r}")
-
-    # pipeline
+    # Values below mirror the schema enums and provide readable CLI errors.
+    if not isinstance(state["schema_version"], int) or state["schema_version"] < 1:
+        errors.append(f"schema_version must be integer >= 1, got {state['schema_version']!r}")
     if state["pipeline"] not in VALID_PIPELINES:
         errors.append(f"pipeline must be one of {VALID_PIPELINES}, got {state['pipeline']!r}")
-
-    # phase
     if state["phase"] not in VALID_PHASES:
         errors.append(f"phase must be one of {VALID_PHASES}, got {state['phase']!r}")
-
-    # project_type
+    if state["status"] not in VALID_STATUSES:
+        errors.append(f"status must be one of {VALID_STATUSES}, got {state['status']!r}")
     if state["project_type"] not in VALID_PROJECT_TYPES:
         errors.append(f"project_type must be one of {VALID_PROJECT_TYPES}, got {state['project_type']!r}")
 
-    # targets
     targets = state["targets"]
     if not isinstance(targets, list) or len(targets) == 0:
         errors.append("targets must be a non-empty array")
     else:
-        for t in targets:
-            if t not in VALID_TARGETS:
-                errors.append(f"Invalid target {t!r}, must be one of {VALID_TARGETS}")
+        for target in targets:
+            if target not in VALID_TARGETS:
+                errors.append(f"Invalid target {target!r}, must be one of {VALID_TARGETS}")
 
     # plan_sha256 format
     if "plan_sha256" in state and state["plan_sha256"] is not None:
@@ -97,9 +102,9 @@ def validate_state(state, schema_data=None):
         if not isinstance(tasks, dict):
             errors.append("tasks must be an object")
         else:
-            for f in ("total", "completed", "current"):
-                if f not in tasks:
-                    errors.append(f"tasks missing field: {f}")
+            for field in ("total", "completed", "current"):
+                if field not in tasks:
+                    errors.append(f"tasks missing field: {field}")
             if tasks.get("total", 0) < 0:
                 errors.append("tasks.total must be >= 0")
             if tasks.get("completed", 0) < 0:
@@ -109,10 +114,8 @@ def validate_state(state, schema_data=None):
             if tasks.get("completed", 0) > tasks.get("total", 0):
                 errors.append("tasks.completed cannot exceed tasks.total")
 
-    # last_updated format
     try:
-        if "last_updated" in state:
-            datetime.fromisoformat(state["last_updated"])
+        datetime.fromisoformat(state["last_updated"])
     except (ValueError, TypeError):
         errors.append(f"last_updated must be ISO 8601 format, got {state.get('last_updated')!r}")
 
@@ -195,6 +198,7 @@ def init_state(plan_path, force=False):
         "schema_version": 1,
         "pipeline": "development",
         "phase": "plan",
+        "status": "in_progress",
         "project_type": "lib",
         "targets": ["native"],
         "plan_file": os.path.relpath(plan_path),
@@ -225,7 +229,10 @@ def migrate_state(state):
 
     # Ensure required fields
     for field, default in [
+        ("schema_version", 1),
         ("pipeline", "development"),
+        ("phase", "plan"),
+        ("status", "in_progress"),
         ("project_type", "lib"),
         ("targets", ["native"]),
         ("tasks", {"total": 0, "completed": 0, "current": 0}),
@@ -292,7 +299,12 @@ def main():
             print("No migration needed.")
         sys.exit(0)
 
-    errors = validate_state(state)
+    schema_data, schema_error = load_json(SCHEMA_PATH)
+    if schema_error:
+        print(f"ERROR: {schema_error}", file=sys.stderr)
+        sys.exit(1)
+
+    errors = validate_state(state, schema_data)
     if errors:
         print("Validation FAILED:", file=sys.stderr)
         for e in errors:

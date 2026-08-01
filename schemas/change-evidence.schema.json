@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/atomgit/moonbit-skills/schemas/change-evidence.schema.json",
+  "$id": "https://github.com/morning-start/moonbit-skills/schemas/change-evidence.schema.json",
   "title": "MoonBit Change Evidence",
   "description": "Structured evidence record for code changes. Each change type has a minimum evidence contract.",
   "type": "object",

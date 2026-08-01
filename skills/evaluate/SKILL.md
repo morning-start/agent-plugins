@@ -1,6 +1,6 @@
 ---
 name: moonbit-evaluate
-description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'deploy', 'done', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first. After evaluation approval, delegate deployment to moonbit-cd."
+description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'ship', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first. After evaluation approval, delegate deployment to moonbit-cd."
 ---
 
 # Evaluate — 验收评估 + 发布准备
@@ -139,6 +139,8 @@ Agent 自动展示 API Signature Diff，给出建议版本号和升级类型，�
 ### 1. 委托 verify 做全量门禁
 
 调用 `moonbit-verify` 技能，确保基础测试 B1-B4 全部通过，Custom 测试 C1 通过。如果 verify 失败，返回 `moonbit-implement` 修复，不继续发布。
+
+验证通过且用户批准发布后，必须将管线状态更新为 `phase: "evaluate"`、`status: "approved"`、`next: "cd"`，并用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json` 校验。未批准时保持 `status: "pending"` 或 `"blocked"`，不得进入 CD。
 
 ### 2. 项目类型专属验证
 

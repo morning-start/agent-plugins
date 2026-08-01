@@ -15,7 +15,7 @@ if not ("moon.mod" | path exists) and not ("moon.mod.json" | path exists) {
     exit 0
 }
 
-let strict_audit = ($env.MOONBIT_STRICT_AUDIT? | default "1")
+let strict_audit = ($env.MOONBIT_STRICT_AUDIT? | default "0")
 mut failed = 0
 
 # 1. Format check

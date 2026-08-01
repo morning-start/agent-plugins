@@ -128,4 +128,4 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
 
 ## 下一步
 
-任务交付后：若本任务存在设计风险或复杂变更 → `moonbit-code-review`；全部任务完成后 → `moonbit-verify` 做全量门禁，再进入 `moonbit-evaluate`。
+任务交付后必须进入 `moonbit-code-review`。Review 未批准时回到实现修复并重新审查；全部任务完成后进入 `moonbit-verify` 做全量门禁，再进入 `moonbit-evaluate`。

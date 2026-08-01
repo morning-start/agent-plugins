@@ -239,6 +239,8 @@
 | PrePush | git push | `hooks/pre-push.sh` | B3 + E2（test + audit） |
 | PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | B1-B3 + C1 + E2 |
 
+平台差异：Claude/Kimi 的 `hooks/hooks.json` 接入完整 Git/完成前事件；OMP/Pi 接入 SessionStart 与 PostTool；Codex/Cursor/Gemini 默认接入编辑后的轻量验证。平台 Hook 不能替代显式 `moonbit-verify`。
+
 ---
 
 ## 技能间依赖关系
@@ -289,41 +291,27 @@ using-moonbit-skills (alwaysApply, 路由入口)
 
 ## 管线持久化状态 (.moonbit-pipeline.json)
 
-在长周期或跨 Session / Context 压缩开发时，Agent 在项目根目录读写轻量级持久化状态文件 `.moonbit-pipeline.json`。由 `moonbit-writing-plans` 初始化，并由 `moonbit-implement` / `moonbit-verify` / `moonbit-evaluate` 实时更新：
+在长周期或跨 Session / Context 压缩开发时，Agent 在项目根目录读写轻量级持久化状态文件 `.moonbit-pipeline.json`。由 `moonbit-writing-plans` 初始化，并由 `moonbit-implement` / `moonbit-verify` / `moonbit-evaluate` / `moonbit-cd` / `moonbit-learn` 实时更新；状态必须通过 `scripts/validate-pipeline-state.py` 校验：
 
 ```json
 {
+  "schema_version": 1,
   "pipeline": "development",
   "phase": "implement",
-  "project_type": "main",
+  "status": "in_progress",
+  "project_type": "cli",
   "primary_type": "parser",
   "capabilities": ["lexer", "tokenizer"],
   "targets": ["native"],
   "plan_file": "docs/plans/2026-07-29-parser-plan.md",
-  "hard_checks": {
-    "fmt": "pass",
-    "check": "pass",
-    "test": "pass (12/12)",
-    "info": "pass",
-    "workspace": "pass"
-  },
-  "type_specific": {
-    "moon_run": "pass (output: 'Hello')"
-  },
-  "soft_checks": {
-    "cross_platform": "skipped (main project)",
-    "security": "pass (0 findings)",
-    "perf": "pass (1.2s)"
-  },
-  "progress": {
-    "total_tasks": 13,
-    "completed_tasks": 4,
-    "current_task": 5
-  },
+  "tasks": {"total": 13, "completed": 4, "current": 5},
+  "last_verification": "2026-07-29T10:25:00Z",
   "last_updated": "2026-07-29T10:30:00Z",
   "next": "implement:task-5"
 }
 ```
+
+验证命令输出应另存为 `moonbit-verification.schema.json` 定义的验证产物，不要把检查详情混入管线状态文件。
 
 **Session 恢复机制**：
 当 Session 重新初始化或发生 Context 压缩重入时，Agent 若在根目录检测到 `.moonbit-pipeline.json`，优先读取该文件恢复进度断点，跳过重复的计划与探索逻辑。

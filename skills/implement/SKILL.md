@@ -1,6 +1,6 @@
 ---
 name: moonbit-implement
-description: "Use when implementing MoonBit features, fixing bugs, debugging, or refactoring code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'debug', 'error', 'fail', 'refactor', or after a plan is approved."
+description: "Use when implementing MoonBit features, fixing bugs, or debugging code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'debug', 'error', or after a plan is approved."
 ---
 
 # Implement — TDD 实现
@@ -226,15 +226,21 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 
 ```json
 {
+  "schema_version": 1,
   "pipeline": "development",
   "phase": "implement",
+  "status": "in_progress",
+  "project_type": "lib",
+  "targets": ["native"],
   "plan_file": "docs/plans/2026-07-29-topic-plan.md",
-  "progress": {
-    "total_tasks": 7,
-    "completed_tasks": 3,
-    "current_task": 4
+  "tasks": {
+    "total": 7,
+    "completed": 3,
+    "current": 4
   },
-  "last_updated": "2026-07-29T10:30:00Z"
+  "last_verification": "2026-07-29T10:25:00Z",
+  "last_updated": "2026-07-29T10:30:00Z",
+  "next": "implement:task-4"
 }
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: moonbit-verify
-description: "Use when running MoonBit verification gates — before claiming any work is done. Triggered by user phrases like 'review', 'check', 'audit', 'verify', 'test', 'quality', 'security', 'is it ready', 'does it pass'. Do NOT skip this before claiming done — always verify first."
+description: "Use when running MoonBit verification gates — before claiming any work is done. Triggered by user phrases like 'check', 'audit', 'verify', 'test', 'quality', 'is it ready', or 'does it pass'. Do NOT skip this before claiming done — always verify first."
 ---
 
 # Verify — 三级检测门禁
@@ -292,32 +292,61 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 
 ## 输出
 
-```json
 {
-  "status": "pass | blocked",
+  "schema_version": 1,
+  "status": "pass",
   "project_type": "main",
-  "basic_checks": {
-    "fmt": "pass",
-    "check": "pass",
-    "test": "pass (12/12)",
-    "workspace": "pass (clean)"
+  "targets": ["native"],
+  "checks": {
+    "B1": {
+      "status": "pass",
+      "command": "moon fmt --check",
+      "exit_code": 0
+    },
+    "B2": {
+      "status": "pass",
+      "command": "moon check --target native --warn-list +73",
+      "exit_code": 0
+    },
+    "B3": {
+      "status": "pass",
+      "command": "moon test --target native",
+      "exit_code": 0,
+      "details": "12/12 tests passed"
+    },
+    "B4": {
+      "status": "pass",
+      "command": "git status --porcelain",
+      "exit_code": 0,
+      "details": "clean or allowlisted generated files only"
+    },
+    "C2": {
+      "status": "pass",
+      "command": "moon run .",
+      "exit_code": 0,
+      "details": "stdout is non-empty"
+    },
+    "E2": {
+      "status": "skipped",
+      "command": "moon-audit pipeline .",
+      "exit_code": null,
+      "reason": "moon-audit is not installed"
+    }
   },
-  "custom_checks": {
-    "api_stability": "pass",
-    "moon_run": "pass (output: 'Hello')",
-    "consumer_verify": "skipped (main project)"
+  "type_specific": {
+    "moon_run": {
+      "status": "pass",
+      "command": "moon run .",
+      "exit_code": 0
+    }
   },
-  "enhanced_checks": {
-    "cross_platform": "pass",
-    "security": "pass (0 findings)",
-    "perf": "pass (1.2s)",
-    "api_design": "pass (1 suggestion)",
-    "ci_config": "pass",
-    "docs": "pass"
+  "changed_files": [],
+  "toolchain": {
+    "moon": "0.x",
+    "moonc": "0.x"
   },
-  "auto_fixes": [],
-  "failures": [],
-  "next": "implement | evaluate"
+  "started_at": "2026-08-01T10:00:00Z",
+  "finished_at": "2026-08-01T10:01:00Z"
 }
 ```
 

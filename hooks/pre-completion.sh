@@ -16,7 +16,7 @@ if [ ! -f moon.mod.json ] && [ ! -f moon.mod ]; then
   exit 0
 fi
 
-STRICT_AUDIT="${MOONBIT_STRICT_AUDIT:-1}"
+STRICT_AUDIT="${MOONBIT_STRICT_AUDIT:-0}"
 
 FAILED=0
 

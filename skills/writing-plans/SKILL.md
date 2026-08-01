@@ -211,15 +211,21 @@ src/
 
 ```json
 {
+  "schema_version": 1,
   "pipeline": "development",
   "phase": "implement",
+  "status": "in_progress",
+  "project_type": "lib",
+  "targets": ["native"],
   "plan_file": "docs/plans/2026-07-29-topic-plan.md",
-  "progress": {
-    "total_tasks": 7,
-    "completed_tasks": 0,
-    "current_task": 1
+  "tasks": {
+    "total": 7,
+    "completed": 0,
+    "current": 1
   },
-  "last_updated": "2026-07-29T10:00:00Z"
+  "last_verification": null,
+  "last_updated": "2026-07-29T10:00:00Z",
+  "next": "implement:task-1"
 }
 ```
 

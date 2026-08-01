@@ -91,11 +91,30 @@ def check_skill_frontmatter():
     return errors, skill_dirs
 
 
+def _without_fenced_code(content: str) -> str:
+    """Remove fenced code blocks before interpreting Markdown links."""
+    return re.sub(r"```.*?```", "", content, flags=re.DOTALL)
+
+
 def check_skill_counts(skill_dirs):
     """Check skill count consistency across routing and orchestration."""
     errors = []
     known_skills = sorted(skill_dirs)
     known_count = len(known_skills)
+    expected_core_count = known_count - (1 if "using-moonbit-skills" in known_skills else 0)
+    fact_files = [
+        REPO_ROOT / "README.md",
+        REPO_ROOT / "assets" / "readme" / "hero.svg",
+        REPO_ROOT / "assets" / "readme" / "section-skills.svg",
+    ]
+    for fact_file in fact_files:
+        if not fact_file.exists():
+            continue
+        fact_content = fact_file.read_text(encoding="utf-8")
+        if "13 个核心技能" in fact_content or "十三个核心技能" in fact_content:
+            errors.append(
+                f"Stale skill count in {fact_file.relative_to(REPO_ROOT)}: expected {expected_core_count} core skills"
+            )
 
     # Check using-moonbit-skills SKILL.md
     bootstrap = SKILLS_DIR / "using-moonbit-skills" / "SKILL.md"
@@ -186,7 +205,7 @@ def check_reference_paths():
     for md_file in REPO_ROOT.rglob("*.md"):
         if ".git" in md_file.parts:
             continue
-        content = md_file.read_text(encoding="utf-8")
+        content = _without_fenced_code(md_file.read_text(encoding="utf-8"))
 
         # Find markdown links with relative paths
         for m in re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', content):

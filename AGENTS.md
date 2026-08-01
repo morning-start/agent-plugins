@@ -106,12 +106,13 @@ MoonBit 项目的完整门禁以 `skills/verify/SKILL.md` 为唯一权威，按�
 | library | B1-B4 + C1/C3：包结构与临时 consumer 编译验证 |
 | ffi / wasm / parser / async | B1-B4 + C3：对应 `references/patterns/` 和技能定义的类型专属验证 |
 
-Hooks 只提供自动化子集，不能替代完整验证：
+Hooks 只提供自动化子集，不能替代完整验证；各平台事件能力不同：
 
-- `hooks/pre-commit.sh`：安全扫描 + 格式化 + 接口同步 + 类型检查。
-- `hooks/commit-msg.sh`：Conventional Commits 格式校验。
-- `hooks/pre-push.sh`：编译检查 + 全量测试。
-- `hooks/pre-completion.sh`：会话完成前的自动检查；以脚本退出码和实际输出为准。
+- `hooks/pre-commit.sh`：安全扫描 + 格式化 + 接口同步 + 类型检查（由支持 Git hooks 的环境执行）。
+- `hooks/commit-msg.sh`：Conventional Commits 校验（由支持 Git hooks 的环境执行）。
+- `hooks/pre-push.sh`：编译检查 + 全量测试（由支持 Git hooks 的环境执行）。
+- `hooks/pre-completion.sh`：会话完成前的自动检查（仅接入该事件的平台执行）。
+- Codex/Cursor/Gemini 的默认集成目前以 PostTool/afterFileEdit 轻量检查为主，不宣称具备完整 PreCompletion 门禁。
 
 修改本技能仓库自身时，按变更范围执行针对性验证：
 

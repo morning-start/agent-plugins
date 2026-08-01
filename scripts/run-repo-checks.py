@@ -14,7 +14,7 @@ Checks:
   6. Python syntax check for all scripts under scripts/
 
 Usage:
-  python scripts/run-repo-checks.py [--verbose]
+  python scripts/run-repo-checks.py [--verbose] [--allow-working-tree]
   python scripts/run-repo-checks.py --skip-shell  (for Windows without bash)
 """
 
@@ -187,8 +187,8 @@ def check_git_diff_check():
         return CheckResult("Git diff --check", False, ["Timed out"])
 
 
-def check_working_tree():
-    """Check for unexpected untracked artifacts."""
+def check_working_tree(allow_changes=False):
+    """Check for unexpected untracked artifacts unless local changes are allowed."""
     try:
         result = subprocess.run(
             ["git", "status", "--porcelain"],
@@ -201,6 +201,8 @@ def check_working_tree():
         output = result.stdout.strip()
         if not output:
             return CheckResult("Working tree clean", True, ["No unexpected changes"])
+        if allow_changes:
+            return CheckResult("Working tree check", True, ["Working tree changes allowed by --allow-working-tree"])
 
         # Filter out allowed artifacts
         lines = [line for line in output.split("\n") if line.strip()]
@@ -230,6 +232,8 @@ def main():
                         help="Show detailed output")
     parser.add_argument("--skip-shell", action="store_true",
                         help="Skip shell syntax checks (on Windows without bash)")
+    parser.add_argument("--allow-working-tree", action="store_true",
+                        help="Do not fail on intentional local changes")
     parser.add_argument("--format", choices=["text", "json"], default="text",
                         help="Output format")
     args = parser.parse_args()
@@ -240,7 +244,7 @@ def main():
         ("Python syntax", check_python_syntax),
         ("Repository consistency", check_repo_consistency),
         ("Git whitespace", check_git_diff_check),
-        ("Working tree", check_working_tree),
+        ("Working tree", lambda: check_working_tree(args.allow_working_tree)),
     ]
 
     if not args.skip_shell:

@@ -178,6 +178,8 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 
 OMP/Pi 通过 `package.json` 的 `omp.extensions` / `pi.extensions` 注册扩展；`skills/`、`hooks/` 和 `commands/` 保持为可发现的插件内容。
 
+不同平台的 Hook 事件能力不同：Claude/Kimi 可接入 Git 与完成前门禁，Codex/Cursor/Gemini 默认以编辑后的轻量验证为主；任何平台都仍需显式运行 `moonbit-verify` 才能形成完整交付证据。
+
 </details>
 
 ## 仓库结构
@@ -217,17 +219,16 @@ evals/evals.json            路由与管线场景评估
 
 插件安装和技能使用不依赖 Unix shell。仓库同时提供 Bash、Nushell 和 PowerShell 入口；Git hooks 推荐使用 Git Bash 或 WSL，并应运行仓库的针对性检查确认环境差异。
 
-## 贡献与本地检查
-
 修改技能、路由、平台元数据或 hooks 后，至少运行：
 
 ```bash
+python scripts/run-repo-checks.py --allow-working-tree
 python scripts/check-plugin-metadata.py
 python scripts/check-pipeline-consistency.py
-python -m py_compile scripts/check-plugin-metadata.py
+python scripts/validate-evals.py
+python -m compileall -q scripts
 ```
-
-如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应检查 [`evals/evals.json`](./evals/evals.json)。
+如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应运行 `python scripts/validate-evals.py`。Verify 产生 JSON 证据后，使用 `python scripts/validate-verification.py --file <artifact.json>`；管线状态使用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json`。
 
 ## 许可证
 

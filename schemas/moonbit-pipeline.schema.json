@@ -1,13 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/atomgit/moonbit-skills/schemas/moonbit-pipeline.schema.json",
+  "$id": "https://github.com/morning-start/moonbit-skills/schemas/moonbit-pipeline.schema.json",
   "title": "MoonBit Pipeline State",
-  "description": "Persistent pipeline state for MoonBit development skills. Written by writing-plans, updated by implement/verify/evaluate.",
+  "description": "Persistent pipeline state for MoonBit development skills. Written by writing-plans, updated by implement/verify/evaluate/cd/learn.",
   "type": "object",
   "required": [
     "schema_version",
     "pipeline",
     "phase",
+    "status",
     "project_type",
     "targets",
     "last_updated"
@@ -20,7 +21,7 @@
     },
     "pipeline": {
       "type": "string",
-      "enum": ["development", "bugfix", "spike"],
+      "enum": ["development", "bugfix", "spike", "release"],
       "description": "Pipeline mode"
     },
     "phase": {
@@ -28,9 +29,17 @@
       "enum": [
         "plan", "writing-plans", "scaffold", "testing",
         "implement", "review", "perform", "refactor",
-        "verify", "evaluate"
+        "verify", "evaluate", "cd", "learn", "incident"
       ],
       "description": "Current pipeline phase"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending", "in_progress", "blocked", "approved",
+        "completed", "deployed", "rolled_back"
+      ],
+      "description": "Status of the current pipeline phase"
     },
     "project_type": {
       "type": "string",
@@ -100,6 +109,7 @@
       "schema_version": 1,
       "pipeline": "development",
       "phase": "implement",
+      "status": "in_progress",
       "project_type": "cli",
       "primary_type": "parser",
       "capabilities": ["lexer", "tokenizer"],

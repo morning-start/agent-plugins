@@ -71,16 +71,25 @@ If you catch yourself doing any of these, you are violating the CD contract:
 ### 1. 验证 evaluate 已批准
 
 ```bash
-# 验证 evaluate 状态（读取管线状态文件）
-if [ -f .moonbit-pipeline.json ]; then
-  EVAL_STATUS=$(python3 -c "import json; f=open('.moonbit-pipeline.json'); d=json.load(f); print(d.get('evaluate_status','unknown'))" 2>/dev/null)
-  echo "Evaluate status: ${EVAL_STATUS}"
-  if [ "$EVAL_STATUS" != "approved" ]; then
-    echo "ERROR: evaluate must approve before CD can proceed"
-    exit 1
-  fi
-else
-  echo "WARNING: no pipeline state found — verify evaluate approval manually"
+# CD only accepts a schema-valid evaluate approval.
+if [ ! -f .moonbit-pipeline.json ]; then
+  echo "ERROR: .moonbit-pipeline.json is required before CD"
+  exit 1
+fi
+
+PYTHON_BIN="${PYTHON_BIN:-python}"
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  PYTHON_BIN="python3"
+fi
+
+EVAL_STATE=$("$PYTHON_BIN" -c 'import json; d=json.load(open(".moonbit-pipeline.json", encoding="utf-8")); print(d.get("phase", "unknown"), d.get("status", "unknown"))' 2>/dev/null) || {
+  echo "ERROR: invalid pipeline state; run validate-pipeline-state.py"
+  exit 1
+}
+echo "Evaluate state: ${EVAL_STATE}"
+if [ "$EVAL_STATE" != "evaluate approved" ]; then
+  echo "ERROR: evaluate must approve before CD can proceed"
+  exit 1
 fi
 
 # 检查工作区干净

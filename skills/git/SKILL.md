@@ -11,17 +11,20 @@ description: "Use when performing Git operations during MoonBit development — 
 
 **适用前提**：项目本身是 git 仓库（存在 `.git` 或 `git rev-parse` 成功）。非 git 仓库只展示变更，不执行 git 命令。
 
-## The Iron Law
+## The Default Contract
 
 ```
-NO FEATURE WORK DIRECTLY ON MAIN
-NO COMMIT WITHOUT BRANCH OR USER AUTHORIZATION
-NO WORKTREE WITHOUT USER CONSENT
+DEFAULT: NO FEATURE WORK DIRECTLY ON MAIN
+DEFAULT: NO COMMIT WITHOUT BRANCH OR USER AUTHORIZATION
+DEFAULT: NO WORKTREE WITHOUT USER CONSENT
 ```
 
-- **功能实现必须在功能分支上进行**，不在主分支（main/master）上直接修改
-- 提交必须遵守授权契约：单个任务 → 用户确认；多个任务 + 用户授权 → 提交
-- **worktree 并行必须获得用户明确同意**后方可使用；用户不同意 → 顺序实现
+这些是 Agent 的默认安全协作规则，不是对用户明确指令的绝对否决。用户在当前对话中明确要求直接在 main 上修改、提交或使用 worktree 时，Agent 可以遵从，但必须在执行前说明影响并保留新鲜验证证据。
+
+- **默认**：功能实现使用功能分支，不在主分支直接修改。
+- **用户明确要求例外**：允许在 main 上工作，但报告该例外；不把它伪装成标准流程。
+- **提交**：仍需区分用户明确授权与 Agent 自行提交；用户未授权时只展示 diff。
+- **worktree**：用户明确同意后才使用；用户未同意时顺序实现。
 
 ## 分支工作流
 
@@ -38,10 +41,9 @@ NO WORKTREE WITHOUT USER CONSENT
   │    └─ ...（逐个功能循环：建分支 → 实现 → 合并 → 再建分支）
 ```
 
-- **每个功能一个分支**，合并后删除该分支（`git branch -d`）
-- **不要在 main 上直接修改**；紧急修复走 `fix/` 分支
-- 分支命名：`feat/{名称}` / `fix/{名称}` / `refactor/{名称}` / `docs/{名称}`
-- 顺序实现：建分支 → 实现 → 合并 → 再建分支，一点点推进；**禁止跳过分支直接在主分支修改**
+- **默认每个功能一个分支**，合并后删除该分支（`git branch -d`）。用户明确要求直接在 main 上工作时，记录例外并按用户指令执行。
+- 分支命名：`feat/{名称}` / `fix/{名称}` / `refactor/{名称}` / `docs/{名称}`。
+- 默认顺序实现：建分支 → 实现 → 合并 → 再建分支；用户明确要求跳过分支时，说明风险后执行。
 
 ## 提交契约
 
@@ -58,7 +60,7 @@ NO WORKTREE WITHOUT USER CONSENT
 # 1. 确认是 git 仓库
 git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_A_GIT_REPO"
 
-# 2. 确认当前在功能分支（不在 main 上直接提交）
+# 2. 确认当前分支；若用户明确授权在 main 上工作，记录该例外
 git branch --show-current
 
 # 3. 确认授权：仅当用户在本对话中明确授权"提交/commit"时执行
@@ -95,14 +97,14 @@ git worktree remove ../{project}-{feature}
 
 ## Red Flags — STOP and Re-evaluate
 
-- 在主分支（main/master）直接修改功能代码（"就一个小改动"）
-- 未获用户同意就使用 worktree（"反正可以并行"）
-- 未获授权就提交（"反正都做完了"）
-- 一次提交混入多个任务产物（"一起提交省事"）
-- 合并前不验证测试（"合并就完事了"）
-- 非 git 仓库却执行 git 命令
+- 未经说明就在 main 上修改功能代码；用户明确要求的 main 例外不属于违规，但必须记录风险。
+- 未获用户同意就使用 worktree（"反正可以并行"）。
+- 未获授权就提交（"反正都做完了"）。
+- 一次提交混入多个任务产物（"一起提交省事"）。
+- 合并前不验证测试（"合并就完事了"）。
+- 非 git 仓库却执行 git 命令。
 
-**All of these mean: Stop. 回到分支工作流起点。**
+**除用户明确覆盖的分支例外外，以上情况都意味着停止并重新检查分支工作流。**
 
 ## 停止条件
 

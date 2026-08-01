@@ -33,6 +33,8 @@ jobs:
 
       - name: Validate plugin metadata
         run: python scripts/check-plugin-metadata.py
+      - name: Validate evaluation scenarios
+        run: python scripts/validate-evals.py
 
       - name: Validate all JSON schemas
         run: |

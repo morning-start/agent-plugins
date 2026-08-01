@@ -74,9 +74,9 @@ When multiple skills match, route by intent:
 | "single task", "implement this task", "finish this task", "one module" | "实现这个任务", "单一任务", "单模块", "逐项验收" | `moonbit-task` |
 | "branch", "git commit", "merge", "worktree", "git workflow" | "分支", "提交", "合并", "worktree", "git 操作" | `moonbit-git` |
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
-| "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量", "安全审查" | `moonbit-verify` |
+| "verify", "check", "quality", "audit", "is it ready", "does it pass" | "验证", "检查", "质量", "审计", "是否完成", "是否通过" | `moonbit-verify` |
 | "threat model", "security review", "secure design", "vulnerability" | "安全设计", "威胁建模", "安全审查", "漏洞扫描" | `moonbit-security` |
-| "evaluate", "publish", "release", "ship" | "发布", "验收", "部署" | `moonbit-evaluate` |
+| "evaluate", "publish", "release", "ship" | "发布验收", "发布", "版本", "上线前检查" | `moonbit-evaluate` |
 | "deploy", "rollout", "deployment", "rollback" | "部署", "回滚", "发布到生产" | `moonbit-cd`（evaluate 批准后） |
 | "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
 | "debug", "fix", "error", "bug", "fail" | "调试", "修bug", "出错" | `moonbit-implement` (Bug Fix Mode) |

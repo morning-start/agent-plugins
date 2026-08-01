@@ -82,16 +82,73 @@
       "id": 6,
       "name": "security-review",
       "prompt": "Review this MoonBit library for security issues before we publish it.",
-      "expected_output": "Route to verify rather than plan or scaffold. Check moon-audit availability and report findings.",
+      "expected_output": "Route to moonbit-security for threat modeling and dependency review; use moonbit-verify only for the final E2 gate.",
       "assertions": [
-        "routes verify rather plan scaffold",
-        "checks moon-audit availability reports unavailable",
-        "not silently auto-edit public API or security-sensitive behavior",
-        "reports findings residual risk"
+        "routes to security rather than verify as the primary skill",
+        "checks moon-audit availability and reports unavailable",
+        "does not silently auto-edit public API or security-sensitive behavior",
+        "reports findings and residual risk"
       ],
       "should_trigger": true,
       "files": [],
-      "skills": ["verify", "code-review"]
+      "skills": ["security", "verify"]
+    },
+    {
+      "id": 29,
+      "name": "docs-api-change",
+      "prompt": "A public MoonBit API changed. Update the API documentation and changelog without changing implementation code.",
+      "expected_output": "Route to moonbit-docs and update documentation only; verify paths, examples, and public API references.",
+      "assertions": [
+        "routes to docs",
+        "does not modify implementation code",
+        "checks public API and changelog consistency"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["docs"]
+    },
+    {
+      "id": 30,
+      "name": "deployment-gate",
+      "prompt": "The release was approved. Deploy the MoonBit CLI and prepare a rollback plan.",
+      "expected_output": "Route to moonbit-cd, verify evaluate approval state, create an artifact manifest and rollback plan, then wait for user confirmation.",
+      "assertions": [
+        "routes to cd rather than evaluate",
+        "requires evaluate status approved",
+        "requires rollback plan before deployment",
+        "waits for user confirmation before execution"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["cd", "evaluate"]
+    },
+    {
+      "id": 31,
+      "name": "ci-setup",
+      "prompt": "Set up GitHub Actions and commit message checks for this MoonBit project.",
+      "expected_output": "Route to moonbit-ci, inspect existing CI and hooks, and preview changes before writing them.",
+      "assertions": [
+        "routes to ci",
+        "does not run verify as a substitute for CI setup",
+        "does not overwrite existing workflow without approval"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["ci"]
+    },
+    {
+      "id": 32,
+      "name": "pipeline-state-validation",
+      "prompt": "Validate the verification artifact and pipeline state before release.",
+      "expected_output": "Run the repository validators and report blocking state or schema errors instead of trusting prose output.",
+      "assertions": [
+        "validates pipeline state against the checked-in schema",
+        "validates verification artifact fields and check results",
+        "blocks release on invalid state"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["verify", "evaluate"]
     },
     {
       "id": 7,
