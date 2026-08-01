@@ -4,6 +4,10 @@ description: Create a new agent plugin end-to-end: intent interview → PRD → 
 
 # /pf-new — Full plugin creation workflow
 
+> **Entry**: the unified entry point is the `using-pf` bootstrap skill (superpowers
+> pattern) — this command is a direct channel for the **create** intent, not the only
+> door. Maintenance/analysis intents route via `using-pf` too.
+
 Run the complete plugin-factory workflow. Do NOT scaffold anything before the PRD is signed off.
 
 ## Steps

@@ -90,6 +90,54 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
   "过重→拆分" 拆出 `pf-compose` 子技能（仅编排设计）。决策记录在构件清单的
   orchestration 溯源中。
 
+## 插件生命周期场景（状态机）
+
+创建是线性流程，但插件的生命周期是**循环**：一次创建后进入 运行 → 维护 → 发布
+的闭环；分析（pf-analyze）在运行期随时可跑，产出建议路由到维护场景。**单技能退役
+属于维护的一部分**——与"整个插件停止维护"（归档，范围外）不同：单个 skill 丢弃
+是插件维护的正常动作。
+
+### 状态
+
+| 状态 | 含义 |
+|------|------|
+| Create（创建） | 插件不存在，从零生成 |
+| Operate（运行） | 插件已安装、在使用 |
+| Maintain（维护） | 变更进行中（迭代/优化/重组/单技能退役/移植/编排） |
+| Release（发布） | 变更以 SemVer 版本发布 |
+| Analyze（分析） | 结构健康检查，驱动维护决策 |
+| Archive（归档） | 整个项目停止维护（**范围外**——插件死亡 ≠ 单技能丢弃） |
+
+### 场景目录
+
+| # | 场景 | 入口 | 技能序列 | 说明 |
+|---|------|------|----------|------|
+| S1 | 从零创建 | /pf-new | intent(Full) → design → build → verify → release | 现有线性流程只是这一个场景 |
+| S2 | 新增技能 | /pf-maintain | intent(Change) → design(增量) → build(单技能) → verify → release | 给现有插件加技能 |
+| S3 | 改进技能 | /pf-maintain | intent(Change 轻) → build(skill-creator 循环) → verify → release | 描述/步骤/评测优化 |
+| S4 | 技能重组（拆分/合并） | /pf-analyze 或 /pf-maintain | analyze → design → build → verify → release | 生命周期建议驱动 |
+| S5 | 单技能退役 | /pf-maintain | analyze(确认) → build(移除) → verify → release | **维护的一部分**，非插件死亡 |
+| S6 | 多端移植 | /pf-maintain | design(适配器) → build(新端渲染) → verify → release | 为现有插件加端 |
+| S7 | 编排优化 | /pf-maintain | design(编排) → build(重渲染路由) → verify → release | 换触发链/入口 |
+| S8 | 配置/依赖维护 | /pf-maintain | build(修复) → verify → release | hooks/manifest/依赖 |
+| S9 | 例行发布 | /pf-release | verify → release | 版本演进 |
+| S10 | 生命周期分析 | /pf-analyze | analyze → 建议 → 路由到 S4/S5/S7 | 纯结构 |
+
+### 编排规则（循环而非线性）
+
+1. **单一入口 + 内部编排**（superpowers 模式，参考 using-superpowers）：统一入口是
+   引导技能 `using-<plugin>`（如 `using-pf`）——任何会话/任务先经过它，按用户意图
+   路由到对应场景（创建→S1；维护→S2–S8；分析→S10；发布→S9）；**不增加入口命令**。
+   `/pf-*` 阶段命令仅作专家直达通道，不是入口。
+2. **intent 两模式**：Full（创建，8 问）与 Change（变更：变更点/影响技能/复杂度/
+   继承语言策略）；Change 复用已有 PRD，只重写受影响部分。
+3. **每个变更都以 verify → release 收尾**——发布不是创建流程的终点，是每次变更的门。
+4. **发布后回到 Operate**，形成闭环；Release 不终结生命周期。
+5. 单技能退役（S5）与插件归档分离：S5 在维护范围内；归档是整个项目不再维护（范围外）。
+
+> 场景表中的"入口"列 = `using-<plugin>` 按用户意图选定的**内部路由**；用户不直接
+> 面对这些入口命令（/pf-* 仅供专家直达）。
+
 ## 复核节奏
 
 - 固化于 **2026-08-01**。仅当模式变更或某端引导规格变更时更新

@@ -44,6 +44,10 @@ plugin-factory 每个 `pf-*` 技能与每个生成插件都必须遵守的共享
 | SKILL.md `name` | 必须与父目录一致 | `name: pf-intent` |
 | tags / metadata | 冗余品牌信息 | `tags: [pf, pf-intent]`、`metadata.prefix: pf` |
 | 斜杠命令 | `/pf-*` | `/pf-new`、`/pf-intent`、`/pf-analyze` |
+| 引导技能（统一入口） | `using-<插件名>`（superpowers 模式例外） | `skills/using-pf/`、`using-superpowers` |
+
+引导技能例外：统一入口遵循 superpowers 的 `using-<plugin>` 命名，标识其
+入口/编排语义；它不做阶段工作，只按用户意图路由到场景。
 
 生成插件沿用同一约定，使用各自的项目前缀（如 moonbit-skills 的 `moonbit-`）。
 前缀防止共享目录（`.agents/skills/`、`~/.agents/skills/`）中的命名冲突。

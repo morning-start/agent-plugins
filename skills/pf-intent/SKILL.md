@@ -1,6 +1,6 @@
 ---
 name: pf-intent
-description: Use when creating a new agent plugin, when a user has only a vague idea of what a plugin should do, when asked to turn "I want a plugin for X" into a concrete spec, or when no signed-off PRD exists yet. Triggers on "create a plugin", "I have an idea for a plugin", "plugin for X", "/pf-intent", "/pf-new". Elicits intent, writes a one-page PRD, and applies the complexity gate.
+description: Use when creating a new agent plugin, when a user has only a vague idea of what a plugin should do, when clarifying a change to an existing plugin (add/improve/retire a skill, port a harness, orchestration tweak), when asked to turn "I want a plugin for X" into a concrete spec, or when no signed-off PRD exists yet. Triggers on "create a plugin", "I have an idea for a plugin", "plugin for X", "change my plugin", "add a skill", "/pf-intent", "/pf-new", or routing from using-pf. Elicits intent, writes a one-page PRD, and applies the complexity gate.
 tags: [pf, pf-intent, plugin, prd, intent, interview, requirements]
 metadata:
   prefix: pf
@@ -86,6 +86,20 @@ Score:
 
 Present the PRD; the user confirms or edits. Record the confirmation and date.
 Proceed only after sign-off.
+
+## Change mode (existing plugin)
+
+For maintenance scenarios (S2–S8, routed by `using-pf`), run a lighter intent pass
+instead of the full 8-question interview:
+
+- **Change point** — what exactly changes (one sentence).
+- **Affected components** — which skills/hooks/commands/manifests are touched.
+- **Complexity** — apply the Light/Medium/Heavy gate to the **change**, not the plugin.
+- **Language policy** — inherit the existing plugin's `language` policy (no re-ask).
+- **PRD delta** — amend the existing one-page PRD (or write a short change note);
+  never rewrite the whole PRD. The existing PRD + manifest stay the source of truth.
+
+The full 8-question interview is for new plugins only.
 
 ## Output
 
