@@ -75,6 +75,13 @@ Score:
 | Hooks required | +2 |
 | Extra harness beyond the first | +1 each |
 | Rules / agents / subagents needed | +1 |
+| Skills span ≥3 unrelated categories (cross-scenario) | +5 → **split into multiple plugins** |
+
+**Scoping gate (Iron Law 5)** — before scoring, check the plugin answers one sentence:
+"what fixed scenario does this serve?" Every skill must belong to that scenario (D5,
+`references/design-principles.md`). Cross-scenario intents are **split into separate
+plugins**, each going through its own S1 creation — never one sprawling plugin
+(ECC anti-pattern).
 
 | Score | Verdict | Path |
 |-------|---------|------|
