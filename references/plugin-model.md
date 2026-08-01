@@ -28,6 +28,8 @@
 6. 安装说明（`install.sh` / `install.ps1` 或各端文档）。
 7. 方法论插件：引导/入口技能（`using-<plugin>`）+ 编排元数据
    （`references/orchestration-patterns.md`）。
+8. 语言策略记录在 `AGENTS.md`（Language policy 段）并按层应用（默认分层：
+   人维护层用用户语言、agent 执行层用英文——见 `references/design-principles.md`）。
 
 ## 生成插件布局（模板）
 

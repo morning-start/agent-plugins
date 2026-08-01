@@ -103,8 +103,24 @@ Per `references/orchestration-patterns.md`:
 ### 6. Generate project docs
 
 - `AGENTS.md` / `CLAUDE.md` (project instructions incl. activation rules).
-- `README.md` + `README.zh-CN.md` (bilingual; English docs, Chinese user README).
+- `README.md` + `README.zh-CN.md` (bilingual; English docs, user-language user README).
 - `install.sh` / `install.ps1` (per-harness install instructions).
+
+### 7. Apply the language policy
+
+Per the manifest `language` section (default **tiered** —
+`references/design-principles.md`):
+
+- **Human-review layer** (references/, docs/, CHANGELOG prose, README user edition) →
+  rendered in `user_lang` (the user's language).
+- **Agent-executed layer** (skills body, commands, AGENTS/CLAUDE, hooks/scripts) →
+  rendered in `agent_lang` (English).
+- Skill descriptions: `agent_lang` CSO style + `user_lang` trigger keywords in
+  `metadata`.
+- Write the policy into the generated `AGENTS.md` (Language policy section) so the
+  plugin maintains the tiering itself.
+
+Policy values: `tiered` (default) / `english` (all English) / `native` (all `user_lang`).
 
 ## Outputs
 
@@ -117,6 +133,7 @@ Per `references/orchestration-patterns.md`:
 - Per-harness manifests match `references/plugins/`.
 - Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
 - Bilingual README + AGENTS/CLAUDE + install scripts present.
+- Language policy applied per layer and recorded in the generated AGENTS.md.
 
 ## Status
 

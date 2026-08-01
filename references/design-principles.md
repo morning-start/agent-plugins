@@ -56,8 +56,13 @@ plugin-factory 每个 `pf-*` 技能与每个生成插件都必须遵守的共享
 - 每个 hook：bash **和** PowerShell 双实现 + 按需 `hooks.json`。
 - 每个生成插件：双语 README（`README.md` + `README.zh-CN.md`）、各端 manifest、
   安装说明。
-- 语言分层：文档与技能——agent 执行层用英文；references/ 设计层用中文；
-  用户面 README 双语。
+- **语言分层（生成插件同样适用，默认能力）**：人维护层（references/、docs/、
+  CHANGELOG 正文、README 用户版）用**用户语言**；agent 执行层（skills 正文、
+  commands、AGENTS/CLAUDE、hooks/scripts）用**英文**；技能 description 用英文
+  规范 + 用户语言关键词进 metadata。
+- 语言策略：默认 **tiered（分层）**；用户可在 pf-intent 访谈时选择全英文或全用户
+  语言；策略写入 PRD → 构件清单 `language` 段 → 生成插件 AGENTS.md
+  （见 pf-intent / pf-design / pf-build）。
 
 ## 流程
 

@@ -76,6 +76,10 @@ name: <plugin-name>
 prefix: <abbr>                     # e.g. pf, moonbit
 version: 0.1.0
 harnesses: [claude-code, pi, opencode, oh-my-pi]
+language:                            # from pf-intent, default tiered
+  policy: tiered                     # tiered | english | native
+  user_lang: zh-CN                   # 人维护层语言（用户语言）
+  agent_lang: en                     # agent 执行层语言（默认英文）
 components:
   skills: [{name, capability, triggers, consumes, produces}]
   hooks:   [{event, action, harnesses}]       # canonical, pre-render
@@ -100,6 +104,7 @@ in the generated plugin (and in plugin-factory's own `docs/` when applicable).
 - Every chain link's handoff artifact is produced upstream.
 - Trigger domains are mutually exclusive (or declared in `conflicts`).
 - Manifest lists per-harness manifest specs (see `references/plugins/`).
+- Language policy from the PRD is carried into the manifest (`language` section).
 - User confirms the manifest before `pf-build` runs.
 
 ## Complexity threshold (extract pf-compose)

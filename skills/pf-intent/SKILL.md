@@ -38,6 +38,10 @@ Ask in order; adapt follow-ups to the answers. Record every answer **verbatim**.
 5. **Boundaries** — What is explicitly NOT in scope?
 6. **Platforms** — Which harnesses: Claude Code / pi / opencode?
 7. **Complexity signals** — Estimated skill count; hooks needed? multiple harnesses? rules/agents needed?
+8. **Language preference** — Default **tiered**: maintenance/review layer in your
+   language (e.g. 中文), agent-executed layer in English. Options: tiered (default) /
+   all English / all your language. Record the choice — it becomes the plugin's
+   `language` policy (PRD → manifest → generated AGENTS.md).
 
 Elicitation rules:
 
@@ -56,6 +60,7 @@ Elicitation rules:
 ## Scenarios         3–5: context → trigger → expected behavior
 ## Non-goals         explicitly out of scope
 ## Platforms         claude-code | pi | opencode | all
+## Language          policy: tiered | english | native · user_lang: <your language> · agent_lang: en
 ## Complexity signals  skills ~N · hooks Y/N · multi-harness Y/N · rules/agents Y/N
 ## Sign-off          user confirmation + date
 ```
