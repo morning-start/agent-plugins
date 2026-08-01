@@ -1,17 +1,20 @@
 /**
  * plugin-factory — pi extension bootstrap.
  *
- * M0 placeholder. The exact pi extension API surface is verified in M2
- * (see references/agent-adapters.md "pi — 待验证 items"). At minimum this
- * module must remain valid TypeScript so `node --check` passes.
+ * Implements the pi extension API per the frozen spec:
+ * references/hooks-reference.md §3 (captured 2026-08-01).
+ * Auto-discovered from `.pi/extensions/*.ts` (project-local, after project trust);
+ * hot-reloaded with `/reload`.
  *
- * Intended behavior (M2):
- *   - inject the "check pf-* skills before any task" bootstrap prompt at
- *     session start, mirroring the pattern used by superpowers' pi package.
+ * Kept dependency-free and node-checkable: types live in JSDoc only. For full
+ * types, prefer the official package `@earendil-works/pi-coding-agent`
+ * (formerly `@mariozechner/pi-coding-agent`).
  */
-export const meta = {
-  name: "plugin-factory",
-  version: "0.1.0",
-  description:
-    "Bootstrap for plugin-factory: make the agent check pf-* skills before any task.",
-} as const;
+
+// @ts-check
+/** @param {import("@earendil-works/pi-coding-agent").ExtensionAPI} pi */
+export default function (pi) {
+  pi.on("session_start", async (_event, ctx) => {
+    ctx.ui.notify("plugin-factory loaded — check pf-* skills before any task.", "info");
+  });
+}

@@ -25,13 +25,18 @@ Common (all three): `name` (required), `description` (required), `license`,
 
 ## Hooks
 
+**Verified 2026-08-01 — full pinned specs in [`hooks/`](hooks/) (index: `hooks-reference.md`).**
+
 | | Claude Code | pi | opencode |
 |---|---|---|---|
-| Model | event-based (PreToolUse, PostToolUse, Stop, SessionStart…) via settings/plugin config | ⚠️ extension hooks — verify API in M2 | ⚠️ config hooks in `opencode.json` — verify shape in M2 |
-| Script style | `.sh` (or executable) | — | — |
+| Model | shell / HTTP / prompt hooks, event-based (SessionStart, PreToolUse, PostToolUse, Stop…) | TypeScript **extensions** (`pi.on(...)` events) | TypeScript **plugins** (hooks object) |
+| Declared in | settings.json `hooks` key / plugin manifest / skill frontmatter | `.pi/extensions/*.ts`, `package.json` `pi.extensions`, settings `extensions` | `.opencode/plugins/*.ts`, `~/.config/opencode/plugins/`, npm `plugin` |
+| Language | bash or PowerShell (`shell` field: `"bash"` / `"powershell"`) | TypeScript | TypeScript / JS |
+| Block / modify | JSON decision on stdout (`hookSpecificOutput`) | `return {block:true}` / return modified result | mutate `output` / throw |
 
-plugin-factory rule: author every hook as **bash + PowerShell** pair + `hooks.json`
-metadata; the adapter rewrites the wiring (event names / config keys) per harness.
+plugin-factory rule: author each hook once as a canonical {event, action} spec and
+render per harness — **bash + PowerShell** pairs for Claude Code, a `.ts` plugin for
+opencode, a `.ts` extension for pi (see [`hooks/`](hooks/)).
 
 ## Commands
 
@@ -42,15 +47,21 @@ metadata; the adapter rewrites the wiring (event names / config keys) per harnes
 
 ## Packaging / install
 
+**Verified 2026-08-01 — per-harness packaging specs in [`plugins/`](plugins/) (index: `plugins-reference.md`).**
+
 | | Claude Code | pi | opencode |
 |---|---|---|---|
-| Manifest | `.claude-plugin/plugin.json` | `package.json` → `pi.skills` | `.opencode/opencode.json` |
-| Install | `/plugin install` or marketplace (not in scope M0–M4) | `pi install git:github.com/<owner>/<repo>` | follow `.opencode/INSTALL.md`; ⚠️ catalog/index.json (v2, out of scope) |
+| Manifest | `.claude-plugin/plugin.json` (name/description/version) | `package.json` → `pi.skills` + `pi.extensions` | none (TS/JS plugin modules + opencode.json) |
+| Structure | root `skills/`/`agents/`/`commands/` + `hooks/hooks.json` | `skills/` + `.pi/extensions/*.ts` | `.opencode/plugins/*.ts` |
+| Install | `/plugin install`, `claude --plugin-dir`, marketplaces | `pi install git:github.com/<owner>/<repo>` | `.opencode/plugins/`, npm `plugin`（生态: opencode.ai/docs/ecosystem） |
 
-## Open questions (tracked, not blocking)
++ **oh-my-pi (omp)**（Pi 的 fork）: 读取 `package.json` 的 `pi`/`omp` 字段
+  (`extensions[]`/`skills`) — 见 [`plugins/oh-my-pi.md`](plugins/oh-my-pi.md)。
 
-- ⚠️ pi extension API for session-start bootstrap (`.pi/extensions/*.ts`).
-- ⚠️ opencode hooks config shape in `opencode.json`.
+## Open questions (tracked, not blocking — non-hooks items)
+
 - ⚠️ whether Claude Code scans `.agents/skills/` for bare skills (beyond plugin dir).
 - ⚠️ skill-creator's eval loop is Claude-based; validating pi/opencode skills with it
   is unproven — verify in M1 before promising cross-harness skill validation.
+
+> All hooks questions are resolved — see `hooks-reference.md` (captured 2026-08-01).
