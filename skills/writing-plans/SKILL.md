@@ -48,6 +48,7 @@ If you catch yourself doing any of these, you are violating the writing-plans co
 - 任务拆解后用户认为粒度不合适 → 调整后重新输出
 - 需求中存在无法拆解的模糊点 → 标记为 blocked，请求澄清
 - 计划文档保存失败（目录不存在）→ 创建 `docs/plans/` 目录，重试
+- 项目定义了自定义文档布局（如 `AGENTS.md` 指定任务拆解放 `docs/tasks/`）→ **遵循项目约定**，通用契约式布局参考 [`references/project-contract.md`](../../references/project-contract.md)（经验式，非强制）
 
 ## 输入
 
@@ -253,6 +254,14 @@ src/
 
 计划文档生成后， Agent 必须在项目根目录初始化轻量级持久化状态文件 `.moonbit-pipeline.json`（用于多 Session / Context 压缩后的断点恢复）：
 
+### 断点恢复契约 — Phase 切换时更新 plan_file
+
+`.moonbit-pipeline.json` 是断点恢复的关键锚点，其中 **`plan_file` 字段必须始终指向「当前工作对应的拆解文档」**：
+
+- **Phase 1 拆解完成** → `plan_file` 指向 Phase 1 拆解文档；Phase 1 收尾（verify 通过）时保持该指针
+- **进入 Phase 2 前（下一轮继续）** → **必须把 `plan_file` 更新为新的 Phase 2 拆解文档路径**，再开始 Phase 2 任务
+- 恢复会话时：读取 `plan_file` → 打开对应拆解文档 → 按 `tasks.current` 继续；若 `plan_file` 过期（指向已完成 Phase），先纠正指针再继续
+
 ```json
 {
   "schema_version": 1,
@@ -272,6 +281,14 @@ src/
   "next": "implement:task-1"
 }
 ```
+
+**Phase 切换检查点（进入新 Phase 前必做）**：
+1. 为 Phase 2 生成/获取新的拆解文档（`docs/tasks/` 或项目约定位置）
+2. 更新 `.moonbit-pipeline.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数
+3. 用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json` 校验状态文件合法
+4. 再开始 Phase 2 的第一个任务
+
+> 不做此更新 → 恢复会话时 `plan_file` 仍指向 Phase 1 文档，断点恢复会读到已完成的旧计划，导致进度错位。
 
 ### 输出 JSON
 

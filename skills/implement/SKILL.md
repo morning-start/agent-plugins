@@ -246,6 +246,8 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 
 在每完成一个 Task（通过 RED → GREEN → VERIFY 并经 `code-review` 批准）后，Agent 必须更新根目录的 `.moonbit-pipeline.json` 文件：
 
+> **断点恢复衔接**：`plan_file` 必须始终指向「当前工作对应的拆解文档」。进入新 Phase（如 Phase 2）前，先把 `plan_file` 更新为新 Phase 拆解文档路径（`tasks.total/completed/current` 重置为该 Phase 计数），再开始该 Phase 任务——这是 Context 压缩/多 Session 后断点恢复的关键一环，详见 `moonbit-writing-plans` 的「断点恢复契约」。恢复会话时若 `plan_file` 过期（指向已完成 Phase），先纠正指针再继续。
+
 ```json
 {
   "schema_version": 1,
