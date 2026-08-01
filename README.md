@@ -104,8 +104,8 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 
 | 技能 | 作用 |
 |---|---|
-| `moonbit-plan` | 澄清需求，选择项目类型，确定架构、目标平台和 API；宏观设计 + 模块划分 + 规则承载 |
-| `moonbit-writing-plans` | 把已确认设计拆成分阶段（Phase）、分步骤、带验证命令的行为增量任务 |
+| `moonbit-plan` | 澄清需求（目标/场景/客户/边界/维护五问），选择项目类型，确定架构、目标平台和 API；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 |
+| `moonbit-writing-plans` | 把已确认设计拆成分阶段（Phase，含维护 Phase）、分步骤、带验证命令的行为增量任务 |
 | `moonbit-scaffold` | 按项目类型动态生成骨架（按模块组织目录），不覆盖已有用户文件 |
 
 ### 构建与审查

@@ -131,8 +131,8 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
 | `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs |
 | `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning |
-| `moonbit-plan` | Clarify requirements, design architecture and API; macro design + module breakdown + rule carrying |
-| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular) |
+| `moonbit-plan` | Clarify requirements (goal/scenario/customer/boundary/maintenance), design architecture and API; macro design + module breakdown + rule carrying + maintainability |
+| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular, maintenance phase) |
 | `moonbit-scaffold` | Generate project skeleton from templates |
 | `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) |
 | `moonbit-perform` | Optimize performance with measurement-driven cycle |

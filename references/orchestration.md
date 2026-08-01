@@ -160,8 +160,8 @@
 | `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
 | `moonbit-docs` | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 管线步骤 |
 | `moonbit-security` | 威胁建模、依赖漏洞扫描、安全设计审查 | 管线步骤 |
-| `moonbit-plan` | 需求澄清、架构和 API 设计；宏观设计 + 模块划分 + 规则承载 | 管线入口 |
-| `moonbit-writing-plans` | 设计→任务拆解（分阶段 Phase、分步骤、粒度约束） | 管线步骤 |
+| `moonbit-plan` | 需求澄清（目标/场景/客户/边界/维护五问）、架构和 API 设计；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 | 管线入口 |
+| `moonbit-writing-plans` | 设计→任务拆解（分阶段 Phase、分步骤、粒度约束、维护 Phase） | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架（按模块组织目录） | 管线步骤 |
 | `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 管线并行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
