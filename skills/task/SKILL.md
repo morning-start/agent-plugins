@@ -74,6 +74,7 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
   - **多个任务且用户已授权提交 git** → 验收后按授权在功能分支上提交（遵循 `moonbit-git` 分支工作流）。
   - **分支规范**：不在主分支直接修改；单个功能在功能分支上实现，合并后再建新分支。
   - **worktree 并行**：必须获得用户明确同意；不同意则顺序实现。
+  - **批次检查点**：多任务按批次执行（每批最多 5 个，见 `moonbit-implement` 批次上限）。本任务完成并提交（或交用户确认）后即构成批次检查点：压缩会话/开始新上下文后再继续下一任务；达到批次上限必须停在该检查点。
   - **前提检查**：项目本身是 git 仓库（存在 `.git` 或 `git rev-parse` 成功）才可提交；非 git 仓库只展示变更，不执行 `git` 命令。
 
 ## Red Flags — STOP and Start Over

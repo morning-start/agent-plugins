@@ -161,13 +161,13 @@
 | `moonbit-docs` | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 管线步骤 |
 | `moonbit-security` | 威胁建模、依赖漏洞扫描、安全设计审查 | 管线步骤 |
 | `moonbit-plan` | 需求澄清（目标/场景/客户/边界/维护五问）、架构和 API 设计；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 | 管线入口 |
-| `moonbit-writing-plans` | 设计→任务拆解（分阶段 Phase、分步骤、粒度约束、维护 Phase） | 管线步骤 |
+| `moonbit-writing-plans` | 设计→任务拆解（分阶段 Phase、分步骤、粒度约束、维护 Phase、批次 ≤5） | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架（按模块组织目录） | 管线步骤 |
 | `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 管线并行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
 | `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 管线并行 |
-| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；Git 提交契约（单任务用户确认/多任务授权提交） | 管线核心 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后交用户确认） | 管线核心 |
+| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；批次上限（≤5/批）；Git 提交契约（单任务用户确认/多任务授权提交） | 管线核心 |
+| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后交用户确认，构成批次检查点） | 管线核心 |
 | `moonbit-git` | 功能分支工作流、提交契约、合并、worktree 并行管理 | 独立 |
 | `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 任务间门禁 |
 | `moonbit-verify` | 全量验证门禁 + 按模块/任务验证子集 | 管线检查点 |

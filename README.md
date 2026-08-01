@@ -105,7 +105,7 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 | 技能 | 作用 |
 |---|---|
 | `moonbit-plan` | 澄清需求（目标/场景/客户/边界/维护五问），选择项目类型，确定架构、目标平台和 API；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 |
-| `moonbit-writing-plans` | 把已确认设计拆成分阶段（Phase，含维护 Phase）、分步骤、带验证命令的行为增量任务 |
+| `moonbit-writing-plans` | 把已确认设计拆成分阶段（Phase，含维护 Phase）、分步骤、带验证命令的行为增量任务（每批 ≤5 个） |
 | `moonbit-scaffold` | 按项目类型动态生成骨架（按模块组织目录），不覆盖已有用户文件 |
 
 ### 构建与审查
@@ -113,8 +113,8 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 | 技能 | 作用 |
 |---|---|
 | `moonbit-testing` | 设计测试策略、组织测试文件、决定测试时机（先行 vs 后补）、补充 valid/invalid/edge 场景 |
-| `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码；模块化小步实现；Git 提交契约（单任务用户确认/多任务授权提交） |
-| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）、逐项验收、保质保量交付（交付后交用户确认） |
+| `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码；模块化小步实现；批次上限（≤5/批）；Git 提交契约（单任务用户确认/多任务授权提交） |
+| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）、逐项验收、保质保量交付（交付后交用户确认，构成批次检查点） |
 | `moonbit-git` | 功能分支工作流（不在主分支直接修改）、提交契约、合并、worktree 并行（需用户同意） |
 | `moonbit-code-review` | 在任务之间审查真实变更（任务/模块粒度 + 验收项↔测试对应），处理 Critical/Important 问题 |
 

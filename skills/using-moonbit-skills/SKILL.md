@@ -139,9 +139,9 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) |
 | `moonbit-perform` | Optimize performance with measurement-driven cycle |
 | `moonbit-refactor` | Refactor code with test protection, eliminate code smells |
-| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation; git commit contract (single task → user confirms, multi-task → authorized commit) |
-| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance, user confirmation on delivery |
-| `moonbit-git` | Branch-per-feature workflow, commit contract, merges, worktree (user consent required) |
+| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation; batch limit (≤5 tasks per batch); git commit contract (single task → user confirms, multi-task → authorized commit) |
+| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance, user confirmation on delivery, batch checkpoint on completion |
+| `moonbit-git` | Branch-per-feature workflow, commit contract, merges, worktree (user consent required), batch checkpoints |
 | `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |
 | `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment |
