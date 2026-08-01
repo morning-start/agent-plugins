@@ -7,7 +7,9 @@ description: "Use FIRST before any MoonBit implementation work — when the user
 
 ## 职责
 
-Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求文档 + 架构决策。**
+Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求文档 + 架构决策 + 模块划分 + 设计规则。**
+
+设计要**宏观、清晰、能承载规则**：不只决定"做什么"，还要定下"模块边界"和"实现时必须遵守的规则"，让后续 writing-plans / testing / implement / task 有统一的约束来源，避免每个技能各自猜测。
 
 ## 项目类型分类
 
@@ -60,6 +62,8 @@ NO CODE WITHOUT APPROVED DESIGN
 
 - [ ] 已生成 `docs/requirements.md` 需求文档
 - [ ] 用户已明确确认 `primary_type`、`targets`、`api_surface`（记录确认来源）
+- [ ] 已定义**模块划分**（每个模块的职责与边界、模块间依赖方向）
+- [ ] 已定义**设计规则**（命名约定、错误处理策略、验证/测试约束、验收标准来源）
 - [ ] 当前阶段未产出任何 `.mbt` 实现代码文件
 - [ ] 若已进入 implement，回头检查是否有 plan 跳过证据
 
@@ -130,8 +134,26 @@ pub fn parse(input: StringView) -> Result[Ast, ParseError]
 ## 架构
 {推荐架构模式}
 
-## API 表面
-- pub fn parse(StringView) -> Result[Ast, ParseError]
+## 模块划分（宏观设计，能承载规则）
+| 模块 | 职责 | 边界（做什么/不做什么） | 依赖（依赖哪些模块） |
+|------|------|------------------------|----------------------|
+| {module_a} | {职责} | {边界} | {依赖} |
+| {module_b} | {职责} | {边界} | {依赖} |
+
+> 模块是后续任务拆解的最小聚合单元：每个模块对应一个 Phase，模块内再拆 Task。
+
+## 设计规则（实现必须遵守，后续技能统一引用）
+- 命名约定：{如 snake_case / 前缀规则}
+- 错误处理：{如 Result[T,E] 而非 panic，错误类型定义在哪个模块}
+- 测试约束：{如 parser 必须 valid/invalid/edge 三分类；验收标准如何定义}
+- 其他规则：{模块间依赖方向、性能约束、公共 API 稳定性要求}
+
+## API 表面（按模块组织）
+### {module_a}
+- pub fn {fn1}(...) -> ...
+- pub type {type1}
+### {module_b}
+- pub fn {fn2}(...) -> ...
 ```
 
 ## 检查点
@@ -169,6 +191,16 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
   "capabilities": ["lexer", "tokenizer"],
   "targets": ["native"],
   "architecture": "recursive-descent-layered",
+  "modules": [
+    {"name": "lexer", "responsibility": "tokenize", "depends_on": []},
+    {"name": "parser", "responsibility": "AST build", "depends_on": ["lexer"]}
+  ],
+  "design_rules": {
+    "naming": "snake_case",
+    "error_handling": "Result[T,E] no panic",
+    "test_constraints": "valid/invalid/edge",
+    "acceptance_source": "module boundary + test classification"
+  },
   "api_surface": ["pub fn parse(StringView) -> Result[Ast, ParseError]"],
   "requirements_file": "docs/requirements.md",
   "next": "writing-plans"

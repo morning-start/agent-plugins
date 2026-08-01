@@ -55,16 +55,17 @@
 | `moonbit-cd`（新增） | 部署策略、制品管理、回滚预案、发布渠道 | 不替代 verify 门禁；不判定"可发布"（归 evaluate） |
 | `moonbit-docs`（新增） | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 不做发布前预览校验（归 evaluate） |
 | `moonbit-security`（新增） | 威胁建模、依赖漏洞扫描、安全设计审查 | 不替代 verify E2 最终审计门禁 |
-| `moonbit-plan` | 需求澄清、架构和 API 设计决策 | 不写实现代码 |
-| `moonbit-writing-plans` | 设计→可执行任务拆解 | 不写实现代码 |
-| `moonbit-scaffold` | 按已批准设计动态生成项目骨架 | 不依赖预置模板，不覆盖用户文件 |
-| `moonbit-testing` | 测试设计、组织、写法、迭代 | 不写实现代码，不运行门禁判定，不接管 implement 的 TDD Red 阶段执行 |
+| `moonbit-plan` | 需求澄清、架构和 API 设计决策；宏观设计 + 模块划分 + 规则承载 | 不写实现代码 |
+| `moonbit-writing-plans` | 设计→可执行任务拆解（分阶段 Phase、分步骤、任务粒度约束） | 不写实现代码 |
+| `moonbit-scaffold` | 按已批准设计动态生成项目骨架（按模块组织目录） | 不依赖预置模板，不覆盖用户文件 |
+| `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 不写实现代码，不运行门禁判定，不接管 implement 的 TDD Red 阶段执行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 不改变功能行为，不替代 verify 门禁 |
 | `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 不改变可观察行为，不替代 testing 测试设计 |
-| `moonbit-implement` | Feature TDD + Bug Fix Mode 双模式实现 | 无失败测试/无 regression test 不写实现代码 |
-| `moonbit-code-review` | 任务间代码审查 | 不发布、不声称完成 |
-| `moonbit-verify` | 三级验证门禁（基础/Custom/增强） | 不声称完成除非有新鲜证据 |
-| `moonbit-evaluate`（扩展） | 验收评估 + 发布准备 + changelog/release notes/回退预案 | 不跳过 verify，不替用户决定版本号，不执行部署（归 cd） |
+| `moonbit-implement` | Feature TDD + Bug Fix Mode 双模式实现；模块化小步实现 | 无失败测试/无 regression test 不写实现代码；目标过大回 writing-plans 拆分 |
+| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）+ 逐项验收交付 | 不写实现代码前无失败测试；不替代 verify 门禁；验收项未逐项确认不声称完成 |
+| `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 不发布、不声称完成 |
+| `moonbit-verify` | 三级验证门禁（基础/Custom/增强）+ 按模块/任务验证子集 | 不声称完成除非有新鲜证据 |
+| `moonbit-evaluate`（扩展） | 验收评估（任务级验收清单汇总）+ 发布准备 + changelog/release notes/回退预案 | 不跳过 verify，不替用户决定版本号，不执行部署（归 cd） |
 | `moonbit-learn` | 从已定位问题中沉淀知识 + 生产事故 RCA | NO MEMORY WITHOUT ROOT CAUSE：未确认根因不写入，不重复创建 |
 
 ## 仓库工作规则
@@ -121,7 +122,7 @@ Hooks 只提供自动化子集，不能替代完整验证：
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 16 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 17 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
 - `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。

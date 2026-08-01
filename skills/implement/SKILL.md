@@ -9,6 +9,8 @@ description: "Use when implementing MoonBit features, fixing bugs, debugging, or
 
 逐任务实现功能。**Agent 做 TDD（Red-Green-Verify），每个任务完成后展示给用户看。** 调试失败自动修复，3 次失败后问用户。
 
+**实现要分功能模块、小步推进**：一次只实现一个功能点/模块，不一次性实现太大目标。任务过大时回到 `moonbit-writing-plans` 拆分，而不是在实现中"顺手"扩展范围。
+
 ## The Iron Law
 
 ```
@@ -67,13 +69,20 @@ If you catch yourself thinking any of these, you are violating TDD:
 
 ```
 ┌─ RED:    写一个会失败的测试 → moon test -f "test_name" (预期: 失败)
-│          （测试组织遵循 moonbit-testing 决策）
+│          （测试组织遵循 moonbit-testing 决策；测试时机遵循 testing 的先行/后补决策）
 ├─ GREEN:  写最小实现 → moon test -f "test_name" (预期: 通过)
 ├─ VERIFY: 全量验证 → moon fmt --check + moon check --warn-list +73 + moon test
 └─ 失败 → 自动诊断 (debug 内置, 3 次上限 → 问用户)
 
 设计回溯触发条件: API 不可测、架构假设错误、依赖不兼容 → 回到 plan（详见 [plan 设计回溯](../plan/SKILL.md#设计回溯)）
 ```
+
+### 模块化小步实现
+
+- 按 `writing-plans` 的任务粒度推进：一个 Task = 一个功能点/模块，**不跨多个模块同时大改**
+- 任务目标过大（预计改动 >3 文件或跨模块）→ **回到 `moonbit-writing-plans` 拆分**，不在实现中临时扩范围
+- 每个模块的 Phase 完成时，该模块测试应全绿且可独立验证
+- 实现范围以当前 Task 的验收项为准，不"顺手"实现相邻功能
 
 ---
 

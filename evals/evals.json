@@ -284,6 +284,117 @@
       "should_trigger": true,
       "files": [],
       "skills": ["perform", "plan"]
+    },
+    {
+      "id": 20,
+      "name": "single-task-implementation",
+      "prompt": "Here is task 3 from the plan: implement the tokenizer module that converts a string into a list of tokens. Please implement this single task with quality.",
+      "expected_output": "Use moonbit-task: define acceptance criteria first, write a failing test (RED), implement minimal code (GREEN), run full verification (VERIFY), and report item-by-item acceptance results before claiming done.",
+      "assertions": [
+        "routes to task not full implement pipeline",
+        "defines acceptance criteria checklist before implementation",
+        "writes failing test before production code",
+        "runs full verification (fmt check test) before delivery",
+        "reports item-by-item acceptance results",
+        "does not claim completion before all acceptance items pass"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["task"]
+    },
+    {
+      "id": 21,
+      "name": "single-task-module-feature",
+      "prompt": "帮我实现单一模块：给这个 JSON 解析库加一个格式化输出函数，测试前置、逐项验收、保质保量交付。",
+      "expected_output": "使用 moonbit-task：先定义验收清单，RED 写失败测试，GREEN 最小实现，VERIFY 全量验证，逐项验收后交付给用户。",
+      "assertions": [
+        "routes to task",
+        "writes acceptance checklist before implementation",
+        "test-first RED before production code",
+        "verifies fmt check test before delivery",
+        "delivers with item-by-item acceptance report"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["task"]
+    },
+    {
+      "id": 22,
+      "name": "plan-module-breakdown",
+      "prompt": "I want to build a TOML parser library. Please design it — make the design macro and clear so it can carry rules for implementation.",
+      "expected_output": "Use moonbit-plan: define project type, architecture, module breakdown (lexer/parser/validate) with boundaries and dependencies, and design rules (naming, error handling, test constraints). API surface organized by module.",
+      "assertions": [
+        "defines module breakdown with boundaries and dependencies",
+        "defines design rules carrying section (naming/error/test constraints)",
+        "organizes API surface by module",
+        "does not write implementation code",
+        "outputs modules and design_rules in plan result"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["plan"]
+    },
+    {
+      "id": 23,
+      "name": "writing-plans-phased",
+      "prompt": "Here is the approved design with modules lexer, parser, validate. Break it into implementation tasks — phased, stepped, and executable.",
+      "expected_output": "Use moonbit-writing-plans: organize tasks by Phase (one per module), each phase has goal and deliverable, tasks sorted by dependency, each task focuses a single function point with verify command.",
+      "assertions": [
+        "organizes tasks by Phase per module",
+        "each phase has goal and deliverable",
+        "tasks sorted by module dependency order",
+        "each task is a single function point with verify command",
+        "no placeholder code in tasks"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["writing-plans"]
+    },
+    {
+      "id": 24,
+      "name": "testing-timing-decision",
+      "prompt": "I have existing code for the validate module without tests, and I'm about to add a new feature to it. How should I test?",
+      "expected_output": "Use moonbit-testing timing decisions: new feature → test-first; existing behavior → post-implementation tests to lock behavior. Provide timing decisions per item.",
+      "assertions": [
+        "applies timing decision rules (test-first vs post-impl)",
+        "new feature requires failing test first",
+        "existing behavior gets post-implementation lock tests",
+        "does not write implementation code"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["testing"]
+    },
+    {
+      "id": 25,
+      "name": "implement-modular-scope",
+      "prompt": "The plan says implement the lexer module. While implementing tokenize, I also see the parser needs a fix. Should I do both now?",
+      "expected_output": "Use moonbit-implement modular small-step: do NOT cross modules. Implement only the lexer task; if parser fix is a separate task, defer it or return to writing-plans for splitting.",
+      "assertions": [
+        "does not expand scope across modules",
+        "keeps implementation within current task's acceptance items",
+        "deferring cross-module work to its own task",
+        "escalates oversized tasks to writing-plans for splitting"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["implement"]
+    },
+    {
+      "id": 26,
+      "name": "evaluate-acceptance-summary",
+      "prompt": "All tasks passed verify. Can I publish the library now?",
+      "expected_output": "Use moonbit-evaluate: first summarize task-level acceptance (all acceptance items passed), then delegate verify, run type-specific checks, generate CI/CHANGELOG preview, give SemVer suggestion, and let user decide.",
+      "assertions": [
+        "summarizes task-level acceptance before publish readiness",
+        "delegates verify before publication",
+        "gives SemVer suggestion based on API changes",
+        "keeps version confirmation as user decision",
+        "does not claim publish_ready before checks pass"
+      ],
+      "should_trigger": true,
+      "files": [],
+      "skills": ["evaluate", "verify"]
     }
   ]
 }

@@ -7,7 +7,7 @@ description: "Use when transitioning from design to implementation — after moo
 
 ## 职责
 
-将设计文档拆解为可执行的实现任务列表。**每个任务代表一个行为增量，可独立审查、可验证。**
+将设计文档拆解为可执行的实现任务列表。**每个任务代表一个行为增量，可独立审查、可验证。规划分阶段、分步骤、可实现。**
 
 **核心原则：** 假设执行者对你代码库零上下文、品味堪忧。文档写清楚每一步。
 
@@ -22,8 +22,10 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 ### 可机械化自检
 
 - [ ] 已生成 `docs/plans/YYYY-MM-DD-{feature}-plan.md` 计划文件
+- [ ] 任务按 **Phase（阶段）** 分组：每个 Phase 对应一个模块，有明确的阶段目标和交付物
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
+- [ ] 每个任务聚焦**单个功能点**，目标过大已拆分（单任务不跨多个模块）
 - [ ] 计划文件中无占位符（搜索 `TODO`、`TBD`、`参照`、`类似上面`）
 
 未满足以上任一 → Iron Law 触发：停止，先完善计划。
@@ -76,7 +78,31 @@ src/
 
 ### 2. 任务拆解
 
-每个任务以 **TDD 循环**或变更类型验证为粒度。见 `moonbit-implement` 的变更类型路由表。
+先按**模块 → Phase → Task** 三层组织，每个任务以 **TDD 循环**或变更类型验证为粒度。见 `moonbit-implement` 的变更类型路由表。
+
+#### Phase（阶段）定义
+
+- 每个 **Phase 对应一个模块**（来自 plan 的模块划分），有明确的阶段目标和交付物
+- Phase 内任务按依赖拓扑排序；Phase 之间按模块依赖方向排序
+- 每个 Phase 结束时模块可独立验证（该模块的测试全绿）
+- 单个 Task 聚焦**单个功能点**：一个函数、一个类型、一个行为；目标过大 → 继续拆分
+
+```markdown
+## Phase 1: lexer（词法分析模块）
+阶段目标：字符串 → Token 列表；交付物：src/tokenize.mbt + 测试
+依赖：无
+
+### Task 1.1: Token 类型定义
+...
+
+### Task 1.2: 基本 tokenize 函数
+...
+
+## Phase 2: parser（AST 构建模块）
+阶段目标：Token 列表 → AST；交付物：src/parser.mbt + 测试
+依赖：Phase 1
+...
+```
 
 ### 3. 输出计划文档
 
@@ -140,6 +166,8 @@ src/
 | 单次变更建议 3 个文件以内 | Create + Modify + Test | "改 8 个文件"（考虑拆分） |
 | 每个任务含完整代码 | 不写 "类似上面" | "参照 task 2 写"（模棱两可） |
 | 无占位符 | 每行代码都实际写成 | "TODO: 加错误处理"（不可执行） |
+| **单任务聚焦单功能点** | 一个 Task = 一个函数/类型/行为 | "实现 lexer + parser + validate"（跨模块） |
+| **任务目标过大时拆分** | 拆到可独立验证的最小增量 | "实现完整格式化输出"（拆成：结构遍历→格式生成→IO） |
 
 **注意：** 文件数是提示，不是硬限制。如果行为内聚性要求跨更多文件，优先保留语义完整性，不强行拆分。
 
@@ -177,6 +205,11 @@ src/
 ```json
 {
   "status": "planned | blocked",
+  "total_phases": 3,
+  "phases": [
+    {"name": "lexer", "tasks": ["task-1", "task-2"], "depends_on": []},
+    {"name": "parser", "tasks": ["task-3", "task-4"], "depends_on": ["lexer"]}
+  ],
   "total_tasks": 7,
   "total_files": 5,
   "plan_file": "docs/plans/2026-07-28-parser-plan.md",

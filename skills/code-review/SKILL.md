@@ -9,7 +9,7 @@ description: "Use when requesting code review between implementation tasks, afte
 
 在实现任务之间进行代码审查，及早发现和修复问题，防止问题扩散。
 
-**核心原则：早审查，常审查。** 每个 implement 任务完成后都做一次审查。
+**核心原则：早审查，常审查。** 每个 implement 任务完成后都做一次审查。**审查粒度对齐任务/模块**：按 `moonbit-task` / `moonbit-implement` 的单个 Task 或 Phase 模块为单位审查，diff 过大时拆分为多个小审查。
 
 ## The Iron Law
 
@@ -98,6 +98,8 @@ fi
 | 跨包 struct 字面量 | 跨包只能用 `pub` 字段，通常需要提供构造器函数 | 结构体重构只报告 |
 | `unused_mut` 语义 | `mut` 仅在变量重新赋值时需要，push/mutate 不需要 | 谨慎添加/移除 `mut`，需验证 push/mutate 场景 |
 | 测试覆盖 | 新增功能有对应单元测试，组织遵循 testing 契约 | 报告缺失的测试和不符合的组织 |
+| 验收项 ↔ 测试对应 | 每个验收项（来自 task 验收清单）都有对应测试，测试时机符合 testing 决策（新功能先行、既有行为后补） | 报告无测试支撑的验收项 |
+| 模块边界 | 变更不越出当前 Task/模块范围；跨模块改动应拆分审查 | 报告越界变更，建议拆分 |
 | perform 产出审查 | 优化有测量数据支撑，无过早优化 | 报告无基线的优化 |
 | refactor 产出审查 | 可观察行为不变，公共 API 未变 | 报告 API 变更 |
 
@@ -161,7 +163,8 @@ Round 3: ... → approved → verify
   "status": "approved | changes_needed",
   "review_round": 1,
   "previous_round_findings": 0,
-  "scope": "tasks 3-5",
+  "scope": "task-3 (lexer 模块)",
+  "acceptance_coverage": {"total": 4, "tested": 4, "missing": 0},
   "findings": {
     "critical": 0,
     "important": 1,

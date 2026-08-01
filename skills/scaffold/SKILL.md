@@ -7,9 +7,9 @@ description: "Use when generating a MoonBit project skeleton. Triggered by user 
 
 ## 职责
 
-根据 plan 阶段确认的项目类型和配置，**动态生成**最小可构建的 MoonBit 项目骨架。不依赖预置模板，按需生成每一份文件。
+根据 plan 阶段确认的项目类型、模块划分和配置，**动态生成**最小可构建的 MoonBit 项目骨架。不依赖预置模板，按需生成每一份文件。
 
-**核心原则：拒绝固定模板，按需动态生成。**
+**核心原则：拒绝固定模板，按需动态生成；骨架按模块组织目录，为分模块实现落地铺路。**
 
 ## The Iron Law
 
@@ -17,7 +17,7 @@ description: "Use when generating a MoonBit project skeleton. Triggered by user 
 NO TEMPLATES — DYNAMICALLY GENERATE
 ```
 
-禁止使用预置模板文件（如 `templates/*.txt`）。所有项目文件必须根据 `project_type` 和 `package_name` 动态生成，确保内容与 MoonBit 工具链版本和用户配置一致。
+禁止使用预置模板文件（如 `templates/*.txt`）。所有项目文件必须根据 `project_type`、`package_name` 和 **plan 输出的模块划分**动态生成，确保内容与 MoonBit 工具链版本和用户配置一致。
 
 > **区分**：下方"按类型动态生成"章节中的代码块是**生成逻辑示例**（agent 按此模式动态写入文件），不是模板文件。模板文件指 `templates/` 目录下的预置文件；本技能不存在此类文件。
 
@@ -167,14 +167,16 @@ test "version" {
 }
 ```
 
-### 3. 能力扩展
+### 3. 能力扩展（按模块组织）
 
-当项目包含 `parser` 或 `async` 能力时，在基础结构上追加：
+当项目包含 `parser` 或 `async` 能力时，在基础结构上追加**模块目录**。模块来自 plan 的「模块划分」，每个模块一个文件组，为 writing-plans 的 Phase 和 implement 的分模块实现提供落地骨架：
 
-| 能力 | 追加文件 |
+| 能力 | 模块文件（每模块一个文件组） |
 |------|---------|
-| `parser` | `tokenize.mbt`, `parser.mbt`, `validate.mbt` |
-| `async` | `event_loop.mbt`, `task.mbt`, `io.mbt` |
+| `parser` | `tokenize.mbt`（lexer 模块）、`parser.mbt`（parser 模块）、`validate.mbt`（validate 模块） |
+| `async` | `event_loop.mbt`（event_loop 模块）、`task.mbt`（task 模块）、`io.mbt`（io 模块） |
+
+> 若 plan 定义了自定义模块划分，以 plan 为准动态生成对应模块文件；每模块可附带独立测试文件（`{module}_test.mbt`），让后续 TDD 有落点。
 
 ### 4. 替换占位符
 
@@ -213,6 +215,7 @@ moon test --target wasm
   "status": "scaffolded | blocked",
   "project_type": "cli",
   "package_name": "username/my-tool",
+  "modules": ["main", "lib"],
   "files_created": [
     "moon.mod", "moon.pkg",
     "main.mbt", "test.mbt"

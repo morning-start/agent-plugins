@@ -45,6 +45,7 @@ When multiple skills match, route by intent:
 | 安全设计审查、威胁建模 | `moonbit-security` |
 | 测试设计、组织、写法 | `moonbit-testing` |
 | 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
+| 单一任务、单模块功能、逐项验收交付 | `moonbit-task` (Single Task TDD) |
 | 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
 | 性能优化、瓶颈分析 | `moonbit-perform` |
 | 重构、技术债务、坏味 | `moonbit-refactor` |
@@ -69,6 +70,7 @@ When multiple skills match, route by intent:
 | "optimize performance", "benchmark", "profile" | "性能优化", "性能瓶颈", "测量", "基线对比" | `moonbit-perform` |
 | "refactor", "technical debt", "code smell" | "重构", "技术债务", "坏味", "清理代码" | `moonbit-refactor` |
 | "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
+| "single task", "implement this task", "finish this task", "one module" | "实现这个任务", "单一任务", "单模块", "逐项验收" | `moonbit-task` |
 | "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "security" | "验证", "检查", "质量", "安全审查" | `moonbit-verify` |
 | "threat model", "security review", "secure design", "vulnerability" | "安全设计", "威胁建模", "安全审查", "漏洞扫描" | `moonbit-security` |
@@ -129,13 +131,14 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 | `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
 | `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs |
 | `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning |
-| `moonbit-plan` | Clarify requirements, design architecture and API |
-| `moonbit-writing-plans` | Break design into executable implementation tasks |
+| `moonbit-plan` | Clarify requirements, design architecture and API; macro design + module breakdown + rule carrying |
+| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular) |
 | `moonbit-scaffold` | Generate project skeleton from templates |
-| `moonbit-testing` | Design tests, organize test files, iterate on test code |
+| `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) |
 | `moonbit-perform` | Optimize performance with measurement-driven cycle |
 | `moonbit-refactor` | Refactor code with test protection, eliminate code smells |
-| `moonbit-implement` | Write code via TDD (test → implement → verify) |
+| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation |
+| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance |
 | `moonbit-code-review` | Review code diff and design between tasks |
 | `moonbit-verify` | Full quality gate: fmt, check, test, audit |
 | `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment |

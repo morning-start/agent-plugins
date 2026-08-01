@@ -9,13 +9,15 @@ description: "Use when evaluating or publishing a MoonBit project — the LAST s
 
 最终验收 + 发布准备。**Agent 委托 verify 做门禁→按项目类型执行专属验证→生成文档/CI→用户决定是否发布。**
 
+**项目级验收 = 任务级验收清单汇总**：实现按模块/任务小步交付（`moonbit-task` / `moonbit-implement`），因此发布前先汇总每个 Task 的逐项验收结果，确认所有模块的验收项均已通过，再执行全量门禁。
+
 ## The Iron Law
 
 ```
 NO PUBLISH WITHOUT FULL VERIFICATION AND ROLLBACK READINESS
 ```
 
-发布前必须通过 `moonbit-verify` 全量门禁（B1-B4 + C1）+ 类型专属验证。任何基础测试或 Custom 测试失败则阻断发布，不得跳过。发布时必须附带回滚预案（评估发布回退路径）。
+发布前必须通过 `moonbit-verify` 全量门禁（B1-B4 + C1）+ 类型专属验证。任何基础测试或 Custom 测试失败则阻断发布，不得跳过。发布时必须附带回滚预案（评估发布回退路径）。**未逐项验收全部 Task 验收清单时，不得声称项目可交付。**
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -44,6 +46,24 @@ If you catch yourself doing any of these, you are violating the evaluate contrac
 类型决定发布验证路径的差异。
 
 ## 验收标准
+
+### 任务验收清单汇总（所有项目必做）
+
+发布前先汇总实现阶段的逐项验收结果（来自 `moonbit-task` / `moonbit-implement` 的输出 JSON）：
+
+```json
+{
+  "task_acceptance_summary": {
+    "total_tasks": 7,
+    "accepted_tasks": 7,
+    "total_acceptance_items": 24,
+    "passed_items": 24,
+    "failed_items": 0
+  }
+}
+```
+
+**判定标准：** 全部 Task 的验收项通过（failed_items = 0），未通过的任务回到 implement 修复，不进入发布流程。
 
 ### 通用验证要求（所有项目类型）
 
@@ -285,6 +305,7 @@ ROLLBACK
   "status": "approved | needs_fix",
   "project_type": "main",
   "verification": "pass (B1-B4 + C1 all green)",
+  "task_acceptance": {"total_tasks": 7, "accepted_tasks": 7, "failed_items": 0},
   "type_specific": {
     "moon_run": "pass (output: 'Hello World')"
   },

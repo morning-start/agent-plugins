@@ -87,6 +87,25 @@ moon test -f "edge/"     # 边界条件
 
 **判定标准：** Total tests = passed，failed = 0。覆盖 valid（快乐路径）+ invalid（错误路径）+ edge（边界条件）三种类型。
 
+### B3a. 按模块/任务验证子集（单 Task 完成时）
+
+实现按模块/任务小步推进（见 `moonbit-writing-plans` 的 Phase 和 `moonbit-implement` 的模块化小步实现），因此验证也支持子集粒度：
+
+```bash
+# 单任务/模块验证：只跑当前 Task 的测试
+moon test -f "task_x_*"              # 聚焦当前功能点
+moon fmt --check                     # 格式仍全量检查（低成本）
+moon check --warn-list +73           # 类型仍全量检查
+
+# 阶段（Phase）验证：某个模块完成后独立验证该模块
+moon test -f "lexer_*"               # lexer 模块测试全绿
+```
+
+**契约**：
+- **单 Task 完成时**：`-f` 子集验证即可证明该功能点，但**声称"任务完成"前仍须全量验证一次**（B1-B4）。
+- **Phase/模块完成时**：该模块测试全绿 + 全量 B1-B4 通过，才能声称模块交付。
+- 子集验证 ≠ 全量验证：子集用于快速反馈，全量用于交付声明。
+
 ### B4. 工作区干净（发布准备阶段专用）
 
 ```bash

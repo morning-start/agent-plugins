@@ -109,6 +109,28 @@ NO TEST CODE WITHOUT TEST STRATEGY
 | 测试重构 | testing 重构测试代码 → verify 确认无回归 |
 | 非 TDD 流程 | 用户指定流程，testing 仅负责测试部分 |
 
+## 测试时机决策（测试先行 vs 实现后测试）
+
+测试不是"永远先行"也不是"永远后补"，按情况选择时机：
+
+| 场景 | 时机 | 理由 |
+|------|------|------|
+| **新功能 / 行为不确定** | **测试先行（TDD）** | 测试定义期望行为，驱动设计；先看失败（RED）证明测试有效 |
+| **新模块 / 公共 API** | **测试先行** | API 签名由测试消费侧验证，防过度设计 |
+| **修复已有 bug** | **先写 regression test 复现**，再修 | 先证明复现，再证明修复（见 implement Bug Fix Mode） |
+| **既有代码补覆盖** | **实现后补测** | 代码已存在，测试目的是记录/锁定当前行为 |
+| **探索性 / 临时代码** | 不写测试（Spike） | Spike 代码验证后丢弃，不进版本控制 |
+| **重构（行为不变）** | **先有测试保护再重构** | 重构前测试全绿，重构后仍绿才证明行为不变 |
+
+**决策问题**（写测试前先回答）：
+1. 这段行为是**新定义**还是**已存在**？新定义 → 测试先行；已存在 → 后补或回归。
+2. 该行为**是否需要锁定**（防回归）？需要 → 测试先行；仅记录 → 后补。
+3. 能否**先写一个会失败的测试**？能 → 测试先行；不能（行为未定/设计未定）→ 先澄清设计，再决定。
+
+**与验收清单的衔接**（`moonbit-task` / `moonbit-implement` 使用）：
+- 每个验收项对应至少一个测试，测试时机随验收项来源决定：新功能验收项 → 先行；既有行为验收项 → 后补锁定。
+- 无法为验收项写出测试 → 报告设计缺陷，回到 plan 修正验收项定义。
+
 ## 各项目类型测试策略
 
 | 类型 | 测试文件 | 分类 | 特殊关注 |
@@ -161,6 +183,10 @@ NO TEST CODE WITHOUT TEST STRATEGY
   "status": "designed | blocked",
   "project_type": "parser",
   "test_strategy": "valid/invalid/edge 分类",
+  "timing_decisions": [
+    {"item": "新模块公共 API", "timing": "test_first"},
+    {"item": "既有行为补覆盖", "timing": "post_implementation"}
+  ],
   "test_files": ["lib_test.mbt", "lib_valid_test.mbt", "lib_invalid_test.mbt"],
   "naming_convention": "<lib>_<category>_test.mbt",
   "coverage_targets": ["公共 API", "边界条件", "错误路径"],
