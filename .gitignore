@@ -21,3 +21,4 @@ Thumbs.db
 
 # Generated plugin projects (dogfood outputs)
 workspace/
+.*/skills/
