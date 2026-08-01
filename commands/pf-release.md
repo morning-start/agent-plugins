@@ -9,13 +9,15 @@ Prerequisites: `pf-verify` passes (exit 0); CHANGELOG entries exist for all chan
 ## Steps
 
 1. **Verify** — run `pf-verify`; abort on any FAIL finding.
-2. **Version bump (SemVer)** — bump `version` in **all** of:
-   - `package.json` (including the `pi` / `omp` fields if present);
-   - `.claude-plugin/plugin.json`;
-   - any versioned orchestration metadata in the component manifest.
+2. **Version bump (SemVer)** — run `scripts/bump-version.sh <new-version>`: it bumps
+   every declared manifest (`package.json` incl. `pi`/`omp`, `.claude-plugin/plugin.json`,
+   …) via `.version-bump.json`, then `--audit`s the repo for undeclared version
+   references. Do not hand-edit versions.
 3. **CHANGELOG** — Conventional Commits (`feat`/`fix`/`refactor`/`docs`/`test`/`chore`),
-   current milestone; record which lifecycle action drove the change
-   (split / merge / reorganize / port / retire) when applicable.
+   current milestone. **Each entry follows the evidence narrative** (superpowers
+   RELEASE-NOTES style): **bold one-line conclusion** + problem → root cause → fix →
+   evidence (eval results / issue refs / test coverage). Record which lifecycle action
+   drove the change (split / merge / reorganize / port / retire) when applicable.
 4. **Bilingual README** — sync `README.md` (English) and `README.zh-CN.md` (Chinese
    edition); both must reflect the new version and features.
 5. **Install scripts** — ensure `install.sh` / `install.ps1` exist and are executable

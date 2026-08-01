@@ -32,4 +32,5 @@
 - 复核时只更新受影响的端文件（以及本索引的日期）。
 - 固化当日已知缺口（各在其文件中标 ⚠️）：omp.sh docs 页 JS-rendered
   （oh-my-pi 规格已从 GitHub 固化 — 见 plugins/oh-my-pi.md）、Claude `plugins-reference`
-  完整 schema、pi `pi.extensions` 键形状。
+  官方完整 schema（已从 ECC PLUGIN_SCHEMA_NOTES 吸收实测约束 — 见 plugins/claude-code.md）、
+  pi `pi.extensions` 键形状。

@@ -1,13 +1,28 @@
 {
   "name": "plugin-factory",
   "version": "0.1.0",
-  "description": "A meta-plugin that guides agents through creating multi-agent plugins (Claude Code, pi, opencode) from intent, goals, and scenarios.",
-  "author": "plugin-factory contributors",
+  "description": "A meta-plugin that guides agents through creating multi-agent plugins (Claude Code, pi, opencode, oh-my-pi) from intent, goals, and scenarios.",
+  "author": {
+    "name": "plugin-factory contributors"
+  },
   "license": "MIT",
   "tags": [
     "meta-plugin",
     "plugin-factory",
     "scaffolding",
     "skill-creation"
+  ],
+  "keywords": [
+    "agent",
+    "plugin",
+    "skill",
+    "meta-plugin",
+    "scaffolding"
+  ],
+  "skills": [
+    "./skills/"
+  ],
+  "commands": [
+    "./commands/"
   ]
 }

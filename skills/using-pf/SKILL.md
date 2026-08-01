@@ -9,6 +9,20 @@ metadata:
 
 # using-pf — Unified Entry & Orchestration
 
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a pf-* scenario applies to what you are
+doing, you MUST run the intent check below BEFORE any response or action —
+including clarifying questions, exploring files, or scaffolding.
+
+IF A PF-* SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
 ## Overview
 
 The single entry point for plugin-factory (mirrors superpowers' `using-superpowers`).
@@ -33,6 +47,21 @@ commands — route internally.
 3. **Analyze** → S10: /pf-analyze structure probes; recommendations route to S4/S5/S7.
 4. **Release** → S9: /pf-release (verify → release).
 5. **Just a question** → answer directly; no scenario needed.
+
+## Red Flags
+
+These thoughts mean STOP — you are rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a question" | Questions are tasks. Determine intent first. |
+| "I'll just scaffold a quick plugin" | No PRD, no scaffold (Iron Law 1). |
+| "Let me explore the codebase first" | using-pf tells you HOW to approach. Check intent first. |
+| "I remember the pf-* flow" | Skills evolve. Read the current version. |
+| "This is a small change, skip intent" | Every change (S2–S8) starts with intent (Change mode). |
+| "Maintenance is trivial" | Every change still ends with verify → release. |
+| "Retiring this skill kills the plugin" | Single-skill retirement is maintenance (S5); the plugin lives on. |
+| "The skill is overkill" | Simple things become complex. Use it. |
 
 ## Rules
 

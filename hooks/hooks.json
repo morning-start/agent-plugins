@@ -1,10 +1,15 @@
 {
-  "manifest": "plugin-factory hooks metadata",
-  "events": {
+  "hooks": {
     "SessionStart": [
-      "session-start.sh",
-      "session-start.ps1"
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/session-start.sh",
+            "shell": "bash"
+          }
+        ]
+      }
     ]
-  },
-  "note": "Per-harness hook wiring (event names and config keys) is handled by the adapters — see references/agent-adapters.md."
+  }
 }

@@ -35,9 +35,19 @@ my-plugin/
 
 ### Manifest（`plugin.json`）
 
-已核实字段（来自指南）：`name`、`description`、`version`。
-完整 schema（author、license、tags、homepage、repository、dependencies…）在
-`plugins-reference` ⚠️——接线时查该来源。
+已核实字段（指南 + ECC 实测）：`name`、`description`、`version`、`author`、
+`homepage`、`repository`、`license`、`keywords`、`mcpServers`、`skills[]`、`commands[]`。
+
+#### 实测契约（2026-08-01 吸收自 ECC `PLUGIN_SCHEMA_NOTES.md` — 校验器未公开但强制）
+
+- `version` **必填**：示例文档常省略，但 marketplace 安装 / CLI 校验会因缺失失败。
+- `skills` / `commands` / `hooks` **必须是数组**：即使只有一项也不能用字符串，
+  否则报模糊错误（如 `agents: Invalid input`）。
+- agent Markdown frontmatter 的 `tools` 用**标量**（与 plugin.json 的数组规则相反）。
+- 修改 plugin.json 前先读契约；这些规则来自真实安装失败，防静默破坏与回归。
+
+> 官方 `plugins-reference` 完整 schema 仍待复核（code.claude.com 网络受限，
+> 2026-08-01）；上述实测约束已覆盖最常见安装失败点。
 
 ### 插件内的 hooks
 

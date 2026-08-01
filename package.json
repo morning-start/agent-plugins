@@ -15,6 +15,17 @@
   "license": "MIT",
   "private": true,
   "pi": {
+    "extensions": [
+      ".pi/extensions/pf-bootstrap.ts"
+    ],
+    "skills": [
+      "skills"
+    ]
+  },
+  "omp": {
+    "extensions": [
+      ".pi/extensions/pf-bootstrap.ts"
+    ],
     "skills": [
       "skills"
     ]

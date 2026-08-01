@@ -86,6 +86,9 @@ Per `references/plugins/` and `references/agent-adapters.md`:
   `.opencode/skills/` or `.agents/skills/`).
 - pi: `package.json` → `pi.skills` + `pi.extensions`.
 - oh-my-pi: **also** write the `omp` field (`pkg.omp` preferred, `pkg.pi` fallback).
+- **Tool mapping** (superpowers pattern): generate `references/<harness>-tools.md`
+  translating the skills' action vocabulary into each harness's native tools; keep
+  skill bodies tool-agnostic (see pf-design).
 
 ### 4. Render hooks (multi-shell) and commands
 
@@ -136,6 +139,7 @@ Policy values: `tiered` (default) / `english` (all English) / `native` (all `use
 - Every manifest skill exists as `skills/<name>/SKILL.md` and passed skill-creator eval.
 - Per-harness manifests match `references/plugins/`.
 - Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
+- Tool mapping files (`references/<harness>-tools.md`) generated per advertised harness.
 - Bilingual README + AGENTS/CLAUDE + install scripts present.
 - Language policy applied per layer and recorded in the generated AGENTS.md.
 
