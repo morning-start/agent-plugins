@@ -21,6 +21,12 @@ split, merge, reorganize, port, retire, and version evolution.
 | Zombie skill | no triggerable description / no references / no tests | **Retire** or **evolve** (v2 rewrite) |
 | Name collisions | name == dir violated, or duplicate names across sources | **Rename** with project prefix |
 | Version drift | root plugin version vs skill versions out of sync | **Align** versions (one source of truth) |
+| Chain break | a chain link's handoff artifact is not produced upstream, or a chain references a missing skill | **Repair orchestration** (re-link / reorder) |
+| Orphan skill | skill unreachable from any entry point or chain | **Reorganize**: add an entry link, or merge |
+| Missing entry | methodology plugin without a bootstrap/entry skill | **Add** `using-<plugin>` entry skill |
+
+Orchestration-health probes (chain break / orphan skill / missing entry) follow the
+patterns in `references/orchestration-patterns.md`.
 
 ## Decision flow
 

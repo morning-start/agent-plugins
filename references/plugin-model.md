@@ -17,6 +17,7 @@ per harness — see `agent-adapters.md` for the per-harness mapping table.
 | **scripts** | Validators, generators, helpers | bash + PowerShell pairs | multi-shell requirement |
 | **tests / evals** | Infrastructure & behavior tests | `tests/`, `evals/` | — |
 | **manifests** | Per-harness metadata | `.claude-plugin/plugin.json`, `package.json` (`pi.skills`), `.opencode/opencode.json` | — |
+| **orchestration** | Entry points / trigger chains / handoffs / conflicts (first-class manifest section); bootstrap skill for methodology plugins | `orchestration` in the component manifest | rendered into each skill's "next steps" + a `using-<plugin>` bootstrap skill |
 
 ## What a plugin must contain (release gate)
 
@@ -26,6 +27,8 @@ per harness — see `agent-adapters.md` for the per-harness mapping table.
 4. `AGENTS.md` (+ `CLAUDE.md`) project instructions.
 5. Bilingual README: `README.md` + `README.zh-CN.md`.
 6. Install instructions (`install.sh` / `install.ps1` or per-harness docs).
+7. Methodology plugins: a bootstrap/entry skill (`using-<plugin>`) and orchestration
+   metadata (`references/orchestration-patterns.md`).
 
 ## Generated plugin layout (template)
 
