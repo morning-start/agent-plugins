@@ -1,98 +1,98 @@
 # Claude Code hooks — 规格固化
 
-> **Captured: 2026-08-01** · Source: https://code.claude.com/docs/en/hooks (reference),
-> guide: https://code.claude.com/docs/en/hooks-guide
-> **Re-verify**: only when Claude Code ships a breaking hooks change or wiring fails at
-> runtime. Do not re-search pre-emptively; do not edit other harness files for this one.
+> **固化于：2026-08-01** · 来源：https://code.claude.com/docs/en/hooks （参考），
+> 指南：https://code.claude.com/docs/en/hooks-guide
+> **复核**：仅当 Claude Code 发布破坏性 hooks 变更或接线运行时失败时复核。
+> 不要预先重搜；为这一端复核时不要动其他端文件。
 
-## Model
+## 模型
 
-- Hooks are user-defined **shell commands**, HTTP endpoints, or LLM prompts that run at
-  lifecycle points.
-- Input: JSON context on **stdin** (command hooks) or POST body (HTTP hooks).
-- Output: optional JSON decision on stdout.
+- 钩子是**用户自定义的 shell 命令**、HTTP 端点或 LLM prompt，在 Claude Code
+  生命周期的特定点自动执行。
+- 输入：JSON 上下文经 **stdin**（command 钩子）或 POST body（HTTP 钩子）传入。
+- 输出：可选 JSON 决策，写 stdout。
 
-## Events and cadence
+## 事件与节奏
 
-Cadences:
+节奏：
 
-- once per session: `SessionStart`, `SessionEnd`
-- once per turn: `UserPromptSubmit`, `Stop`, `StopFailure`
-- every tool call in the agentic loop: `PreToolUse`, `PostToolUse`
-  (`EndConversation` calls skip both)
+- 每会话一次：`SessionStart`、`SessionEnd`
+- 每轮一次：`UserPromptSubmit`、`Stop`、`StopFailure`
+- agentic 循环中每次工具调用：`PreToolUse`、`PostToolUse`
+  （`EndConversation` 调用两者都跳过）
 
-Full event list:
+完整事件表：
 
-| Event | Fires when |
+| 事件 | 触发时机 |
 |-------|-----------|
-| `SessionStart` | session begins or resumes |
-| `Setup` | `--init-only`, or `--init`/`--maintenance` in `-p` mode (CI prep) |
-| `UserPromptSubmit` | prompt submitted, before Claude processes it |
-| `UserPromptExpansion` | user-typed command expands into a prompt; can block the expansion |
-| `PreToolUse` | before a tool call; **can block** |
-| `PermissionRequest` | tool call needs a permission decision |
-| `PermissionDenied` | auto-mode classifier denied a call; `{retry:true}` lets the model retry |
-| `PostToolUse` | after a tool call succeeds |
-| `PostToolUseFailure` | after a tool call fails |
-| `PostToolBatch` | full batch of parallel tool calls resolves, before next model call |
-| `Notification` | Claude Code sends a notification |
-| `MessageDisplay` | assistant message text is displayed |
-| `SubagentStart` / `SubagentStop` | subagent spawned / finished |
-| `TaskCreated` / `TaskCompleted` | task created / marked completed via TaskCreate |
-| `Stop` / `StopFailure` | Claude finished responding / turn ended on API error |
-| `TeammateIdle` | agent-team teammate about to go idle |
-| `InstructionsLoaded` | CLAUDE.md or `.claude/rules/*.md` loaded into context |
-| `ConfigChange` | config file changes during a session |
-| `CwdChanged` | working directory changes (e.g. `cd`) |
-| `FileChanged` | watched file changes on disk (`matcher` = filenames to watch) |
-| `WorktreeCreate` / `WorktreeRemove` | worktree created / removed |
-| `PreCompact` / `PostCompact` | before / after context compaction |
-| `Elicitation` | MCP server requests user input |
+| `SessionStart` | 会话开始或恢复 |
+| `Setup` | `--init-only`，或 `-p` 模式下的 `--init`/`--maintenance`（CI 准备） |
+| `UserPromptSubmit` | 提交 prompt 后、Claude 处理前 |
+| `UserPromptExpansion` | 用户输入的命令展开为 prompt、到达 Claude 前；可阻断展开 |
+| `PreToolUse` | 工具调用前；**可阻断** |
+| `PermissionRequest` | 工具调用需要权限决策 |
+| `PermissionDenied` | auto 模式分类器拒绝调用；`{retry:true}` 允许模型重试 |
+| `PostToolUse` | 工具调用成功后 |
+| `PostToolUseFailure` | 工具调用失败后 |
+| `PostToolBatch` | 一批并行工具调用全部解析后、下一次模型调用前 |
+| `Notification` | Claude Code 发送通知 |
+| `MessageDisplay` | 助手消息文本显示期间 |
+| `SubagentStart` / `SubagentStop` | 子代理生成 / 结束 |
+| `TaskCreated` / `TaskCompleted` | 经 TaskCreate 创建 / 标记完成 |
+| `Stop` / `StopFailure` | Claude 完成响应 / 轮次因 API 错误结束 |
+| `TeammateIdle` | agent 团队队友即将空闲 |
+| `InstructionsLoaded` | CLAUDE.md 或 `.claude/rules/*.md` 加载进上下文 |
+| `ConfigChange` | 会话中配置文件变更 |
+| `CwdChanged` | 工作目录变更（如 `cd`） |
+| `FileChanged` | 被监视文件在磁盘上变更（`matcher` = 要监视的文件名） |
+| `WorktreeCreate` / `WorktreeRemove` | worktree 创建 / 移除 |
+| `PreCompact` / `PostCompact` | 上下文压缩前 / 后 |
+| `Elicitation` | MCP 服务器请求用户输入 |
 
-## Config fields
+## 配置字段
 
-Common fields:
+公共字段：
 
-| Field | Notes |
+| 字段 | 说明 |
 |-------|-------|
-| `if` | one permission rule (matcher); only evaluated on `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`; no `&&`/`||` |
-| `timeout` | seconds; defaults: 600 (`command`/`http`/`mcp_tool`), 30 (`prompt`), 60 (`agent`); `UserPromptSubmit` lowers to 30, `MessageDisplay` to 10; `SessionEnd` hooks share a 1.5 s budget (up to 60 s) |
-| `statusMessage` | custom spinner message while the hook runs |
-| `once` | run once per session; honored **only in skill frontmatter**, ignored in settings/agents |
+| `if` | 一条权限规则（匹配器）；仅在 `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied` 上求值；不支持 `&&`/`||` |
+| `timeout` | 秒；默认：600（`command`/`http`/`mcp_tool`）、30（`prompt`）、60（`agent`）；`UserPromptSubmit` 降到 30、`MessageDisplay` 降到 10；`SessionEnd` 钩子共享 1.5 秒预算（最高 60 秒） |
+| `statusMessage` | 钩子运行时显示的自定义 spinner 消息 |
+| `once` | 每会话只跑一次；**仅在技能 frontmatter 中生效**，settings/agents 中忽略 |
 
-Command-hook fields:
+command 钩子字段：
 
-| Field | Notes |
+| 字段 | 说明 |
 |-------|-------|
-| `command` | shell command to execute (shell form) |
-| `args` | when set, `command` is an executable spawned directly with no shell (exec form) |
-| `async` | run in background without blocking |
-| `asyncRewake` | background + wake Claude on exit code 2; implies `async`; stderr (or stdout) shown as system reminder |
-| `shell` | `"bash"` or `"powershell"`; default `bash`, or `powershell` on Windows when Git Bash is absent; ignored when `args` is set |
+| `command` | 要执行的 shell 命令（shell 形式） |
+| `args` | 设置后 `command` 作为可执行文件直接 spawn、不经 shell（exec 形式） |
+| `async` | 后台运行、不阻断 |
+| `asyncRewake` | 后台 + 退出码 2 时唤醒 Claude；隐含 `async`；stderr（或空时 stdout）作为 system reminder 展示 |
+| `shell` | `"bash"` 或 `"powershell"`；默认 `bash`，Windows 无 Git Bash 时默认 `powershell`；设置 `args` 时忽略 |
 
-## Output / decision control (JSON on stdout)
+## 输出 / 决策控制（stdout JSON）
 
-Shape: `{ "hookSpecificOutput": { "hookEventName": "<event>", ... } }`
+形状：`{ "hookSpecificOutput": { "hookEventName": "<事件>", ... } }`
 
-| Field | Meaning |
+| 字段 | 含义 |
 |-------|---------|
-| `decision` | `approve` / `block` / `stop` (e.g. `PreToolUse` can block a tool call; `Stop` can continue the conversation) |
-| `retry` | `PermissionDenied`: `true` lets the model retry the denied call |
-| `additionalContext` | string injected into Claude's context as a system reminder: at conversation start (`SessionStart`/`Setup`/`SubagentStart`), alongside the prompt (`UserPromptSubmit`/`UserPromptExpansion`), next to the tool result (`PreToolUse`/`PostToolUse`/`PostToolUseFailure`/`PostToolBatch`), or at end of turn (`Stop`/`SubagentStop`). >10,000 chars → written to a session file, path + preview passed instead. Write factual statements, not imperative instructions (avoids prompt-injection defenses). |
-| `terminalSequence` | OSC 777 notification sequence allowlist (urxvt/Ghostty/Warp/BEL); cursor/color/OSC 8/52/1337 sequences rejected |
+| `decision` | `approve` / `block` / `stop`（如 `PreToolUse` 可阻断工具调用；`Stop` 可延续会话） |
+| `retry` | `PermissionDenied`：`true` 允许模型重试被拒调用 |
+| `additionalContext` | 注入 Claude 上下文的字符串（system reminder）：会话开头（`SessionStart`/`Setup`/`SubagentStart`）、随 prompt（`UserPromptSubmit`/`UserPromptExpansion`）、紧邻工具结果（`PreToolUse`/`PostToolUse`/`PostToolUseFailure`/`PostToolBatch`）、或轮次末尾（`Stop`/`SubagentStop`）。>10,000 字符 → 写入会话文件、传路径+预览。写成事实陈述而非祈使指令（避免触发 prompt-injection 防御）。 |
+| `terminalSequence` | OSC 777 通知序列白名单（urxvt/Ghostty/Warp/BEL）；拒绝光标/颜色/OSC 8/52/1337 序列 |
 
-## Multi-shell (validates plugin-factory's bar)
+## 多 shell（佐证 plugin-factory 的质量栏）
 
-Claude Code natively supports `shell: "bash"` or `shell: "powershell"` per hook —
-hooks should be authored as `.sh` + `.ps1` pairs and wired via the `shell` field.
+Claude Code 每个 hook 原生支持 `shell: "bash"` 或 `shell: "powershell"`——
+hook 应写成 `.sh` + `.ps1` 成对，经 `shell` 字段接线。
 
-## Hook sources
+## 钩子来源
 
-- `settings.json` → `"hooks"` key
-- plugin manifests (`.claude-plugin/`)
-- skill frontmatter (`once` is honored only here)
+- `settings.json` → `"hooks"` 键
+- 插件 manifest（`.claude-plugin/`）
+- 技能 frontmatter（`once` 仅此处生效）
 
-## ⚠️ Remaining verify-at-wiring (M1)
+## ⚠️ 接线时待核实（M1）
 
-- Full exit-code table and complete per-event input JSON schemas beyond what is pinned
-  above (check the pinned source URL in this file's header when wiring the adapter).
+- 完整的退出码表与各事件完整输入 JSON schema，超出本文件固化内容的
+  （复核时查本文件头部的来源 URL）。

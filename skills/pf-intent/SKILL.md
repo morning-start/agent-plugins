@@ -4,6 +4,7 @@ description: Use when creating a new agent plugin, when a user has only a vague 
 tags: [pf, pf-intent, plugin, prd, intent, interview, requirements]
 metadata:
   prefix: pf
+  keywords_zh: "创建插件, 插件想法, 需求澄清, PRD, 意图访谈"
 ---
 
 # pf-intent — Intent Clarification

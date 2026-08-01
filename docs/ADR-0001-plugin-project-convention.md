@@ -1,34 +1,31 @@
-# ADR-0001 — Agent Plugin Project Convention
+# ADR-0001 — Agent 插件项目公约
 
-- **Status**: Accepted (2026-08-01)
-- **Context**: plugin-factory's own repo and every generated plugin must follow a
-  structure that real agent-plugin projects use (moonbit-skills, ECC, superpowers).
-  The naive "skill bundle" layout (root SKILL.md router + nested skills/) is a skill
-  repository, not an agent plugin project.
+- **状态**: 已接受（2026-08-01）
+- **背景**: plugin-factory 自身仓库与每个生成插件必须采用真实 agent 插件项目
+  使用的结构（参考 moonbit-skills、ECC、superpowers）。朴素的"技能包"布局
+  （根 SKILL.md 路由器 + 嵌套 skills/）是技能仓库，不是 agent 插件项目。
 
-## Decision
+## 决策
 
-An agent plugin project is **one repository that packages a plugin for multiple
-harnesses at once**:
+一个 agent 插件项目是**一个同时为多端打包插件的仓库**：
 
-- **Per-harness manifests**: `.claude-plugin/plugin.json` (Claude Code),
-  `package.json` with `pi.skills` + `.pi/extensions/*.ts` (pi),
-  `.opencode/opencode.json` + `.opencode/INSTALL.md` (opencode).
-- **Root shared content**: `skills/` (one dir per skill, Agent Skills standard),
-  `commands/`, `hooks/` (bash + PowerShell pairs + `hooks.json`), `scripts/`,
-  `tests/`, `references/`, `docs/`.
-- **Project instructions**: `AGENTS.md` + `CLAUDE.md`.
-- **Docs**: English `README.md` with a Chinese `README.zh-CN.md`.
-- **Install**: `install.sh` / `install.ps1` or per-harness instructions.
+- **逐端 manifest**：`.claude-plugin/plugin.json`（Claude Code）、
+  `package.json` 的 `pi.skills` + `.pi/extensions/*.ts`（pi/oh-my-pi）、
+  `.opencode/opencode.json` + `.opencode/INSTALL.md`（opencode）。
+- **根部共享内容**：`skills/`（每技能一目录，Agent Skills 标准）、`commands/`、
+  `hooks/`（bash + PowerShell 成对 + `hooks.json`）、`scripts/`、`tests/`、
+  `references/`、`docs/`。
+- **项目说明**：`AGENTS.md` + `CLAUDE.md`。
+- **文档**：英文 `README.md` + 中文 `README.zh-CN.md`。
+- **安装**：`install.sh` / `install.ps1` 或逐端说明。
 
-## Consequences
+## 后果
 
-- Skills are authored once (standard) and rendered per harness via adapters —
-  no forked copies per harness.
-- Hooks/commands must be multi-shell; every hook ships `.sh` + `.ps1`.
-- Structure is verifiable: `scripts/validate-structure.*` enforces the bars.
+- 技能按标准写一次、经适配器逐端渲染——不为每端分叉副本。
+- hooks/commands 必须多 shell；每个 hook 提供 `.sh` + `.ps1`。
+- 结构可验证：`scripts/validate-structure.*` 强制质量栏。
 
-## Alternatives considered
+## 备选方案
 
-- Skill-bundle layout (rejected: not an installable agent plugin).
-- Single-harness plugin (rejected: user requires Claude Code / pi / opencode).
+- 技能包布局（否决：不是可安装的 agent 插件）。
+- 单端插件（否决：用户要求 Claude Code / pi / opencode 多端）。

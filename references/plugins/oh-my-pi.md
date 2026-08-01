@@ -1,15 +1,15 @@
 # oh-my-pi (omp) plugin 格式 — 规格固化
 
-> **Captured: 2026-08-01** · Sources:
-> - 官网: https://omp.sh (docs 页 JS-rendered，抓取不到内容 — URL 固化)
-> - GitHub: https://github.com/can1357/oh-my-pi (README + issue #433 维护者回复，已核实)
+> **固化于：2026-08-01** · 来源：
+> - 官网: https://omp.sh （docs 页 JS-rendered，抓取不到内容 — URL 固化）
+> - GitHub: https://github.com/can1357/oh-my-pi （README + issue #433 维护者回复，已核实）
 > - npm: https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent
 > - 插件/marketplace 源文档（仓库 docs/，已抓取固化）: `docs/marketplace.md` ·
 >   `docs/plugin-manager-installer-plumbing.md` · `docs/extensions.md` ·
 >   `docs/porting-from-pi-mono.md`
-> **Re-verify**: only on breaking omp plugin-format changes. Do not re-search pre-emptively.
+> **复核**：仅当 omp 插件格式破坏性变更时复核。不要预先重搜。
 
-## What omp is
+## omp 是什么
 
 **oh-my-pi (omp)** 是 **Pi 的 fork**（badlogic/pi-mono，作者 mariozechner），重写为
 coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-my-pi/pi-coding-agent`。
@@ -17,7 +17,7 @@ coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-m
 安装: `curl -fsSL https://omp.sh/install | sh`（Windows: `irm https://omp.sh/install.ps1 | iex`）、
 `bun install -g @oh-my-pi/pi-coding-agent`、`brew install can1357/tap/omp`。
 
-## Plugin 格式
+## 插件格式
 
 - 插件 = 一个仓库/包，通过 **`omp plugin install git:github.com/<owner>/<repo>`**（或
   npm 包）安装。
@@ -40,12 +40,6 @@ coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-m
   same as those of omp"）→ 完整扩展 API/事件见 `hooks/pi.md`（pi/omp 共用）。
 - 重新加载: `/reload-plugins`。
 - 发布方式: 本地目录、marketplace、npm。
-
-## 目录位置（用户侧）
-
-- 全局插件目录: `~/.omp/plugins`（社区做法: `pi install -l npm:<name>` 后
-  `cp -r .pi/npm ~/.omp/plugins`）
-- 项目内扩展: `.pi/extensions/*.ts`（与 pi 相同）
 
 ## Marketplace（插件市场）
 
@@ -90,10 +84,10 @@ coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-m
   固化（marketplace.md / plugin-manager-installer-plumbing.md / extensions.md /
   porting-from-pi-mono.md，2026-08-01）。
 
-## Implication for plugin-factory
+## 对 plugin-factory 的含义
 
 - 生成插件时在 `package.json` **同时写 `pi` 与 `omp` 字段**（extensions + skills），
   同一产物兼容 pi 与 omp 两端安装（omp 读 `pkg.omp || pkg.pi`）。
-- 生成 `.pi/extensions/<plugin-name>.ts`（pi/omp 共用）；扩展 API 见 `hooks/pi.md`。
+- 生成 `.pi/extensions/<插件名>.ts`（pi/omp 共用）；扩展 API 见 `hooks/pi.md`。
 - plugin-factory 自身（当前项目）应同步在 package.json 增加 `omp` 字段以支持
   `omp plugin install git:...` 安装（M2 落实）。

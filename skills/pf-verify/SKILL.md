@@ -4,6 +4,7 @@ description: Use when a plugin project needs structural or compliance checks, wh
 tags: [pf, pf-verify, plugin, audit, compliance, validation, orchestration]
 metadata:
   prefix: pf
+  keywords_zh: "审计, 校验, 合规检查, 验证插件, 质量检查"
 ---
 
 # pf-verify — Verification & Audit

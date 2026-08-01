@@ -1,61 +1,58 @@
-# opencode hooks (= plugins) — 规格固化
+# opencode hooks（= 插件）— 规格固化
 
-> **Captured: 2026-08-01** · Source: https://opencode.ai/docs/plugins/
-> **Re-verify**: only when opencode ships a breaking plugin/hooks change or wiring fails
-> at runtime. Do not re-search pre-emptively; do not edit other harness files for this one.
+> **固化于：2026-08-01** · 来源：https://opencode.ai/docs/plugins/
+> **复核**：仅当 opencode 发布破坏性插件/hooks 变更或接线失败时复核。
+> 不要预先重搜；为这一端复核时不要动其他端文件。
 
-## Model
+## 模型
 
-- opencode has **no shell hooks**. Its hook mechanism is **TypeScript/JS plugins**:
-  a module exporting one or more plugin functions; each function receives a context
-  object and returns a hooks object.
-- Load locations (order: global config → project config → global plugins dir →
-  project plugins dir):
-  - `.opencode/plugins/*.{ts,js}` — project-level
-  - `~/.config/opencode/plugins/` — global
-  - npm packages via `"plugin": [...]` in `opencode.json` (installed with Bun)
+- opencode **没有 shell 钩子**。其 hook 机制是 **TypeScript/JS 插件**：
+  一个模块导出一个或多个插件函数；每个函数接收上下文对象、返回 hooks 对象。
+- 加载位置（顺序：全局配置 → 项目配置 → 全局插件目录 → 项目插件目录）：
+  - `.opencode/plugins/*.{ts,js}` — 项目级
+  - `~/.config/opencode/plugins/` — 全局
+  - `opencode.json` 的 `"plugin": [...]` npm 包（Bun 安装）
 
-## Plugin signature
+## 插件签名
 
 ```ts
 import type { Plugin } from "@opencode-ai/plugin";
 
 export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree }) => {
-  return { /* hook implementations */ };
+  return { /* hook 实现 */ };
 };
 ```
 
-- `$` is Bun's shell API (for executing commands).
-- Local plugins using npm deps: add `.opencode/package.json` (Bun installs at startup).
+- `$` 是 Bun 的 shell API（用于执行命令）。
+- 本地插件用 npm 依赖：加 `.opencode/package.json`（Bun 启动时安装）。
 
-## Event keys (hooks object keys)
+## 事件键（hooks 对象键）
 
-- **Tool**: `tool.execute.before`, `tool.execute.after`
-- **Shell**: `shell.env`
-- **Permission**: `permission.asked`, `permission.replied`
-- **Session**: `session.created`, `session.compacted`, `session.deleted`, `session.diff`,
-  `session.error`, `session.idle`, `session.status`, `session.updated`
-- **Message**: `message.part.removed`, `message.part.updated`, `message.removed`, `message.updated`
-- **File**: `file.edited`, `file.watcher.updated`
-- **Todo**: `todo.updated`
-- **LSP**: `lsp.client.diagnostics`, `lsp.updated`
-- **Command**: `command.executed`
-- **Installation**: `installation.updated`
-- **Server**: `server.connected`
-- **TUI**: `tui.prompt.append`, `tui.command.execute`, `tui.toast.show`
-- **Catch-all**: `event` (receive any event)
-- **Compaction**: `experimental.session.compacting` (push `output.context` or set `output.prompt`)
-- **Custom tools**: `tool` (registry of `tool({...})` definitions)
+- **工具**：`tool.execute.before`、`tool.execute.after`
+- **Shell**：`shell.env`
+- **权限**：`permission.asked`、`permission.replied`
+- **会话**：`session.created`、`session.compacted`、`session.deleted`、`session.diff`、
+  `session.error`、`session.idle`、`session.status`、`session.updated`
+- **消息**：`message.part.removed`、`message.part.updated`、`message.removed`、`message.updated`
+- **文件**：`file.edited`、`file.watcher.updated`
+- **待办**：`todo.updated`
+- **LSP**：`lsp.client.diagnostics`、`lsp.updated`
+- **命令**：`command.executed`
+- **安装**：`installation.updated`
+- **服务器**：`server.connected`
+- **TUI**：`tui.prompt.append`、`tui.command.execute`、`tui.toast.show`
+- **全量**：`event`（接收任意事件）
+- **压缩**：`experimental.session.compacting`（push `output.context` 或设置 `output.prompt`）
+- **自定义工具**：`tool`（`tool({...})` 定义注册表）
 
-## Behavior
+## 行为
 
-- Hook handlers receive `(input, output)`; **mutate `output`** to change behavior or
-  **throw** to block.
-  - `tool.execute.before` (bash): `output.args.command = ...` to rewrite, throw to block.
-  - `shell.env`: `output.env.X = ...` to inject env vars.
-- Logging: `client.app.log(...)` (levels: debug/info/warn/error).
+- hook 处理器接收 `(input, output)`；**修改 `output`** 改变行为，或 **throw** 阻断。
+  - `tool.execute.before`（bash）：`output.args.command = ...` 重写，throw 阻断。
+  - `shell.env`：`output.env.X = ...` 注入环境变量。
+- 日志：`client.app.log(...)`（级别：debug/info/warn/error）。
 
-## Implication for plugin-factory
+## 对 plugin-factory 的含义
 
-- Generated opencode hooks = one `.ts` plugin per event group under `.opencode/plugins/`.
-- "Multi-shell" does not apply — TS is cross-platform.
+- 生成的 opencode hooks = `.opencode/plugins/` 下每个事件组一个 `.ts` 插件。
+- "多 shell" 不适用——TS 天然跨平台。

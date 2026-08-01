@@ -1,18 +1,18 @@
 # pi plugin 格式 — 规格固化
 
-> **Captured: 2026-08-01** · Sources:
+> **固化于：2026-08-01** · 来源：
 > - Extensions: https://pi.dev/docs/latest/extensions + https://github.com/earendil-works/pi/blob/v0.79.10/packages/coding-agent/docs/extensions.md
 > - Skills: https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/skills.md
-> **Re-verify**: only on breaking pi package/extension changes. Do not re-search pre-emptively.
+> **复核**：仅当 pi 包/扩展格式破坏性变更时复核。不要预先重搜。
 
-## Model
+## 模型
 
-- A pi plugin is a **package** (git repo or local dir) installed with
-  `pi install git:github.com/<owner>/<repo>` (or `pi -e /path/to/checkout` for dev).
-- The package contributes: **skills** (via `skills/` dir or `pi.skills` in package.json)
-  and **extensions** (`.pi/extensions/*.ts` or `pi.extensions` in package.json).
+- pi 插件是一个**包**（git 仓库或本地目录），用
+  `pi install git:github.com/<owner>/<repo>` 安装（开发用 `pi -e /path/to/checkout`）。
+- 包贡献：**skills**（经 `skills/` 目录或 package.json 的 `pi.skills`）与
+  **extensions**（`.pi/extensions/*.ts` 或 package.json 的 `pi.extensions`）。
 
-## Packaging (package.json)
+## 打包（package.json）
 
 ```json
 {
@@ -25,26 +25,26 @@
 }
 ```
 
-- Skill discovery from packages: `skills/` directories or `pi.skills` entries.
-- Extension discovery: `~/.pi/agent/extensions/*.ts` (global), `.pi/extensions/*.ts`
-  (project-local, after trust), `package.json` `pi.extensions`, settings `extensions`
-  array; hot-reload via `/reload`.
+- 包内技能发现：`skills/` 目录或 `pi.skills` 条目。
+- 扩展发现：`~/.pi/agent/extensions/*.ts`（全局）、`.pi/extensions/*.ts`
+  （项目级，信任后）、`package.json` 的 `pi.extensions`、settings 的 `extensions`
+  数组；`/reload` 热重载。
 
-## Structure (generated project)
+## 结构（生成项目）
 
 ```
 <plugin>/
 ├── package.json               # name/version + pi.skills / pi.extensions
-├── skills/                    # Agent Skills standard SKILL.md dirs
-├── .pi/extensions/<plugin>.ts # extension (pi.on(...) handlers; full spec in hooks/pi.md)
-└── (commands via registerCommand — see hooks/pi.md)
+├── skills/                    # Agent Skills 标准的 SKILL.md 目录
+├── .pi/extensions/<plugin>.ts # 扩展（pi.on(...) 处理器；完整规格在 hooks/pi.md）
+└── (commands 经 registerCommand — 见 hooks/pi.md)
 ```
 
-## Implication for plugin-factory
+## 对 plugin-factory 的含义
 
-- Generated pi plugin = `package.json` (`pi.skills` + `pi.extensions`) + `skills/` +
-  `.pi/extensions/<plugin-name>.ts`.
-- `pi install git:...` is the install path; plugin-factory's own `package.json`
-  already carries `"pi": { "skills": ["skills"] }`.
-- ⚠️ `pi.extensions` key shape for package-local extensions: verify against pi docs
-  at M2 wiring (the pinned source lists it under package.json).
+- 生成的 pi 插件 = `package.json`（`pi.skills` + `pi.extensions`）+ `skills/` +
+  `.pi/extensions/<插件名>.ts`。
+- `pi install git:...` 是安装路径；plugin-factory 自身 `package.json` 已带
+  `"pi": { "skills": ["skills"] }`。
+- ⚠️ 包内扩展的 `pi.extensions` 键形状：M2 接线时对照 pi 文档核实
+  （钉住来源中列于 package.json 下）。

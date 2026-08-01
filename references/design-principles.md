@@ -1,71 +1,70 @@
-# Design Principles (铁律)
+# 设计原则（铁律）
 
-Shared conventions that every `pf-*` skill and every generated plugin must follow.
-When a skill and this document disagree, this document wins — update the skill.
+plugin-factory 每个 `pf-*` 技能与每个生成插件都必须遵守的共享约定。
+当技能与本文冲突时，以本文为准——并同步修正技能。
 
-## 1. Intent first — no PRD, no work
+## 1. 意图优先——没有 PRD，不动手
 
-- The one-page PRD produced by `pf-intent` is the **only entry credential** for design
-  and build. Never scaffold files before the user has signed off the PRD.
-- No design before PRD sign-off; no build before the component manifest sign-off.
+- `pf-intent` 产出的一页式 PRD 是进入设计与构建的**唯一凭证**。PRD 未签收前，
+  禁止搭建任何文件。
+- PRD 未签收 → 不设计；构件清单未签收 → 不构建。
 
-## 2. Delegate, don't re-implement
+## 2. 委托，不重复实现
 
-- Skill authoring, test-case creation, evaluation, and iteration are **delegated to
-  skill-creator** (Anthropic, `npx skills add https://github.com/anthropics/skills --skill skill-creator`).
-- plugin-factory orchestrates: it supplies the PRD-derived skill spec, invokes
-  skill-creator's TDD loop, and accepts a skill only after its evaluation passes.
-- **Never auto-install skill-creator**: if it is missing, remind the user to install it
-  themselves (`anthropics/skills@skill-creator`); installing it is a **user decision** —
-  never auto-install without explicit permission.
-- plugin-factory's own value is everything **around** a single skill: multi-harness
-  rendering, hooks/commands, plugin packaging, and lifecycle analysis.
+- 技能的编写、测试用例、评测与迭代**全部委托给 skill-creator**
+  （Anthropic，`npx skills add https://github.com/anthropics/skills --skill skill-creator`）。
+- plugin-factory 只做编排：提供 PRD 派生的技能规格、调用 skill-creator 的 TDD 循环、
+  评测通过后才验收该技能。
+- plugin-factory 的价值在单个技能**之外**：多端渲染、hooks/commands、插件打包、
+  生命周期分析。
+- **绝不自动安装 skill-creator**：缺失时提醒用户自行安装
+  （`anthropics/skills@skill-creator`）；安装是**用户决策**——未经明确允许不得自动安装。
 
-## 3. Standard-driven rendering
+## 3. 标准驱动渲染
 
-- Skills are authored once against the **Agent Skills standard** (agentskills.io) and
-  rendered per harness; adapters handle only the differences (see `agent-adapters.md`).
-- Name == parent directory. Description ≤ 1024 chars, "Use when…", triggers only.
-- Never fork the standard for one harness; keep the canonical form portable.
+- 技能按 **Agent Skills 标准**（agentskills.io）编写一次，再按端渲染；
+  适配器只处理差异（见 `agent-adapters.md`）。
+- `name` == 目录名；description ≤ 1024 字符，以 "Use when…" 开头，只写触发条件。
+- 不为一端分叉标准；始终保留可移植的规范形式。
 
-## 4. Users make key decisions only
+## 4. 用户只做关键决策
 
-- The agent drives the workflow autonomously. The user decides:
-  1. PRD sign-off (intent phase)
-  2. Complexity gate (Light / Medium / Heavy)
-  3. Component manifest sign-off (design phase)
-  4. Lifecycle recommendations (split / merge / reorganize / port / retire)
-- Everything else (interviews, drafting, rendering, auditing, versioning) is agent work.
+- Agent 自主推进流程；用户只决定：
+  1. PRD 签收（意图阶段）
+  2. 复杂度判定（Light / Medium / Heavy）
+  3. 构件清单签收（设计阶段）
+  4. 生命周期建议（拆分 / 合并 / 重组 / 移植 / 退役）
+- 其余（访谈、起草、渲染、审计、版本）都是 Agent 的工作。
 
-## Naming convention
+## 命名约定
 
-| Location | Rule | Example |
-|----------|------|---------|
-| Skill directory | `pf-` abbreviation prefix + short name | `skills/pf-intent/` |
-| SKILL.md `name` | must match parent directory | `name: pf-intent` |
-| tags / metadata | redundant brand info | `tags: [pf, pf-intent]`, `metadata.prefix: pf` |
-| Slash commands | `/pf-*` | `/pf-new`, `/pf-intent`, `/pf-analyze` |
+| 位置 | 规则 | 示例 |
+|------|------|------|
+| 技能目录 | `pf-` 缩写前缀 + 短名 | `skills/pf-intent/` |
+| SKILL.md `name` | 必须与父目录一致 | `name: pf-intent` |
+| tags / metadata | 冗余品牌信息 | `tags: [pf, pf-intent]`、`metadata.prefix: pf` |
+| 斜杠命令 | `/pf-*` | `/pf-new`、`/pf-intent`、`/pf-analyze` |
 
-Generated plugins follow the same convention with their own project prefix
-(e.g. `moonbit-` in moonbit-skills). The prefix prevents name collisions in shared
-directories (`.agents/skills/`, `~/.agents/skills/`).
+生成插件沿用同一约定，使用各自的项目前缀（如 moonbit-skills 的 `moonbit-`）。
+前缀防止共享目录（`.agents/skills/`、`~/.agents/skills/`）中的命名冲突。
 
-## Quality bars
+## 质量栏
 
-- Every SKILL.md: YAML frontmatter, `name` == dir, `description` ≤ 1024 chars,
-  trigger-style, third person.
-- Every command: frontmatter `description`.
-- Every hook: bash **and** PowerShell implementation + `hooks.json` where needed.
-- Every generated plugin: bilingual README (`README.md` + `README.zh-CN.md`),
-  per-harness manifests, install instructions.
-- Language: docs and skills in English; user-facing README has a Chinese edition.
+- 每个 SKILL.md：YAML frontmatter、`name` == 目录、`description` ≤ 1024 字符、
+  触发式、第三人称。
+- 每个命令：frontmatter `description`。
+- 每个 hook：bash **和** PowerShell 双实现 + 按需 `hooks.json`。
+- 每个生成插件：双语 README（`README.md` + `README.zh-CN.md`）、各端 manifest、
+  安装说明。
+- 语言分层：文档与技能——agent 执行层用英文；references/ 设计层用中文；
+  用户面 README 双语。
 
-## Process
+## 流程
 
 ```
-intent → (gate: Light? direct) → design → build (skill-creator loop)
-       → verify (audit) → release (SemVer) → lifecycle (analysis)
+intent → (门禁: Light? 直通) → design → build（skill-creator 循环）
+       → verify（审计）→ release（SemVer）→ lifecycle（分析）
 ```
 
-Complexity gate (from `pf-intent`): Light = 1–2 skills, no hooks, single harness →
-skip design, go straight to build. Medium/Heavy → full path.
+复杂度判定（来自 `pf-intent`）：Light = 1–2 个技能、无 hooks、单端 →
+跳过设计、直达 build。Medium/Heavy → 完整路径。

@@ -4,6 +4,7 @@ description: Use when a signed-off PRD exists for a plugin, when planning which 
 tags: [pf, pf-design, plugin, design, architecture, manifest, orchestration]
 metadata:
   prefix: pf
+  keywords_zh: "插件设计, 构件清单, 架构, 编排设计, 设计文档"
 ---
 
 # pf-design — Plugin Design

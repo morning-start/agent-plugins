@@ -1,50 +1,46 @@
-# Lifecycle Matrix (生命周期决策矩阵)
+# 生命周期决策矩阵
 
-**Scope (v1): pure-structural analysis only** — no runtime usage data, no telemetry.
-Inputs are files and metadata the agent can read directly. Runtime signals (trigger
-frequency, eval pass rates over time) are deferred; the matrix notes where they would
-refine a recommendation.
+**范围（v1）：纯结构分析**——不读运行时使用数据、无遥测。输入只有 agent 能直接
+读取的文件与元数据。运行时信号（触发频率、评测通过率随时间变化）暂缓，矩阵中
+注明它们会如何改进建议。
 
-skill-creator covers the **single-skill** create → test → iterate loop. plugin-factory
-covers the **multi-skill / plugin-level** lifecycle that skill-creator does not:
-split, merge, reorganize, port, retire, and version evolution.
+skill-creator 覆盖**单技能**的 创建→测试→迭代 循环。plugin-factory 覆盖
+skill-creator 未覆盖的**多技能/插件级**生命周期：拆分、合并、重组、移植、退役、
+版本演进。
 
-## Signals → Recommendations
+## 信号 → 建议
 
-| Signal (pure structural) | How to measure | Recommendation |
+| 信号（纯结构） | 如何度量 | 建议 |
 |--------------------------|----------------|----------------|
-| Skill too large (heavy+thick) | lines > ~300, heading depth > 3, many "see references/" links | **Split** into focused skills, or **reorganize**: extract `references/` |
-| Overlapping trigger domains | two `description` fields match the same user intents | **Merge** into one skill; keep the union of scenarios |
-| Coupled content / duplicated guidance | same steps or tables repeated across skills | **Reorganize**: extract shared `references/` |
-| Hierarchy too deep | nested `skills/` > 2 levels, indirection | **Flatten** / reorganize into flat namespace |
-| Multi-harness gap | skill only exists for one harness, plugin advertises more | **Port** via adapter render (see agent-adapters.md) |
-| Zombie skill | no triggerable description / no references / no tests | **Retire** or **evolve** (v2 rewrite) |
-| Name collisions | name == dir violated, or duplicate names across sources | **Rename** with project prefix |
-| Version drift | root plugin version vs skill versions out of sync | **Align** versions (one source of truth) |
-| Chain break | a chain link's handoff artifact is not produced upstream, or a chain references a missing skill | **Repair orchestration** (re-link / reorder) |
-| Orphan skill | skill unreachable from any entry point or chain | **Reorganize**: add an entry link, or merge |
-| Missing entry | methodology plugin without a bootstrap/entry skill | **Add** `using-<plugin>` entry skill |
+| 技能过大（重+厚） | 行数 > ~300、标题层级 > 3、大量 "见 references/" 链接 | **拆分**为聚焦技能，或**重组**：抽取 `references/` |
+| 触发域重叠 | 两个 `description` 匹配相同用户意图 | **合并**为一个技能；保留场景并集 |
+| 内容耦合 / 指导重复 | 多个技能重复相同步骤或表格 | **重组**：抽取共享 `references/` |
+| 层级过深 | 嵌套 `skills/` > 2 层、间接引用 | **扁平化** / 重组为平铺命名空间 |
+| 多端缺口 | 技能只存在于一端，而插件宣称多端 | **移植**（按适配器渲染，见 agent-adapters.md） |
+| 僵尸技能 | 无触发式 description / 无 references / 无测试 | **退役**或**演进**（v2 重写） |
+| 命名冲突 | name ≠ 目录，或跨源重名 | **改名**，加项目前缀 |
+| 版本漂移 | 根插件版本与技能版本不同步 | **对齐**版本（单一事实来源） |
+| 链路断裂 | 链中某交接产物上游未生产，或链引用了缺失技能 | **修复编排**（重新链接 / 重排） |
+| 孤儿技能 | 技能从任何入口/链均不可达 | **重组**：补入口链接，或合并 |
+| 入口缺失 | 方法论插件没有引导/入口技能 | **新增** `using-<plugin>` 入口技能 |
 
-Orchestration-health probes (chain break / orphan skill / missing entry) follow the
-patterns in `references/orchestration-patterns.md`.
+编排健康探针（链路断裂 / 孤儿技能 / 入口缺失）遵循
+`references/orchestration-patterns.md` 中的模式。
 
-## Decision flow
+## 决策流程
 
-1. **Analyze** — `pf-lifecycle` runs the structural probes above on a target
-   plugin/skill (its own repo or a generated one).
-2. **Recommend** — produce a table of {skill, signal, severity, action, impact},
-   ordered by severity.
-3. **Confirm** — the user approves each recommendation (key decision).
-4. **Execute** — approved actions run through `pf-design`/`pf-build`/`pf-verify`
-   so nothing bypasses the quality bars.
+1. **分析** — `pf-lifecycle` 对目标插件/技能集（自身仓库或生成产物）运行上述结构探针。
+2. **建议** — 产出 {技能, 信号, 严重度, 动作, 影响} 表，按严重度排序。
+3. **确认** — 用户逐条批准（关键决策）。
+4. **执行** — 批准的动走 `pf-design` / `pf-build` / `pf-verify`——不得绕过质量栏。
 
-## Evolution (v1 → v2)
+## 演进（v1 → v2）
 
-Version bumps are SemVer; each release records in CHANGELOG which lifecycle action
-drove it (split/merge/reorganize/port/retire). The plugin itself is dogfooded: the
-`pf-*` skills may be split/reorganized using this same matrix (see M4).
+版本按 SemVer；每次发布在 CHANGELOG 记录驱动本次变更的生命周期动作
+（拆分/合并/重组/移植/退役）。插件自身也要 dogfood：`pf-*` 技能可用同一矩阵
+拆分/重组（见 M4）。
 
-## Future signals (out of scope for v1)
+## 未来信号（v1 范围外）
 
-Trigger frequency, eval pass rates, user feedback themes, install counts. When these
-exist, they upgrade recommendations from structural suspicion to evidence.
+触发频率、评测通过率、用户反馈主题、安装数。这些信号就位后，会把建议从
+"结构怀疑"升级为"证据"。

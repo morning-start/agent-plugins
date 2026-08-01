@@ -4,6 +4,7 @@ description: Use when a component manifest is signed off, when creating a standa
 tags: [pf, pf-build, plugin, scaffold, build, skill-creator, render]
 metadata:
   prefix: pf
+  keywords_zh: "插件构建, 脚手架, 生成插件, 渲染, skill-creator"
 ---
 
 # pf-build — Plugin Build

@@ -4,6 +4,7 @@ description: Use when analyzing how existing skills should evolve, when deciding
 tags: [pf, pf-lifecycle, plugin, lifecycle, analysis, refactor, split, merge]
 metadata:
   prefix: pf
+  keywords_zh: "生命周期, 技能拆分, 技能合并, 重组, 移植, 退役, 演进"
 ---
 
 # pf-lifecycle — Lifecycle Analysis
