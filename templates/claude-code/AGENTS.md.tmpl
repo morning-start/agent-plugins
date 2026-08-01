@@ -1,0 +1,17 @@
+# AGENTS.md — {{PLUGIN_NAME}}
+
+{{PLUGIN_DESCRIPTION}}
+
+## Activation
+
+Before starting any task, check whether a skill in `skills/` applies (Agent Skills
+standard — each SKILL.md has a trigger-only `description`).
+
+## Conventions
+
+- **Skills**: one directory per skill under `skills/` with a `SKILL.md`
+  (`name` == directory, description ≤ 1024 chars, "Use when…").
+- **Hooks**: bash + PowerShell pairs wired via `hooks/hooks.json`.
+- **Docs**: English; the user-facing README has a Chinese edition (`README.zh-CN.md`).
+- **Orchestration**: entry points / trigger chains / handoffs live in the component
+  manifest (see `docs/` if present).

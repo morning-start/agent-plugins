@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Install {{PLUGIN_NAME}} for Claude Code.
+set -eu
+src="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "Option A — run Claude Code with this plugin loaded:"
+echo "  claude --plugin-dir $src"
+echo
+echo "Option B — distribute via a marketplace (see references: plugin-marketplaces)."
