@@ -1,0 +1,1 @@
+- plugin-factory 项目约定：子技能目录与 name 用 pf- 缩写前缀（skills/pf-intent/ → name: pf-intent）；技能规范位置为仓库根 skills/（Claude Code 插件与 pi 包发现）；hooks/脚本必须 bash+PowerShell 双版本；文档英文、README.zh-CN.md 中文版；skill 创建/评测委托 skill-creator 而非自研；目标平台 Claude Code/pi/opencode；生命周期分析 v1 纯结构。
