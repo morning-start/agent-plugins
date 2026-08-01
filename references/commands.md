@@ -1,5 +1,7 @@
 # MoonBit 命令参考
 
+> 本文件是**常用命令速查**；全量命令的深度说明（用法/选项/与技能映射）见 [`moon-cli.md`](moon-cli.md)。命令以实际 `moon --help` 为准。
+
 ## 核心命令
 
 ```bash
@@ -57,7 +59,7 @@ moon new my-package
 
 # 添加依赖
 moon add moonbitlang/quickcheck
-# 失败: moon add moonbitlang/quickcheck --version 0.11.2
+# 升级已有依赖: moon add --upgrade moonbitlang/quickcheck
 
 # 发布
 moon publish
@@ -115,7 +117,7 @@ moon prove
 
 ```bash
 # 直接执行临时脚本（0.9.2+）
-moon run -c 'fn main { println("hello") }'
+moon run -e 'fn main { println("hello") }'
 
 # 从标准输入运行（0.8.3+）
 echo 'fn main {println("hello")}' | moon run -
@@ -143,7 +145,7 @@ moon build --target native
 moon runwasm Yoorkin/cowsay -- hello
 
 # 限制错误/警告数量（0.10.0+）
-moon check --diagnostics-limit 20
+moon check --diagnostic-limit 20
 
 # 将警告视为错误（0.10.4+）
 moon check --deny-warn

@@ -192,6 +192,14 @@ moon test 2>&1 | tail -3
 # 与上次 verify 对比，单次 > 5s 需排查
 ```
 
+### E3a. 覆盖率信号（可选）
+
+> `moon coverage`（analyze/report/clean）为工具链现成能力，作为覆盖完整性的可选增强信号，非阻断。
+
+```bash
+moon coverage analyze && moon coverage report
+```
+
 ### E4. API 设计深度检查
 
 | 检查项 | 合格标准 | 动作 |

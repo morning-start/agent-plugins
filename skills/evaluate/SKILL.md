@@ -197,7 +197,7 @@ jobs:
 
 ```bash
 # 生成 API 文档预览（不写入仓库，仅展示）
-moon doc --target native --target-dir /tmp/moonbit-doc-preview
+moon doc --target-dir /tmp/moonbit-doc-preview
 
 # 验证文档示例可运行（如有 usage 测试）
 moon test --target native -f "usage"
