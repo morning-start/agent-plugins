@@ -8,7 +8,7 @@
 
 | 工具 | 出处 | 覆盖能力 | 建议 | 理由 |
 |------|------|----------|------|------|
-| **skill-creator** | https://skills.sh/anthropics/skills/skill-creator · https://claude.com/plugins/skill-creator（Anthropic） | skill 全生命周期：意图→草稿→测试用例→A/B 评测→迭代 | **调用** | 已是 plugin-factory 铁律 #2：skill 创建/评测全部委托它 |
+| **skill-creator** | https://skills.sh/anthropics/skills/skill-creator · https://claude.com/plugins/skill-creator（Anthropic） | skill 全生命周期：意图→草稿→测试用例→A/B 评测→迭代 | **调用** | 已是 plugin-factory 铁律 #2：skill 创建/评测全部委托它；**安装由用户自行执行**（`anthropics/skills@skill-creator`，缺失时只提醒、不自动安装） |
 | **Plugin Developer Toolkit** | https://claude.com/plugins/plugin-dev（Anthropic 官方插件） | 7 个专家技能：hooks（9 种事件）、MCP（stdio/SSE/HTTP/WS）、插件结构与 settings、slash 命令、agents、skill 编写；`/plugin-dev:create-plugin` 八阶段引导（discovery→planning→design→implementation→validation→testing→documentation）；12+ 示例、6 个校验脚本 | **吸收** | Claude Code 端的"插件创建器"；pf-build 的 Claude 适配器借鉴其八阶段与校验思路；校验脚本可对照我们的 validate 脚本。若用户环境已装，也可在 build 阶段**调用**其 create-plugin 命令 |
 | **Claude Code Setup** | https://claude.com/plugins/claude-code-setup（Anthropic 官方插件） | 分析代码库并推荐 hooks/skills/MCP/agents 自动化 | 吸收（可选项） | 与 pf-intent 的"复杂度信号"思路重叠；不直接创建插件 |
 | **Hookify** | https://claude.com/plugins/hookify（Anthropic 官方插件） | 用 markdown 描述生成自定义 hooks，防止不良行为 | 吸收 | hooks 生成的另一种范式（描述→钩子）；对照我们的"多 shell 渲染" |
@@ -25,6 +25,8 @@
 3. **opencode / pi / oh-my-pi 插件层 → 按固化规格直接生成**（无官方 creator 工具）。
 4. 任何"调用"动作都必须与"吸收"的规格一致——**不许出现第三方工具输出与
    references/ 固化规格冲突**；冲突时以 references/ 为准并触发复核。
+5. **skill-creator 安装由用户负责**：缺失时提醒用户自行安装
+   （`anthropics/skills@skill-creator`），agent/插件未经允许不得自动安装。
 
 ## 待办（网络受限未完成，2026-08-01）
 

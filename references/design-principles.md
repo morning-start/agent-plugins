@@ -15,6 +15,9 @@ When a skill and this document disagree, this document wins — update the skill
   skill-creator** (Anthropic, `npx skills add https://github.com/anthropics/skills --skill skill-creator`).
 - plugin-factory orchestrates: it supplies the PRD-derived skill spec, invokes
   skill-creator's TDD loop, and accepts a skill only after its evaluation passes.
+- **Never auto-install skill-creator**: if it is missing, remind the user to install it
+  themselves (`anthropics/skills@skill-creator`); installing it is a **user decision** —
+  never auto-install without explicit permission.
 - plugin-factory's own value is everything **around** a single skill: multi-harness
   rendering, hooks/commands, plugin packaging, and lifecycle analysis.
 
