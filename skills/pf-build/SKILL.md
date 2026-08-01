@@ -29,6 +29,10 @@ directory/repo. Skill authoring and evaluation are **delegated to skill-creator*
 ## skill-creator availability (rule)
 
 - Check that skill-creator is available before entering the build loop.
+- **Accepted install forms** (either satisfies the gate):
+  - global (e.g. `~/.pi/agent/skills/skill-creator`), or
+  - project-local via the skills CLI (`npx skills add …` → `.agents/skills/skill-creator`
+    + tracked `skills-lock.json` at the repo root; the vendor dir itself is gitignored).
 - **If missing**: remind the user to install it themselves —
   `npx skills add https://github.com/anthropics/skills --skill skill-creator`
   (`anthropics/skills@skill-creator`). **Do NOT auto-install**, and do not run the
