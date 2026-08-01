@@ -258,6 +258,34 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 }
 ```
 
+## 任务验收后的 Git 提交契约
+
+任务验收（RED → GREEN → VERIFY → code-review 通过）之后，按以下规则处理提交：
+
+| 场景 | 处理 | 说明 |
+|------|------|------|
+| **单个任务** | **交给用户确认，不自动提交** | 展示验收清单 + diff，等待用户决定（确认/修改/提交） |
+| **多个任务 + 用户已授权提交** | **验收后提交 git** | 按用户授权执行 `git add` + `git commit`，使用 Conventional Commits 规范 |
+| **非 git 仓库** | 只展示变更，不执行 git | 项目必须存在 `.git` 或 `git rev-parse` 成功才可提交 |
+
+**提交前提检查（提交前必做）**：
+```bash
+# 1. 确认是 git 仓库
+git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_A_GIT_REPO"
+
+# 2. 确认授权：仅当用户在本对话中明确授权"提交/commit"时执行
+#    未获授权 → 展示 diff，等待用户确认
+
+# 3. 提交前工作区干净检查（提交的应只有本次任务产物）
+git status --porcelain
+```
+
+**提交规则**：
+- 单次提交只包含**一个 Task 的产物**（对应「模块化小步实现」的粒度），不把多个任务混在一个提交里
+- commit message 遵循 Conventional Commits：`feat:` / `fix:` / `refactor:` / `test:` / `docs:`
+- 提交后确认 `git status --porcelain` 干净（预期产物如 `pkg.generated.mbti` 按 allowlist 处理）
+- 用户未授权 → 永远只展示 diff，等待用户确认后再提交
+
 ## 错误恢复
 
 | 问题 | 诊断 | 修复 |

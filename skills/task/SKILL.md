@@ -69,6 +69,10 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
 
 - 向用户报告：任务完成、验收清单逐项结果、关键变更、验证证据
 - 输出 JSON（见下），更新 `.moonbit-pipeline.json` 进度
+- **任务验收后的处理**：
+  - **单个任务** → 交给用户确认，**不自动提交 git**。展示变更（验收清单 + diff）后等待用户决定（确认、修改或提交）。
+  - **多个任务且用户已授权提交 git** → 验收后按授权提交（见 `moonbit-implement` 的提交契约）。
+  - **前提检查**：项目本身是 git 仓库（存在 `.git` 或 `git rev-parse` 成功）才可提交；非 git 仓库只展示变更，不执行 `git` 命令。
 
 ## Red Flags — STOP and Start Over
 

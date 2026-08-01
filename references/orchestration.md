@@ -166,8 +166,8 @@
 | `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 管线并行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
 | `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 管线并行 |
-| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现 | 管线核心 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付 | 管线核心 |
+| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；Git 提交契约（单任务用户确认/多任务授权提交） | 管线核心 |
+| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后交用户确认） | 管线核心 |
 | `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 任务间门禁 |
 | `moonbit-verify` | 全量验证门禁 + 按模块/任务验证子集 | 管线检查点 |
 | `moonbit-evaluate` | 验收评估（任务级验收清单汇总）+ 发布管理 | 管线终点 |

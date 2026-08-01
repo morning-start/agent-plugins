@@ -113,8 +113,8 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 | 技能 | 作用 |
 |---|---|
 | `moonbit-testing` | 设计测试策略、组织测试文件、决定测试时机（先行 vs 后补）、补充 valid/invalid/edge 场景 |
-| `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码；模块化小步实现 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）、逐项验收、保质保量交付 |
+| `moonbit-implement` | Feature TDD 与 Bug Fix Mode；没有失败测试不写生产代码；模块化小步实现；Git 提交契约（单任务用户确认/多任务授权提交） |
+| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）、逐项验收、保质保量交付（交付后交用户确认） |
 | `moonbit-code-review` | 在任务之间审查真实变更（任务/模块粒度 + 验收项↔测试对应），处理 Critical/Important 问题 |
 
 ### 工程质量

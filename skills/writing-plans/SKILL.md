@@ -164,10 +164,14 @@ src/
 - [ ] **Step 5: 全量验证**
   Run: `moon fmt --check && moon check --warn-list +73 && moon test`
 
-- [ ] **Step 6: 提交（可选，用户或仓库规则要求时）**
+- [ ] **Step 6: 提交（遵循任务验收后的 Git 提交契约）**
   ```bash
-  git add -A && git commit -m "feat: add function"
+  # 单任务 → 不自动提交，交给用户确认（展示验收清单 + diff）
+  # 多任务 + 用户已授权提交 + 项目是 git 仓库 → 提交
+  git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_A_GIT_REPO"
+  git add <本任务产物> && git commit -m "feat: add function"
   ```
+  提交规则详见 `moonbit-implement` 的「任务验收后的 Git 提交契约」：单任务不自动提交；多任务需用户授权且项目为 git 仓库；单次提交只含一个 Task 产物。
 ```
 
 ## 任务粒度规则
