@@ -181,7 +181,7 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 |---|---|
 | Oh My Pi (OMP) | `omp plugin install https://github.com/morning-start/moonbit-skills.git`（Git 直装，无需 marketplace） |
 | AtomCode | `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再安装 `moonbit-skills` |
-| Claude Code | 先 `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再 `/plugin install moonbit-skills`（不在 `claude-plugins-official`） |
+| Claude Code | 先 `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再 `/plugin install moonbit-skills@moonbit-skills`（不在 `claude-plugins-official`） |
 | Cursor | 先添加自定义 Marketplace（指向本仓库），再在 Agent 聊天中执行 `/add-plugin moonbit-skills` |
 | Codex CLI / App | 先添加自定义 Marketplace（指向本仓库），再在 `/plugins` 中搜索安装 `moonbit-skills` |
 | Kimi Code | 先添加自定义 Marketplace（指向本仓库），再从市场安装 `moonbit-skills` |
