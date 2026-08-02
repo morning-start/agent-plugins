@@ -23,6 +23,10 @@
 
 ## 30 秒开始
 
+<p align="center">
+  <img src="./assets/readme/section-quickstart.svg" width="100%" alt="快速开始：用自然语言说你想做什么，Agent 自动路由到对应技能。">
+</p>
+
 ### 1. 安装
 
 OMP 是最直接的插件安装方式：
@@ -160,6 +164,10 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 
 ## 支持的平台
 
+<p align="center">
+  <img src="./assets/readme/section-install.svg" width="100%" alt="安装方式：作为 AI Agent 插件安装，装完即用，无需手动配置。">
+</p>
+
 技能内容统一位于 `skills/`；不同 Agent 平台通过原生 skill 发现、SessionStart 注入、插件 manifest 或平台 hooks 接入。
 
 <details>
@@ -203,6 +211,10 @@ evals/evals.json            路由与管线场景评估
 
 ## 常见问题
 
+<p align="center">
+  <img src="./assets/readme/section-faq.svg" width="100%" alt="常见问题：关于技能管线、使用门槛、Windows 兼容性和代码安全的解答。">
+</p>
+
 ### 必须按顺序使用所有技能吗？
 
 不需要。管线是推荐路径。已有项目可以直接从 `plan`、`testing`、`implement` 或 `verify` 开始；只在需求或架构发生变化时回到 `plan`。
@@ -214,6 +226,8 @@ evals/evals.json            路由与管线场景评估
 ### Agent 会直接修改我的代码吗？
 
 取决于技能。`plan`、`writing-plans`、`code-review`、`verify` 默认以设计或报告为主；`scaffold`、`implement`、`init`、`ci` 会在各自职责范围内写入文件。行为型技能会明确测试、失败恢复和停止条件。
+
+Git 提交遵循一次性授权协议：首次询问一次，得到允许后写入目标项目 AGENTS.md，后续每个任务验收自动执行「建功能分支 → 提交 → 合并 → 删除分支」，不再逐次询问；你随时可以在对话中明确要求不自动提交。
 
 ### Windows 支持如何？
 
