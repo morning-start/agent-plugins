@@ -120,7 +120,7 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
 | S6 | 多端移植 | /pf-maintain | design(适配器) → build(新端渲染) → verify → release | 为现有插件加端 |
 | S7 | 编排优化 | /pf-maintain | design(编排) → build(重渲染路由) → verify → release | 换触发链/入口 |
 | S8 | 配置/依赖维护 | /pf-maintain | build(修复) → verify → release | hooks/manifest/依赖 |
-| S9 | 例行发布 | /pf-release | verify → release | 版本演进 |
+| S9 | 例行发布 | /pf-release | verify → pf-git（版本提升 + CHANGELOG）→ release gate → 显式 tag/push | 版本演进 |
 | S10 | 生命周期分析 | /pf-analyze | analyze → 建议 → 路由到 S4/S5/S7 | 纯结构 |
 
 ### 编排规则（循环而非线性）

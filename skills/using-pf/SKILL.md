@@ -45,7 +45,7 @@ commands — route internally.
      config/dependency fix → S8.
    → route: intent (Change) → design/build → verify → release.
 3. **Analyze** → S10: /pf-analyze structure probes; recommendations route to S4/S5/S7.
-4. **Release** → S9: /pf-release (verify → release).
+4. **Release** → S9: /pf-release (verify → version bump via pf-git → release).
 5. **Just a question** → answer directly; no scenario needed.
 
 ## Red Flags
