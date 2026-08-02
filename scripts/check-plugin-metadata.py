@@ -138,19 +138,30 @@ def check_author(descriptors: list[tuple[Path, dict]]) -> list[str]:
 
 
 def check_hooks(descriptors: list[tuple[Path, dict]]) -> list[str]:
-    """Check hooks field is declared in plugin.json files that support it."""
+    """Check hooks field in plugin.json files that declare it.
+
+    Claude Code auto-discovers hooks/hooks.json at the plugin root; a string
+    `hooks` field in .claude-plugin/plugin.json is INVALID schema (Claude Code
+    rejects it with "hooks: Invalid input"), so it must be omitted there.
+    Kimi Code still declares the path explicitly.
+    """
     failures = []
     for path, data in descriptors:
         hooks_val = data.get("hooks")
         expected = "hooks/hooks.json"
-        if hooks_val is None:
-            # Claude Code and Kimi Code should declare hooks
-            # OMP (root plugin.json) uses TypeScript hooks, not shell hooks
-            pname = path.parent.name
-            if pname in (".claude-plugin", ".kimi-plugin"):
+        pname = path.parent.name
+        if pname == ".claude-plugin":
+            # Claude Code auto-discovers hooks/hooks.json; omit the field.
+            if hooks_val is not None:
+                failures.append(
+                    f"{path}: hooks must be omitted (auto-discovered from "
+                    f"hooks/hooks.json), got {hooks_val!r}"
+                )
+        elif pname == ".kimi-plugin":
+            if hooks_val is None:
                 failures.append(f"{path}: hooks field missing, expected {expected!r}")
-        elif hooks_val != expected:
-            failures.append(f"{path}: hooks must point to {expected!r}, got {hooks_val!r}")
+            elif hooks_val != expected:
+                failures.append(f"{path}: hooks must point to {expected!r}, got {hooks_val!r}")
     return failures
 
 
