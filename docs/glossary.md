@@ -16,4 +16,10 @@
 | **Multi-shell（多 shell）** | 每个 hook/脚本须同时提供 bash 与 PowerShell 实现。 |
 | **Orchestration（编排）** | 一组技能的协作设计：入口点、触发链、交接产物、冲突避免（见 `references/orchestration-patterns.md`）。 |
 | **Lifecycle actions（生命周期动作）** | 拆分 / 合并 / 重组 / 移植 / 退役 / 演进——`pf-lifecycle` 的建议（v1 纯结构）。 |
-| **Dogfood** | 用 plugin-factory 自己生成一个示例插件（M4）。 |
+| **Dogfood** | 用 plugin-factory 自己生成一个示例插件（T5 `npm run smoke`：`git-release` 从干净临时目标生成→校验→引导→审计）。 |
+| **Verifier（验证器）** | `scripts/verify.mjs`：跨平台结构/harness/生命周期审计引擎；Bash 与 PowerShell 仅转发参数。`npm run validate` / `validate:ps` 调用同一引擎。 |
+| **Finding schema（findings 形状）** | 验证器产出的稳定结构 `{ signal, file, severity: FAIL|WARN|INFO, action, impact }`；FAIL 使退出码为 1。 |
+| **Lifecycle probe（生命周期探针）** | `verify.mjs lifecycle` 实现的纯结构信号（`skill-too-large`、`trigger-overlap`、`broken-handoff`、`orphan-skill`、`missing-entry-skill` 等 11 个）。 |
+| **Bootstrap marker** | `PLUGIN_FACTORY_BOOTSTRAP:<plugin>`：引导注入的唯一标记，每个生命周期阶段至多出现一次（T3）。 |
+| **Release-check（发布门禁）** | `scripts/release-check.mjs`：发布准备检查（版本同步、审计、验证器、CHANGELOG 证据、harness 产物、干净工作树）；从不隐式打标签或推送。 |
+| **SemVer（语义化版本）** | `scripts/version.mjs` 严格解析 `X.Y.Z[-prerelease]`；声明文件经 `.version-bump.json` 同步。 |

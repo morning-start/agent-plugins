@@ -13,7 +13,11 @@
 |------|----------|----------|
 | Claude Code | `/plugin install plugin-factory@<marketplace>` 或本地插件 | 插件内 `skills/` |
 | pi | `pi install git:github.com/<you>/plugin-factory` | 包内 `skills/`（package.json 的 `pi.skills`） |
-| opencode | 按 `.opencode/INSTALL.md` | 复制 `skills/` → `.opencode/skills/`（脚本规划中） |
+| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` | 包内 `skills/`（`omp`/`pi` 字段） |
+| opencode | 按 `.opencode/INSTALL.md` | `.opencode/skills/`（scaffold 自动复制，无需手工拷贝） |
+
+四个平台均由自举冒烟测试（`npm run smoke`）验证；一个平台只有在 manifest、
+引导、技能发现路径与冒烟检查齐备时才被声明支持（T1 契约）。
 
 ## 快速开始
 
@@ -53,11 +57,32 @@ plugin-factory/
 
 ## 路线图
 
-- **M0** — 插件骨架、三平台 manifest、`pf-intent`、references ✅ *(当前)*
+- **M0** — 插件骨架、三平台 manifest、`pf-intent`、references ✅
 - **M1** — 全流程编排，先出 Claude Code 端，双 shell 脚手架脚本
 - **M2** — pi + opencode 适配器、多 shell hooks/commands 渲染、独立项目生成完善
 - **M3** — 生命周期分析引擎（纯结构）+ 决策矩阵 + 审计升级
 - **M4** — dogfood：用 plugin-factory 自己生成一个示例插件；测试与文档完善
+
+## 安全发布流程
+
+发布准备与**发布动作分离**（见 `/pf-release`）：
+
+1. `npm run verify` — 必须退出码 0（无 `FAIL` finding）。
+2. `npm run release:check -- --json` — 发布门禁：版本同步、版本审计、可执行
+   验证器、当前版本的 CHANGELOG 证据、已宣称 harness 的 manifest、以及
+   **干净的工作树**。任何违规都以稳定 `signal` 失败（`version-drift`、
+   `missing-changelog-entry`、`dirty-worktree`、`missing-harness-artifact`、
+   `verification-failed`）。
+3. `scripts/bump-version.sh <X.Y.Z>`（或 `.ps1`）— 按 `.version-bump.json`
+   同步所有声明的 manifest；不要手工改版本。
+4. 更新 CHANGELOG 与双语 README，复核 diff。
+5. **显式**打标签（`git tag v<版本>`）并仅在用户要求分发时推送——门禁本身
+   从不打标签或推送。
+
+## 验证
+
+`npm run validate` 与 `npm run validate:ps` 调用同一个 Node 验证器
+（`scripts/verify.mjs`）；`npm test` 运行全部契约测试。
 
 ## 许可证
 

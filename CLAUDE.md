@@ -7,7 +7,7 @@
 The user only provides *what the plugin should do*; the agent drives everything else
 through a software-development workflow (intent → design → build → verify → release → lifecycle).
 
-Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**.
+Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**, **oh-my-pi**. A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract, enforced by `scripts/scaffold.mjs`).
 
 ## How it works
 
@@ -37,7 +37,7 @@ intent interview. The workflow then proceeds through these phases:
 - **Skill creation is delegated**: plugin-factory never re-implements skill authoring or
   evaluation — it orchestrates **skill-creator** (Anthropic) for create/test/iterate.
 
-## Quality bars (enforced by `pf-verify` / `scripts/validate-structure.*`)
+## Quality bars (enforced by `scripts/verify.mjs` / `npm run verify`)
 
 - Every `SKILL.md` has YAML frontmatter with `name` and `description`.
 - `name` matches its parent directory; lowercase letters/digits/hyphens only.
@@ -45,26 +45,31 @@ intent interview. The workflow then proceeds through these phases:
   (never the workflow), and stays under 1024 characters.
 - Every command file has a frontmatter `description`.
 - Every hook has both a `.sh` and a `.ps1` implementation.
+- Every advertised harness has its complete artifact set.
+
+`npm run validate` and `npm run validate:ps` invoke the same Node engine
+(`scripts/verify.mjs structure`) — Bash and PowerShell are thin wrappers.
 
 ## Repository structure
 
 ```
 plugin-factory/
 ├── .claude-plugin/plugin.json    # Claude Code plugin manifest
-├── .pi/extensions/               # pi extension bootstrap (M2: API verified)
-├── .opencode/                    # opencode config + INSTALL.md
+├── .pi/extensions/               # pi/oh-my-pi bootstrap extension
+├── .opencode/                    # opencode config, plugin + INSTALL.md
 ├── skills/                       # pf-* workflow sub-skills (canonical location)
 ├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
-├── references/                   # shared design docs (adapters, model, lifecycle matrix)
-├── scripts/                      # validate/audit/scaffold scripts (multi-shell)
-├── templates/                    # generated-plugin scaffolds (M1+)
-├── docs/                         # ADRs + glossary
-└── tests/                        # plugin-infrastructure tests
+├── references/                   # shared design docs (adapters, model, lifecycle matrix, hooks)
+├── scripts/                      # scaffold/verify/lifecycle/version/release (Node core + shell wrappers)
+├── templates/                    # shared/ + harnesses/ scaffold templates
+├── docs/                         # ADRs, glossary, tasks, reports
+└── tests/                        # contract + smoke tests (scaffold/verify/bootstrap/release/smoke)
 ```
 
 ## Working here
 
 - Before editing a skill, read the matching `references/*.md` doc so conventions stay in sync.
 - When you change a convention, update the affected `references/` docs and the CHANGELOG.
-- Keep every deliverable verifiable: run `npm run validate` after structural changes.
+- Keep every deliverable verifiable: run `npm test` and `npm run validate` after changes
+  (add contract tests under `tests/` for any new script).

@@ -16,7 +16,12 @@ lifecycle analysis (split / merge / reorganize / port / retire).
 |---------|---------|----------------|
 | Claude Code | `/plugin install plugin-factory@<marketplace>` or local plugin | plugin `skills/` |
 | pi | `pi install git:github.com/<you>/plugin-factory` | package `skills/` (`pi.skills` in package.json) |
-| opencode | follow `.opencode/INSTALL.md` | copy `skills/` → `.opencode/skills/` (script planned) |
+| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` | package `skills/` (`omp`/`pi` fields) |
+| opencode | follow `.opencode/INSTALL.md` | `.opencode/skills/` (auto-copied by the scaffold — no manual `cp`) |
+
+All four harnesses are verified by the dogfood smoke test (`npm run smoke`); a
+harness is only advertised when its manifest, bootstrap, skill discovery path,
+and smoke check are present (T1 contract).
 
 ## Quick start
 
@@ -58,11 +63,32 @@ plugin-factory/
 
 ## Roadmap
 
-- **M0** — plugin skeleton, three-harness manifests, `pf-intent`, references ✅ *(current)*
+- **M0** — plugin skeleton, three-harness manifests, `pf-intent`, references ✅
 - **M1** — full pipeline orchestration, Claude Code adapter first, dual-shell scaffold scripts
 - **M2** — pi + opencode adapters, multi-shell hooks/commands rendering, standalone project generation
 - **M3** — lifecycle analysis engine (pure structural) + decision matrix + audit upgrade
 - **M4** — dogfood: generate an example plugin with plugin-factory itself; tests; docs polish
+
+## Safe release flow
+
+Release preparation is **separated from publication** (see `/pf-release`):
+
+1. `npm run verify` — exit 0 required (no `FAIL` findings).
+2. `npm run release:check -- --json` — the release gate: version sync, version
+   audit, executable verifier, CHANGELOG evidence for the current version,
+   advertised-harness manifests, and a **clean worktree**. Any violation fails
+   with a stable `signal` (`version-drift`, `missing-changelog-entry`,
+   `dirty-worktree`, `missing-harness-artifact`, `verification-failed`).
+3. `scripts/bump-version.sh <X.Y.Z>` (or `.ps1`) — bump every declared manifest
+   via `.version-bump.json`; never hand-edit versions.
+4. Update CHANGELOG + bilingual README, review the diff.
+5. **Explicitly** tag (`git tag v<version>`) and push only when the user asked
+   for distribution — the gate never tags or pushes.
+
+## Verification
+
+`npm run validate` and `npm run validate:ps` invoke the same Node verifier
+(`scripts/verify.mjs`); `npm test` runs all contract tests.
 
 ## License
 

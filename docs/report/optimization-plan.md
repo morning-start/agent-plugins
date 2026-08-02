@@ -21,6 +21,21 @@
 
 ## 二、分阶段计划
 
+> **状态更新（2026-08-02，T1–T5 证据）**：下表原为计划，现以任务证据为准——
+> A 阶段（O1–O4）与大部分 B/C 前置项已由 [docs/tasks](../tasks/README.md) 的
+> T1–T5 落地；实现状态以**命令/测试路径**为准，不再以计划措辞为准：
+> - O1（契约文档化）→ `references/plugins/claude-code.md` + T1 产物契约
+>   （`scripts/scaffold.mjs` 强制；测试 `tests/scaffold/scaffold-contract.test.mjs`）
+> - O2（引导强制力）→ `skills/using-pf/SKILL.md` + T3 引导注入
+>   （`scripts/render-bootstrap.mjs`；测试 `tests/bootstrap/bootstrap-contract.test.mjs`）
+> - O3（发布叙事）+ O4（版本工程机械化）→ `scripts/version.mjs` +
+>   `scripts/release-check.mjs`（测试 `tests/release/release-safety.test.mjs`）
+> - O8（发布门禁）→ T4 release-check（dirty worktree / 缺失证据阻断）
+> - M3 生命周期探针（C3）→ T2 `scripts/verify.mjs lifecycle`
+>   （测试 `tests/verify/verify-engine.test.mjs`）
+> - dogfood（M4/C1/C2 静态部分）→ T5 `npm run smoke`
+>   （`tests/smoke/dogfood-smoke.test.mjs`；live 通道 `npm run smoke:live`）
+
 ### 阶段 A — 快速吸收（M1 收尾 · O1–O4 · 低投入高收益，无前置依赖）
 
 | 步骤 | 内容 | 验收 |
