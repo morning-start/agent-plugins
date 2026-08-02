@@ -17,7 +17,7 @@
  * The engine never executes skill content and never installs dependencies.
  *
  * Usage:
- *   node scripts/verify.mjs [structure|harness|lifecycle] --root <dir> [--format table|json]
+ *   node scripts/verify.mjs [structure|harness|lifecycle] --root <dir> [--format table|json] [--coverage=WARN|FAIL]
  */
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
@@ -718,6 +718,51 @@ async function orchestrationChecks(root, findings) {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* Coverage check (VFY-2) — opt-in, configurable severity              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Test coverage check. Every `active` skill must have at least one matching
+ * test: a `tests/<name>/` directory with test files, or a test referenced in
+ * the skill's `metadata.tests` field. `deprecated`/`retired` skills are
+ * exempt. Severity is configurable: WARN (advisory) or FAIL (blocking,
+ * `--coverage=FAIL`). Opt-in — the probe runs only when `--coverage` is passed.
+ * @param {string} root
+ * @param {object[]} findings
+ * @param {"WARN"|"FAIL"} mode - severity for uncovered active skills.
+ */
+async function coverageChecks(root, findings, mode) {
+  const skills = await collectSkills(root);
+  for (const s of skills) {
+    if (!s.text) continue;
+    const rel = `skills/${s.rel}SKILL.md`;
+    const statusMatch = s.text.match(/lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/);
+    if (!statusMatch || statusMatch[1] !== "active") continue; // only active skills are covered
+    if (await skillHasTest(root, s.dirName, s.text)) continue;
+    findings.push(
+      makeFinding(
+        "test-coverage",
+        rel,
+        mode,
+        `Add a test under tests/${s.dirName}/ or reference one via the skill's metadata.tests field.`,
+        "Active skills require test coverage; escalate with --coverage=FAIL to make it blocking.",
+      ),
+    );
+  }
+}
+
+/** Does the skill have a matching test (tests/<name>/ dir or metadata.tests)? */
+async function skillHasTest(root, dirName, text) {
+  try {
+    const entries = await readdir(join(root, "tests", dirName));
+    if (entries.length > 0) return true;
+  } catch {
+    /* no tests/<name>/ dir */
+  }
+  return /^\s+tests:\s*\[/m.test(text); // frontmatter metadata.tests list
+}
+
 /** Does any project file claim a using-<plugin> entry path? */
 async function declaresEntryPath(root) {
   const candidates = ["README.md", "AGENTS.md", "CLAUDE.md", "package.json"];
@@ -788,24 +833,34 @@ async function dirHasSupport(dir) {
 /**
  * Run the requested layers against `root`.
  * @param {string} root
- * @param {{layers?: string[]}} [opts]
+ * @param {{layers?: string[], coverage?: "WARN"|"FAIL"}} [opts]
+ *   When `coverage` is set, additionally run the test-coverage probe at that
+ *   severity (WARN advisory, FAIL blocking).
  * @returns {Promise<{root: string, findings: object[]}>}
  */
-export async function runChecks(root, { layers = ["structure", "harness", "orchestration"] } = {}) {
+export async function runChecks(root, { layers = ["structure", "harness", "orchestration"], coverage } = {}) {
   const findings = [];
   if (layers.includes("structure")) await structureChecks(root, findings);
   if (layers.includes("harness")) await harnessChecks(root, findings);
   if (layers.includes("orchestration")) await orchestrationChecks(root, findings);
+  if (coverage) await coverageChecks(root, findings, coverage);
   return { root, findings: sortFindings(findings) };
 }
 
 function parseArgs(argv) {
-  const args = { root: process.cwd(), format: "table", layers: null };
+  const args = { root: process.cwd(), format: "table", layers: null, coverage: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--root") args.root = argv[++i];
     else if (a === "--format") args.format = argv[++i];
-    else if (a === "structure") args.layers = ["structure"];
+    else if (a === "--coverage" || a.startsWith("--coverage=")) {
+      const v = (a.includes("=") ? a.split("=")[1] : argv[++i] || "WARN").toUpperCase();
+      if (v !== "WARN" && v !== "FAIL") {
+        console.error(`verify: invalid --coverage value "${v}" (expected WARN or FAIL)`);
+        process.exit(2);
+      }
+      args.coverage = v;
+    } else if (a === "structure") args.layers = ["structure"];
     else if (a === "harness") args.layers = ["harness"];
     else if (a === "lifecycle") args.layers = ["orchestration"];
     else if (a === "all") args.layers = ["structure", "harness", "orchestration"];
@@ -817,7 +872,10 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   let result;
   try {
-    result = await runChecks(args.root, { layers: args.layers ?? undefined });
+    result = await runChecks(args.root, {
+      layers: args.layers ?? undefined,
+      coverage: args.coverage ?? undefined,
+    });
   } catch (err) {
     console.error(`verify: failed to run checks: ${err.message}`);
     process.exit(2);

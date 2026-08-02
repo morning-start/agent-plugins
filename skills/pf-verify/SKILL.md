@@ -104,9 +104,20 @@ Before releasing, verify that every skill has a corresponding test file:
   **WARNING** finding (not a FAIL — coverage is advisory, not blocking).
 - Skills with `lifecycle.status: deprecated` are exempt from coverage
   requirements.
+- **Configurable severity** — run the coverage probe with an explicit severity:
+  - `node scripts/verify.mjs structure --root . --coverage=WARN` (advisory),
+  - `node scripts/verify.mjs structure --root . --coverage=FAIL` (blocking:
+    uncovered active skills become FAIL and exit 1).
+  - Without `--coverage` the probe is skipped entirely — coverage is opt-in.
 
 Run: `npm test` (all tests must pass) and `npm run verify` (coverage warnings
 are informational).
+
+**Eval coverage** (advisory): when `evals/evals.json` declares eval cases, every
+declared eval should have a recorded result (`evals.mjs` records them during
+pf-build). Check with `node scripts/evals.mjs check`; uncovered evals exit 1 —
+report them as WARN findings and re-run the missing evals via pf-build, never
+imply evals passed without a recorded result (honest evaluation claims).
 
 ### 7. Docs & packaging
 

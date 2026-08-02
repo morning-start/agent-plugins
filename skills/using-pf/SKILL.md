@@ -115,7 +115,11 @@ These thoughts mean STOP — you are rationalizing:
 ## Stop conditions
 
 - No scenario matches and the request is not plugin-factory work → state "This
-  scenario is not covered by current skills" and suggest an issue.
+  scenario is not covered by current skills", then **fall back to the scenario
+  request template** (`docs/templates/scenario-request.md`) — fill it with the
+  user's intent (description, triggers, entry conditions, expected
+  deliverables) and open a GitHub issue from it, so the gap is captured instead
+  of dead-ending.
 - A matched skill's file is unavailable → report the missing skill, fall back to
   `references/`.
 - Multiple scenarios match and priority cannot disambiguate → list the matches

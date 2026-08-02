@@ -1,6 +1,6 @@
 ---
 name: pf-git
-description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-version, /pf-release, or using-pf.
+description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when setting up git hooks for commit/merge quality gates, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-version, /pf-release, or using-pf.
 tags: [pf, pf-git, git, branch, worktree, semver, changelog, release, version]
 metadata:
   prefix: pf
@@ -187,6 +187,73 @@ then automate — never nag per commit:
 Batch discipline: run at most **5 consecutive tasks** per batch, then stop,
 report, and reach a **commit checkpoint** (verify + commit) before continuing
 (≤3 if the platform cannot compact sessions).
+
+### 6. Git hooks — local quality gates
+
+Hooks make the conventions mechanical: **commit-msg** enforces Conventional
+Commits, **pre-commit** runs lint / structure checks before anything is committed.
+They are local to each clone (not shared automatically) — install them per repo.
+
+#### 6.1 Where hooks live
+
+- Default: `git hooks` are looked up in `.git/hooks/` (untracked, per-clone).
+- Tracked alternative: keep hook scripts in the repo (e.g. `githooks/`) and point
+  git at them so every clone gets the same gates:
+  `git config core.hooksPath githooks`.
+- The scaffolded plugin keeps hooks portable: commit-msg/pre-commit are **bash +
+  PowerShell pairs** (project multi-shell convention) where the harness supports
+  them; git itself only runs hooks from `core.hooksPath`, so either place works.
+
+#### 6.2 commit-msg hook — Conventional Commits validation
+
+Gate the commit **subject** format `type(scope)!: subject`:
+
+```bash
+#!/usr/bin/env bash
+# githooks/commit-msg — reject non-Conventional-Commit subjects.
+set -eu
+msg="$(cat "$1")"
+subject="$(printf '%s' "$msg" | head -n1)"
+if ! printf '%s' "$subject" | grep -qE '^(feat|fix|docs|test|refactor|chore|perf)(\([a-z0-9-]+\))?!?: '; then
+  echo "commit-msg: subject must match 'type(scope)!: subject'" >&2
+  echo "  got: $subject" >&2
+  exit 1
+fi
+```
+
+- A `!` after the scope (or a `BREAKING CHANGE:` footer) marks breaking changes —
+  the hook may additionally require a footer when the subject carries `!`.
+- Keep the hook permissive on the body: only the subject is machine-checked here.
+
+#### 6.3 pre-commit hook — lint / structure gate
+
+Run the project's fast checks before committing; fail the commit on any break:
+
+```bash
+#!/usr/bin/env bash
+# githooks/pre-commit — structural gate before commit.
+set -eu
+npm run validate     # structure audit (Agent Skills standard)
+```
+
+- Prefer the fastest meaningful check (structure/lint), not the full suite —
+  leave `npm test` to CI / the release gate unless the project explicitly wants
+  it pre-commit.
+- If a check is intentionally skipped on some commits (e.g. docs-only), gate it
+  on the changed files (`git diff --cached --name-only`) rather than disabling
+  the hook.
+
+#### 6.4 Rules
+
+- **Never install hooks implicitly** — the user decides whether a repo gets
+  `commit-msg` / `pre-commit` hooks (per-repo config, may collide with their
+  existing hooks).
+- Always make hooks **non-destructive**: they reject, they never rewrite or
+  amend. Let the developer fix the message / the code.
+- Document the hooks in the repo (`githooks/README.md` or the project's
+  `AGENTS.md` validation section) so the gates are discoverable.
+- Hooks enforce, they do not replace: the same quality bars stay in `npm run
+  validate` / `npm test` for CI regardless of local hooks.
 
 ## Outputs
 

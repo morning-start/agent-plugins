@@ -102,7 +102,16 @@ For every skill in `components.skills`:
 3. Run its loop: intent → draft → test cases → parallel A/B eval (with/without the
    skill) → iterate based on feedback (description optimization up to its rounds).
 4. **Accept only after its evaluation passes and all test cases pass.** Record the
-   eval summary per skill.
+   eval summary per skill **automatically** — never leave it in conversation only:
+
+   ```bash
+   node scripts/evals.mjs record --skill <skill-name> --name <eval-name> --passed <true|false> [--notes <summary>]
+   ```
+
+   `recordEval()` (exported from `scripts/evals.mjs`) appends the result to
+   `evals/evals.json` (`results.<skill>.<eval-name>`), preserving the declared
+   eval cases; latest result wins per name. Every accepted skill must have a
+   recorded eval result before the build hands off.
 
 Test-first principle: a skill is not complete until its test cases exist and pass.
 The scaffold generates a `tests/` directory with per-skill test stubs;
