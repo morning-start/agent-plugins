@@ -29,11 +29,13 @@
 
 ### 1. 安装
 
-OMP 是最直接的插件安装方式：
+OMP 是最直接的插件安装方式（Git 直装，无需 marketplace）：
 
 ```bash
 omp plugin install https://github.com/morning-start/moonbit-skills.git
 ```
+
+> 本插件不在任何平台的官方插件市场发布，无法直接搜索下载。Claude Code / Cursor / Codex / Kimi Code 等平台需**先添加自定义 Marketplace（指向本仓库）**再安装，具体见下方「[支持的平台](#支持的平台)」表格。
 
 安装前准备：
 
@@ -173,16 +175,18 @@ Plan → [Spike] → Writing-Plans → Scaffold → [Testing ↔] Implement
 <details>
 <summary>安装方式</summary>
 
+> 注意：本插件**不在任何平台的官方插件市场发布**，官方市场无法直接下载。Claude Code / Cursor / Codex / Kimi Code 均需**先添加自定义 Marketplace（源指向本仓库）**，再从该源安装 `moonbit-skills`。
+
 | 平台 | 安装方式 |
 |---|---|
-| Oh My Pi (OMP) | `omp plugin install https://github.com/morning-start/moonbit-skills.git` |
+| Oh My Pi (OMP) | `omp plugin install https://github.com/morning-start/moonbit-skills.git`（Git 直装，无需 marketplace） |
 | AtomCode | `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再安装 `moonbit-skills` |
-| Claude Code | `/plugin install moonbit-skills@claude-plugins-official`，或添加自定义 marketplace |
-| Cursor | 在 Agent 聊天中执行 `/add-plugin moonbit-skills` |
-| Codex CLI / App | `/plugins` → 搜索 `moonbit-skills` → Install |
-| Kimi Code | `/plugins` → 市场 → `moonbit-skills` → 安装 |
-| Gemini CLI | `gemini extensions install https://github.com/morning-start/moonbit-skills` |
-| OpenCode | 使用 `.opencode/opencode.json` 中的 instructions 和 plugin 配置 |
+| Claude Code | 先 `/plugin marketplace add https://github.com/morning-start/moonbit-skills`，再 `/plugin install moonbit-skills`（不在 `claude-plugins-official`） |
+| Cursor | 先添加自定义 Marketplace（指向本仓库），再在 Agent 聊天中执行 `/add-plugin moonbit-skills` |
+| Codex CLI / App | 先添加自定义 Marketplace（指向本仓库），再在 `/plugins` 中搜索安装 `moonbit-skills` |
+| Kimi Code | 先添加自定义 Marketplace（指向本仓库），再从市场安装 `moonbit-skills` |
+| Gemini CLI | `gemini extensions install https://github.com/morning-start/moonbit-skills`（Git 直装，无需 marketplace） |
+| OpenCode | 使用 `.opencode/opencode.json` 中的 instructions 和 plugin 配置（本地文件引用） |
 
 OMP/Pi 通过 `package.json` 的 `omp.extensions` / `pi.extensions` 注册扩展；`skills/`、`hooks/` 和 `commands/` 保持为可发现的插件内容。
 
