@@ -84,7 +84,17 @@ Follow `references/orchestration-patterns.md`:
   (`using-<plugin>`) + per-harness session-start hooks.
 - **Chains**: ordered trigger chains with handoffs; each link's artifact must be
   produced upstream.
-- **Conflicts**: trigger domains must be mutually exclusive; declare exceptions here.
+- **Conflicts**: trigger domains must be mutually exclusive; detect them
+  **automatically** — never by hand:
+
+  ```bash
+  node scripts/check-conflicts.mjs --manifest <manifest.json>   # or --root <plugin-dir>
+  ```
+
+  `check-conflicts.mjs` (reusing verify.mjs's `keywordBag`/`jaccard`) computes
+  Jaccard similarity over every skill's trigger domain; identical domains are
+  FAIL (merge them), similarity ≥ 0.85 is WARN (merge, or declare the exception
+  in `orchestration.conflicts` with the reported score). Empty output = clean.
 - Every skill ends with "After this, route to X" (rendered by pf-build).
 
 ### 5. Emit the component manifest

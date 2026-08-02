@@ -80,6 +80,25 @@ The concrete v2 roadmap — probes (`trigger-frequency`, `eval-pass-rate`,
 `references/lifecycle-matrix.md` § 未来信号 → v2 roadmap. v1 must never fake
 these probes: without their data sources wired, mark them "not enabled" (INFO).
 
+## Cross-skill dependency analysis (executable: `scripts/check-dependencies.mjs`)
+
+```text
+node scripts/check-dependencies.mjs [--root <dir>] [--format table|json]
+```
+
+Builds the handoff/chain dependency graph (A references B when A's body routes
+or hands off to B — same `collectSkillRefs` patterns as the `broken-handoff`
+probe) and reports **endangered dependencies**: when skill B is `deprecated` or
+`retired`, every skill A that depends on B gets a WARN
+(`endangered-dependency`) — the dependent chain must be reworked before B is
+cleaned up. A skill's retirement therefore never silently breaks its dependents.
+
+## MCP exposure
+
+The lifecycle probes are callable programmatically through the MCP server
+(`mcp/verify-server.mjs`): `lifecycle_report(root)` returns the markdown report,
+`verify(root, layers: ["orchestration"])` returns the machine-readable findings.
+
 ## Status
 
 T2 complete — decision matrix probes are executable via `scripts/verify.mjs

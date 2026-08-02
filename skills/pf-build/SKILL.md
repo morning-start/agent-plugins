@@ -130,6 +130,12 @@ Per `references/plugins/` and `references/agent-adapters.md`:
 - **Tool mapping** (superpowers pattern): generate `references/<harness>-tools.md`
   translating the skills' action vocabulary into each harness's native tools; keep
   skill bodies tool-agnostic (see pf-design).
+- **MCP stub**: plugins that need an external API get a scaffolded
+  `mcp-servers/` directory — `README.md` (when to keep/delete, wiring) plus a
+  dependency-free stdio server stub with one example tool
+  (`mcp-servers/<prefix>-server.mjs`). Keep it only when the plugin calls an
+  external API; implement real tools via the TDD loop and delete the directory
+  otherwise.
 
 ### 4. Render hooks (multi-shell) and commands
 

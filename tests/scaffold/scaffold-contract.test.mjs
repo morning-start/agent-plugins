@@ -80,6 +80,8 @@ test("all four harnesses produce their required artifacts", async () => {
       "scripts/verify.mjs",
       "scripts/validate-structure.sh",
       "scripts/validate-structure.ps1",
+      "mcp-servers/README.md",
+      "mcp-servers/gr-server.mjs",
     ]) {
       assert.ok(await exists(join(target, rel)), `missing shared artifact: ${rel}`);
     }

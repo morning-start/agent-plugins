@@ -144,6 +144,22 @@ Every finding has the stable shape:
 - `npm run verify:json` emits the full machine-readable list.
 - Pass → route to `/pf-release`.
 
+## MCP exposure (programmatic callers)
+
+The same engine is exposed as a Model Context Protocol server
+(`mcp/verify-server.mjs`, stdio, zero dependencies) so other agents/tools can
+call verification without shelling out:
+
+```text
+node mcp/verify-server.mjs                     # stdio server (harness-registered)
+node mcp/verify-server.mjs --self-test         # one-shot, then exit
+```
+
+- `verify(root, layers?, coverage?)` → `runChecks()` findings + exit code.
+- `lifecycle_report(root)` → markdown lifecycle report.
+- Register in Claude Code via `.mcp.json` (`mcpServers.plugin-factory-verify`
+  → `node mcp/verify-server.mjs`); other harnesses use their own MCP config.
+
 ## Outputs
 
 - Audit report (severity-ranked; `--format table` or `--format json`) + exit code

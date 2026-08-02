@@ -370,7 +370,7 @@ async function harnessChecks(root, findings) {
 /* ------------------------------------------------------------------ */
 
 /** Normalized keyword bag for trigger-overlap comparison. */
-function keywordBag(description) {
+export function keywordBag(description) {
   return description
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, " ")
@@ -379,7 +379,7 @@ function keywordBag(description) {
 }
 
 /** Jaccard similarity of two keyword sets. */
-function jaccard(a, b) {
+export function jaccard(a, b) {
   const setA = new Set(a);
   const setB = new Set(b);
   if (setA.size === 0 && setB.size === 0) return 1;
@@ -791,7 +791,7 @@ async function rootIndexText(root) {
 }
 
 /** Collect skill references from handoff/route patterns in a skill body. */
-function collectSkillRefs(text) {
+export function collectSkillRefs(text) {
   const refs = new Set();
   const patterns = [
     /(?:route to|route via|handoff to|next skill|follow(?:ing)? skill)\s+[`'"]?([a-z0-9]+(?:-[a-z0-9]+)*)/g,
