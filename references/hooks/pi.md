@@ -64,3 +64,11 @@ export default function (pi: ExtensionAPI): void {
 
 - 生成的 pi hooks = `.pi/extensions/<插件名>.ts` 中的 `pi.on(...)` 处理器。
 - 阻断 = `return {block:true}`；结果修改 = 返回修改后的结果。
+
+## 已验证不变量（T3 落地）
+
+- 引导扩展（`.pi/extensions/pf-bootstrap.ts`，omp 共用）只注入**一个**入口技能
+  （`using-<plugin>`，frontmatter 剥离）的副本：`context` 事件仅在消息中缺失
+  `PLUGIN_FACTORY_BOOTSTRAP:<plugin>` marker 时返回 `{messages}`；
+  `session_compact` 不重复注入（压缩清空消息后由 `context` 在下一次模型轮注入）。
+- 注入文本来自 `skills/using-<plugin>/SKILL.md` 的规范正文，适配器不含手工拷贝。

@@ -86,6 +86,15 @@ command 钩子字段：
 Claude Code 每个 hook 原生支持 `shell: "bash"` 或 `shell: "powershell"`——
 hook 应写成 `.sh` + `.ps1` 成对，经 `shell` 字段接线。
 
+## 已验证不变量（T3 落地）
+
+- SessionStart 引导 hook（`hooks/session-start.sh` / `.ps1`）调用
+  `scripts/render-bootstrap.mjs` 生成
+  `{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"PLUGIN_FACTORY_BOOTSTRAP:<plugin> …body…"}}`；
+  双 shell 解码后 marker 与 body 完全一致（不比较 JSON 空白）。
+- hook 命令路径相对插件根解析（脚本内 `BASH_SOURCE[0]` / `$PSScriptRoot`），
+  与调用者 cwd 无关。
+
 ## 钩子来源
 
 - `settings.json` → `"hooks"` 键

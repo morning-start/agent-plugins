@@ -1,5 +1,26 @@
 # plugin-factory session-start bootstrap (PowerShell variant).
-# Activates the unified entry skill (using-pf): before ANY response, determine
-# intent and route to the right pf-* scenario. Mirrors superpowers' bootstrap.
+# Emits Claude-compatible hook JSON with the canonical using-pf entry context.
+# The renderer (scripts/render-bootstrap.mjs) owns marker/body generation; this
+# hook only wires lifecycle and serializes the result.
+$ErrorActionPreference = "SilentlyContinue"
 
-Write-Host "[plugin-factory] Before any task, load and follow skills/using-pf/SKILL.md - determine intent (create / maintain / analyze / release) and route to the right scenario."
+# Resolve the plugin root from this script's own location (not $PWD).
+$pluginRoot = Split-Path -Parent $PSScriptRoot
+
+$nodeBin = $env:NODE
+if (-not $nodeBin) {
+    $nodeBin = (Get-Command node -ErrorAction SilentlyContinue).Source
+}
+if (-not $nodeBin) {
+    Write-Output '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[plugin-factory] node not found - entry skill not bootstrapped."}}'
+    exit 0
+}
+
+Set-Location $pluginRoot
+$json = & $nodeBin "$pluginRoot\scripts\render-bootstrap.mjs" --root $pluginRoot --plugin-name plugin-factory --harness claude 2>$null
+if ($LASTEXITCODE -ne 0 -or -not $json) {
+    Write-Output '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[plugin-factory] entry skill not found - check skills/using-pf/SKILL.md."}}'
+} else {
+    Write-Output $json
+}
+exit 0

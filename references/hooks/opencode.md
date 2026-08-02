@@ -56,3 +56,10 @@ export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree
 
 - 生成的 opencode hooks = `.opencode/plugins/` 下每个事件组一个 `.ts` 插件。
 - "多 shell" 不适用——TS 天然跨平台。
+
+## 已验证不变量（T3 落地）
+
+- 引导插件（`.opencode/plugins/pf-bootstrap.ts`）导出 `Plugin` 函数，仅用
+  message/session 钩子面（`session.created` 注入 `PLUGIN_FACTORY_BOOTSTRAP:<plugin>`
+  上下文；marker 已存在时不重复注入）；**不**尝试运行 shell hooks。
+- 注入文本来自 `skills/using-<plugin>/SKILL.md` 的规范正文，适配器不含手工拷贝。
