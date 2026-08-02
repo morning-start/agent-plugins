@@ -31,7 +31,16 @@
     ]
   },
   "scripts": {
+    "test": "node --test \"tests/**/*.test.mjs\"",
     "validate": "bash scripts/validate-structure.sh",
-    "validate:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1"
+    "validate:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1",
+    "verify": "node scripts/verify.mjs --format table",
+    "verify:json": "node scripts/verify.mjs --format json",
+    "lifecycle": "node scripts/verify.mjs lifecycle --format table",
+    "version:check": "node scripts/version.mjs check",
+    "version:audit": "node scripts/version.mjs audit",
+    "release:check": "node scripts/release-check.mjs",
+    "smoke": "node --test tests/smoke/dogfood-smoke.test.mjs",
+    "smoke:live": "node tests/smoke/run-live.mjs"
   }
 }
