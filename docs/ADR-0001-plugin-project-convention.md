@@ -1,6 +1,7 @@
 # ADR-0001 — Agent 插件项目公约
 
-- **状态**: 已接受（2026-08-01）
+- **状态**: Accepted（已接受）
+- **日期**: 2026-08-01
 - **背景**: plugin-factory 自身仓库与每个生成插件必须采用真实 agent 插件项目
   使用的结构（参考 moonbit-skills、ECC、superpowers）。朴素的"技能包"布局
   （根 SKILL.md 路由器 + 嵌套 skills/）是技能仓库，不是 agent 插件项目。

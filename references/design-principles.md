@@ -86,6 +86,19 @@ plugin-factory 每个 `pf-*` 技能与每个生成插件都必须遵守的共享
   语言；策略写入 PRD → 构件清单 `language` 段 → 生成插件 AGENTS.md
   （见 pf-intent / pf-design / pf-build）。
 
+## 契约（spec-anchored 规格锚定）
+
+- 本管线采用 **spec-anchored（规格锚定）** 级别：交接产物（PRD、构件清单、
+  审计报告）的 JSON Schema **即契约**，规格与产物同步演进——产物必须通过
+  schema 校验，drift 是 finding 而不是警告（`additionalProperties: false`）。
+- 规格是**单一事实来源**：schema 变更须先于或伴随产物变更；校验失败即
+  FAIL、退出码 1（见 `schemas/README.md` 与铁律 6）。
+- **契约正反例（contract fixtures）**：每个交接产物 schema 必须配套合法/非法
+  样例（`tests/fixtures/verify-valid`、`verify-invalid`），校验器用它们证明契约
+  行为——合法样例必须通过、非法样例必须产生 finding。无正反例的 schema 视为
+  契约未验证。
+- 不为单端分叉契约（同铁律 3）：schema 保持可移植的规范形式，逐端只做渲染差异。
+
 ## 流程
 
 ```

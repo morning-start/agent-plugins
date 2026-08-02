@@ -4,6 +4,24 @@ All notable changes to plugin-factory are documented here. The format is based
 on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- ADR conventions (`references/adr-conventions.md`) — trigger standard,
+  one-page template, `Proposed → Accepted → Superseded → Deprecated` status
+  machine, immutability rule (supersede, never edit); existing ADR-0001/0002
+  now carry explicit status + date fields.
+- Contract-layer probes in `scripts/verify.mjs` — `adr-status` (ADR numbering
+  continuity, status-field hygiene, superseded links) and `spec-trace`
+  (handoff schema JSON validity + positive/negative contract fixtures), both
+  WARN/INFO non-blocking (`tests/verify/verify-engine.test.mjs`).
+- `docs/README.md` — Diátaxis documentation map (tutorials / how-to /
+  reference / explanation) so every doc has one authoritative location.
+- `references/design-principles.md` § 契约 — explicit spec-anchored
+  declaration and the contract-fixture convention; `docs/glossary.md` gains
+  ADR / Spec-anchored / Contract fixture terms.
+
 ## [0.1.0] - 2026-08-02
 
 **Baseline release: multi-harness scaffold, verifier engine, bootstrap

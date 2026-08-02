@@ -23,3 +23,6 @@
 | **Bootstrap marker** | `PLUGIN_FACTORY_BOOTSTRAP:<plugin>`：引导注入的唯一标记，每个生命周期阶段至多出现一次（T3）。 |
 | **Release-check（发布门禁）** | `scripts/release-check.mjs`：发布准备检查（版本同步、审计、验证器、CHANGELOG 证据、harness 产物、干净工作树）；从不隐式打标签或推送。 |
 | **SemVer（语义化版本）** | `scripts/version.mjs` 严格解析 `X.Y.Z[-prerelease]`；声明文件经 `.version-bump.json` 同步。 |
+| **ADR（架构决策记录）** | 一页纸的决策记录；状态机 `Proposed → Accepted → Superseded → Deprecated`，**不可变**——改决策即写新 ADR 并标记 Superseded（见 `references/adr-conventions.md`）。 |
+| **Spec-anchored（规格锚定）** | 规格与产物同步演进的开发级别：交接产物 Schema 即契约，门禁处校验强制对齐（`schemas/`，见 `references/design-principles.md` § 契约）。 |
+| **Contract fixture（契约正反例）** | 每个交接产物 schema 配套的合法/非法样例（`tests/fixtures/verify-valid`、`verify-invalid`），校验器用它们证明契约行为。 |

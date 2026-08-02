@@ -607,6 +607,96 @@ async function orchestrationChecks(root, findings) {
       makeFinding("version-drift", "package.json", "WARN", "Align all declared versions to a single source of truth.", `Declared versions differ: ${[...versionSources].join(", ")}.`),
     );
   }
+
+  // --- adr-status: ADR numbering continuity and status-field hygiene.
+  // Absence of docs/ADR-*.md is fine (only significant decisions get ADRs);
+  // present ADRs must form a readable, immutable decision chain.
+  let adrFiles = [];
+  try {
+    adrFiles = (await readdir(join(root, "docs"))).filter((f) => /^ADR-\d{4}-.+\.md$/.test(f));
+  } catch {
+    /* no docs directory — no ADRs to check */
+  }
+  if (adrFiles.length > 0) {
+    const numbers = adrFiles.map((f) => Number(/^ADR-(\d{4})-/.exec(f)?.[1] ?? NaN));
+    const seen = new Map();
+    for (const f of adrFiles) {
+      const n = Number(/^ADR-(\d{4})-/.exec(f)?.[1] ?? NaN);
+      if (Number.isNaN(n)) continue;
+      if (!seen.has(n)) seen.set(n, []);
+      seen.get(n).push(f);
+    }
+    for (const [n, files] of seen) {
+      if (files.length > 1) {
+        findings.push(
+          makeFinding("adr-status", files.join(", "), "WARN", `Renumber ADR-${String(n).padStart(4, "0")} — one number per decision.`, "Duplicate ADR numbers break the decision log."),
+        );
+      }
+    }
+    const sorted = [...numbers].filter((n) => !Number.isNaN(n)).sort((a, b) => a - b);
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i] - sorted[i - 1] > 1) {
+        findings.push(
+          makeFinding("adr-status", "docs/", "INFO", `ADR sequence jumps from ${sorted[i - 1]} to ${sorted[i]} — add the missing record.`, "A gap suggests a missing decision record."),
+        );
+      }
+    }
+    const STATUS_RE = /^(Proposed|Accepted|Superseded|Deprecated)/;
+    for (const f of adrFiles) {
+      const text = await readFile(join(root, "docs", f), "utf8");
+      const statusLine = text.split(/\r?\n/).find((l) => /^\s*-\s*\*\*状态\*\*/.test(l));
+      if (!statusLine) {
+        findings.push(
+          makeFinding("adr-status", `docs/${f}`, "WARN", "Add a '**状态**: Accepted' status field.", "An ADR without a status cannot be read as a decision chain."),
+        );
+        continue;
+      }
+      const status = (statusLine.match(/\*\*状态\*\*:\s*(.+)/)?.[1] ?? "").trim();
+      if (!STATUS_RE.test(status)) {
+        findings.push(
+          makeFinding("adr-status", `docs/${f}`, "WARN", `Use one of Proposed/Accepted/Superseded/Deprecated (found "${status}").`, "Unknown ADR status."),
+        );
+      } else if (status.startsWith("Superseded")) {
+        const selfNum = /^ADR-(\d{4})/.exec(f)?.[1];
+        const hasLink = [...text.matchAll(/ADR-(\d{4})/g)].some((m) => m[1] !== selfNum);
+        if (!hasLink) {
+          findings.push(
+            makeFinding("adr-status", `docs/${f}`, "WARN", "Link the superseding ADR (e.g. 'Superseded by ADR-0003').", "A superseded ADR without a link breaks the chain."),
+          );
+        }
+      }
+    }
+  }
+
+  // --- spec-trace: handoff schema contract integrity (spec-anchored, Iron Law 6).
+  // Every schema must parse, and every handoff schema needs positive + negative
+  // contract fixtures; absence of schemas/ is fine (generated plugins don't ship one).
+  let schemaFiles = [];
+  try {
+    schemaFiles = (await readdir(join(root, "schemas"))).filter((f) => f.endsWith(".schema.json"));
+  } catch {
+    /* no schemas directory — no contract to trace */
+  }
+  if (schemaFiles.length > 0) {
+    for (const f of schemaFiles) {
+      try {
+        await readJson(join(root, "schemas", f));
+      } catch {
+        findings.push(
+          makeFinding("spec-trace", `schemas/${f}`, "WARN", `Fix JSON syntax in schemas/${f}.`, "An unparsable schema cannot act as a contract."),
+        );
+      }
+    }
+    for (const sub of ["verify-valid", "verify-invalid"]) {
+      try {
+        await stat(join(root, "tests", "fixtures", sub));
+      } catch {
+        findings.push(
+          makeFinding("spec-trace", `tests/fixtures/${sub}`, "WARN", `Create tests/fixtures/${sub}/ with contract examples.`, "A schema without positive/negative fixtures is unverified (spec-anchored)."),
+        );
+      }
+    }
+  }
 }
 
 /** Does any project file claim a using-<plugin> entry path? */

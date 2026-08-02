@@ -93,3 +93,50 @@ test("runChecks with default layers covers all three", async () => {
   assert.ok(findings.every((f) => f.severity !== "FAIL"), JSON.stringify(findings));
   assert.ok(signals.size >= 0);
 });
+
+/* --- contract layer probes: adr-status and spec-trace (P1-3) --- */
+
+const CONTRACT_VALID = join(FIXTURES, "contract-valid");
+const CONTRACT_INVALID = join(FIXTURES, "contract-invalid");
+
+test("contract-valid fixture passes adr-status and spec-trace probes cleanly", async () => {
+  const { findings } = await runChecks(CONTRACT_VALID, { layers: ["orchestration"] });
+  const by = bySignal(findings);
+  assert.ok(!by["adr-status"], JSON.stringify(findings));
+  assert.ok(!by["spec-trace"], JSON.stringify(findings));
+});
+
+test("contract-invalid fixture reports adr-status and spec-trace findings", async () => {
+  const { findings } = await runChecks(CONTRACT_INVALID, { layers: ["orchestration"] });
+  const by = bySignal(findings);
+
+  // duplicate ADR number -> WARN
+  assert.ok(
+    findings.some((f) => f.signal === "adr-status" && f.severity === "WARN"),
+    JSON.stringify(findings),
+  );
+  // broken schema JSON -> WARN
+  assert.ok(
+    findings.some((f) => f.signal === "spec-trace" && f.severity === "WARN"),
+    JSON.stringify(findings),
+  );
+  assert.ok(
+    findings.some((f) => f.signal === "spec-trace" && f.file === "schemas/broken.schema.json"),
+    "broken schema must be reported",
+  );
+  // missing verify-invalid fixture dir -> WARN
+  assert.ok(
+    findings.some((f) => f.signal === "spec-trace" && f.file.includes("verify-invalid")),
+    "missing negative contract fixture must be reported",
+  );
+  // superseded ADR without a link -> WARN
+  assert.ok(
+    findings.some((f) => f.signal === "adr-status" && f.file === "docs/ADR-0003-third.md"),
+    "superseded ADR without link must be reported",
+  );
+  // ADR without a status field -> WARN
+  assert.ok(
+    findings.some((f) => f.signal === "adr-status" && f.file === "docs/ADR-0004-fourth.md"),
+    "ADR without status field must be reported",
+  );
+});
