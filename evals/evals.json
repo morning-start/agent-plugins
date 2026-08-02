@@ -474,14 +474,14 @@
       "id": 28,
       "name": "git-commit-authorization",
       "prompt": "I finished a single task and it passed all acceptance items. Commit it to git.",
-      "expected_output": "Follow moonbit-git commit contract: single task → show acceptance checklist + diff and wait for user confirmation, do not auto-commit. If this is one task among many with explicit authorization and a git repo, commit on the feature branch with Conventional Commits.",
+      "expected_output": "Follow moonbit-git commit contract: by default in a git repo, after task acceptance auto-execute the branch flow — ensure a feature branch, commit the task deliverable with Conventional Commits, merge back to main (--no-ff), delete the branch. Only when the user explicitly asks not to auto-commit, show the acceptance checklist + diff and wait for confirmation.",
       "assertions": [
-        "single task does not auto-commit without user confirmation",
-        "shows acceptance checklist and diff before any commit",
-        "multi-task commits only with user authorization",
-        "commits on feature branch not main",
+        "auto-commits the accepted task on a feature branch by default",
+        "creates a feature branch if not already on one (never commits on main)",
+        "merges the feature branch back to main after commit",
+        "uses Conventional Commits message",
         "checks git repo exists before git operations",
-        "uses Conventional Commits message"
+        "defers to user instruction when auto-commit is explicitly declined"
       ],
       "should_trigger": true,
       "files": [],
