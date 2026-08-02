@@ -93,7 +93,7 @@ Per `references/orchestration-patterns.md`:
 - methodology plugins have an entry skill (no missing entry);
 - trigger domains mutually exclusive, or declared in `orchestration.conflicts` — `trigger-overlap`.
 
-### 7. Test coverage check (executable guard)
+### 6. Test coverage check (executable guard)
 
 Before releasing, verify that every skill has a corresponding test file:
 
@@ -108,14 +108,14 @@ Before releasing, verify that every skill has a corresponding test file:
 Run: `npm test` (all tests must pass) and `npm run verify` (coverage warnings
 are informational).
 
-### 8. Docs & packaging
+### 7. Docs & packaging
 
 - `README.md` + `README.zh-CN.md` present and in sync (bilingual rule);
 - `AGENTS.md` / `CLAUDE.md` present with activation rules;
 - `install.sh` / `install.ps1` present and executable;
 - version sync: `package.json` vs `.claude-plugin/plugin.json` vs `omp`/`pi` fields.
 
-### 7. Report
+### 8. Report
 
 Every finding has the stable shape:
 

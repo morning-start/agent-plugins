@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://plugin-factory.dev/schemas/audit-report.schema.json",
+  "title": "Audit Report",
+  "description": "Machine-readable output contract of scripts/verify.mjs (--format json). A FAIL finding blocks release; exit code 1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["root", "findings"],
+  "properties": {
+    "root": {
+      "type": "string",
+      "description": "Directory the audit ran against."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["signal", "severity", "action", "impact"],
+        "properties": {
+          "signal": {
+            "type": "string",
+            "description": "Stable machine-readable probe id, e.g. name-mismatch, missing-hook-pair."
+          },
+          "file": {
+            "type": ["string", "null"],
+            "description": "Relative file path the finding points at, if any."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["FAIL", "WARN", "INFO"],
+            "description": "FAIL blocks release; WARN/INFO exit 0."
+          },
+          "action": {
+            "type": "string",
+            "description": "What to do about the finding."
+          },
+          "impact": {
+            "type": "string",
+            "description": "Why the finding matters."
+          }
+        }
+      }
+    }
+  }
+}

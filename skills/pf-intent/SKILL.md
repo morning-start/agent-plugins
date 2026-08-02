@@ -70,9 +70,17 @@ Elicitation rules:
 ## Sign-off          user confirmation + date
 ```
 
-### 3. Apply the complexity gate
+### 3. Apply the complexity gate (automated)
 
-Score:
+Score with the executable gate — never by hand:
+
+```
+node scripts/complexity.mjs --skills <N> [--hooks] [--harnesses <N>] [--rules] [--cross-scenario]
+```
+
+`scoreComplexity()` (exported from `scripts/complexity.mjs`) applies the table below
+and prints `{ score, verdict, path, signals }`; the interview records only the raw
+signals, the function computes the verdict:
 
 | Signal | Points |
 |--------|--------|
@@ -85,8 +93,8 @@ Score:
 **Scoping gate (Iron Law 5)** — before scoring, check the plugin answers one sentence:
 "what fixed scenario does this serve?" Every skill must belong to that scenario (D5,
 `references/design-principles.md`). Cross-scenario intents are **split into separate
-plugins**, each going through its own S1 creation — never one sprawling plugin
-(ECC anti-pattern).
+plugins** (pass `--cross-scenario`), each going through its own S1 creation — never one
+sprawling plugin (ECC anti-pattern).
 
 | Score | Verdict | Path |
 |-------|---------|------|

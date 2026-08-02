@@ -66,6 +66,17 @@ When multiple scenarios match, route by intent — first match wins:
 
 ### Trigger Matrix (user says → route)
 
+Run the automated router first — never route by hand:
+
+```
+node scripts/route-intent.mjs "<user intent text>"
+```
+
+`routeIntent()` (exported from `scripts/route-intent.mjs`) matches the trigger table
+below and prints `{ scenario, skill, path, evidence }`; the entry skill feeds the raw
+utterance in, the function returns the route. The table below is the authoritative
+source the function encodes — keep the two in sync:
+
 | User says (EN) | 用户说（中文） | Route |
 |----------------|----------------|-------|
 | "create a plugin", "I have an idea" | "创建插件", "做一个插件", "插件想法" | `pf-intent` (S1 Full) |
