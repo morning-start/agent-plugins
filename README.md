@@ -33,9 +33,9 @@ You tell the agent *what you want*; it drives the rest: intent interview → PRD
 
 | Harness | Install |
 |---------|---------|
-| Claude Code | `/plugin install plugin-factory@<marketplace>` or local plugin |
-| pi | `pi install git:github.com/<you>/plugin-factory` |
-| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` |
+| Claude Code | `git clone https://github.com/morning-start/plugin-factory` then `claude --plugin-dir ./plugin-factory` |
+| pi | `pi install git:github.com/morning-start/plugin-factory` |
+| oh-my-pi (omp) | `omp plugin install git:github.com/morning-start/plugin-factory` |
 | opencode | Follow `.opencode/INSTALL.md` |
 
 **2. Create a plugin.** Run `/pf-new` (Claude Code) or tell your agent "I want a plugin that…".

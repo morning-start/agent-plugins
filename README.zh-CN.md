@@ -33,9 +33,9 @@
 
 | 平台 | 安装方式 |
 |------|----------|
-| Claude Code | `/plugin install plugin-factory@<marketplace>` 或本地插件 |
-| pi | `pi install git:github.com/<you>/plugin-factory` |
-| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` |
+| Claude Code | `git clone https://github.com/morning-start/plugin-factory` 然后 `claude --plugin-dir ./plugin-factory` |
+| pi | `pi install git:github.com/morning-start/plugin-factory` |
+| oh-my-pi (omp) | `omp plugin install git:github.com/morning-start/plugin-factory` |
 | opencode | 按 `.opencode/INSTALL.md` |
 
 **2. 创建插件。** 运行 `/pf-new`（Claude Code）或告诉 Agent"我要做一个插件，它……"。
