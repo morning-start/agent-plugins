@@ -102,6 +102,7 @@ function buildValues({ name, prefix, description, userLang, harnesses }) {
     PLUGIN_DESCRIPTION: description,
     USER_LANG: userLang,
     VERSION: SCAFFOLD_VERSION,
+    VERSION_DATE: new Date().toISOString().slice(0, 10),
   };
   const bootstrapExt = `.pi/extensions/${prefix}-bootstrap.ts`;
   const hasPi = harnesses.includes("pi");

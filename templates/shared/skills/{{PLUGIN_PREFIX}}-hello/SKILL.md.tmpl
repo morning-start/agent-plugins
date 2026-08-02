@@ -4,6 +4,12 @@ description: Use when [trigger condition for this example skill].
 tags: [{{PLUGIN_PREFIX}}, {{PLUGIN_PREFIX}}-hello]
 metadata:
   prefix: {{PLUGIN_PREFIX}}
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: {{VERSION_DATE}}
+    updated: {{VERSION_DATE}}
+  keywords_zh: "[替换为中文触发词]"
 ---
 
 # {{PLUGIN_PREFIX}}-hello
@@ -11,12 +17,22 @@ metadata:
 ## Overview
 
 Example skill scaffolded by plugin-factory. Replace with real capability content —
-author it via skill-creator's intent → draft → test cases → A/B eval loop
+author it via **TDD loop**: write test cases first, then implement via skill-creator
 (see `pf-build`).
 
 ## When to Use
 
-- [replace with concrete triggers]
+- [replace with concrete triggers — pure CSO format, no workflow]
+
+## Prerequisites (TDD)
+
+Before implementing this skill:
+
+1. **Write test cases** — define trigger scenarios, expected outputs, error
+   conditions, and edge cases in `tests/{{PLUGIN_PREFIX}}-hello/`.
+2. **Acceptance criteria** — what observable behavior proves the skill works?
+3. **Implement** — use skill-creator's intent → draft → A/B eval loop.
+4. **Verify** — all test cases must pass. Coverage is advisory.
 
 ## Steps
 

@@ -1,4 +1,6 @@
+#
 # AGENTS.md — {{PLUGIN_NAME}}
+#
 
 {{PLUGIN_DESCRIPTION}}
 
@@ -19,10 +21,49 @@ optimize this plugin's target project, never the generator.
 
 - **Skills**: one directory per skill under `skills/` with a `SKILL.md`
   (`name` == directory, description ≤ 1024 chars, "Use when…").
+  - Description is pure **CSO (Condition-Situation-Outcome)**: triggers only.
+    No workflow, no outcome, no guidance. Third person, starts with "Use when".
+  - Every skill has `metadata.lifecycle` with `status`, `version`, `created`, `updated`.
 - **Hooks**: bash + PowerShell pairs wired via `hooks/hooks.json`.
 - **Docs**: bilingual README (`README.md` + `README.zh-CN.md`).
 - **Orchestration**: entry points / trigger chains / handoffs live in the component
   manifest (see `docs/` if present).
+- **Tests**: each skill has a corresponding test file in `tests/<skill-name>/`.
+  Write tests before implementation (TDD). See `tests/` for the pattern.
+
+## TDD methodology (iron law)
+
+**Test before implementation.** Every skill follows the Red-Green-Refactor cycle:
+
+1. **Red** — write test cases first. Tests define the contract: trigger scenarios,
+   expected outputs, error conditions, edge cases.
+2. **Green** — implement the minimum skill content that passes all tests.
+3. **Refactor** — clean up under test protection.
+
+| Phase | TDD application | Enforcement |
+|-------|----------------|-------------|
+| Skill creation | Write test cases → implement via skill-creator | Required |
+| Before release | All tests must pass (`npm test`) | Blocking (FAIL) |
+| Coverage check | Every active skill must have a test file | Advisory (WARN) |
+
+## Lifecycle management
+
+Every skill carries lifecycle metadata in its frontmatter:
+
+```yaml
+metadata:
+  lifecycle:
+    status: active       # active | deprecated | retired
+    version: 0.1.0
+    created: YYYY-MM-DD
+    updated: YYYY-MM-DD
+```
+
+- `active` — normal operation. Must have test coverage.
+- `deprecated` — still works but should be replaced. Marked as INFO in audit.
+- `retired` — removed from active use. Should be cleaned up.
+
+Run `npm run lifecycle` to audit all skills for lifecycle completeness.
 
 ## Git workflow (one-time authorization)
 
@@ -47,3 +88,4 @@ optimize this plugin's target project, never the generator.
 
 Run `npm run validate` (and `npm run validate:ps` on Windows) before committing
 structural changes; both invoke the same Node verifier.
+Run `npm test` (and `npm run test:coverage`) before any release.

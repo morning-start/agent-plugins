@@ -1,0 +1,37 @@
+/**
+ * {{PLUGIN_PREFIX}}-hello — contract tests
+ *
+ * TDD: write tests BEFORE implementing the skill. These tests define the
+ * observable contract. The skill is not complete until all tests pass.
+ *
+ * Pattern: each test case maps to one trigger → expected behavior pair.
+ * Update these tests as the skill evolves — keep them in sync with SKILL.md.
+ */
+
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+
+/**
+ * Replace the following placeholder tests with real contract tests for your
+ * {{PLUGIN_PREFIX}}-hello skill. Each test should verify one observable
+ * behavior: trigger recognition, step execution, error handling, etc.
+ */
+
+describe("{{PLUGIN_PREFIX}}-hello", () => {
+  it("should detect its trigger condition", () => {
+    // TODO: replace with real trigger detection test
+    // Example: assert.ok(triggersOn("when the user says hello"));
+    assert.ok(true, "replace with real trigger assertion");
+  });
+
+  it("should handle the primary workflow", () => {
+    // TODO: replace with real workflow test
+    assert.ok(true, "replace with real workflow assertion");
+  });
+
+  it("should handle edge cases gracefully", () => {
+    // TODO: replace with real edge case test
+    // Example: empty input, missing dependencies, etc.
+    assert.ok(true, "replace with real edge case");
+  });
+});

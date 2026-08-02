@@ -502,6 +502,25 @@ async function orchestrationChecks(root, findings) {
     }
   }
 
+  // --- lifecycle-status: check skill frontmatter for lifecycle metadata.
+  for (const s of skills) {
+    if (!s.text) continue;
+    const rel = `skills/${s.rel}SKILL.md`;
+    const hasLifecycleStatus = /lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/.test(s.text);
+    if (!hasLifecycleStatus) {
+      findings.push(
+        makeFinding("lifecycle-status", rel, "WARN", "Add lifecycle metadata (status/version/created/updated) to the skill frontmatter.", "Skill is missing lifecycle metadata."),
+      );
+    } else {
+      const statusMatch = s.text.match(/lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/);
+      if (statusMatch && (statusMatch[1] === "deprecated" || statusMatch[1] === "retired")) {
+        findings.push(
+          makeFinding("lifecycle-status", rel, "INFO", `Skill is ${statusMatch[1]}. Consider removing or replacing it.`, "Deprecated/retired skills should be cleaned up."),
+        );
+      }
+    }
+  }
+
   // --- harness-gap: advertised harness without a discoverable skill path.
   const harnesses = await collectHarnesses(root);
   if (harnesses.includes("opencode")) {
