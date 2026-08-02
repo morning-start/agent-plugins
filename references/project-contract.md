@@ -43,7 +43,7 @@
 ## 三、进度与提交约定
 
 - **one feature per commit**：一次提交只包含一个功能/任务产物
-- **commit after each task**：每个任务验收通过后自动提交（功能分支上），无需逐任务等待用户确认；用户明确要求不自动提交时例外
+- **commit after each task**：每个任务验收通过后提交（功能分支上）；按一次性授权协议执行——目标项目 AGENTS.md 已有授权 → 自动提交；无授权 → 询问一次并写入授权记录后自动提交；用户明确要求不自动提交时例外
 - **branch per task**：每个任务一个功能分支，验收提交后合并回主分支（`--no-ff`）再删除
 - **提交前必须通过**：`moon fmt --check` + `moon check` + `moon test`
 - 与 `moonbit-git` 提交契约一致：单次提交只含一个 Task 产物，遵循 Conventional Commits

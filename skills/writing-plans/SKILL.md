@@ -211,14 +211,16 @@ src/
 
 - [ ] **Step 6: 提交（遵循 `moonbit-git` 技能）**
   ```bash
-  # Git 操作遵循 moonbit-git 技能（见 ../git/SKILL.md）
-  # 默认：任务验收后自动提交并合并（建功能分支 → 提交 → 合并回主分支 → 删除分支）
+  # Git 操作遵循 moonbit-git 技能（见 ../git/SKILL.md，按一次性授权协议执行）
+  # 检测目标项目 AGENTS.md 是否有「自动提交授权」记录：
+  #   已有 → 任务验收后自动提交并合并（建功能分支 → 提交 → 合并回主分支 → 删除分支）
+  #   无 → 询问一次，用户允许则写入授权记录再自动执行；拒绝则只展示 diff
   git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_A_GIT_REPO"
   git branch --show-current   # 确认在功能分支，不在 main 直接提交
   git add <本任务产物> && git commit -m "feat: add function"
   git checkout main && git merge --no-ff feat/{task-name} && git branch -d feat/{task-name}
   ```
-  提交与分支规则详见 `moonbit-git`：不在主分支直接修改、每个任务一个功能分支（验收提交后合并删除）、默认验收后自动提交、worktree 需用户同意、单次提交只含一个 Task 产物；用户明确要求不自动提交/不合并时例外。
+  提交与分支规则详见 `moonbit-git`：不在主分支直接修改、每个任务一个功能分支（验收提交后合并删除）、一次性授权后自动提交（无授权先询问一次并写入目标项目 AGENTS.md）、worktree 需用户同意、单次提交只含一个 Task 产物；用户明确要求不自动提交/不合并时例外。
 ```
 
 ## 任务粒度规则

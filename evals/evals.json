@@ -474,14 +474,15 @@
       "id": 28,
       "name": "git-commit-authorization",
       "prompt": "I finished a single task and it passed all acceptance items. Commit it to git.",
-      "expected_output": "Follow moonbit-git commit contract: by default in a git repo, after task acceptance auto-execute the branch flow — ensure a feature branch, commit the task deliverable with Conventional Commits, merge back to main (--no-ff), delete the branch. Only when the user explicitly asks not to auto-commit, show the acceptance checklist + diff and wait for confirmation.",
+      "expected_output": "Follow moonbit-git one-time authorization contract: first check whether the target project's AGENTS.md records auto-commit approval. If recorded → auto-execute the branch flow after acceptance (ensure a feature branch, commit with Conventional Commits, merge back to main with --no-ff, delete the branch), no repeated asking. If not recorded → ask the user once whether to allow auto commit+merge; if allowed, record the authorization in the target project's AGENTS.md, then auto-execute; if declined or the user explicitly says not to auto-commit, show the acceptance checklist + diff and wait for confirmation.",
       "assertions": [
-        "auto-commits the accepted task on a feature branch by default",
+        "checks the target project's AGENTS.md for an existing auto-commit authorization record",
+        "auto-commits and merges on a feature branch when authorization is already recorded (no repeated asking)",
+        "asks the user once when no authorization record exists",
+        "records the one-time authorization in the target project's AGENTS.md when granted",
         "creates a feature branch if not already on one (never commits on main)",
-        "merges the feature branch back to main after commit",
-        "uses Conventional Commits message",
-        "checks git repo exists before git operations",
-        "defers to user instruction when auto-commit is explicitly declined"
+        "uses Conventional Commits message and merges back with --no-ff",
+        "only shows diff when user declines or explicitly asks not to auto-commit"
       ],
       "should_trigger": true,
       "files": [],
