@@ -1,0 +1,12 @@
+{
+  "name": "{{PLUGIN_NAME}}",
+  "version": "{{VERSION}}",
+  "description": "{{PLUGIN_DESCRIPTION}}",
+  "license": "MIT",
+  "private": true,
+{{PACKAGE_HARNESS_FIELDS}}
+  "scripts": {
+    "validate": "bash scripts/validate-structure.sh",
+    "validate:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1"
+  }
+}

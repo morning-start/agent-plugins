@@ -53,11 +53,12 @@ Per `references/plugin-model.md`:
 
 ```
 <plugin-name>/
-├── .claude-plugin/plugin.json
-├── .pi/extensions/<prefix>-bootstrap.ts      # pi / oh-my-pi
-├── .opencode/opencode.json + INSTALL.md     # opencode
-├── package.json                              # pi + omp fields (both!)
-├── skills/                                   # filled in step 2
+├── .claude-plugin/plugin.json              # claude-code harness
+├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness (shared path)
+├── .opencode/opencode.json + plugins/      # opencode harness
+├── .opencode/skills/                       # opencode skill discovery (auto-copied)
+├── package.json                            # pi/omp fields only when requested
+├── skills/                                 # filled in step 2
 ├── commands/  hooks/  rules/ or references/
 ├── scripts/  tests/  docs/
 ├── AGENTS.md  CLAUDE.md
@@ -65,7 +66,10 @@ Per `references/plugin-model.md`:
 └── install.sh  install.ps1
 ```
 
-Use `scripts/scaffold.sh` / `scaffold.ps1` (or equivalent) so structure is repeatable.
+Use `scripts/scaffold.sh` / `scaffold.ps1` / `scripts/scaffold.mjs` — the single
+cross-platform renderer. Record the requested harness list (`--harnesses`).
+A harness is advertised **only** when all of its required artifacts are rendered
+(see `references/plugin-model.md` § 生成插件布局).
 
 ### 2. Author each skill via skill-creator (TDD loop)
 
@@ -129,14 +133,32 @@ Per the manifest `language` section (default **tiered** —
 
 Policy values: `tiered` (default) / `english` (all English) / `native` (all `user_lang`).
 
+### 8. Hand off to git engineering
+
+Once the standalone project is generated and verified, apply git discipline per
+`pf-git`: create a feature branch (or worktree) for the plugin work, follow
+Conventional Commits, and manage version bumps / CHANGELOG from git history via
+the pf-git version workflow (or `/pf-git`). The generated project's own
+`scripts/verify.mjs` + `version.mjs` engine is used by the release gate.
+
 ## Outputs
 
 - Standalone plugin project (new directory/repo) ready for `pf-verify`.
 - Per-skill eval summaries (evidence for the release gate).
+- Git engineering handoff (branch/worktree/commit/version conventions from pf-git).
 
 ## Acceptance
 
 - Every manifest skill exists as `skills/<name>/SKILL.md` and passed skill-creator eval.
+- The requested harness list is recorded; every requested harness has all required
+  artifacts (see `references/plugin-model.md` § 生成插件布局).
+- No unrequested harness file is generated (Claude-only request → no `.pi/`,
+  `.opencode/`, or `OMP-NOTES.md`).
+- The generated project passes its own verifier: `npm run validate` and
+  `npm run validate:ps` (both invoke `scripts/verify.mjs` — the same engine as
+  plugin-factory itself).
+- opencode skill discovery needs no manual `cp -r skills …` step — the scaffold
+  copies rendered skills into `.opencode/skills/` automatically.
 - Per-harness manifests match `references/plugins/`.
 - Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
 - Tool mapping files (`references/<harness>-tools.md`) generated per advertised harness.

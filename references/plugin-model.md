@@ -38,12 +38,14 @@
 
 ```
 <plugin-name>/
-├── .claude-plugin/plugin.json
-├── .pi/extensions/<plugin-name>.ts      # pi/omp 引导（M2）
-├── .opencode/opencode.json + INSTALL.md # opencode（M2）
-├── skills/<skill-name>/SKILL.md         # 经 skill-creator 创建
+├── .claude-plugin/plugin.json              # claude-code harness
+├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness（同一路径）
+├── .opencode/opencode.json + plugins/      # opencode harness
+├── .opencode/skills/                       # opencode 技能发现（scaffold 自动复制）
+├── package.json                            # pi/omp 字段仅在请求对应 harness 时写入
+├── skills/<skill-name>/SKILL.md            # 经 skill-creator 创建
 ├── commands/                            # /<prefix>-* 命令
-├── hooks/                               # 多 shell
+├── hooks/                               # 多 shell（claude-code）
 ├── rules/ or references/
 ├── scripts/  tests/  docs/
 ├── AGENTS.md  CLAUDE.md
@@ -53,3 +55,21 @@
 
 命名：目录与 `name` 用 `<项目前缀>-<短名>`（如 `pf-intent`、`moonbit-verify`）。
 前缀防止共享技能目录中的命名冲突。
+
+### 产物不变量（scaffold 契约，`scripts/scaffold.mjs` 强制）
+
+1. 请求的 harness 列表被记录；每个请求的 harness 渲染其全部必需产物：
+   - claude-code：`.claude-plugin/plugin.json`、`hooks/hooks.json`、
+     `hooks/session-start.sh` + `.ps1`
+   - pi：`.pi/extensions/<prefix>-bootstrap.ts`
+   - opencode：`.opencode/opencode.json`、`.opencode/plugins/<prefix>-bootstrap.ts`、
+     `.opencode/skills/`（技能自动复制，无需手工拷贝）
+   - oh-my-pi：`.pi/extensions/<prefix>-bootstrap.ts` + `OMP-NOTES.md`
+2. 未请求的 harness 不生成任何文件（Claude-only → 无 `.pi/`、`.opencode/`）。
+3. `package.json` 的 `pi`/`omp` 字段只在对应 harness 产物实际渲染时写入
+   （不声明悬空的 `pi.extensions` / `omp.extensions` 路径）。
+4. 共享文件（README/AGENTS/CLAUDE/install/scripts）只存于 `templates/shared/`，
+   仅 manifest、bootstrap 适配器与安装说明按 harness 分目录。
+5. 模板替换为函数式替换（非 shell 语法）：用户输入中的 `/`、`&`、`$`、反斜杠、
+   Unicode 与换行按字节原样进入生成文本；输出为 UTF-8 + LF。
+6. 目标目录已存在时拒绝生成且不修改其中任何文件。

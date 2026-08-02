@@ -23,3 +23,8 @@ standard — each SKILL.md has a trigger-only `description`).
 - User-maintained content (references/, docs/, CHANGELOG prose, README user edition):
   **{{USER_LANG}}**.
 - Skill descriptions: English (CSO) + {{USER_LANG}} trigger keywords in `metadata`.
+
+## Validation
+
+Run `npm run validate` (and `npm run validate:ps` on Windows) before committing
+structural changes; both invoke the same Node verifier.

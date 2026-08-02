@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# {{PLUGIN_NAME}} session-start bootstrap (bash variant).
+# Emits Claude-compatible hook JSON with the canonical using-<plugin> entry
+# context. The renderer (scripts/render-bootstrap.mjs) owns marker/body
+# generation; this hook only wires lifecycle and serializes the result.
+set -eu
+plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+node_bin="${NODE:-}"
+if [ -z "$node_bin" ]; then
+  node_bin="$(command -v node 2>/dev/null || command -v node.exe 2>/dev/null || true)"
+fi
+if [ -z "$node_bin" ]; then
+  echo '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[{{PLUGIN_NAME}}] node not found — entry skill not bootstrapped."}}'
+  exit 0
+fi
+
+cd "$plugin_root"
+"$node_bin" scripts/render-bootstrap.mjs --root . --plugin-name {{PLUGIN_NAME}} --harness claude 2>/dev/null \
+  || echo '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[{{PLUGIN_NAME}}] entry skill not found — check skills/using-{{PLUGIN_NAME}}/SKILL.md."}}'
+exit 0
