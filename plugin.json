@@ -7,24 +7,5 @@
   },
   "homepage": "https://github.com/morning-start/plugin-factory",
   "repository": "https://github.com/morning-start/plugin-factory",
-  "license": "MIT",
-  "tags": [
-    "meta-plugin",
-    "plugin-factory",
-    "scaffolding",
-    "skill-creation"
-  ],
-  "keywords": [
-    "agent",
-    "plugin",
-    "skill",
-    "meta-plugin",
-    "scaffolding"
-  ],
-  "skills": [
-    "./skills/"
-  ],
-  "commands": [
-    "./commands/"
-  ]
+  "license": "MIT"
 }

@@ -1,0 +1,19 @@
+{
+  "name": "plugin-factory",
+  "owner": {
+    "name": "morning-start",
+    "url": "https://github.com/morning-start"
+  },
+  "plugins": [
+    {
+      "name": "plugin-factory",
+      "source": "./",
+      "description": "A meta-plugin that guides agents through creating multi-agent plugins (Claude Code, pi, opencode, oh-my-pi) from intent, goals, and scenarios.",
+      "version": "0.1.0",
+      "author": {
+        "name": "plugin-factory contributors",
+        "url": "https://github.com/morning-start"
+      }
+    }
+  ]
+}
