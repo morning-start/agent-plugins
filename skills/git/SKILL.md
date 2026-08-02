@@ -1,6 +1,6 @@
 ---
 name: moonbit-git
-description: "Use when performing Git operations during MoonBit development — creating feature branches, committing task deliverables, merging branches, or considering parallel worktree. Triggered when a feature implementation needs a branch, when a task is accepted and ready to commit, or when parallel feature work is considered. Branch-per-feature: never modify main directly."
+description: "Use when performing Git operations during MoonBit development — creating feature branches, committing task deliverables, merging branches, or considering parallel worktree. Triggered when a feature implementation needs a branch, when a task is accepted and ready to commit, or when parallel feature work is considered. One-time authorization: ask once, record approval in the target project's AGENTS.md, then auto commit+merge per task. Branch-per-feature: never modify main directly."
 ---
 
 # Git — 分支工作流与提交契约
@@ -15,16 +15,38 @@ description: "Use when performing Git operations during MoonBit development — 
 
 ```
 DEFAULT: NO FEATURE WORK DIRECTLY ON MAIN
-DEFAULT: TASK ACCEPTANCE → AUTO COMMIT ON FEATURE BRANCH → MERGE BACK
+DEFAULT: NO COMMIT WITHOUT ONE-TIME AUTHORIZATION
 DEFAULT: NO WORKTREE WITHOUT USER CONSENT
 ```
 
 这些是 Agent 的默认协作规则，不是对用户明确指令的绝对否决。用户在当前对话中明确要求跳过提交、直接在 main 上修改或使用 worktree 时，Agent 可以遵从，但必须在执行前说明影响并保留新鲜验证证据。
 
-- **默认**：每个任务验收通过后**自动执行**「建功能分支 → 提交 → 合并回主分支 → 删除分支」，不需要逐任务等待用户授权；只有用户明确说"不要自动提交/不要合并"时才例外。
+- **默认**：每个任务验收通过后，若目标项目已写入**一次性授权记录**（见下）→ **自动执行**「建功能分支 → 提交 → 合并回主分支 → 删除分支」；无授权记录 → **询问一次**，用户同意后写入授权并自动执行，拒绝则只展示 diff。
 - **用户明确要求例外**：允许在 main 上工作或跳过提交，但报告该例外；不把它伪装成标准流程。
-- **提交**：在功能分支上进行，单次提交只含一个 Task 产物；用户明确要求不自动提交时只展示 diff。
+- **提交**：在功能分支上进行，单次提交只含一个 Task 产物。
 - **worktree**：用户明确同意后才使用；用户未同意时顺序实现。
+
+## 一次性授权协议（One-Time Authorization）
+
+**目的**：每个任务都要走「建分支 → 提交 → 合并」流程，但不必每次询问用户。通过**一次性授权**解决：用户在目标项目授权一次，写入该项目级指令文件，之后所有任务的 Git 流程自动执行。
+
+**授权检测（每个任务提交前必做）**：
+
+1. 检查**目标项目**根目录指令文件（`AGENTS.md`，或该平台对应的 `CLAUDE.md` / `.atomcode.md` / `.atomcode.user.md`）中是否有「自动提交授权」标记（例如「自动提交授权」或 "AUTO_COMMIT_AUTHORIZED"）。
+2. **有授权记录** → 直接自动执行：建功能分支 → 提交 → 合并回主分支 → 删除分支，**不再询问**。
+3. **无授权记录** → **询问一次**：「是否允许本项目自动执行 git 提交与合并？允许则写入本项目指令文件，之后每个任务自动执行，不再询问」。
+   - 用户允许 → 将授权记录写入目标项目指令文件，然后自动执行本任务流程。
+   - 用户拒绝 → 本任务只展示 diff（验收清单 + 变更），等待用户确认；不写入授权。
+4. 用户在对话中明确说"不要自动提交/不要合并" → 该次及后续均只展示 diff，直到用户改变主意。
+
+**授权记录写入模板**（写入**目标项目**根目录 `AGENTS.md`，不写进技能仓库）：
+
+```markdown
+## Git 自动提交授权（一次性）
+本项目用户已授权 Agent 自动执行 git 提交与合并（每任务验收后：建功能分支 → 提交 → 合并回主分支 → 删除分支），后续会话无需再逐次询问；仅当用户明确说"不要自动提交/不要合并"时例外。
+```
+
+- 授权记录写在**目标项目**的根目录指令文件，跨会话持久有效；不影响其他用户决策事项（worktree、public API 变更等仍需询问）。
 
 ## 分支工作流
 
@@ -47,10 +69,12 @@ DEFAULT: NO WORKTREE WITHOUT USER CONSENT
 
 ## 提交契约
 
-任务验收（RED → GREEN → VERIFY → code-review 通过）之后，**默认自动执行**以下流程，无需逐任务等待用户授权：
+任务验收（RED → GREEN → VERIFY → code-review 通过）之后，按一次性授权协议执行：
 
 ```
-验收通过 → 确保在功能分支上（不在则 git checkout -b feat/{task-name}）
+验收通过 → 检测目标项目指令文件（AGENTS.md 等）是否有「自动提交授权」记录
+         → 无 → 询问一次；用户允许 → 写入授权记录
+         → 有（或已获本次授权）→ 确保在功能分支上（不在则 git checkout -b feat/{task-name}）
          → git add <本任务产物> && git commit -m "feat: ..."（Conventional Commits）
          → git checkout main && git merge --no-ff feat/{task-name}
          → git branch -d feat/{task-name}   ← 删除已合并分支
@@ -59,7 +83,8 @@ DEFAULT: NO WORKTREE WITHOUT USER CONSENT
 
 | 场景 | 处理 | 说明 |
 |------|------|------|
-| **默认（git 仓库）** | **验收后自动提交并合并** | 在功能分支上 `git add` + `git commit`（Conventional Commits），随后合并回主分支并删除分支 |
+| **已有授权记录（目标项目 AGENTS.md）** | **验收后自动提交并合并** | 在功能分支上 `git add` + `git commit`（Conventional Commits），随后合并回主分支并删除分支；不再询问 |
+| **无授权记录（首次）** | **询问一次** | 用户允许 → 写入授权记录并自动执行；用户拒绝 → 只展示 diff（验收清单 + 变更），等待用户确认 |
 | **用户明确要求不自动提交/不合并** | 只展示 diff，等待用户确认 | 展示验收清单 + diff，等待用户决定（确认/修改/提交） |
 | **非 git 仓库** | 只展示变更，不执行 git | `git rev-parse` 失败则跳过所有 git 操作 |
 
@@ -78,8 +103,9 @@ git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_A_GIT_REPO"
 # 2. 确认当前分支；若用户在 main 上且任务尚未开分支，先建功能分支
 git branch --show-current
 
-# 3. 用户明确要求"不要自动提交/不要合并" → 展示 diff，等待用户确认；
-#    否则按默认契约自动提交（功能分支上）并合并回主分支
+# 3. 检测一次性授权：目标项目 AGENTS.md 是否含「自动提交授权」记录？
+#    有 → 自动提交并合并；无 → 询问一次（用户允许则写入授权再执行）；
+#    用户明确要求"不要自动提交/不要合并" → 展示 diff，等待用户确认
 
 # 4. 提交前工作区检查（提交的应只有本次任务产物）
 git status --porcelain
@@ -114,7 +140,7 @@ git worktree remove ../{project}-{feature}
 
 - 未经说明就在 main 上修改功能代码；用户明确要求的 main 例外不属于违规，但必须记录风险。
 - 未获用户同意就使用 worktree（"反正可以并行"）。
-- 验收通过后不自动提交/不合并（"反正用户会看，先不动 git"）——默认契约要求自动执行，除非用户明确要求例外。
+- 验收通过且已有授权记录却不自动提交/不合并（"反正用户会看，先不动 git"）——一次性授权后默认自动执行，除非用户明确要求例外。
 - 用户明确要求"不要自动提交"后仍自动提交（"反正都做完了"）。
 - 一次提交混入多个任务产物（"一起提交省事"）。
 - 合并前不验证测试（"合并就完事了"）。

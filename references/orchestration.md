@@ -166,9 +166,9 @@
 | `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 管线并行 |
 | `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
 | `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 管线并行 |
-| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；批次上限（≤5/批）；Git 提交契约（任务验收后自动建分支→提交→合并） | 管线核心 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后自动提交合并，构成批次检查点） | 管线核心 |
-| `moonbit-git` | 功能分支工作流、提交契约、合并、worktree 并行管理 | 独立 |
+| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；批次上限（≤5/批）；Git 提交契约（一次性授权：目标项目 AGENTS.md 已有授权→验收后自动建分支→提交→合并；无→询问一次并写入） | 管线核心 |
+| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后按一次性授权自动提交合并，构成批次检查点） | 管线核心 |
+| `moonbit-git` | 功能分支工作流、一次性授权提交契约、合并、worktree 并行管理 | 独立 |
 | `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 任务间门禁 |
 | `moonbit-verify` | 全量验证门禁 + 按模块/任务验证子集 | 管线检查点 |
 | `moonbit-evaluate` | 验收评估（任务级验收清单汇总）+ 发布管理 | 管线终点 |

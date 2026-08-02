@@ -91,7 +91,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 - **连续执行最多 5 个任务**，之后**停止并汇报**，等待用户确认或进入提交检查点
 - 达到批次上限时的处理：
   1. 汇报本批已完成任务 + 剩余任务清单（指向 `writing-plans` 的批次边界）
-  2. 按 `moonbit-git` 提交契约自动提交合并（每任务验收后已提交；批次检查点确认工作区干净）
+  2. 按 `moonbit-git` 一次性授权协议自动提交合并（每任务验收后已按授权提交；批次检查点确认工作区干净）
   3. 继续前压缩会话或开始新上下文（平台支持时），再进入下一批
 - 批次边界与 `writing-plans` 标注的 Batch 一致；**不要为了赶进度超出批次上限**
 - 平台不支持会话压缩 → 批次上限收紧（≤3），并在批间强制提交检查点
@@ -290,10 +290,10 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 
 ## Git 操作契约（引用 moonbit-git）
 
-任务验收（RED → GREEN → VERIFY → code-review 通过）之后，涉及分支、提交、合并、worktree 等 Git 操作时，**遵循 `moonbit-git` 技能**（见 [`git/SKILL.md`](../git/SKILL.md)），此处不重复定义以避免漂移。核心约定：
+任务验收（RED → GREEN → VERIFY → code-review 通过）之后，涉及分支、提交、合并、worktree 等 Git 操作时，**遵循 `moonbit-git` 技能**（见 [`git/SKILL.md`](../git/SKILL.md)，按一次性授权协议执行），此处不重复定义以避免漂移。核心约定：
 
 - **功能分支**：不在主分支直接修改；每个任务一个分支，验收提交后合并回主分支，再建新分支
-- **自动提交**：默认每个任务验收通过后自动执行「建分支 → 提交（Conventional Commits）→ 合并（`--no-ff`）→ 删除分支」；用户明确要求不自动提交/不合并时才只展示 diff
+- **一次性授权**：检测目标项目 AGENTS.md 是否有「自动提交授权」记录——已有 → 每个任务验收后自动执行「建分支 → 提交（Conventional Commits）→ 合并（`--no-ff`）→ 删除分支」；无 → 询问一次，用户允许则写入授权记录再自动执行，拒绝则只展示 diff
 - **worktree 并行**：必须获得用户明确同意；不同意则顺序实现
 - 单次提交只含一个 Task 产物，遵循 Conventional Commits
 
