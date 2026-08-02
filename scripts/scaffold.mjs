@@ -13,6 +13,7 @@
  * line endings.
  */
 import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -197,8 +198,10 @@ async function copySkillsForOpencode(absTarget, files) {
 /**
  * Scaffold a standalone plugin project.
  *
- * @param {{name: string, prefix: string, target: string, description?: string, userLang?: string, harnesses?: string[]}} opts
- * @returns {Promise<{target: string, harnesses: string[], files: string[]}>}
+ * @param {{name: string, prefix: string, target: string, description?: string, userLang?: string, harnesses?: string[], autoVerify?: boolean}} opts
+ * @returns {Promise<{target: string, harnesses: string[], files: string[], verify?: {ok: boolean, stdout: string, stderr: string}}>}
+ *   When `autoVerify` is true, runs the generated project's own verifier
+ *   (`<target>/scripts/verify.mjs structure`) and includes the result.
  */
 export async function scaffoldPlugin({
   name,
@@ -207,6 +210,7 @@ export async function scaffoldPlugin({
   description = DEFAULT_DESCRIPTION,
   userLang = DEFAULT_USER_LANG,
   harnesses = DEFAULT_HARNESSES,
+  autoVerify = false,
 }) {
   const errors = validateOptions({ name, prefix, target, harnesses });
   if (errors.length > 0) {
@@ -273,14 +277,29 @@ export async function scaffoldPlugin({
   }
 
   files.sort();
+
+  if (autoVerify) {
+    const verifier = join(absTarget, "scripts", "verify.mjs");
+    const v = spawnSync(process.execPath, [verifier, "structure", "--root", absTarget], {
+      encoding: "utf8",
+    });
+    const verify = {
+      ok: v.status === 0 && !/FAIL/.test(v.stdout || ""),
+      stdout: (v.stdout || "").trim(),
+      stderr: (v.stderr || "").trim(),
+    };
+    return { target: absTarget, harnesses, files, verify };
+  }
+
   return { target: absTarget, harnesses, files };
 }
 
 function usage() {
   console.error(
     [
-      "Usage: node scripts/scaffold.mjs <plugin-name> <prefix> <target-dir> [description] [user-lang] [--harnesses a,b,c]",
-      "       node scripts/scaffold.mjs --name <n> --prefix <p> --target <dir> [--description <d>] [--user-lang <l>] --harnesses claude-code,pi,opencode,oh-my-pi",
+      "Usage: node scripts/scaffold.mjs <plugin-name> <prefix> <target-dir> [description] [user-lang] [--harnesses a,b,c] [--auto-verify]",
+      "       node scripts/scaffold.mjs --name <n> --prefix <p> --target <dir> [--description <d>] [--user-lang <l>] --harnesses claude-code,pi,opencode,oh-my-pi [--auto-verify]",
+      "       --auto-verify  run the generated project's structure verifier after scaffolding (exit 1 on FAIL findings)",
     ].join("\n"),
   );
 }
@@ -311,6 +330,9 @@ function parseArgs(argv) {
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean);
+        break;
+      case "--auto-verify":
+        args.autoVerify = true;
         break;
       case "-h":
       case "--help":
@@ -348,6 +370,16 @@ async function main() {
     console.log(`Files: ${result.files.length}`);
     if (process.env.SCAFFOLD_LIST_FILES === "1") {
       for (const f of result.files) console.log(`  ${f}`);
+    }
+    if (result.verify) {
+      if (result.verify.ok) {
+        console.log("Auto-verify: PASS (structure layer, no findings).");
+      } else {
+        console.error("Auto-verify: FAIL — the generated project did not pass structure checks.");
+        if (result.verify.stdout) console.error(result.verify.stdout);
+        if (result.verify.stderr) console.error(result.verify.stderr);
+        process.exit(1);
+      }
     }
     console.log("Next: author real skills via skill-creator (pf-build), then run pf-verify.");
   } catch (err) {

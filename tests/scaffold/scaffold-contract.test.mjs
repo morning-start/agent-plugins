@@ -181,3 +181,30 @@ test("generated package.json is valid JSON and deterministically rendered", asyn
   });
   assert.deepEqual(filesA, filesB, "scaffold output must be deterministic");
 });
+
+test("autoVerify runs the generated verifier and passes on a clean scaffold", async () => {
+  await withTemp(async (tmp) => {
+    const target = join(tmp, "auto-verify");
+    const result = await scaffoldPlugin({
+      ...BASE,
+      target,
+      harnesses: ["claude-code"],
+      autoVerify: true,
+    });
+    assert.ok(result.verify, "autoVerify must attach the verify result");
+    assert.equal(result.verify.ok, true, `verify should pass:\n${result.verify.stdout}`);
+    assert.match(result.verify.stdout, /No findings/);
+  });
+});
+
+test("autoVerify is skipped (no verify field) unless requested", async () => {
+  await withTemp(async (tmp) => {
+    const target = join(tmp, "no-verify");
+    const result = await scaffoldPlugin({
+      ...BASE,
+      target,
+      harnesses: ["claude-code"],
+    });
+    assert.equal(result.verify, undefined);
+  });
+});

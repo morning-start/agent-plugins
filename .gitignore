@@ -7,6 +7,7 @@ node_modules/
 dist/
 build/
 out/
+!tests/build/           # contract tests for build-layer scripts (not build output)
 
 # Logs
 *.log

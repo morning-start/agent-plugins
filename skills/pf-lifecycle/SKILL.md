@@ -46,7 +46,14 @@ single-skill loop does not.
 ```text
 node scripts/verify.mjs lifecycle --root <dir>            # severity-ranked table
 node scripts/verify.mjs lifecycle --root <dir> --format json
+npm run lifecycle:report [-- --root <dir>] [-- --out <file>]   # markdown report
 ```
+
+`lifecycle:report` (via `scripts/lifecycle-report.mjs`) renders the probe output as
+a human-readable markdown report — run header, signal distribution, severity-ranked
+findings, recommendations — so you never read the raw table by hand. It reuses the
+same `runChecks` engine; `--out` writes the report to a file, otherwise it prints
+to stdout.
 
 Every matrix signal maps to a probe name in `references/lifecycle-matrix.md`:
 
@@ -67,6 +74,11 @@ Every matrix signal maps to a probe name in `references/lifecycle-matrix.md`:
 
 Runtime-only signals (trigger frequency, eval pass rate, user feedback themes,
 install counts) remain out of scope for v1 and are documented as future signals.
+The concrete v2 roadmap — probes (`trigger-frequency`, `eval-pass-rate`,
+`feedback-themes`, `install-count`), data sources, and how each upgrades a
+"structural suspicion" into evidence — lives in
+`references/lifecycle-matrix.md` § 未来信号 → v2 roadmap. v1 must never fake
+these probes: without their data sources wired, mark them "not enabled" (INFO).
 
 ## Status
 

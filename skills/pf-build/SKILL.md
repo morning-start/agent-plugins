@@ -33,7 +33,16 @@ directory/repo. Skill authoring and evaluation are **delegated to skill-creator*
 
 ## skill-creator availability (rule)
 
-- Check that skill-creator is available before entering the build loop.
+- Check that skill-creator is available **automatically** before entering the
+  build loop — never by hand:
+
+  ```bash
+  node scripts/check-creator.mjs [--root <plugin-dir>] [--format table|json]
+  ```
+
+  `checkCreator()` (exported from `scripts/check-creator.mjs`) probes the two
+  accepted install forms below and returns `{ available, found, hint }`; exit 1
+  when missing.
 - **Accepted install forms** (either satisfies the gate):
   - global (e.g. `~/.pi/agent/skills/skill-creator`), or
   - project-local via the skills CLI (`npx skills add …` → `.agents/skills/skill-creator`
@@ -49,8 +58,8 @@ directory/repo. Skill authoring and evaluation are **delegated to skill-creator*
 
 ### 0. Availability gate
 
-Run the check in "skill-creator availability" above. Do not proceed to skill authoring
-until the user confirms skill-creator is installed.
+Run `node scripts/check-creator.mjs` (see "skill-creator availability" above).
+Do not proceed to skill authoring until the user confirms skill-creator is installed.
 
 ### 1. Create the standalone project layout
 
@@ -75,6 +84,10 @@ Use `scripts/scaffold.sh` / `scaffold.ps1` / `scripts/scaffold.mjs` — the sing
 cross-platform renderer. Record the requested harness list (`--harnesses`).
 A harness is advertised **only** when all of its required artifacts are rendered
 (see `references/plugin-model.md` § 生成插件布局).
+
+After scaffolding, run the generated project's own structure verifier automatically
+with `--auto-verify` (scaffold exit 1 when the generated project has FAIL findings;
+without the flag, verify manually via `npm run validate` in the target).
 
 ### 2. Author each skill via skill-creator (TDD loop)
 

@@ -38,6 +38,7 @@
     "verify": "node scripts/verify.mjs --format table",
     "verify:json": "node scripts/verify.mjs --format json",
     "lifecycle": "node scripts/verify.mjs lifecycle --format table",
+    "lifecycle:report": "node scripts/lifecycle-report.mjs",
     "version:check": "node scripts/version.mjs check",
     "version:audit": "node scripts/version.mjs audit",
     "release:check": "node scripts/release-check.mjs",
