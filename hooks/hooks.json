@@ -9,6 +9,15 @@
             "shell": "bash"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/session-start.ps1",
+            "shell": "powershell"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -22,6 +31,17 @@
             "description": "Post-edit structural gate (verify.mjs structure layer)"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|create_file|str_replace_editor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/post-tool-verify.ps1",
+            "shell": "powershell",
+            "description": "Post-edit structural gate (verify.mjs structure layer)"
+          }
+        ]
       }
     ],
     "PreCompletion": [
@@ -31,6 +51,16 @@
             "type": "command",
             "command": "hooks/pre-completion.sh",
             "shell": "bash",
+            "description": "Pre-completion gate (verify + tests)"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/pre-completion.ps1",
+            "shell": "powershell",
             "description": "Pre-completion gate (verify + tests)"
           }
         ]
