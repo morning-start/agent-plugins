@@ -1,0 +1,88 @@
+{
+  "skill_name": "using-pf-routing",
+  "description": "Routing evaluations for skills/using-pf — intent → scenario dispatch must be deterministic and must not claim work before verification.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "new-plugin-idea",
+      "prompt": "I want to make a plugin that turns Markdown TODO comments into a project task board.",
+      "expected_output": "Route to pf-intent (S1 Full): interview, one-page PRD, complexity gate, sign-off before any design or scaffolding.",
+      "assertions": [
+        "routes to pf-intent (S1 Full)",
+        "does not scaffold before PRD sign-off (Iron Law 1)",
+        "records verbatim answers",
+        "applies the complexity gate (Light/Medium/Heavy)"
+      ],
+      "should_trigger": true,
+      "skills": ["pf-intent"]
+    },
+    {
+      "id": 2,
+      "name": "add-skill-to-existing-plugin",
+      "prompt": "Add a skill to my existing plugin that checks for duplicate trigger descriptions.",
+      "expected_output": "Route to pf-intent (S2 Change mode): change point, affected components, complexity of the change, inherit language policy, PRD delta.",
+      "assertions": [
+        "routes to Change mode, not full interview",
+        "does not re-ask language policy",
+        "amends PRD rather than rewriting it",
+        "ends with verify -> release"
+      ],
+      "should_trigger": true,
+      "skills": ["pf-intent"]
+    },
+    {
+      "id": 3,
+      "name": "retire-one-skill",
+      "prompt": "I think one of the skills in my plugin is redundant, what should I do?",
+      "expected_output": "Route to pf-analyze (S5): confirm via structure analysis, then build (remove) -> verify -> release. Single-skill retirement is maintenance, not plugin death.",
+      "assertions": [
+        "routes to pf-analyze, not to full redesign",
+        "does not treat single-skill retirement as archiving the plugin",
+        "confirms before removing",
+        "ends with verify -> release"
+      ],
+      "should_trigger": true,
+      "skills": ["pf-analyze"]
+    },
+    {
+      "id": 4,
+      "name": "release-version-bump",
+      "prompt": "We finished the changes, bump the version and release the plugin.",
+      "expected_output": "Route to S9 /pf-release: verify (exit 0), pf-git version management (SemVer from commits, user-confirmed), release gate, explicit tag/push only on request.",
+      "assertions": [
+        "routes to /pf-release (S9)",
+        "runs verify before any bump",
+        "derives version from commit history, not desire",
+        "never tags or pushes implicitly"
+      ],
+      "should_trigger": true,
+      "skills": ["pf-release", "pf-git"]
+    },
+    {
+      "id": 5,
+      "name": "analyze-lifecycle-health",
+      "prompt": "Check the health of my plugin and tell me what should evolve.",
+      "expected_output": "Route to S10 /pf-analyze: lifecycle probes, severity-ranked recommendations, wait for user confirmation before executing.",
+      "assertions": [
+        "routes to pf-analyze (S10)",
+        "uses executable lifecycle probes",
+        "does not execute changes without confirmation",
+        "recommendations route to S4/S5/S7"
+      ],
+      "should_trigger": true,
+      "skills": ["pf-analyze"]
+    },
+    {
+      "id": 6,
+      "name": "non-plugin-question",
+      "prompt": "How does git worktree add work?",
+      "expected_output": "Answer directly — a general git question, not a plugin-factory scenario. No pf-* skill required.",
+      "assertions": [
+        "does not force a scenario",
+        "answers directly"
+      ],
+      "should_trigger": false,
+      "skills": []
+    }
+  ]
+}

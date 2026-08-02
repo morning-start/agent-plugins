@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plugin-factory.dev/schemas/component-manifest.schema.json",
+  "title": "Component manifest (pf-design output)",
+  "description": "Signed-off component manifest produced by pf-design. Gate into pf-build (Iron Law 1: no signed-off manifest -> no build).",
+  "type": "object",
+  "required": ["name", "version", "scenario", "components", "orchestration", "language", "signoff"],
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "scenario": { "type": "string", "description": "One fixed business scenario (Iron Law 5); single-sentence CSO." },
+    "components": { "type": "object", "properties": {
+      "skills": { "type": "array", "items": { "type": "object", "required": ["name", "capability", "triggers"], "properties": { "name": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }, "capability": { "type": "string" }, "triggers": { "type": "array", "items": { "type": "string" } }, "consumes": { "type": "string" }, "produces": { "type": "string" } } } },
+      "hooks": { "type": "array", "items": { "type": "object", "required": ["event", "action"], "properties": { "event": { "type": "string" }, "action": { "type": "string" } } } },
+      "commands": { "type": "array", "items": { "type": "string" } },
+      "rules": { "type": "array", "items": { "type": "string" } }
+    } },
+    "orchestration": { "type": "object", "properties": {
+      "entryPoints": { "type": "array", "items": { "type": "string", "pattern": "^using-[a-z0-9-]+$" }, "description": "Bootstrap/entry skills (methodology plugins: <= 1)." },
+      "chains": { "type": "array", "items": { "type": "array", "items": { "type": "string" } }, "description": "Ordered trigger chains." },
+      "handoffs": { "type": "object", "additionalProperties": { "type": "string" }, "description": "consumes/produces artifact protocol per chain link." },
+      "conflicts": { "type": "array", "items": { "type": "string" }, "description": "Mutually exclusive trigger domains." }
+    } },
+    "language": { "type": "object", "required": ["policy", "user_lang", "agent_lang"], "properties": { "policy": { "enum": ["tiered", "english", "native"] }, "user_lang": { "type": "string" }, "agent_lang": { "type": "string", "enum": ["en"] } } },
+    "signoff": { "type": "object", "required": ["confirmed", "date"], "properties": { "confirmed": { "type": "boolean" }, "date": { "type": "string", "format": "date" } } }
+  },
+  "additionalProperties": false
+}
