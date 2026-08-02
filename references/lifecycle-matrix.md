@@ -17,6 +17,8 @@ S7 编排优化）。**单技能退役属于维护（S5）**，与插件整体�
 
 | 信号（纯结构） | 探针（`scripts/verify.mjs lifecycle`） | 严重度 | 如何度量 | 建议 |
 |--------------------------|----------------|---------|----------------|----------------|
+| 生命周期状态缺失 | `lifecycle-status` | WARN | 技能 frontmatter 无 `metadata.lifecycle` 字段，或 `status` 不是 active/deprecated/retired | **补充**生命周期元数据（status/version/created/updated） |
+| 技能退役/弃用 | `lifecycle-status` | INFO | `lifecycle.status` 为 deprecated 或 retired | **清理**：退役技能应安排移除，弃用技能应标注替代方案 |
 | 技能过大（重+厚） | `skill-too-large` | WARN | 行数 > ~300、标题层级 > 3 | **拆分**为聚焦技能，或**重组**：抽取 `references/` |
 | 触发域重叠 | `trigger-overlap` | WARN（完全重叠 FAIL） | 归一化关键词 Jaccard ≥ 0.85；完全相同 → FAIL | **合并**为一个技能；保留场景并集 |
 | 内容耦合 / 指导重复 | `repeated-guidance` | WARN | 同一 `##` 标题在 ≥3 个技能中重复 | **重组**：抽取共享 `references/` |

@@ -1,9 +1,14 @@
 ---
 name: pf-lifecycle
-description: Use when analyzing how existing skills should evolve, when deciding split, merge, reorganize, port, or retire actions, when a skill is too large, overlapping, or structurally unhealthy, when running pure-structural lifecycle analysis, or when routed from /pf-analyze. Produces severity-ranked recommendations for user confirmation.
+description: Use when analyzing how existing skills should evolve, when deciding split, merge, reorganize, port, or retire actions, when a skill is too large, overlapping, or structurally unhealthy, when running pure-structural lifecycle analysis, or when routed from /pf-analyze.
 tags: [pf, pf-lifecycle, plugin, lifecycle, analysis, refactor, split, merge]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "生命周期, 技能拆分, 技能合并, 重组, 移植, 退役, 演进"
 ---
 
@@ -47,6 +52,7 @@ Every matrix signal maps to a probe name in `references/lifecycle-matrix.md`:
 
 | Signal | Severity policy |
 |--------|-----------------|
+| `lifecycle-status` | WARN (missing) / INFO (deprecated/retired) |
 | `skill-too-large` | WARN |
 | `trigger-overlap` | WARN (FAIL on exact overlap) |
 | `repeated-guidance` | WARN |

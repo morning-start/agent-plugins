@@ -1,9 +1,14 @@
 ---
 name: pf-design
-description: Use when a signed-off PRD exists for a plugin, when planning which skills, hooks, commands, and rules a plugin needs, when designing skill orchestration (trigger chains, handoffs, entry points), when mapping a plugin to Claude Code/pi/opencode/oh-my-pi manifests, or when routed from /pf-design or pf-intent's full path. Produces the component manifest.
+description: Use when a signed-off PRD exists for a plugin, when planning which skills, hooks, commands, and rules a plugin needs, when designing skill orchestration (trigger chains, handoffs, entry points), when mapping a plugin to Claude Code/pi/opencode/oh-my-pi manifests, or when routed from /pf-design or pf-intent's full path.
 tags: [pf, pf-design, plugin, design, architecture, manifest, orchestration]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "插件设计, 构件清单, 架构, 编排设计, 设计文档"
 ---
 

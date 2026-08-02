@@ -1,9 +1,14 @@
 ---
 name: pf-git
-description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-version, /pf-release, or using-pf. Triggers on "git branch", "git worktree", "commit message", "bump version", "what changed since vX", "update changelog", "release notes", "tag a release".
+description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-version, /pf-release, or using-pf.
 tags: [pf, pf-git, git, branch, worktree, semver, changelog, release, version]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "git, 分支, worktree, 并行开发, 提交规范, 版本管理, 语义化版本, CHANGELOG, 发布"
 ---
 

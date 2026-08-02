@@ -102,9 +102,30 @@ plugin-factory 每个 `pf-*` 技能与每个生成插件都必须遵守的共享
 ## 流程
 
 ```
-intent → (门禁: Light? 直通) → design → build（skill-creator 循环）
-       → verify（审计）→ release（SemVer）→ lifecycle（分析）
+intent → (门禁: Light? 直通) → design → build（skill-creator TDD 循环）
+       → verify（审计 + 测试覆盖门禁）→ release（SemVer）→ lifecycle（分析）
 ```
 
 复杂度判定（来自 `pf-intent`）：Light = 1–2 个技能、无 hooks、单端 →
 跳过设计、直达 build。Medium/Heavy → 完整路径。
+
+## TDD 驱动方法论
+
+plugin-factory 全线采用 TDD（测试驱动开发）方法论：
+
+1. **测试先行（Red）**：在任何技能实现之前，先编写测试用例——测试即契约。
+   测试定义触发条件、期望输出、错误路径和边界情况。
+2. **最小实现（Green）**：实现刚好通过测试的代码，不做过度设计。
+3. **重构（Refactor）**：在测试保护下清理实现，保持测试通过。
+
+TDD 在管线中的体现：
+
+| 阶段 | TDD 应用 | 强制程度 |
+|------|----------|----------|
+| pf-build | skill-creator 的 TDD 循环：先写测试用例 → 再实现技能 | 强制（Iron Law 2） |
+| pf-verify | 测试覆盖检查：每个 active 技能必须有对应测试 | 警告（非阻塞） |
+| 生成插件 | 脚手架生成 `tests/` 目录 + 每个技能的测试桩 | 模板级强制 |
+| pf-lifecycle | 测试覆盖率作为技能健康信号 | 未来信号（v2） |
+
+**质量门禁**：测试不通过 → 阻塞发布。测试覆盖不足 → 警告但不阻塞。
+技能未实现但有测试 → 测试失败，正确定义了能力边界。

@@ -1,9 +1,14 @@
 ---
 name: pf-intent
-description: Use when creating a new agent plugin, when a user has only a vague idea of what a plugin should do, when clarifying a change to an existing plugin (add/improve/retire a skill, port a harness, orchestration tweak), when asked to turn "I want a plugin for X" into a concrete spec, or when no signed-off PRD exists yet. Triggers on "create a plugin", "I have an idea for a plugin", "plugin for X", "change my plugin", "add a skill", "/pf-intent", "/pf-new", or routing from using-pf. Elicits intent, writes a one-page PRD, and applies the complexity gate.
+description: Use when creating a new agent plugin, when a user has only a vague idea of what a plugin should do, when clarifying a change to an existing plugin (add/improve/retire a skill, port a harness, orchestration tweak), when asked to turn "I want a plugin for X" into a concrete spec, or when no signed-off PRD exists yet.
 tags: [pf, pf-intent, plugin, prd, intent, interview, requirements]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "创建插件, 插件想法, 需求澄清, PRD, 意图访谈"
 ---
 

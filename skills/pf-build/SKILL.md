@@ -1,9 +1,14 @@
 ---
 name: pf-build
-description: Use when a component manifest is signed off, when creating a standalone plugin project, when scaffolding skills, hooks, or commands for multiple harnesses, when a skill must be authored via skill-creator, when generating a bootstrap/entry skill from orchestration metadata, or when routed from /pf-build. Executes the build; delegates skill authoring and evaluation to skill-creator.
+description: Use when a component manifest is signed off, when creating a standalone plugin project, when scaffolding skills, hooks, or commands for multiple harnesses, when a skill must be authored via skill-creator, when generating a bootstrap/entry skill from orchestration metadata, or when routed from /pf-build.
 tags: [pf, pf-build, plugin, scaffold, build, skill-creator, render]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "插件构建, 脚手架, 生成插件, 渲染, skill-creator"
 ---
 
@@ -75,10 +80,20 @@ A harness is advertised **only** when all of its required artifacts are rendered
 
 For every skill in `components.skills`:
 
-1. Feed skill-creator the PRD-derived spec (capability, triggers, consumes/produces).
-2. Run its loop: intent → draft → test cases → parallel A/B eval (with/without the
+1. **Write test cases first** (TDD red phase) — before any skill implementation,
+   define acceptance criteria as executable test cases: trigger scenarios,
+   expected outputs, error conditions, edge cases. The test cases become the
+   skill's contract.
+2. Feed skill-creator the PRD-derived spec (capability, triggers, consumes/produces)
+   plus the test cases from step 1.
+3. Run its loop: intent → draft → test cases → parallel A/B eval (with/without the
    skill) → iterate based on feedback (description optimization up to its rounds).
-3. **Accept only after its evaluation passes.** Record the eval summary per skill.
+4. **Accept only after its evaluation passes and all test cases pass.** Record the
+   eval summary per skill.
+
+Test-first principle: a skill is not complete until its test cases exist and pass.
+The scaffold generates a `tests/` directory with per-skill test stubs;
+skill-creator fills them during its TDD loop.
 
 ### 3. Render per-harness manifests
 

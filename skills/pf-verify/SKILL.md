@@ -1,9 +1,14 @@
 ---
 name: pf-verify
-description: Use when a plugin project needs structural or compliance checks, when SKILL.md frontmatter or directory naming must be validated against the Agent Skills standard, when hooks need multi-shell verification, when orchestration health must be checked (chain breaks, orphan skills, missing entry), when running the pre-release audit, or when routed from /pf-verify. Triggers on "audit", "check plugin", "verify plugin".
+description: Use when a plugin project needs structural or compliance checks, when SKILL.md frontmatter or directory naming must be validated against the Agent Skills standard, when hooks need multi-shell verification, when orchestration health must be checked (chain breaks, orphan skills, missing entry), when running the pre-release audit, or when routed from /pf-verify.
 tags: [pf, pf-verify, plugin, audit, compliance, validation, orchestration]
 metadata:
   prefix: pf
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-01
+    updated: 2026-08-02
   keywords_zh: "审计, 校验, 合规检查, 验证插件, 质量检查"
 ---
 
@@ -88,7 +93,22 @@ Per `references/orchestration-patterns.md`:
 - methodology plugins have an entry skill (no missing entry);
 - trigger domains mutually exclusive, or declared in `orchestration.conflicts` — `trigger-overlap`.
 
-### 6. Docs & packaging
+### 7. Test coverage check (executable guard)
+
+Before releasing, verify that every skill has a corresponding test file:
+
+- Every `skills/<name>/SKILL.md` must have at least one matching test:
+  - `tests/<name>/` directory with test files, or
+  - A test referenced in the skill's `metadata.tests` field.
+- Skills with `lifecycle.status: active` and no test coverage produce a
+  **WARNING** finding (not a FAIL — coverage is advisory, not blocking).
+- Skills with `lifecycle.status: deprecated` are exempt from coverage
+  requirements.
+
+Run: `npm test` (all tests must pass) and `npm run verify` (coverage warnings
+are informational).
+
+### 8. Docs & packaging
 
 - `README.md` + `README.zh-CN.md` present and in sync (bilingual rule);
 - `AGENTS.md` / `CLAUDE.md` present with activation rules;
