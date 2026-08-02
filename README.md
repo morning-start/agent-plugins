@@ -33,7 +33,7 @@ You tell the agent *what you want*; it drives the rest: intent interview → PRD
 
 | Harness | Install |
 |---------|---------|
-| Claude Code | `git clone https://github.com/morning-start/plugin-factory` then run `/plugin install ./plugin-factory` inside Claude Code |
+| Claude Code | `/plugin install plugin-factory` |
 | pi | `pi install git:github.com/morning-start/plugin-factory` |
 | oh-my-pi (omp) | `omp plugin install git:github.com/morning-start/plugin-factory` |
 | opencode | Follow `.opencode/INSTALL.md` |

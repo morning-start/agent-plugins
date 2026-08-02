@@ -33,7 +33,7 @@
 
 | 平台 | 安装方式 |
 |------|----------|
-| Claude Code | `git clone https://github.com/morning-start/plugin-factory` 然后在 Claude Code 中运行 `/plugin install ./plugin-factory` |
+| Claude Code | `/plugin install plugin-factory` |
 | pi | `pi install git:github.com/morning-start/plugin-factory` |
 | oh-my-pi (omp) | `omp plugin install git:github.com/morning-start/plugin-factory` |
 | opencode | 按 `.opencode/INSTALL.md` |
