@@ -1,95 +1,112 @@
-# plugin-factory
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="plugin-factory: a meta-plugin that builds agent plugins">
+</p>
 
-A **meta-plugin** that guides your coding agent to create **new, standalone agent plugin
-projects** from nothing but your intent, goals, and scenarios.
+**plugin-factory** is a meta-plugin that guides your AI coding agent to create **new, standalone agent plugin projects** from nothing but your intent, goals, and scenarios.
+
+You tell the agent *what you want*; it drives the rest: intent interview → PRD → design → TDD build (delegated to Anthropic's **skill-creator**) → verification → release → lifecycle analysis.
 
 > 中文说明见 [README.zh-CN.md](README.zh-CN.md)
 
-You tell the agent *what the plugin should do*; plugin-factory drives everything else
-through a software-development workflow: intent interview → PRD → design → build
-(delegating each skill to Anthropic's **skill-creator**) → verification → release →
-lifecycle analysis (split / merge / reorganize / port / retire).
-
-## Supported harnesses
-
-| Harness | Install | Skill location |
-|---------|---------|----------------|
-| Claude Code | `/plugin install plugin-factory@<marketplace>` or local plugin | plugin `skills/` |
-| pi | `pi install git:github.com/<you>/plugin-factory` | package `skills/` (`pi.skills` in package.json) |
-| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` | package `skills/` (`omp`/`pi` fields) |
-| opencode | follow `.opencode/INSTALL.md` | `.opencode/skills/` (auto-copied by the scaffold — no manual `cp`) |
-
-All four harnesses are verified by the dogfood smoke test (`npm run smoke`); a
-harness is only advertised when its manifest, bootstrap, skill discovery path,
-and smoke check are present (T1 contract).
-
-## Quick start
-
-1. Install plugin-factory for your harness (table above).
-2. Run `/pf-new` (Claude Code) or ask the agent to create a plugin.
-3. Answer the intent interview: core functionality, measurable goal, 3–5 scenarios,
-   users/triggers, boundaries & non-goals.
-4. Sign off the one-page PRD; the agent drives design → build → verify → release.
-5. A **standalone plugin project** is generated (own directory/repo, bilingual README,
-   per-harness manifests, multi-shell hooks and commands).
+---
 
 ## How it works
 
+<p align="center">
+  <img src="./assets/readme/workflow.svg" width="100%" alt="plugin-factory pipeline: Intent → Design → Build → Verify → Release → Lifecycle">
+</p>
+
 | Phase | Skill / Command | Deliverable |
 |-------|-----------------|-------------|
-| 1. Intent | `pf-intent` | One-page PRD + complexity gate (Light → direct path, Medium/Heavy → full path) |
-| 2. Design | `pf-design` | Component manifest + per-harness manifest specs |
-| 3. Build | `pf-build` | Standalone plugin project; skills via skill-creator (TDD loop) |
-| 4. Verify | `pf-verify` | Structural & compliance audit |
-| 5. Release | `/pf-release` | SemVer, CHANGELOG, bilingual README, install scripts |
-| 6. Lifecycle | `pf-lifecycle` | Pure-structural analysis → split/merge/reorganize/port/retire advice |
+| **Intent** | `pf-intent` | One-page PRD + complexity gate (Light → skip design, Medium/Heavy → full path) |
+| **Design** | `pf-design` | Component manifest + per-harness manifest specs + ADR (Heavy) |
+| **Build** | `pf-build` | Standalone plugin project; skills via skill-creator (TDD loop: test cases → implement → eval) |
+| **Verify** | `pf-verify` | Structural & compliance audit (3-layer engine: structure → harness → orchestration) |
+| **Release** | `/pf-release` | SemVer version, CHANGELOG, bilingual README, install scripts |
+| **Lifecycle** | `pf-lifecycle` | Pure-structural analysis → recommend split / merge / reorganize / port / retire |
+
+---
+
+## Quick start
+
+**1. Install** for your AI coding agent:
+
+| Harness | Install |
+|---------|---------|
+| Claude Code | `/plugin install plugin-factory@<marketplace>` or local plugin |
+| pi | `pi install git:github.com/<you>/plugin-factory` |
+| oh-my-pi (omp) | `omp plugin install git:github.com/<you>/plugin-factory` |
+| opencode | Follow `.opencode/INSTALL.md` |
+
+**2. Create a plugin.** Run `/pf-new` (Claude Code) or tell your agent "I want a plugin that…".
+
+**3. Answer 8 questions.** The agent interviews you one at a time: core functionality, goal, scenarios, triggers, boundaries, platforms, complexity signals, language preference.
+
+**4. Sign off the PRD.** The agent writes a one-page PRD. You confirm it. Done — the agent drives the rest.
+
+**5. Get a standalone plugin project.** New directory, bilingual README, per-harness manifests, multi-shell hooks, install scripts, TDD test stubs, and lifecycle probes.
+
+---
+
+## Supported harnesses
+
+All four harnesses are verified by the dogfood smoke test (`npm run smoke`). A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract).
+
+| Harness | Skill discovery | Hooks | Commands |
+|---------|----------------|-------|----------|
+| **Claude Code** | `skills/` | `.sh` + `.ps1` pairs via `hooks.json` | `commands/*.md` |
+| **pi** | `package.json` → `pi.skills` | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
+| **oh-my-pi (omp)** | `package.json` → `omp` / `pi` fields | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
+| **opencode** | `.opencode/skills/` (auto-copied by scaffold) | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
+
+---
 
 ## Repository structure
 
 ```
 plugin-factory/
 ├── .claude-plugin/plugin.json    # Claude Code plugin manifest
-├── .pi/extensions/               # pi extension bootstrap
+├── .pi/extensions/               # pi / oh-my-pi bootstrap extension
 ├── .opencode/                    # opencode config + INSTALL.md
-├── skills/                       # pf-* workflow sub-skills
+├── skills/                       # pf-* workflow sub-skills (canonical location)
 ├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
-├── references/                   # design docs: adapters, plugin model, lifecycle matrix
-├── scripts/                      # validate/audit/scaffold (bash + PowerShell)
-├── templates/                    # generated-plugin scaffolds
-├── docs/                         # ADRs + glossary
-└── tests/                        # infrastructure tests
+├── references/                   # shared design docs (adapters, plugin model, lifecycle matrix)
+├── scripts/                      # scaffold / verify / lifecycle / version / release (Node core + shell wrappers)
+├── templates/                    # shared + harnesses scaffold templates
+├── docs/                         # ADRs, glossary, optimization reports
+└── tests/                        # contract + smoke tests (34 passing)
 ```
 
-## Roadmap
+---
 
-- **M0** — plugin skeleton, three-harness manifests, `pf-intent`, references ✅
-- **M1** — full pipeline orchestration, Claude Code adapter first, dual-shell scaffold scripts
-- **M2** — pi + opencode adapters, multi-shell hooks/commands rendering, standalone project generation
-- **M3** — lifecycle analysis engine (pure structural) + decision matrix + audit upgrade
-- **M4** — dogfood: generate an example plugin with plugin-factory itself; tests; docs polish
+## Design principles
 
-## Safe release flow
+| Principle | Description |
+|-----------|-------------|
+| **Intent first** | No PRD, no work. The signed-off PRD is the only ticket into build. |
+| **Delegate, never reimplement** | Skill authoring is delegated to Anthropic's **skill-creator** — plugin-factory never hand-writes skills. |
+| **Standard-driven rendering** | Skills authored once to the Agent Skills standard; per-harness adapters handle only the differences. |
+| **TDD methodology** | Every skill follows Red-Green-Refactor: write test cases → implement → verify. |
+| **CSO descriptions** | Skill descriptions are pure triggers (Condition-Situation-Outcome): "Use when…", never workflow. |
+| **Lifecycle metadata** | Every skill has `metadata.lifecycle` (status / version / created / updated). |
+| **Quality is mechanical** | Every advertised harness, skill, command, hook, and manifest must pass `npm run verify`. |
+| **Release safety** | Preparation is separated from publication. The release gate checks version sync, evidence, and a clean worktree — tagging and pushing are explicit user actions. |
 
-Release preparation is **separated from publication** (see `/pf-release`):
+---
 
-1. `npm run verify` — exit 0 required (no `FAIL` findings).
-2. `npm run release:check -- --json` — the release gate: version sync, version
-   audit, executable verifier, CHANGELOG evidence for the current version,
-   advertised-harness manifests, and a **clean worktree**. Any violation fails
-   with a stable `signal` (`version-drift`, `missing-changelog-entry`,
-   `dirty-worktree`, `missing-harness-artifact`, `verification-failed`).
-3. `scripts/bump-version.sh <X.Y.Z>` (or `.ps1`) — bump every declared manifest
-   via `.version-bump.json`; never hand-edit versions.
-4. Update CHANGELOG + bilingual README, review the diff.
-5. **Explicitly** tag (`git tag v<version>`) and push only when the user asked
-   for distribution — the gate never tags or pushes.
+## Verification & quality
 
-## Verification
+```bash
+npm run validate        # structural audit (Agent Skills standard)
+npm run validate:ps     # same, PowerShell wrapper
+npm test                # full test suite (34 tests, all pass)
+npm run lifecycle       # lifecycle probe audit
+npm run release:check   # release gate (version sync, CHANGELOG, clean worktree)
+```
 
-`npm run validate` and `npm run validate:ps` invoke the same Node verifier
-(`scripts/verify.mjs`); `npm test` runs all contract tests.
+---
 
 ## License
 
-MIT
+[MIT](LICENSE)
