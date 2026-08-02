@@ -59,6 +59,17 @@ Detailed rationale lives in `references/design-principles.md`.
    gate checks version sync, evidence, and a clean worktree, but tagging and
    pushing are explicit user-confirmed actions — never implicit side effects.
 
+## User perspective (iron rule)
+
+Whenever this project says **"user"**, it means the **end user of the target
+plugin** — the person who will use the plugin that plugin-factory generates —
+not plugin-factory's own operator. Every design, optimization, and quality
+decision is made from that end user's point of view: the goal is to optimize
+the **generated plugin's target project**, never plugin-factory itself.
+This keyword is baked into every generated plugin's AGENTS.md (see
+`templates/shared/AGENTS.md.tmpl`), so downstream plugins inherit the same
+perspective: they serve their own end user, not the plugin-factory workflow.
+
 ## Conventions
 
 - **Naming**: all plugin-factory sub-skills use the `pf-` abbreviation prefix in both the
