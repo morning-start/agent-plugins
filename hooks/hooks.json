@@ -10,6 +10,31 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|create_file|str_replace_editor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/post-tool-verify.sh",
+            "shell": "bash",
+            "description": "Post-edit structural gate (verify.mjs structure layer)"
+          }
+        ]
+      }
+    ],
+    "PreCompletion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/pre-completion.sh",
+            "shell": "bash",
+            "description": "Pre-completion gate (verify + tests)"
+          }
+        ]
+      }
     ]
   }
 }

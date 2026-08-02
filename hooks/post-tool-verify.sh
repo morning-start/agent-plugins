@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# plugin-factory post-tool-verify hook (bash variant).
+# Runs after file edits (PostToolUse): quick structural gate via the verify
+# engine's structure layer. Emits Claude-compatible hook JSON; non-zero exit
+# on findings so the harness can surface them.
+set -eu
+plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+node_bin="${NODE:-}"
+if [ -z "$node_bin" ]; then
+  node_bin="$(command -v node 2>/dev/null || command -v node.exe 2>/dev/null || true)"
+fi
+if [ -z "$node_bin" ]; then
+  echo '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[plugin-factory] node not found - structure gate skipped."}}'
+  exit 0
+fi
+
+cd "$plugin_root"
+out="$("$node_bin" scripts/verify.mjs structure --format table 2>/dev/null || true)"
+if printf '%s' "$out" | grep -q "FAIL"; then
+  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[plugin-factory] structure gate FAILED:\\n$out\"}}"
+  exit 1
+fi
+if printf '%s' "$out" | grep -q "WARN"; then
+  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[plugin-factory] structure warnings:\\n$out\"}}"
+  exit 0
+fi
+echo '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[plugin-factory] structure gate passed."}}'
+exit 0
