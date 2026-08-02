@@ -15,22 +15,23 @@ S7 编排优化）。**单技能退役属于维护（S5）**，与插件整体�
 
 ## 信号 → 建议
 
-| 信号（纯结构） | 如何度量 | 建议 |
-|--------------------------|----------------|----------------|
-| 技能过大（重+厚） | 行数 > ~300、标题层级 > 3、大量 "见 references/" 链接 | **拆分**为聚焦技能，或**重组**：抽取 `references/` |
-| 触发域重叠 | 两个 `description` 匹配相同用户意图 | **合并**为一个技能；保留场景并集 |
-| 内容耦合 / 指导重复 | 多个技能重复相同步骤或表格 | **重组**：抽取共享 `references/` |
-| 层级过深 | 嵌套 `skills/` > 2 层、间接引用 | **扁平化** / 重组为平铺命名空间 |
-| 多端缺口 | 技能只存在于一端，而插件宣称多端 | **移植**（按适配器渲染，见 agent-adapters.md） |
-| 僵尸技能 | 无触发式 description / 无 references / 无测试 | **退役**或**演进**（v2 重写） |
-| 命名冲突 | name ≠ 目录，或跨源重名 | **改名**，加项目前缀 |
-| 版本漂移 | 根插件版本与技能版本不同步 | **对齐**版本（单一事实来源） |
-| 链路断裂 | 链中某交接产物上游未生产，或链引用了缺失技能 | **修复编排**（重新链接 / 重排） |
-| 孤儿技能 | 技能从任何入口/链均不可达 | **重组**：补入口链接，或合并 |
-| 入口缺失 | 方法论插件没有引导/入口技能 | **新增** `using-<plugin>` 入口技能 |
+| 信号（纯结构） | 探针（`scripts/verify.mjs lifecycle`） | 严重度 | 如何度量 | 建议 |
+|--------------------------|----------------|---------|----------------|----------------|
+| 技能过大（重+厚） | `skill-too-large` | WARN | 行数 > ~300、标题层级 > 3 | **拆分**为聚焦技能，或**重组**：抽取 `references/` |
+| 触发域重叠 | `trigger-overlap` | WARN（完全重叠 FAIL） | 归一化关键词 Jaccard ≥ 0.85；完全相同 → FAIL | **合并**为一个技能；保留场景并集 |
+| 内容耦合 / 指导重复 | `repeated-guidance` | WARN | 同一 `##` 标题在 ≥3 个技能中重复 | **重组**：抽取共享 `references/` |
+| 层级过深 | `nested-skill-tree` | WARN | 嵌套 `skills/` 深度 > 2 | **扁平化** / 重组为平铺命名空间 |
+| 多端缺口 | `harness-gap` | WARN | 宣称 opencode 但无 `.opencode/skills/`（或 `.agents/skills/`） | **移植**（按适配器渲染，见 agent-adapters.md） |
+| 僵尸技能 | `zombie-skill` | WARN | 无触发式 description 且无支持文件（references/tests/assets） | **退役**或**演进**（v2 重写） |
+| 命名冲突 | `name-collision` | FAIL | 技能名跨位置重复（>1 处） | **改名**，加项目前缀 |
+| 版本漂移 | `version-drift` | WARN | package.json / plugin.json / 技能 metadata 版本不一致 | **对齐**版本（单一事实来源） |
+| 链路断裂 | `broken-handoff` | FAIL | 技能 body 的 route/handoff/next 引用不存在的技能 | **修复编排**（重新链接 / 重排） |
+| 孤儿技能 | `orphan-skill` | WARN | 从任何入口/链均不可达（入口存在时） | **重组**：补入口链接，或合并 |
+| 入口缺失 | `missing-entry-skill` | FAIL | 项目声明 `using-<plugin>` 路径但无入口技能 | **新增** `using-<plugin>` 入口技能 |
 
 编排健康探针（链路断裂 / 孤儿技能 / 入口缺失）遵循
-`references/orchestration-patterns.md` 中的模式。
+`references/orchestration-patterns.md` 中的模式，已在 T2 落地为
+`verify.mjs lifecycle`（`npm run lifecycle`；`--format json` 输出机器可读 findings）。
 
 ## 决策流程
 

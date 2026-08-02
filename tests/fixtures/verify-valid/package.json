@@ -1,0 +1,11 @@
+{
+  "name": "verify-valid",
+  "version": "0.1.0",
+  "description": "Valid fixture plugin",
+  "license": "MIT",
+  "private": true,
+  "pi": {
+    "extensions": [".pi/extensions/vv-bootstrap.ts"],
+    "skills": ["skills"]
+  }
+}

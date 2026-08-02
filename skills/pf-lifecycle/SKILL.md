@@ -23,16 +23,46 @@ single-skill loop does not.
 - A plugin advertises harnesses its skills do not cover.
 - The user runs `/pf-analyze` or asks "how should these skills evolve?".
 
-## Responsibilities (skeleton — completed in M3)
+## Responsibilities (engine complete in T2)
 
-- Run structural probes from the decision matrix (`references/lifecycle-matrix.md`):
-  size/depth, trigger overlap, duplicated guidance, hierarchy depth, multi-harness
-  gaps, zombie detection, name collisions, version drift.
-- Produce {skill, signal, severity, action, impact} recommendations, severity-ranked.
+- Run the executable lifecycle probes (`scripts/verify.mjs lifecycle`, wrapped by
+  `scripts/lifecycle-probes.sh` / `.ps1`) — pure-structural analysis from the
+  decision matrix (`references/lifecycle-matrix.md`): size/depth, trigger
+  overlap, duplicated guidance, hierarchy depth, multi-harness gaps, zombie
+  detection, name collisions, version drift, broken handoffs, orphan skills,
+  and missing entry skills.
+- Produce {skill, signal, severity, action, impact} recommendations,
+  severity-ranked; `--format json` for machine-readable output.
 - Wait for user confirmation before any action executes.
 - Route approved actions through `pf-design` / `pf-build` / `pf-verify` — no bypass.
 
+## Executable probes
+
+```text
+node scripts/verify.mjs lifecycle --root <dir>            # severity-ranked table
+node scripts/verify.mjs lifecycle --root <dir> --format json
+```
+
+Every matrix signal maps to a probe name in `references/lifecycle-matrix.md`:
+
+| Signal | Severity policy |
+|--------|-----------------|
+| `skill-too-large` | WARN |
+| `trigger-overlap` | WARN (FAIL on exact overlap) |
+| `repeated-guidance` | WARN |
+| `nested-skill-tree` | WARN |
+| `harness-gap` | WARN |
+| `zombie-skill` | WARN |
+| `name-collision` | FAIL |
+| `version-drift` | WARN |
+| `broken-handoff` | FAIL |
+| `orphan-skill` | WARN |
+| `missing-entry-skill` | FAIL |
+
+Runtime-only signals (trigger frequency, eval pass rate, user feedback themes,
+install counts) remain out of scope for v1 and are documented as future signals.
+
 ## Status
 
-M0 scaffold: the decision matrix lives in `references/lifecycle-matrix.md`; the
-analysis engine lands in **M3**.
+T2 complete — decision matrix probes are executable via `scripts/verify.mjs
+lifecycle`; Bash and PowerShell wrappers only forward arguments.
