@@ -92,14 +92,14 @@ Every commit subject follows `type(scope)!: subject`:
 
 ### 4. Version management (from git history)
 
-#### 4.1 Establish the git baseline
+### 4.1 Establish the git baseline
 
 - Find the last release tag: `git describe --tags --abbrev=0` (fallback: none).
 - Inspect the range since that tag: `git log <last-tag>..HEAD --oneline`.
 - Check the worktree: `git status --porcelain` — dirty worktree is recorded as
   context for the release gate (it blocks publication, not version planning).
 
-#### 4.2 Classify changes (Conventional Commits)
+### 4.2 Classify changes (Conventional Commits)
 
 Read the commit subjects and group them:
 
@@ -120,7 +120,7 @@ Rules:
 - Never invent a version bump from desire alone — every bump must be
   **supported by commits**.
 
-#### 4.3 Decide the next SemVer
+### 4.3 Decide the next SemVer
 
 - `current = node scripts/version.mjs check` (exit 0 → read `version`).
 - Apply the table above; default proposal = highest effect present
@@ -128,7 +128,7 @@ Rules:
 - Present the proposal with its commit evidence; **the user confirms** the
   final version (key decision — Iron Law 4).
 
-#### 4.4 Bump every declared manifest
+### 4.4 Bump every declared manifest
 
 ```text
 node scripts/version.mjs bump <X.Y.Z>      # or:
@@ -141,7 +141,7 @@ powershell -File scripts/bump-version.ps1 <X.Y.Z>
 - Confirm with `npm run version:check` (all manifests in sync) and
   `npm run version:audit` (no undeclared references).
 
-#### 4.5 Write the CHANGELOG entry (feature comments)
+### 4.5 Write the CHANGELOG entry (feature comments)
 
 Add a section under `## [<version>] - <date>` in `CHANGELOG.md`:
 
@@ -156,7 +156,7 @@ Add a section under `## [<version>] - <date>` in `CHANGELOG.md`:
 The CHANGELOG is the release evidence — `scripts/release-check.mjs` fails when
 the current version has no entry.
 
-#### 4.6 Verify and hand off to publication
+### 4.6 Verify and hand off to publication
 
 - Run `npm run verify` (structure + harness + orchestration; exit 0).
 - Run the release gate: `node scripts/release-check.mjs --root . --json`.

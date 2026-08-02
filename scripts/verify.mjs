@@ -30,6 +30,20 @@ const MAX_HEADING_DEPTH = 3;
 const MAX_SKILL_NESTING = 2;
 const STOPWORDS = new Set(["a", "an", "the", "for", "of", "to", "in", "on", "with", "and", "or", "when", "use", "is", "be"]);
 
+/** Standard skill-skeleton headings every skill is expected to share. These are
+ *  structure, not duplicated guidance — repeated-guidance must ignore them. */
+const SKELETON_HEADINGS = new Set([
+  "overview",
+  "when to use",
+  "prerequisites",
+  "workflow",
+  "outputs",
+  "acceptance",
+  "status",
+  "rules",
+  "common mistakes",
+]);
+
 /** Parse the YAML frontmatter block of a markdown skill/command file. */
 export function parseFrontmatter(text) {
   const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text);
@@ -479,6 +493,7 @@ async function orchestrationChecks(root, findings) {
       const m = /^##\s+(.+)$/.exec(line);
       if (m) {
         const key = m[1].trim().toLowerCase();
+        if (SKELETON_HEADINGS.has(key)) continue;
         if (!headingMap.has(key)) headingMap.set(key, []);
         headingMap.get(key).push(`skills/${s.rel}SKILL.md`);
       }
