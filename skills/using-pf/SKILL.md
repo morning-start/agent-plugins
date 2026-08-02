@@ -38,15 +38,41 @@ commands — route internally.
 
 ## Routing (intent → scenario)
 
-1. **Create a new plugin** → S1: intent (Full) → design → build → verify → release.
-2. **Change an existing plugin** → classify the change:
-   - add a skill → S2; improve a skill → S3; reorganize (split/merge) → S4;
-     retire one skill → S5; add a harness (port) → S6; orchestration tweak → S7;
-     config/dependency fix → S8.
-   → route: intent (Change) → design/build → verify → release.
-3. **Analyze** → S10: /pf-analyze structure probes; recommendations route to S4/S5/S7.
-4. **Release** → S9: /pf-release (verify → version bump via pf-git → release).
-5. **Just a question** → answer directly; no scenario needed.
+### Skill Priority (mutually exclusive)
+
+When multiple scenarios match, route by intent — first match wins:
+
+| Intent / state | Route |
+|----------------|-------|
+| New plugin, no signed-off PRD | S1 → `pf-intent` (Full) |
+| Signed-off PRD, no design | S1 → `pf-design` |
+| Complexity verdict Light | S1 → `pf-build` directly (skip design) |
+| Component manifest signed off | S1 → `pf-build` |
+| Add a skill to an existing plugin | S2 → `pf-intent` (Change) → design/build → verify → release |
+| Improve a skill | S3 → `pf-intent` (Change, light) → build → verify → release |
+| Reorganize (split/merge) skills | S4 → `pf-analyze` → design → build → verify → release |
+| Retire one skill | S5 → `pf-analyze` (confirm) → build (remove) → verify → release |
+| Add a harness (port) | S6 → `pf-design` (adapters) → build → verify → release |
+| Orchestration tweak | S7 → `pf-design` (orchestration) → build → verify → release |
+| Config / dependency fix | S8 → `pf-build` (fix) → verify → release |
+| Release an existing plugin | S9 → `/pf-release` (verify → pf-git version bump → release) |
+| Analyze lifecycle health | S10 → `pf-analyze` → recommendations → route to S4/S5/S7 |
+| Just a question | answer directly; no scenario |
+
+### Trigger Matrix (user says → route)
+
+| User says (EN) | 用户说（中文） | Route |
+|----------------|----------------|-------|
+| "create a plugin", "I have an idea" | "创建插件", "做一个插件", "插件想法" | `pf-intent` (S1 Full) |
+| "change", "add a skill", "improve" | "改一下", "加个技能", "优化技能" | `pf-intent` (S2/S3 Change) |
+| "split", "merge", "reorganize" | "拆分", "合并", "重组" | `pf-analyze` (S4) |
+| "retire", "remove this skill" | "退役", "删掉这个技能" | `pf-analyze` → build (S5) |
+| "port", "add opencode/pi" | "移植", "加个平台" | `pf-design` (S6) |
+| "rework orchestration", "entry" | "改编排", "换入口" | `pf-design` (S7) |
+| "fix config", "fix hooks" | "修配置", "修 hook" | `pf-build` (S8) |
+| "release", "bump version", "tag" | "发布", "升版本", "打标签" | `/pf-release` (S9) |
+| "analyze", "health", "what should evolve" | "分析", "健康检查", "该演进了" | `pf-analyze` (S10) |
+| "how does X work", general question | "X 怎么用", 一般提问 | answer directly |
 
 ## Red Flags
 
@@ -69,3 +95,33 @@ These thoughts mean STOP — you are rationalizing:
 - The user makes key decisions (intent confirmation, complexity, manifest sign-off).
 - Every change ends with verify → release (no release without verification).
 - Single-skill retirement is maintenance (S5); plugin archiving is out of scope.
+
+## Stop conditions
+
+- No scenario matches and the request is not plugin-factory work → state "This
+  scenario is not covered by current skills" and suggest an issue.
+- A matched skill's file is unavailable → report the missing skill, fall back to
+  `references/`.
+- Multiple scenarios match and priority cannot disambiguate → list the matches
+  and let the user choose.
+
+## Error recovery
+
+| Problem | Diagnosis | Fix |
+|---------|-----------|-----|
+| Routing match fails | Trigger phrase ambiguous | Show candidate scenarios; let the user choose |
+| Target skill file missing | Path/skill renamed | Fall back to `references/`; flag the missing skill |
+| Skill loads but execution fails | Skill-internal error | Report the failing skill + reason; try a degraded path |
+| Intent misread | User says "not what I meant" | Re-classify; re-route with the corrected intent |
+
+## Post-routing self-check
+
+Before executing the routed skill, state:
+
+- [ ] **Target skill**: routed to `pf-<skill>` / scenario S#
+- [ ] **Iron law**: core constraint restated (e.g. no PRD, no build)
+- [ ] **Stop condition**: this task's stopping boundary
+- [ ] **Verify command**: what will prove completion (e.g. `npm run validate`)
+- [ ] **Output contract**: the handoff artifact this step produces
+
+Unchecked → re-read the target skill before acting.

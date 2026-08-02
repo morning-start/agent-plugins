@@ -70,6 +70,27 @@ This keyword is baked into every generated plugin's AGENTS.md (see
 `templates/shared/AGENTS.md.tmpl`), so downstream plugins inherit the same
 perspective: they serve their own end user, not the plugin-factory workflow.
 
+## Instruction priority (conflict resolution)
+
+When sources conflict, follow this order — higher wins:
+
+1. The user's explicit instruction in the current conversation.
+2. This file's repository-level constraints (iron laws above).
+3. The matching `skills/<name>/SKILL.md` for the current task.
+4. Background knowledge and examples in `references/`.
+
+Each file keeps a single authority. Do not copy long workflows, command
+tables, or directory trees into this file — read the authoritative source.
+The routing table lives only in `skills/using-pf/SKILL.md`; other files
+reference it, never duplicate it (avoids drift).
+
+## This repo is a target instance
+
+plugin-factory itself is also a target project: its own development follows
+the same contracts it teaches — intent → design → build → verify → release,
+verify before claiming completion, evidence-backed releases. All git commit
+and acceptance conventions apply to this repository as well.
+
 ## Conventions
 
 - **Naming**: all plugin-factory sub-skills use the `pf-` abbreviation prefix in both the
@@ -120,3 +141,9 @@ plugin-factory/
 - When you change a convention, update the affected `references/` docs and the CHANGELOG.
 - Keep every deliverable verifiable: run `npm test` and `npm run validate` after changes
   (add contract tests under `tests/` for any new script).
+- **Batch limit**: run at most 5 consecutive tasks per batch, then stop, report, and
+  reach a commit checkpoint (verify + commit) before continuing.
+- **Honest evaluation claims**: when routing/skill changes are validated against
+  `evals/evals.json`, run the evaluation tooling if the environment has it;
+  if no eval runner is available, **state explicitly that evals were not run** —
+  never imply they passed.

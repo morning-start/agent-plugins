@@ -24,6 +24,17 @@ optimize this plugin's target project, never the generator.
 - **Orchestration**: entry points / trigger chains / handoffs live in the component
   manifest (see `docs/` if present).
 
+## Git workflow (one-time authorization)
+
+- **Auto-commit grant** (record once, then automated): the agent may run
+  `feature branch → single commit (Conventional Commits) → merge → delete
+  branch` per accepted task **only when** this section records the grant.
+- **Recorded authorization**: `auto-commit: true` — set only after the user
+  approves once; the agent asks again only if the user says "don't
+  auto-commit / don't auto-merge" in the current conversation.
+- **Batch limit**: at most **5 consecutive tasks** per batch, then stop,
+  report, and reach a commit checkpoint (verify + commit) before continuing.
+
 ## Language policy
 
 - Agent-executed content (skills body, commands, AGENTS/CLAUDE, hooks/scripts):

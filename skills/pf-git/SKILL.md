@@ -163,6 +163,26 @@ the current version has no entry.
 - **Publication is explicit**: tagging (`git tag v<version>`) and pushing
   happen only when the user asks — this skill never tags or pushes implicitly.
 
+### 5. One-time authorization commit protocol
+
+For task-based development in the **target project** (git repo), ask once,
+then automate — never nag per commit:
+
+1. Check the target project's `AGENTS.md` for a recorded authorization
+   (`auto-commit` / `auto-merge` grant).
+2. **Already recorded** → automatically run, per accepted task:
+   feature branch → single commit (one task per commit, Conventional Commits)
+   → merge back to the main branch → delete the branch.
+3. **Not recorded** → ask the user once; on approval, record the grant in the
+   target project's `AGENTS.md` and apply the same flow from then on.
+4. **User explicitly says "don't auto-commit / don't auto-merge"** in the
+   current conversation → show the diff only, run no git commands.
+5. Non-git target projects: show changes, never execute git commands.
+
+Batch discipline: run at most **5 consecutive tasks** per batch, then stop,
+report, and reach a **commit checkpoint** (verify + commit) before continuing
+(≤3 if the platform cannot compact sessions).
+
 ## Outputs
 
 - Consistent branch/worktree usage for parallel development.
