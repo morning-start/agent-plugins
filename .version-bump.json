@@ -10,14 +10,14 @@
       "node_modules",
       ".git",
       ".version-bump.json",
-      "scripts/bump-version.sh",
       "docs",
       "references",
       "skills",
       "commands",
       "scripts",
       "templates",
-      "workspace"
+      "workspace",
+      "tests"
     ]
   }
 }
