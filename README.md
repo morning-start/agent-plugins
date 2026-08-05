@@ -22,6 +22,8 @@ agent-plugins/
 
 两者不是同一层级：`plugin-factory` 是「制造插件的工具」，`moonbit-skills` 是「被制造的领域插件」——前者面向插件作者，后者面向使用该语言开发的人。
 
+> marketplace 中已用 `category`/`tags` 标注层级：`moonbit-skills` → `language`，`plugin-factory` → `meta-plugin`，安装时可按类别筛选。
+
 ## 安装
 
 一个 marketplace 即可安装全部插件：
