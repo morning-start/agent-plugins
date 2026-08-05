@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plugin-factory.dev/schemas/prd.schema.json",
+  "title": "One-page PRD (pf-intent output)",
+  "description": "Signed-off one-page PRD produced by pf-intent. It is the only ticket into design and build (Iron Law 1).",
+  "type": "object",
+  "required": ["name", "version", "background", "goals", "features", "scenarios", "non_goals", "platforms", "language", "complexity", "signoff"],
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Plugin name; matches the target directory and name field." },
+    "version": { "type": "string", "pattern": "^0\\.1\\.0$", "description": "PRD draft version; starts at v0.1." },
+    "background": { "type": "string", "description": "Why now, one paragraph." },
+    "goals": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "2-3 measurable outcomes." },
+    "features": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Numbered: verb + object, one-line acceptance hint each." },
+    "scenarios": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["context", "trigger", "expected"], "properties": { "context": { "type": "string" }, "trigger": { "type": "string" }, "expected": { "type": "string" } } }, "description": "3-5 scenarios: context -> trigger -> expected behavior." },
+    "non_goals": { "type": "array", "items": { "type": "string" }, "description": "Explicitly out of scope (scope-creep firewall)." },
+    "platforms": { "type": "array", "items": { "enum": ["claude-code", "pi", "opencode", "oh-my-pi"] }, "description": "Requested harnesses." },
+    "language": { "type": "object", "required": ["policy", "user_lang", "agent_lang"], "properties": { "policy": { "enum": ["tiered", "english", "native"] }, "user_lang": { "type": "string" }, "agent_lang": { "type": "string", "enum": ["en"] } } },
+    "complexity": { "type": "object", "required": ["signals", "score", "verdict", "path"], "properties": {
+      "signals": { "type": "object", "properties": { "skills": { "type": "integer", "minimum": 0 }, "hooks": { "type": "boolean" }, "extra_harnesses": { "type": "integer", "minimum": 0 }, "rules_agents": { "type": "boolean" }, "cross_scenario": { "type": "boolean" } } },
+      "score": { "type": "integer", "minimum": 0 },
+      "verdict": { "enum": ["Light", "Medium", "Heavy"] },
+      "path": { "enum": ["direct", "full", "full-adr"] }
+    } },
+    "signoff": { "type": "object", "required": ["confirmed", "date"], "properties": { "confirmed": { "type": "boolean" }, "date": { "type": "string", "format": "date" }, "notes": { "type": "string" } }, "description": "User confirmation + date (mandatory gate)." }
+  },
+  "additionalProperties": false
+}

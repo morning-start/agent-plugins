@@ -1,0 +1,15 @@
+{
+  "name": "verify-invalid",
+  "version": "0.1.0",
+  "description": "Invalid fixture plugin",
+  "license": "MIT",
+  "private": true,
+  "pi": {
+    "extensions": [".pi/extensions/missing-bootstrap.ts"],
+    "skills": ["skills"]
+  },
+  "omp": {
+    "extensions": [".pi/extensions/also-missing.ts"],
+    "skills": ["skills"]
+  }
+}

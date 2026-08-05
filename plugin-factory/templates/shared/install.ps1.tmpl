@@ -1,0 +1,7 @@
+# Install {{PLUGIN_NAME}}.
+$src = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Write-Host "{{PLUGIN_NAME}} - install options:"
+{{HARNESS_INSTALL_PS}}
+Write-Host ""
+Write-Host "Full instructions: $src/README.md"

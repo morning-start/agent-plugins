@@ -1,0 +1,12 @@
+{
+  "name": "git-release",
+  "prefix": "gr",
+  "description": "Release workflow helper — prepare, verify, and publish releases.",
+  "user_lang": "zh-CN",
+  "scenario": "preparing a release",
+  "goal": "A developer can prepare a verified release from a clean checklist.",
+  "harnesses": ["claude-code", "pi", "opencode", "oh-my-pi"],
+  "hooks": ["session-bootstrap"],
+  "entry_skill": "using-gr",
+  "handoffs": ["using-gr → gr-check"]
+}

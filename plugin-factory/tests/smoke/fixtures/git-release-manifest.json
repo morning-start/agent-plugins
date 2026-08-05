@@ -1,0 +1,29 @@
+{
+  "name": "git-release",
+  "prefix": "gr",
+  "version": "0.1.0",
+  "description": "Release workflow helper — prepare, verify, and publish releases.",
+  "components": {
+    "skills": [
+      {
+        "name": "gr-check",
+        "description": "Use when preparing a release and pre-release checks must run.",
+        "prefix": "gr"
+      }
+    ],
+    "entry": {
+      "skill": "using-gr"
+    },
+    "chains": [
+      {
+        "from": "using-gr",
+        "to": "gr-check",
+        "handoff": "release-checklist"
+      }
+    ]
+  },
+  "harnesses": ["claude-code", "pi", "opencode", "oh-my-pi"],
+  "hooks": {
+    "session-bootstrap": {}
+  }
+}

@@ -1,0 +1,34 @@
+# {{PLUGIN_NAME}} pre-completion hook (PowerShell variant).
+# Runs before a session/task completes (PreCompletion): full gate — structure
+# + harness + orchestration verify, then the test suite. Emits Claude-
+# compatible hook JSON; non-zero exit on any FAIL so the harness blocks
+# claiming completion without evidence.
+$ErrorActionPreference = "SilentlyContinue"
+
+$pluginRoot = Split-Path -Parent $PSScriptRoot
+$nodeBin = $env:NODE
+if (-not $nodeBin) {
+    $nodeBin = (Get-Command node -ErrorAction SilentlyContinue).Source
+}
+if (-not $nodeBin) {
+    Write-Output '{"hookSpecificOutput":{"hookEventName":"PreCompletion","additionalContext":"[{{PLUGIN_NAME}}] node not found - completion gate skipped."}}'
+    exit 0
+}
+
+Set-Location $pluginRoot
+$vout = & $nodeBin "$pluginRoot\scripts\verify.mjs" --format table 2>$null
+$voutText = [string]::Join("`n", $vout)
+if ($LASTEXITCODE -ne 0 -or $voutText -match "FAIL") {
+    $esc = $voutText.Replace('\', '\\').Replace('"', '\"').Replace("`n", '\n')
+    Write-Output "{`"hookSpecificOutput`":{`"hookEventName`":`"PreCompletion`",`"additionalContext`":`"[{{PLUGIN_NAME}}] verify FAILED - do not claim completion:`n$esc`"}}"
+    exit 1
+}
+$tout = & $nodeBin --test "$pluginRoot\tests\**\*.test.mjs" 2>&1
+$toutText = [string]::Join("`n", $tout)
+if ($toutText -match "fail [1-9]") {
+    $esc = $toutText.Replace('\', '\\').Replace('"', '\"').Replace("`n", '\n')
+    Write-Output "{`"hookSpecificOutput`":{`"hookEventName`":`"PreCompletion`",`"additionalContext`":`"[{{PLUGIN_NAME}}] tests FAILED - do not claim completion:`n$esc`"}}"
+    exit 1
+}
+Write-Output '{"hookSpecificOutput":{"hookEventName":"PreCompletion","additionalContext":"[{{PLUGIN_NAME}}] completion gate passed (verify + tests)."}}'
+exit 0

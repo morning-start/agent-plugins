@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+build/
+out/
+!tests/build/           # contract tests for build-layer scripts (not build output)
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.local.json
+
+# Generated plugin projects (dogfood outputs)
+workspace/
+.atomcode/
+.*/skills/

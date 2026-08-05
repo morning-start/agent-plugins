@@ -1,0 +1,97 @@
+#!/usr/bin/env node
+/**
+ * {{PLUGIN_NAME}} MCP server stub ({{PLUGIN_PREFIX}}-server).
+ *
+ * Minimal Model Context Protocol server over stdio with one example tool
+ * (`echo`). Zero runtime dependencies — install `@modelcontextprotocol/sdk`
+ * only when implementing real tools (see mcp-servers/README.md).
+ *
+ * Protocol references:
+ *   - https://modelcontextprotocol.io/specification
+ *   - SDK: @modelcontextprotocol/sdk (stdio transport)
+ *
+ * Replace the `echo` tool with your plugin's real external-API capability and
+ * add a contract test per tool before considering it complete.
+ */
+const PROTOCOL_VERSION = "2024-11-05";
+
+const tools = [
+  {
+    name: "echo",
+    description: "Echo the input back — example tool. Replace with a real capability.",
+    inputSchema: {
+      type: "object",
+      properties: { text: { type: "string", description: "Text to echo" } },
+      required: ["text"],
+    },
+  },
+];
+
+function readMessage() {
+  return new Promise((resolve, reject) => {
+    let buf = "";
+    process.stdin.on("data", (chunk) => {
+      buf += chunk;
+      let idx;
+      while ((idx = buf.indexOf("\n")) !== -1) {
+        const line = buf.slice(0, idx);
+        buf = buf.slice(idx + 1);
+        if (line.trim() === "") continue;
+        try {
+          resolve(JSON.parse(line));
+        } catch (err) {
+          reject(err);
+        }
+        process.stdin.removeAllListeners("data");
+        return;
+      }
+    });
+  });
+}
+
+function sendMessage(msg) {
+  process.stdout.write(JSON.stringify(msg) + "\n");
+}
+
+/** Execute one tool call; returns the tool result content. */
+export async function executeTool(name, args) {
+  if (name === "echo") {
+    return [{ type: "text", text: String(args?.text ?? "") }];
+  }
+  throw new Error(`unknown tool: ${name}`);
+}
+
+async function main() {
+  while (true) {
+    const msg = await readMessage();
+    if (!msg) break;
+    if (msg.method === "initialize") {
+      sendMessage({
+        jsonrpc: "2.0",
+        id: msg.id,
+        result: { protocolVersion: PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: { name: "{{PLUGIN_NAME}}", version: "{{VERSION}}" } },
+      });
+    } else if (msg.method === "tools/list") {
+      sendMessage({ jsonrpc: "2.0", id: msg.id, result: { tools } });
+    } else if (msg.method === "tools/call") {
+      try {
+        const content = await executeTool(msg.params.name, msg.params.arguments);
+        sendMessage({ jsonrpc: "2.0", id: msg.id, result: { content } });
+      } catch (err) {
+        sendMessage({
+          jsonrpc: "2.0",
+          id: msg.id,
+          error: { code: -32603, message: String(err?.message || err) },
+        });
+      }
+    } else if (msg.method === "notifications/initialized") {
+      /* no-op */
+    } else {
+      sendMessage({ jsonrpc: "2.0", id: msg.id, error: { code: -32601, message: `method not found: ${msg.method}` } });
+    }
+  }
+}
+
+if (process.argv[1] && import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}`) {
+  main();
+}

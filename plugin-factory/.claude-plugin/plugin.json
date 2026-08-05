@@ -1,0 +1,30 @@
+{
+  "name": "plugin-factory",
+  "version": "0.1.0",
+  "description": "A meta-plugin that guides agents through creating multi-agent plugins (Claude Code, pi, opencode, oh-my-pi) from intent, goals, and scenarios.",
+  "author": {
+    "name": "plugin-factory contributors"
+  },
+  "homepage": "https://github.com/morning-start/plugin-factory",
+  "repository": "https://github.com/morning-start/plugin-factory",
+  "license": "MIT",
+  "tags": [
+    "meta-plugin",
+    "plugin-factory",
+    "scaffolding",
+    "skill-creation"
+  ],
+  "keywords": [
+    "agent",
+    "plugin",
+    "skill",
+    "meta-plugin",
+    "scaffolding"
+  ],
+  "skills": [
+    "./skills/"
+  ],
+  "commands": [
+    "./commands/"
+  ]
+}

@@ -1,0 +1,19 @@
+# {{PLUGIN_NAME}} — opencode installation
+
+{{PLUGIN_NAME}} is loaded as a local opencode plugin from `.opencode/plugins/`.
+
+## Install
+
+1. Copy this plugin directory into your project (opencode picks up
+   `.opencode/plugins/` and `.opencode/skills/` automatically).
+2. Restart opencode so it rescans plugin and skill directories.
+
+## Skill discovery
+
+opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/` —
+NOT the repo-root `skills/` directory. The scaffold copies each rendered skill
+into `.opencode/skills/` so no manual copy step is required.
+
+## Use
+
+Ask the agent to run one of this plugin's skills (see `skills/`).
