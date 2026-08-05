@@ -33,7 +33,7 @@
 
 | 平台 | 安装方式 |
 |------|----------|
-| Claude Code | `/plugin marketplace add morning-start/plugin-factory` 然后 `/plugin install plugin-factory@morning-start-plugin-factory` |
+| Claude Code | `/plugin marketplace add morning-start/agent-plugins` 然后 `/plugin install plugin-factory@agent-plugins` |
 | pi | `pi install git:github.com/morning-start/plugin-factory` |
 | oh-my-pi (omp) | `omp plugin install git:github.com/morning-start/plugin-factory` |
 | opencode | 按 `.opencode/INSTALL.md` |
