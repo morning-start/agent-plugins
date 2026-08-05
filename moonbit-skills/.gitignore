@@ -1,0 +1,14 @@
+draft/
+**/skills/*-workspace/
+.*/skills/
+analysis_reference/
+workspace/
+**/_build/
+**/target/
+**/.mooncakes/
+**/.moonagent/
+docs/plans
+
+# Local Serena project memories are developer-machine state.
+.serena/memories/
+**/__pycache__/

@@ -1,0 +1,93 @@
+# CI workflow for the MoonBit Skills plugin repository
+# See scripts/run-repo-checks.py for the single entry point of all checks.
+
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repo-checks:
+    name: Repository Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run repository quality checks
+        run: python scripts/run-repo-checks.py --skip-shell --verbose
+
+      - name: Validate plugin metadata
+        run: python scripts/check-plugin-metadata.py
+      - name: Validate evaluation scenarios
+        run: python scripts/validate-evals.py
+
+      - name: Validate all JSON schemas
+        run: |
+          python -m json.tool schemas/moonbit-pipeline.schema.json > /dev/null
+          python -m json.tool schemas/moonbit-verification.schema.json > /dev/null
+          python -m json.tool schemas/change-evidence.schema.json > /dev/null
+
+  shell-checks:
+    name: Shell Script Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: runner.os == 'Linux'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Bash syntax (all .sh files)
+        run: |
+          status=0
+          while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            bash -n "$file" || { echo "FAILED: $file"; status=1; }
+          done < <(find . -name "*.sh" -not -path "./.git/*" -print0)
+          exit $status
+
+  windows-checks:
+    name: Windows Compatibility Checks
+    runs-on: windows-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Python-only checks (no bash)
+        run: python scripts/run-repo-checks.py --skip-shell --verbose
+
+  git-checks:
+    name: Git Consistency Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check no merge conflict markers
+        run: |
+          ! grep -rE '<<<<<<< |=======|>>>>>>> ' --include='*.md' --include='*.py' \
+            --include='*.json' --include='*.yaml' --include='*.yml' --include='*.sh'

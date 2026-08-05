@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/moonbit-skills/schemas/moonbit-verification.schema.json",
+  "title": "MoonBit Verification Artifact",
+  "description": "Structured verification result output by moonbit-verify. Validated by scripts/validate-verification.py and consumed by moonbit-evaluate.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "project_type",
+    "targets",
+    "checks",
+    "started_at",
+    "finished_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pass", "blocked", "skipped"],
+      "description": "Overall verification status"
+    },
+    "project_type": {
+      "type": "string",
+      "enum": ["lib", "cli", "ffi", "wasm", "parser", "async"]
+    },
+    "targets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "checks": {
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z][0-9]+$": {
+          "$ref": "#/definitions/check_result"
+        }
+      },
+      "minProperties": 1,
+      "description": "Dictionary of check results (e.g. H1, H2, S1). Keys are check identifiers."
+    },
+    "type_specific": {
+      "type": "object",
+      "properties": {
+        "moon_run": { "$ref": "#/definitions/check_result" },
+        "moon_add": { "$ref": "#/definitions/check_result" },
+        "consumer_build": { "$ref": "#/definitions/check_result" }
+      },
+      "additionalProperties": true
+    },
+    "changed_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files modified during verification (e.g. auto-formatted)"
+    },
+    "toolchain": {
+      "type": "object",
+      "properties": {
+        "moon": { "type": "string" },
+        "moonc": { "type": "string" }
+      }
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "definitions": {
+    "check_result": {
+      "type": "object",
+      "required": ["status", "command", "exit_code"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "blocked", "skipped"]
+        },
+        "command": {
+          "type": "string",
+          "description": "The exact command executed"
+        },
+        "exit_code": {
+          "type": ["integer", "null"],
+          "description": "Process exit code. null when command was not executed (skipped with reason)."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Required when status=skipped or status=blocked. Explains why."
+        },
+        "details": {
+          "type": "string",
+          "description": "Optional detailed output or failure message"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "skipped" } }
+          },
+          "then": {
+            "required": ["reason"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "blocked" } }
+          },
+          "then": {
+            "required": ["reason", "details"]
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": 1,
+      "status": "pass",
+      "project_type": "lib",
+      "targets": ["native"],
+      "checks": {
+        "H1": { "status": "pass", "command": "moon fmt --check", "exit_code": 0 },
+        "H2": { "status": "pass", "command": "moon check --warn-list +73", "exit_code": 0 },
+        "H3": { "status": "pass", "command": "moon test --target native", "exit_code": 0 },
+        "H4": { "status": "skipped", "command": "git status --porcelain", "exit_code": null, "reason": "Dev iteration, not release phase" },
+        "H5": { "status": "pass", "command": "moon info --target native", "exit_code": 0 }
+      },
+      "type_specific": {
+        "consumer_build": { "status": "pass", "command": "moon add username/pkg && moon check", "exit_code": 0 }
+      },
+      "changed_files": [],
+      "toolchain": { "moon": "0.1.0", "moonc": "0.1.0" },
+      "started_at": "2026-07-29T10:00:00Z",
+      "finished_at": "2026-07-29T10:01:30Z"
+    }
+  ]
+}

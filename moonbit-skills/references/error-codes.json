@@ -1,0 +1,942 @@
+[
+  {
+    "code": "E0001",
+    "warning_name": "unused_function",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的函数。函数既未被其他代码使用，也未标记 pub 可见性",
+    "fix": "移除未使用的函数，或添加 pub 关键字，或用 ignore() 标记有意保留",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0001.html",
+    "example": "fn unused() -> String { \"Hello\" }  // E0001"
+  },
+  {
+    "code": "E0002",
+    "warning_name": "unused_variable",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的变量。变量既未被使用，也未标记 pub 可见性",
+    "fix": "移除未使用的变量，或添加 pub 关键字，或用 ignore() 标记有意保留",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0002.html",
+    "example": "let x = 42  // E0002: x 未使用"
+  },
+  {
+    "code": "E0003",
+    "warning_name": "unused_type_declaration",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的类型声明。类型既未被构造也未被消费",
+    "fix": "移除未使用的类型，或添加 pub/pub(all) 可见性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0003.html",
+    "example": "struct Foo { bar: Int }  // E0003: Foo 未被使用"
+  },
+  {
+    "code": "E0004",
+    "warning_name": "unused_import",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的导入。导入的模块或符号未被使用",
+    "fix": "移除未使用的 import 语句",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0004.html",
+    "example": "import @math  // E0004: @math 未被使用"
+  },
+  {
+    "code": "E0005",
+    "warning_name": "unused_type_variable",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的泛型类型变量。泛型参数在类型定义中未被使用",
+    "fix": "移除未使用的类型变量，或用 _ 标记有意未使用",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0005.html",
+    "example": "struct Foo[T] { bar: Int }  // E0005: T 未使用"
+  },
+  {
+    "code": "E0006",
+    "warning_name": "unused_match_case",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的 match 分支。模式匹配的某个分支永远不会被执行",
+    "fix": "移除不会被匹配到的分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0006.html",
+    "example": "match x { _ => 1; Some(1) => 2 }  // E0006: 第二个分支永远不会执行"
+  },
+  {
+    "code": "E0007",
+    "warning_name": "unused_field",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的结构体字段",
+    "fix": "移除未使用的字段，或添加 pub 可见性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0007.html",
+    "example": ""
+  },
+  {
+    "code": "E0008",
+    "warning_name": "redundant_pub",
+    "category": "style",
+    "severity": "warning",
+    "desc": "冗余的 pub 修饰符。私有结构体中的公开字段是没有意义的",
+    "fix": "移除冗余的 pub 修饰符，或将结构体改为公开",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0008.html",
+    "example": "priv struct S { pub field: Int }  // E0008 + E4001"
+  },
+  {
+    "code": "E0009",
+    "warning_name": "unused_mut",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "多余的 mut 修饰符。变量声明为 mut 但从未被重新赋值",
+    "fix": "移除不必要的 mut 关键字。注意：push/mutate 方法不需要 mut",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0009.html",
+    "example": "let mut x = 1  // E0009: x 从未被重新赋值"
+  },
+  {
+    "code": "E0010",
+    "warning_name": "unused_pattern",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的模式。模式匹配中某个模式完全被前一个模式覆盖",
+    "fix": "移除被覆盖的模式分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0010.html",
+    "example": "match Some(1) { Some(1) => (); Some(1) => () }  // E0010: 第二个分支被覆盖"
+  },
+  {
+    "code": "E0011",
+    "warning_name": "partial_match",
+    "category": "pattern-matching",
+    "severity": "warning",
+    "desc": "部分匹配。match/guard/loop 表达式未覆盖所有可能的情况",
+    "fix": "添加缺失的分支，或使用通配符 _ 作为默认分支，或使用 is 语法进行条件匹配",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0011.html",
+    "example": "match Some(1) { Some(x) => println(x) }  // E0011: 未覆盖 None"
+  },
+  {
+    "code": "E0012",
+    "warning_name": "unused_label",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的标签",
+    "fix": "移除未使用的标签",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0012.html",
+    "example": ""
+  },
+  {
+    "code": "E0013",
+    "warning_name": "unresolved_type_variable",
+    "category": "type-inference",
+    "severity": "warning",
+    "desc": "未解析的类型变量。编译器无法从上下文中确定类型，默认为 Unit",
+    "fix": "添加类型注解，或提供足够的使用上下文让编译器推断",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0013.html",
+    "example": "let a = []  // E0013: 无法推断数组元素类型，默认为 Array[Unit]"
+  },
+  {
+    "code": "E0014",
+    "warning_name": "unused_method",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的方法",
+    "fix": "移除未使用的方法，或添加 pub 可见性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0014.html",
+    "example": ""
+  },
+  {
+    "code": "E0015",
+    "warning_name": "unused_constructor",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的构造函数",
+    "fix": "移除未使用的构造函数，或添加 pub 可见性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0015.html",
+    "example": ""
+  },
+  {
+    "code": "E0016",
+    "warning_name": "unused_module",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的模块",
+    "fix": "移除未使用的模块",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0016.html",
+    "example": ""
+  },
+  {
+    "code": "E0017",
+    "warning_name": "unused_trait",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的 trait",
+    "fix": "移除未使用的 trait，或添加 pub 可见性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0017.html",
+    "example": ""
+  },
+  {
+    "code": "E0018",
+    "warning_name": "unused_extern",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的外部函数声明",
+    "fix": "移除未使用的 extern 声明",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0018.html",
+    "example": ""
+  },
+  {
+    "code": "E0020",
+    "warning_name": "deprecated",
+    "category": "compatibility",
+    "severity": "warning",
+    "desc": "使用了已废弃的特性",
+    "fix": "迁移到推荐的新语法或新 API",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0020.html",
+    "example": ""
+  },
+  {
+    "code": "E0068",
+    "warning_name": "redundant_alias",
+    "category": "style",
+    "severity": "warning",
+    "desc": "冗余的类型别名",
+    "fix": "移除不必要的类型别名",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0068.html",
+    "example": ""
+  },
+  {
+    "code": "E0069",
+    "warning_name": "empty_match",
+    "category": "style",
+    "severity": "warning",
+    "desc": "空的 match 表达式",
+    "fix": "移除空 match 或添加分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0069.html",
+    "example": ""
+  },
+  {
+    "code": "E0073",
+    "warning_name": "unconditional_recursion",
+    "category": "logic",
+    "severity": "warning",
+    "desc": "无条件递归。函数总是调用自身，会导致栈溢出",
+    "fix": "添加递归终止条件",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0073.html",
+    "example": "fn f() { f() }  // E0073: 无条件递归"
+  },
+  {
+    "code": "E0075",
+    "warning_name": "unused_rec_flag",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "多余的 rec 标记。函数声明为 rec 但没有递归调用自身",
+    "fix": "移除不必要的 rec 关键字",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0075.html",
+    "example": "fn rec f(x: Int) -> Int { x + 1 }  // E0075: f 不是递归的"
+  },
+  {
+    "code": "E0101",
+    "warning_name": "type_mismatch",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "类型不匹配。预期的类型与实际提供的类型不一致",
+    "fix": "检查函数签名和参数类型，用 moon explain --diagnostic E0101 查看详情",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E0101.html",
+    "example": "fn f(x: Int) -> String { x }  // E0101: 预期 String，实际 Int"
+  },
+  {
+    "code": "E1000",
+    "warning_name": "syntax_error",
+    "category": "syntax",
+    "severity": "error",
+    "desc": "语法错误。代码不符合 MoonBit 语法规则",
+    "fix": "检查标点符号、括号匹配、关键字拼写",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E1000.html",
+    "example": "fn main { println(\"Hello\"  // E1000: 缺少右括号"
+  },
+  {
+    "code": "E1001",
+    "warning_name": "lexical_error",
+    "category": "syntax",
+    "severity": "error",
+    "desc": "词法错误。源代码中存在无法识别的 token",
+    "fix": "检查非法字符、不完整的字符串或数字字面量",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E1001.html",
+    "example": ""
+  },
+  {
+    "code": "E3001",
+    "warning_name": "pattern_error",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "模式错误。模式语法不正确",
+    "fix": "检查模式语法",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3001.html",
+    "example": ""
+  },
+  {
+    "code": "E3002",
+    "warning_name": "parse_error",
+    "category": "syntax",
+    "severity": "error",
+    "desc": "解析错误。代码语法不正确，遇到意外的 token",
+    "fix": "检查括号匹配、逗号分隔、关键字拼写等语法问题",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3002.html",
+    "example": "fn main { println(\"Hello\" }  // E3002: 缺少右括号"
+  },
+  {
+    "code": "E3003",
+    "warning_name": "irrefutable_pattern",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "不可反驳模式用在了需要可反驳模式的位置",
+    "fix": "使用可反驳的模式，或改用 let 绑定",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3003.html",
+    "example": ""
+  },
+  {
+    "code": "E3007",
+    "warning_name": "non_exhaustive_match",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "非穷尽匹配。match 表达式没有覆盖所有可能的情况",
+    "fix": "添加缺失的分支，或使用通配符 _ 作为默认分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3007.html",
+    "example": "match Some(1) { Some(x) => x }  // E3007: 未覆盖 None 情况"
+  },
+  {
+    "code": "E3008",
+    "warning_name": "redundant_pattern",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "冗余模式。模式匹配中存在永远不会被匹配到的分支",
+    "fix": "移除冗余的分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3008.html",
+    "example": ""
+  },
+  {
+    "code": "E3009",
+    "warning_name": "variable_bound_multiple_times",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "变量在模式中被多次绑定",
+    "fix": "确保每个变量名在模式中只出现一次",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3009.html",
+    "example": ""
+  },
+  {
+    "code": "E3010",
+    "warning_name": "redundant_guard",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "冗余的 guard 条件",
+    "fix": "移除永远不会被触发的 guard",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3010.html",
+    "example": ""
+  },
+  {
+    "code": "E3011",
+    "warning_name": "unresolved_pattern_variable",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "未解析的模式变量",
+    "fix": "检查模式中变量名是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3011.html",
+    "example": ""
+  },
+  {
+    "code": "E3012",
+    "warning_name": "integer_range_too_large",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "整数范围模式太大",
+    "fix": "缩小范围或使用多个分支",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3012.html",
+    "example": ""
+  },
+  {
+    "code": "E3014",
+    "warning_name": "invalid_pattern",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "无效的模式",
+    "fix": "检查模式语法是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3014.html",
+    "example": ""
+  },
+  {
+    "code": "E3016",
+    "warning_name": "pattern_type_mismatch",
+    "category": "pattern-matching",
+    "severity": "error",
+    "desc": "模式类型不匹配",
+    "fix": "确保模式与被匹配值的类型一致",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3016.html",
+    "example": ""
+  },
+  {
+    "code": "E3100",
+    "warning_name": "method_not_found",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "未找到方法。类型上不存在调用的方法",
+    "fix": "检查方法名拼写，或确认类型是否实现了对应的 trait",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3100.html",
+    "example": "42.foo()  // E3100: Int 没有 foo 方法"
+  },
+  {
+    "code": "E3700",
+    "warning_name": "cyclic_type_definition",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "循环类型定义。类型定义形成了循环依赖",
+    "fix": "使用 box 或其他方式打破循环",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3700.html",
+    "example": "struct A { b: B } struct B { a: A }  // E3700: 循环定义"
+  },
+  {
+    "code": "E3800",
+    "warning_name": "ambiguous_type",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "歧义类型。存在多个可能的类型匹配",
+    "fix": "添加显式类型注解消除歧义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3800.html",
+    "example": ""
+  },
+  {
+    "code": "E3801",
+    "warning_name": "ambiguous_method_call",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "歧义的方法调用。多个 trait 定义了同名方法",
+    "fix": "使用完全限定语法调用，或消除导入歧义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E3801.html",
+    "example": ""
+  },
+  {
+    "code": "E4000",
+    "warning_name": "duplicate_type_parameter",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "重复的类型参数名。同一泛型声明中使用了相同的类型变量名",
+    "fix": "使用不同的类型变量名，或移除重复的类型参数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4000.html",
+    "example": "struct Foo[T, T] { value: T }  // E4000: 重复的类型参数 T"
+  },
+  {
+    "code": "E4001",
+    "warning_name": "incompatible_field_visibility",
+    "category": "visibility",
+    "severity": "error",
+    "desc": "结构体字段的可见性不兼容。私有结构体中不能声明公开字段",
+    "fix": "将字段可见性改为与结构体匹配，或改为公有结构体",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4001.html",
+    "example": "priv struct S { pub field: Int }  // E4001"
+  },
+  {
+    "code": "E4002",
+    "warning_name": "undefined_type",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "未定义的类型。使用了不存在的类型名",
+    "fix": "检查类型名拼写，或导入对应的模块",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4002.html",
+    "example": "let x: UndefinedType = ...  // E4002"
+  },
+  {
+    "code": "E4003",
+    "warning_name": "undefined_variable",
+    "category": "name-resolution",
+    "severity": "error",
+    "desc": "未定义的变量。使用了不存在的变量名",
+    "fix": "检查变量名拼写，或确认变量是否在作用域内",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4003.html",
+    "example": "fn main { println(x) }  // E4003: x 未定义"
+  },
+  {
+    "code": "E4004",
+    "warning_name": "too_many_arguments",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "参数过多。函数调用时提供的参数数量超过了函数定义",
+    "fix": "移除多余的参数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4004.html",
+    "example": "fn f(x: Int) { x }; f(1, 2)  // E4004: 参数过多"
+  },
+  {
+    "code": "E4005",
+    "warning_name": "too_few_arguments",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "参数过少。函数调用时提供的参数数量不足",
+    "fix": "补充缺少的参数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4005.html",
+    "example": "fn f(x: Int, y: Int) { x + y }; f(1)  // E4005: 参数过少"
+  },
+  {
+    "code": "E4006",
+    "warning_name": "type_arity_mismatch",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "类型参数数量不匹配",
+    "fix": "提供正确数量的类型参数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4006.html",
+    "example": ""
+  },
+  {
+    "code": "E4008",
+    "warning_name": "duplicate_field",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "重复的字段名。结构体中定义了相同名称的字段",
+    "fix": "重命名重复的字段",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4008.html",
+    "example": "struct S { x: Int; x: String }  // E4008: 重复的字段 x"
+  },
+  {
+    "code": "E4010",
+    "warning_name": "missing_field",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "缺少字段。结构体字面量中缺少必填字段",
+    "fix": "补充缺失的字段",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4010.html",
+    "example": "struct S { x: Int; y: Int }; let s = S::{ x: 1 }  // E4010: 缺少 y"
+  },
+  {
+    "code": "E4011",
+    "warning_name": "no_such_field",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "不存在的字段。访问了结构体中没有定义的字段",
+    "fix": "检查字段名拼写，或确认结构体定义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4011.html",
+    "example": "struct S { x: Int }; let s = S::{ x: 1 }; s.y  // E4011: 没有 y 字段"
+  },
+  {
+    "code": "E4012",
+    "warning_name": "duplicate_definition",
+    "category": "name-resolution",
+    "severity": "error",
+    "desc": "重复定义。同一作用域中定义了相同名称的项",
+    "fix": "重命名其中一个定义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4012.html",
+    "example": "fn f() { 1 }; fn f() { 2 }  // E4012: 重复定义 f"
+  },
+  {
+    "code": "E4013",
+    "warning_name": "not_visible",
+    "category": "visibility",
+    "severity": "error",
+    "desc": "不可见。尝试访问私有的项",
+    "fix": "将项改为公有，或使用公开的 API",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4013.html",
+    "example": ""
+  },
+  {
+    "code": "E4014",
+    "warning_name": "type_mismatch_return",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "返回类型不匹配。函数返回值类型与声明的返回类型不一致",
+    "fix": "确保返回与函数返回类型相同的值，或修改返回类型声明",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4014.html",
+    "example": "fn[X, Y] fst(a: X, b: Y) -> X { b }  // E4014: 返回 Y 类型，预期 X 类型"
+  },
+  {
+    "code": "E4015",
+    "warning_name": "type_mismatch_argument",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "参数类型不匹配",
+    "fix": "确保参数类型与函数签名一致",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4015.html",
+    "example": ""
+  },
+  {
+    "code": "E4017",
+    "warning_name": "expected_function_type",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "预期函数类型。实际提供的不是函数类型",
+    "fix": "检查是否误把值当作函数调用了",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4017.html",
+    "example": "let x = 42; x()  // E4017: x 不是函数"
+  },
+  {
+    "code": "E4018",
+    "warning_name": "invalid_type_application",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的类型应用",
+    "fix": "检查类型参数是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4018.html",
+    "example": ""
+  },
+  {
+    "code": "E4019",
+    "warning_name": "type_not_constructible",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "类型不可构造",
+    "fix": "检查类型是否有公开的构造函数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4019.html",
+    "example": ""
+  },
+  {
+    "code": "E4020",
+    "warning_name": "invalid_type_cast",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的类型转换",
+    "fix": "使用正确的类型转换方式",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4020.html",
+    "example": ""
+  },
+  {
+    "code": "E4021",
+    "warning_name": "unsatisfied_constraint",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "不满足的类型约束",
+    "fix": "确保类型满足 trait 约束",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4021.html",
+    "example": ""
+  },
+  {
+    "code": "E4022",
+    "warning_name": "unbound_type_variable",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "未绑定的类型变量。函数签名中使用了未声明的泛型参数",
+    "fix": "在函数或类型上声明泛型参数",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4022.html",
+    "example": "fn f(x: T) -> T { x }  // E4022: T 未声明为泛型参数"
+  },
+  {
+    "code": "E4023",
+    "warning_name": "trait_not_found",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "未找到 trait",
+    "fix": "检查 trait 名称拼写，或导入对应的模块",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4023.html",
+    "example": ""
+  },
+  {
+    "code": "E4024",
+    "warning_name": "trait_not_implemented",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "未实现 trait。类型没有实现所需的 trait",
+    "fix": "为类型实现对应的 trait",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4024.html",
+    "example": ""
+  },
+  {
+    "code": "E4027",
+    "warning_name": "unused_type_parameter",
+    "category": "unused",
+    "severity": "warning",
+    "desc": "未使用的类型参数。函数或类型声明了泛型参数但未使用",
+    "fix": "移除未使用的类型参数，或在签名中使用它",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4027.html",
+    "example": "fn[T] id(a: Int) -> Int { a }  // E4027: T 未被使用"
+  },
+  {
+    "code": "E4028",
+    "warning_name": "cannot_infer_type",
+    "category": "type-inference",
+    "severity": "error",
+    "desc": "无法推断类型。编译器没有足够信息来确定表达式的类型",
+    "fix": "添加显式类型注解",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4028.html",
+    "example": "let x = None  // E4028: 无法推断 Option 的类型参数"
+  },
+  {
+    "code": "E4029",
+    "warning_name": "mismatched_types",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "类型不匹配（详细版）",
+    "fix": "调整类型使其一致，使用 moon explain --diagnostic E4029 查看详情",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4029.html",
+    "example": ""
+  },
+  {
+    "code": "E4031",
+    "warning_name": "invalid_return_type",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的返回类型。函数返回值类型与声明的返回类型不匹配",
+    "fix": "修正返回值，或修改返回类型声明",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4031.html",
+    "example": "fn f() -> Int { \"hello\" }  // E4031"
+  },
+  {
+    "code": "E4032",
+    "warning_name": "recursive_type_without_box",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "递归类型缺少 box。递归类型需要使用 Box 来打破无限大小",
+    "fix": "使用 Box 包装递归的字段",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4032.html",
+    "example": "struct List { head: Int; tail: List }  // E4032: 需要 Box[List]"
+  },
+  {
+    "code": "E4033",
+    "warning_name": "cannot_mutate_immutable",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "不能修改不可变值。尝试修改只读的变量或字段",
+    "fix": "将变量声明为 mut，或使用可变的版本",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4033.html",
+    "example": "let x = 1; x = 2  // E4033: x 是不可变的"
+  },
+  {
+    "code": "E4034",
+    "warning_name": "cannot_move",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无法移动值。值的所有权不能被转移",
+    "fix": "检查值的所有权和借用规则",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4034.html",
+    "example": ""
+  },
+  {
+    "code": "E4036",
+    "warning_name": "trait_mismatch",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "Trait 实现不匹配。实现的方法签名与 trait 定义不一致",
+    "fix": "确保实现的方法签名与 trait 定义完全一致",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4036.html",
+    "example": ""
+  },
+  {
+    "code": "E4037",
+    "warning_name": "duplicate_trait_impl",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "重复的 trait 实现",
+    "fix": "移除重复的 trait 实现",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4037.html",
+    "example": ""
+  },
+  {
+    "code": "E4038",
+    "warning_name": "duplicate_method",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "重复的方法定义",
+    "fix": "移除重复的方法定义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4038.html",
+    "example": ""
+  },
+  {
+    "code": "E4039",
+    "warning_name": "invalid_try",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的 try 表达式。try 块的返回类型不是 Result",
+    "fix": "确保 try 块返回 Result 类型",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4039.html",
+    "example": ""
+  },
+  {
+    "code": "E4040",
+    "warning_name": "unwrap_on_non_result",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "在非 Result 类型上使用 unwrap",
+    "fix": "确保操作的是 Result 或 Option 类型",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4040.html",
+    "example": ""
+  },
+  {
+    "code": "E4041",
+    "warning_name": "invalid_operator",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的运算符。运算符不适用于当前类型",
+    "fix": "检查运算符两侧的类型是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4041.html",
+    "example": ""
+  },
+  {
+    "code": "E4042",
+    "warning_name": "cannot_borrow",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无法借用。不能按引用借用该值",
+    "fix": "检查借用规则和值的可变性",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4042.html",
+    "example": ""
+  },
+  {
+    "code": "E4043",
+    "warning_name": "borrow_conflict",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "借用冲突。同时存在可变借用和不可变借用",
+    "fix": "调整借用顺序，确保同一时间只有一个可变借用或多个不可变借用",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4043.html",
+    "example": ""
+  },
+  {
+    "code": "E4044",
+    "warning_name": "moved_value",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "使用已移动的值。值的所有权已被转移",
+    "fix": "使用引用或克隆值，或重新组织代码逻辑",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4044.html",
+    "example": ""
+  },
+  {
+    "code": "E4046",
+    "warning_name": "lifetime_error",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "生命周期错误。引用的生命周期不够长",
+    "fix": "延长值的生命周期，或调整引用范围",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4046.html",
+    "example": ""
+  },
+  {
+    "code": "E4047",
+    "warning_name": "invalid_closure",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的闭包",
+    "fix": "检查闭包的参数和返回类型",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4047.html",
+    "example": ""
+  },
+  {
+    "code": "E4048",
+    "warning_name": "tuple_index_out_of_bounds",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "元组索引越界",
+    "fix": "确保索引在元组大小范围内",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4048.html",
+    "example": ""
+  },
+  {
+    "code": "E4049",
+    "warning_name": "invalid_array_access",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的数组访问",
+    "fix": "确保数组索引正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4049.html",
+    "example": ""
+  },
+  {
+    "code": "E4050",
+    "warning_name": "type_size_unknown",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "类型大小未知。编译时无法确定类型的大小",
+    "fix": "使用 Box 或其他间接方式包装类型",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4050.html",
+    "example": ""
+  },
+  {
+    "code": "E4051",
+    "warning_name": "alignment_error",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "对齐错误",
+    "fix": "检查类型的内存对齐要求",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4051.html",
+    "example": ""
+  },
+  {
+    "code": "E4052",
+    "warning_name": "invalid_self_usage",
+    "category": "type-error",
+    "severity": "error",
+    "desc": "无效的 self 使用。在不允许的地方使用了 self",
+    "fix": "检查 self 的使用位置是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4052.html",
+    "example": ""
+  },
+  {
+    "code": "E4053",
+    "warning_name": "module_not_found",
+    "category": "module",
+    "severity": "error",
+    "desc": "模块未找到。导入的模块不存在",
+    "fix": "检查模块路径是否正确，或添加对应的依赖",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4053.html",
+    "example": "import @nonexistent  // E4053: 模块不存在"
+  },
+  {
+    "code": "E4054",
+    "warning_name": "package_not_found",
+    "category": "module",
+    "severity": "error",
+    "desc": "包未找到",
+    "fix": "检查包名是否正确，或添加对应的依赖",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4054.html",
+    "example": ""
+  },
+  {
+    "code": "E4055",
+    "warning_name": "symbol_not_found",
+    "category": "name-resolution",
+    "severity": "error",
+    "desc": "符号未找到。引用的名称不存在",
+    "fix": "检查名称拼写，或导入对应的模块",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4055.html",
+    "example": ""
+  },
+  {
+    "code": "E4056",
+    "warning_name": "ambiguous_name",
+    "category": "name-resolution",
+    "severity": "error",
+    "desc": "歧义的名称。存在多个同名的项",
+    "fix": "使用完全限定名称，或消除导入歧义",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4056.html",
+    "example": ""
+  },
+  {
+    "code": "E4057",
+    "warning_name": "private_interface",
+    "category": "visibility",
+    "severity": "error",
+    "desc": "私有的接口。不能在外部使用私有的 trait 或类型",
+    "fix": "将接口改为公有，或使用公开的 API",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4057.html",
+    "example": ""
+  },
+  {
+    "code": "E4101",
+    "warning_name": "circular_import",
+    "category": "module",
+    "severity": "error",
+    "desc": "循环导入。模块之间形成了循环依赖",
+    "fix": "重构代码打破循环依赖",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4101.html",
+    "example": ""
+  },
+  {
+    "code": "E4121",
+    "warning_name": "ffi_error",
+    "category": "ffi",
+    "severity": "error",
+    "desc": "FFI 错误。外部函数声明或调用有问题",
+    "fix": "检查 extern 声明的类型和名称是否正确",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4121.html",
+    "example": "extern \"c\" fn foo() -> = \"foo\"  // E4121: 缺少返回类型"
+  },
+  {
+    "code": "E4203",
+    "warning_name": "wasm_ffi_error",
+    "category": "wasm",
+    "severity": "error",
+    "desc": "WASM FFI 错误",
+    "fix": "检查 extern \"wasm\" 声明",
+    "url": "https://docs.moonbitlang.cn/language/error_codes/E4203.html",
+    "example": ""
+  }
+]

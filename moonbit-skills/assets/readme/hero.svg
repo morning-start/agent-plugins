@@ -1,0 +1,250 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">MoonBit Skills — AI Agent 技能集</title>
+  <desc id="hero-desc">你决策，Agent 执行。18 个核心技能覆盖 MoonBit 项目从规划到验证与发布准备的完整生命周期。</desc>
+
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D1117"/>
+      <stop offset="100%" stop-color="#131A24"/>
+    </linearGradient>
+    <linearGradient id="accent-bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#58A6FF"/>
+      <stop offset="100%" stop-color="#3FB950"/>
+    </linearGradient>
+    <linearGradient id="card-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A2332"/>
+      <stop offset="100%" stop-color="#141D2A"/>
+    </linearGradient>
+    <linearGradient id="card-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A2E23"/>
+      <stop offset="100%" stop-color="#14271D"/>
+    </linearGradient>
+    <linearGradient id="card-amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2E2619"/>
+      <stop offset="100%" stop-color="#272014"/>
+    </linearGradient>
+    <linearGradient id="card-purple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#251E33"/>
+      <stop offset="100%" stop-color="#1D1728"/>
+    </linearGradient>
+    <filter id="glow-green">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-purple">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="380" rx="26" fill="url(#bg-grad)" stroke="#21262D" stroke-width="1"/>
+
+  <g opacity="0.03">
+    <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="1.5" fill="#58A6FF"/>
+    </pattern>
+    <rect width="1200" height="380" fill="url(#dots)"/>
+  </g>
+
+  <rect x="0" y="0" width="1200" height="3" rx="1.5" fill="url(#accent-bar)"/>
+
+  <!-- ===== LEFT: Title Area ===== -->
+  <g transform="translate(52, 0)">
+    <rect x="0" y="50" width="96" height="26" rx="13" fill="rgba(88,166,255,0.12)" stroke="#58A6FF" stroke-width="0.8"/>
+    <text x="48" y="67" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="12" font-weight="600" fill="#58A6FF" text-anchor="middle">Developer Tool</text>
+
+    <text x="0" y="116" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="42" font-weight="700" fill="#E6EDF3" letter-spacing="-0.5">MoonBit Skills</text>
+
+    <text x="0" y="162" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="25" font-weight="600" fill="#F0F6FC">
+      <tspan fill="#58A6FF">你决策</tspan>，<tspan fill="#3FB950">Agent 执行</tspan>
+    </text>
+
+    <text x="0" y="200" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="15" fill="#8B949E">18 个核心技能，覆盖 MoonBit 项目从规划到验证与发布准备的</text>
+    <text x="0" y="224" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="15" fill="#8B949E">完整生命周期。用自然语言描述需求，剩下的交给 Agent。</text>
+
+    <rect x="0" y="256" width="224" height="60" rx="8" fill="#161B22" stroke="#30363D" stroke-width="1"/>
+    <text x="12" y="280" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="#8B949E">
+      <tspan fill="#3FB950">$</tspan> <tspan fill="#E6EDF3">我想写一个 TOML 解析器</tspan>
+    </text>
+    <text x="12" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="#58A6FF">→ 自动触发 moonbit-plan</text>
+  </g>
+
+  <!-- ===== RIGHT: Pipeline ===== -->
+  <g id="pipeline" transform="translate(530, 0)">
+
+    <!-- Vertical Spine Line -->
+    <line x1="24" y1="35" x2="24" y2="281" stroke="#30363D" stroke-width="1.5" stroke-dasharray="3,4"/>
+
+    <!-- Spine Nodes -->
+    <circle cx="24" cy="51" r="4" fill="#58A6FF"/>
+    <circle cx="24" cy="121" r="4" fill="#58A6FF"/>
+    <circle cx="24" cy="191" r="4" fill="#3FB950"/>
+    <circle cx="24" cy="281" r="4" fill="#D29922"/>
+
+    <!-- Connector lines between spine nodes -->
+    <line x1="24" y1="55" x2="24" y2="117" stroke="#58A6FF" stroke-width="1.5" stroke-opacity="0.6"/>
+    <line x1="24" y1="125" x2="24" y2="187" stroke="#58A6FF" stroke-width="1.5" stroke-opacity="0.6"/>
+    <line x1="24" y1="195" x2="24" y2="277" stroke="#3FB950" stroke-width="1.5" stroke-opacity="0.6"/>
+
+    <!-- ═══ 01 SETUP ═══ -->
+    <g transform="translate(44, 35)">
+      <text x="0" y="-6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="700" fill="#58A6FF" letter-spacing="1.5">01 SETUP</text>
+
+      <!-- init -->
+      <g transform="translate(0, 0)">
+        <rect width="88" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="44" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">init</text>
+        <text x="44" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">hooks</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M 92,16 L 104,16" stroke="#30363D" stroke-width="1.2"/>
+      <polygon points="103,13 108,16 103,19" fill="#30363D"/>
+
+      <!-- ci -->
+      <g transform="translate(112, 0)">
+        <rect width="88" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="44" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">ci</text>
+        <text x="44" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">CI/CD</text>
+      </g>
+
+      <!-- Badge optional -->
+      <g transform="translate(212, 4)">
+        <rect width="118" height="24" rx="12" fill="#161B22" stroke="#30363D" stroke-width="0.8" stroke-dasharray="3,3"/>
+        <text x="59" y="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" fill="#484F58" text-anchor="middle">新项目 · optional</text>
+      </g>
+    </g>
+
+    <!-- ═══ 02 DESIGN ═══ -->
+    <g transform="translate(44, 105)">
+      <text x="0" y="-6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="700" fill="#58A6FF" letter-spacing="1.5">02 DESIGN</text>
+
+      <!-- plan -->
+      <g transform="translate(0, 0)">
+        <rect width="100" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="50" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">plan</text>
+        <text x="50" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">架构 + API</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M 104,16 L 116,16" stroke="#30363D" stroke-width="1.2"/>
+      <polygon points="115,13 120,16 115,19" fill="#30363D"/>
+
+      <!-- writing-plans -->
+      <g transform="translate(124, 0)">
+        <rect width="110" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="55" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">writing-plans</text>
+        <text x="55" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">任务拆解</text>
+      </g>
+    </g>
+
+    <!-- ═══ 03 BUILD ═══ -->
+    <g transform="translate(44, 175)">
+      <text x="0" y="-6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="700" fill="#3FB950" letter-spacing="1.5">03 BUILD</text>
+
+      <!-- scaffold -->
+      <g transform="translate(0, 0)">
+        <rect width="86" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="43" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">scaffold</text>
+        <text x="43" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">骨架生成</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M 90,16 L 100,16" stroke="#30363D" stroke-width="1.2"/>
+      <polygon points="99,13 104,16 99,19" fill="#30363D"/>
+
+      <!-- testing -->
+      <g transform="translate(108, 0)">
+        <rect width="86" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="1" stroke-opacity="0.5"/>
+        <text x="43" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#58A6FF" text-anchor="middle">testing</text>
+        <text x="43" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">测试策略</text>
+      </g>
+
+      <!-- Bi-directional arrow (testing ↔ implement) -->
+      <g transform="translate(198, 16)">
+        <line x1="0" y1="0" x2="10" y2="0" stroke="#3FB950" stroke-width="1.2"/>
+        <polygon points="2,-3 -2,0 2,3" fill="#3FB950"/>
+        <polygon points="8,-3 12,0 8,3" fill="#3FB950"/>
+      </g>
+
+      <!-- implement ★ (core highlight) -->
+      <g transform="translate(214, 0)">
+        <rect width="110" height="32" rx="8" fill="url(#card-green)" stroke="#3FB950" stroke-width="1.2" filter="url(#glow-green)"/>
+        <text x="55" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="700" fill="#3FB950" text-anchor="middle">implement ★</text>
+        <text x="55" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">TDD 核心</text>
+      </g>
+
+      <!-- Arrow (implement → review) -->
+      <path d="M 328,16 L 338,16" stroke="#30363D" stroke-width="1.2"/>
+      <polygon points="337,13 342,16 337,19" fill="#30363D"/>
+
+      <!-- code-review -->
+      <g transform="translate(346, 0)">
+        <rect width="88" height="32" rx="8" fill="url(#card-blue)" stroke="#58A6FF" stroke-width="0.8" stroke-opacity="0.4"/>
+        <text x="44" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10.5" font-weight="600" fill="#58A6FF" text-anchor="middle">code-review</text>
+        <text x="44" y="24" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8" fill="#484F58" text-anchor="middle">每任务后</text>
+      </g>
+
+      <!-- Sub-lane: perform · refactor (attached cleanly below implement) -->
+      <g transform="translate(214, 38)">
+        <rect width="110" height="20" rx="10" fill="url(#card-purple)" stroke="#BC8CFF" stroke-width="0.7" stroke-opacity="0.5"/>
+        <text x="55" y="14" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#BC8CFF" text-anchor="middle">perform · refactor</text>
+      </g>
+      <!-- dashed vertical connector down from implement to perform/refactor -->
+      <line x1="269" y1="32" x2="269" y2="38" stroke="#BC8CFF" stroke-width="1" stroke-dasharray="2,2"/>
+    </g>
+
+    <!-- ═══ 04 SHIP ═══ -->
+    <g transform="translate(44, 265)">
+      <text x="0" y="-6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="10" font-weight="700" fill="#D29922" letter-spacing="1.5">04 SHIP</text>
+
+      <!-- verify -->
+      <g transform="translate(0, 0)">
+        <rect width="90" height="32" rx="8" fill="url(#card-amber)" stroke="#D29922" stroke-width="1" stroke-opacity="0.6"/>
+        <text x="45" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#D29922" text-anchor="middle">verify</text>
+        <text x="45" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">三级门禁</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M 94,16 L 106,16" stroke="#30363D" stroke-width="1.2"/>
+      <polygon points="105,13 110,16 105,19" fill="#30363D"/>
+
+      <!-- evaluate -->
+      <g transform="translate(114, 0)">
+        <rect width="96" height="32" rx="8" fill="url(#card-amber)" stroke="#D29922" stroke-width="1" stroke-opacity="0.6"/>
+        <text x="48" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#D29922" text-anchor="middle">evaluate</text>
+        <text x="48" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">发布准备</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M 214,16 L 226,16" stroke="#BC8CFF" stroke-width="1.2" stroke-dasharray="2,2"/>
+      <polygon points="225,13 230,16 225,19" fill="#BC8CFF"/>
+
+      <!-- learn -->
+      <g transform="translate(234, 0)">
+        <rect width="88" height="32" rx="8" fill="url(#card-purple)" stroke="#BC8CFF" stroke-width="1" stroke-opacity="0.6" filter="url(#glow-purple)"/>
+        <text x="44" y="13" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="11.5" font-weight="600" fill="#BC8CFF" text-anchor="middle">learn</text>
+        <text x="44" y="24" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="8.5" fill="#8B949E" text-anchor="middle">知识沉淀</text>
+      </g>
+    </g>
+
+    <!-- ═══ FEEDBACK LOOP: Design Backtrack (设计回溯) ═══ -->
+    <!-- Arc starts from learn right side (44+234+88=366, 265+16=281), sweeps right to 535, curves up to plan top right (44+100=144, 105) -->
+    <path d="M 366,281
+             C 535,281 535,105 148,105"
+          fill="none" stroke="#BC8CFF" stroke-width="1.2" stroke-dasharray="4,4" stroke-opacity="0.55"/>
+    <polygon points="154,101 142,105 154,109" fill="#BC8CFF" fill-opacity="0.55"/>
+
+    <g transform="translate(485, 183)">
+      <rect width="78" height="20" rx="10" fill="#1D1728" stroke="#BC8CFF" stroke-width="0.6" stroke-opacity="0.4"/>
+      <text x="39" y="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="9" font-weight="600" fill="#BC8CFF" text-anchor="middle">设计回溯</text>
+    </g>
+
+  </g>
+
+  <g transform="translate(52, 350)">
+    <text x="0" y="0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="#484F58">适用于 AtomCode · Claude Code · Codex · Cursor · Kimi Code · Gemini CLI · Oh My Pi · OpenCode</text>
+    <text x="730" y="0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" fill="#484F58">18 core skills · B/C/E verification</text>
+  </g>
+</svg>

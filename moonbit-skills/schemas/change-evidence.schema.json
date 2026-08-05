@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/moonbit-skills/schemas/change-evidence.schema.json",
+  "title": "MoonBit Change Evidence",
+  "description": "Structured evidence record for code changes. Each change type has a minimum evidence contract.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "change_type",
+    "scope",
+    "steps",
+    "toolchain"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "change_type": {
+      "type": "string",
+      "enum": [
+        "feature", "bugfix", "refactor", "performance",
+        "dependency", "configuration", "documentation",
+        "scaffold", "security", "release", "spike"
+      ],
+      "description": "Type of change being made"
+    },
+    "scope": {
+      "type": "object",
+      "required": ["files", "symbols"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of file paths changed (relative to repo root)"
+        },
+        "symbols": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names of functions/types modified (if applicable)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Observable claim being changed (what behavior/outcome this change addresses)"
+    },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/evidence_step" },
+      "minItems": 1,
+      "description": "Evidence steps showing the change journey (red, baseline, reproduce, implement, verify, etc.)"
+    },
+    "toolchain": {
+      "type": "object",
+      "required": ["moon"],
+      "properties": {
+        "moon": { "type": "string", "description": "Moon toolchain version" },
+        "moonc": { "type": "string" },
+        "os": { "type": "string" },
+        "platform": { "type": "string" }
+      }
+    },
+    "user_approval_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this change requires user approval (public API, ABI, security, release)"
+    },
+    "approval_reference": {
+      "type": ["string", "null"],
+      "description": "Link or reference to the user approval (e.g., conversation turn ID, decision record)"
+    }
+  },
+  "definitions": {
+    "evidence_step": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "red", "baseline", "reproduce", "implement",
+            "verify", "smoke", "audit", "review"
+          ],
+          "description": "Phase name within the evidence lifecycle"
+        },
+        "command": {
+          "type": "string",
+          "description": "The exact command executed"
+        },
+        "expected": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "changed output"],
+          "description": "Expected result for this step"
+        },
+        "actual": {
+          "type": "string",
+          "description": "Actual result observed"
+        },
+        "exit_code": {
+          "type": ["integer", "null"],
+          "description": "Process exit code (null if skipped)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "skipped"]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Required when status=skipped. Explains why the step was skipped and what alternative evidence exists."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "skipped" } } },
+          "then": { "required": ["reason"] }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "description": "Feature changes require red and verify steps",
+      "if": { "properties": { "change_type": { "const": "feature" } } },
+      "then": {
+        "properties": {
+          "steps": {
+            "contains": { "properties": { "name": { "const": "red" } } }
+          }
+        }
+      }
+    },
+    {
+      "description": "Bugfix changes require reproduce and verify steps",
+      "if": { "properties": { "change_type": { "const": "bugfix" } } },
+      "then": {
+        "properties": {
+          "steps": {
+            "contains": { "properties": { "name": { "const": "reproduce" } } }
+          }
+        }
+      }
+    },
+    {
+      "description": "Refactor changes require baseline and verify steps",
+      "if": { "properties": { "change_type": { "const": "refactor" } } },
+      "then": {
+        "properties": {
+          "steps": {
+            "contains": { "properties": { "name": { "const": "baseline" } } }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": 1,
+      "change_type": "feature",
+      "scope": {
+        "files": ["src/parser.mbt", "src/parser_test.mbt"],
+        "symbols": ["parse_token"]
+      },
+      "hypothesis": "Add token-level parsing with proper error handling",
+      "steps": [
+        { "name": "red", "command": "moon test -f token_test", "expected": "FAIL", "actual": "test panicked at line 42", "exit_code": 1, "status": "pass" },
+        { "name": "implement", "status": "pass", "reason": "Implementation written, no command to run" },
+        { "name": "verify", "command": "moon test --target native", "expected": "PASS", "actual": "Total: 15 passed", "exit_code": 0, "status": "pass" }
+      ],
+      "toolchain": { "moon": "0.1.0" },
+      "user_approval_required": false
+    }
+  ]
+}
