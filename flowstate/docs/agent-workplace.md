@@ -99,7 +99,9 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 - **Goal 模式 = PRD §七 的迭代闭环（N8→N4）** 在单次长任务中的体现：
   设定完成条件 → 每轮自我评估（对照 DoD/验收清单）→ 未达标继续、达标停止；
 - 任何需要留档、可追溯、可评审的**定稿**（如 SPEC 定稿、验收记录）写入项目
-  正式 `docs/` 并提交——`.agent-workplace/` 只承载过程态。
+  正式 `docs/` 并提交——`.agent-workplace/` 只承载过程态；
+- **正式 `docs/` 的组织**（PRD 必选、双模式 light/full、ADR 文件夹化）遵循
+  `docs/documentation-structure.md`（文档系统规范）。
 
 ## 例外与边界
 
