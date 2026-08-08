@@ -582,7 +582,10 @@ flowchart TD
 ## 十一、后续落地事项
 
 1. **插件命名**：已定 **flowstate**（中文展示名可作"流程状态机/心流"），技能前缀 `fst-`
-2. **技能拆分方案**：按 `fst-` 前缀拆分（如 `fst-init` / `fst-change` / `fst-review` / `fst-iterate`）
+2. **技能拆分方案（已定）**：按 `fst-` 前缀拆分 4 个技能——`fst-init`（N1~N3 立项/冻结/设计）、
+   `fst-change`（N5+N9 变更管控/紧急通道）、`fst-review`（N6~N7 测试/灰度验收）、
+   `fst-iterate`（N4+N8 迭代开发/持续迭代闭环，含 F4.2 Git 分支适配）。
+   详细映射、产出物归属、关联最佳实践见 **`docs/skill-split.md`**（权威拆分依据）
 3. **schema 落地**：5.1~5.9 的 JSON Schema 文件（放 `schemas/` 目录）
 4. **与 plugin-factory 的关系**：独立插件（放仓库根目录），注册进 marketplace.json
 5. **编排方式（已定）**：**拒绝代码硬编排，采用动态软编排**——第七章执行图是
