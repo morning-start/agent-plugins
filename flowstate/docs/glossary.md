@@ -40,7 +40,6 @@
 | **检查点（Checkpoint）** | 节点完成即保存状态，可断点续跑 | 产出物文件（docs/plan、docs/task、变更单） |
 | **并行（Parallel）** | 互不依赖的分支同时执行 | 多变更单并行评估影响 |
 | **短路（Shortcut）** | 绕过主干的直达路径 | Hotfix 直通车（任意节点 → N9 → N6） |
-| **编排运行时（Orchestration runtime）** | 驱动图执行的引擎 | 默认自研轻量状态机（skills 驱动）；LangGraph 为备选 |
 
 ## 产出物术语（schema 5.1~5.9）
 

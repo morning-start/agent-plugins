@@ -95,7 +95,7 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
   `.agent-workplace/state/`；
 - **modes/graph.md = PRD §七 执行图（Agent 执行图）** 的工作区落地：
   节点=流程环节、边=DoD 判据、HITL=人工闸门、Checkpoint=state/checkpoint.json；
-  flowstate 插件按图驱动 Agent 执行时，本工作区就是图的运行时载体；
+  flowstate 插件按图驱动 Agent 执行时，本工作区就是图的执行载体；
 - **Goal 模式 = PRD §七 的迭代闭环（N8→N4）** 在单次长任务中的体现：
   设定完成条件 → 每轮自我评估（对照 DoD/验收清单）→ 未达标继续、达标停止；
 - 任何需要留档、可追溯、可评审的**定稿**（如 SPEC 定稿、验收记录）写入项目
