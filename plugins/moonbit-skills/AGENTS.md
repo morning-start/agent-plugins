@@ -41,6 +41,7 @@
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
 - 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate → cd`。
 - 注: `↔` 表示双向依赖（含设计回溯，可从 implement/perform/refactor/evaluate 回到 plan）
+- **流程框架选择（flowstate 优先）**：会话中检测到 flowstate（`fst-*` 技能或 `using-flowstate` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）时，流程框架采用 flowstate 执行图（节点流转/DoD/HITL/Checkpoint 由 flowstate 驱动），moonbit-* 技能降为 MoonBit 专项执行层；无 flowstate 时本插件自包含完整管线。检测规则与分层详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」。
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。
 

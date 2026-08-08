@@ -112,6 +112,20 @@ These thoughts mean STOP — you are rationalizing:
 | 技能加载后执行失败 | 技能内部错误 | 报告失败技能和原因，尝试降级方案 |
 | 意图识别错误 | 用户说"不是这个意思" | 重新分类，使用修正后的技能 |
 
+## 流程框架选择（flowstate 优先）
+
+**检测**：会话中若存在 flowstate 插件（`fst-init` / `fst-change` / `fst-review` / `fst-iterate` 技能可用，或 `using-flowstate` 可加载，或项目根存在 `.agent-workplace/` 且含 flowstate 结构）→ **采用 flowstate 流程框架**。
+
+| 情形 | 流程框架 | moonbit-skills 角色 |
+|------|---------|-------------------|
+| **有 flowstate** | flowstate 执行图（N1~N9）：`fst-init`（立项/冻结/设计）→ `fst-iterate`（迭代/闭环）→ `fst-review`（验收/灰度）→ `fst-change`（变更/紧急） | **MoonBit 专项执行层**：在 flowstate 节点内提供 MoonBit 专属能力（`moonbit-testing` / `moonbit-implement` / `moonbit-verify` / `moonbit-git` 等），遵循其 Iron Law 与验证门禁 |
+| **无 flowstate** | moonbit-skills 自包含管线（现状不变）：`plan → writing-plans → scaffold → [testing ↔] implement → [perform ↔ refactor ↔] verify → evaluate` | 完整管线：流程 + MoonBit 专项都由本插件承担 |
+
+**分层原则（有 flowstate 时）**：
+- **流程层**（flowstate 负责）：节点流转、DoD 判据、HITL 闸门、Checkpoint、变更分级、工作区（`.agent-workplace/`）
+- **专项层**（moonbit-skills 负责）：MoonBit 工具链命令、项目类型模式、测试策略、安全审计、发布验收——**只提供能力，不重新定义流程**
+- 冲突时按 AGENTS.md「指令优先级」：用户要求 > 仓库约束 > 技能 > 参考
+
 ## Pipeline (recommended flow)
 
 ```

@@ -152,6 +152,22 @@
                     └──────────────────┘
 ```
 
+### 执行图语义（flowstate 对齐）
+
+moonbit-skills 管线按 **flowstate 执行图** 的语义建模（有 flowstate 时由 flowstate 驱动；无 flowstate 时本管线自包含同样语义）：
+
+| 图元素 | moonbit-skills 对应 |
+|--------|--------------------|
+| **节点（Node）** | 管线各阶段（plan / writing-plans / implement / verify / evaluate…） |
+| **边 + 守卫（Guard）** | 阶段间流转条件 = 门禁（如 verify 的 B1-B4+C1-C3 全绿才到 evaluate） |
+| **条件边** | 项目类型路由（lib→consumer 编译验证、main→moon run）、变更类型路由（Feature/Bug Fix） |
+| **循环（Loop）** | 设计回溯（implement/perform/refactor→plan）、testing↔implement 双向 |
+| **人工闸门（HITL）** | 用户决策点：plan 设计批准、evaluate"好了/再改"、deploy 策略批准 |
+| **检查点（Checkpoint）** | 批次边界（每批最多 5 任务）→ 提交 + 会话压缩，断点续跑 |
+| **短路（Shortcut）** | hotfix → implement（Bug Fix Mode）直通车 |
+
+**流程框架选择**：会话中检测到 flowstate（`fst-*` 技能或 `using-flowstate` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）→ 由 flowstate 执行图驱动节点流转与 DoD 判据，moonbit-skills 提供 MoonBit 专项执行层；无 flowstate → 本管线自包含全部流程语义。详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」。
+
 ### 独立技能（单次调用）
 
 | 技能 | 触发场景 | 类型 |

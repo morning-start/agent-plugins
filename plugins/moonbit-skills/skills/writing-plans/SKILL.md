@@ -21,11 +21,12 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 ### 可机械化自检
 
-- [ ] 已生成 `docs/plans/YYYY-MM-DD-{feature}-plan.md` 计划文件
+- [ ] 已生成计划文件：有 flowstate 时落 `.agent-workplace/docs/plan/PLAN.md`（flowstate 规范）；无 flowstate 时落 `docs/plans/YYYY-MM-DD-{feature}-plan.md`
 - [ ] 任务按 **Phase（阶段）** 分组：每个 Phase 对应一个模块，有明确的阶段目标和交付物
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
 - [ ] 每个任务聚焦**单个功能点**，目标过大已拆分（单任务不跨多个模块）
+- [ ] 任务按批次组织（每批最多 5 个），批次标注边界（flowstate 规范：批次按内聚程度 + 实现顺序，一批一验）
 - [ ] 计划文件中无占位符（搜索 `TODO`、`TBD`、`参照`、`类似上面`）
 
 未满足以上任一 → Iron Law 触发：停止，先完善计划。
