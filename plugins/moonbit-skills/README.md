@@ -42,6 +42,7 @@ omp plugin install https://github.com/morning-start/moonbit-skills.git
 - MoonBit 工具链：`moon`
 - Git
 - 可选：`moon-audit`，用于增强安全审计
+- 可选：**flowstate**（同仓库插件）——同时安装后，moonbit-skills 自动采用 flowstate 的流程框架（执行图节点流转 / DoD / HITL / Checkpoint 由 flowstate 驱动），moonbit-* 技能作为 MoonBit 专项执行层；不安装则使用本插件自包含管线
 
 ### 2. 用自然语言提出第一个请求
 
