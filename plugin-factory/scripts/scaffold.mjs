@@ -304,9 +304,10 @@ export async function scaffoldPlugin({
 function usage() {
   console.error(
     [
-      "Usage: node scripts/scaffold.mjs <plugin-name> <prefix> <target-dir> [description] [user-lang] [--harnesses a,b,c] [--auto-verify]",
-      "       node scripts/scaffold.mjs --name <n> --prefix <p> --target <dir> [--description <d>] [--user-lang <l>] --harnesses claude-code,pi,opencode,oh-my-pi [--auto-verify]",
+      "Usage: node scripts/scaffold.mjs <plugin-name> <prefix> <target-dir> [description] [user-lang] [--harnesses a,b,c] [--auto-verify] [--validation-scripts <json>]",
+      "       node scripts/scaffold.mjs --name <n> --prefix <p> --target <dir> [--description <d>] [--user-lang <l>] --harnesses claude-code,pi,opencode,oh-my-pi [--auto-verify] [--validation-scripts <json>]",
       "       --auto-verify  run the generated project's structure verifier after scaffolding (exit 1 on FAIL findings)",
+      "       --validation-scripts <json>  JSON object with validate/validate:ps/lifecycle keys",
     ].join("\n"),
   );
 }
@@ -338,9 +339,12 @@ function parseArgs(argv) {
           .map((s) => s.trim())
           .filter(Boolean);
         break;
-      case "--auto-verify":
-        args.autoVerify = true;
-        break;
+       case "--auto-verify":
+         args.autoVerify = true;
+         break;
+       case "--validation-scripts":
+         args.validationScripts = JSON.parse(argv[++i]);
+         break;
       case "-h":
       case "--help":
         usage();
