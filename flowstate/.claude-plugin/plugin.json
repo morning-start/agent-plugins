@@ -1,0 +1,31 @@
+{
+  "name": "flowstate",
+  "version": "0.1.0",
+  "description": "Project development workflow plugin — dynamic soft orchestration via Agent Graph (requirements-incomplete / mid-change / continuous-iteration friendly)",
+  "author": {
+    "name": "morning-start"
+  },
+  "homepage": "https://github.com/morning-start/agent-plugins",
+  "repository": "https://github.com/morning-start/agent-plugins",
+  "license": "MIT",
+  "tags": [
+    "workflow",
+    "project-management",
+    "agent-graph",
+    "requirements"
+  ],
+  "keywords": [
+    "agent",
+    "plugin",
+    "workflow",
+    "project",
+    "change-management",
+    "iteration"
+  ],
+  "skills": [
+    "./skills/"
+  ],
+  "commands": [
+    "./commands/"
+  ]
+}

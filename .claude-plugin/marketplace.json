@@ -29,6 +29,18 @@
         "name": "plugin-factory contributors",
         "url": "https://github.com/morning-start"
       }
+    },
+    {
+      "name": "flowstate",
+      "source": "./flowstate",
+      "description": "Project development workflow plugin — dynamic soft orchestration via Agent Graph (requirements-incomplete / mid-change / continuous-iteration friendly)",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["workflow", "project-management", "agent-graph", "requirements"],
+      "author": {
+        "name": "morning-start",
+        "url": "https://github.com/morning-start"
+      }
     }
   ]
 }
