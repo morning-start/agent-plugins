@@ -10,5 +10,5 @@ metadata:
     created: 2026-08-01
     updated: 2026-08-02
   keywords_zh: "插件入口, 创建插件, 维护插件, 分析插件, 意图路由"
-alwaysApply: true
+  alwaysApply: true
 ---

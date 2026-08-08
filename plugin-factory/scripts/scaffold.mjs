@@ -110,7 +110,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
     LIFECYCLE_SCRIPT: validationScripts?.lifecycle ?? "node scripts/verify.mjs lifecycle --format table",
     VALIDATION_INSTRUCTIONS: validationScripts
       ? "Run npm run validate (and npm run validate:ps on Windows) before committing structural changes.\nRun npm run lifecycle before any release.\nSee scripts/ for custom domain validators."
-    ALWAYS_APPLY: 'true',
+      : "Run npm run validate (and npm run validate:ps on Windows) before committing\nstructural changes; both invoke the same Node verifier.\nRun npm test (and npm run test:coverage) before any release.",
   };
   const bootstrapExt = `.pi/extensions/${prefix}-bootstrap.ts`;
   const hasPi = harnesses.includes("pi");
