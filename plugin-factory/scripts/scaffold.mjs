@@ -343,7 +343,7 @@ function parseArgs(argv) {
          args.autoVerify = true;
          break;
        case "--validation-scripts":
-         args.validationScripts = JSON.parse(argv[++i]);
+         args.validationScripts = (() => { const obj = JSON.parse(argv[++i]); if (obj["validate:ps"]) obj.validatePs = obj["validate:ps"]; return obj; })();
          break;
       case "-h":
       case "--help":
