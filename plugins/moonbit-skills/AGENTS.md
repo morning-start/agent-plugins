@@ -42,7 +42,10 @@
 - 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate → cd`。
 - 注: `↔` 表示双向依赖（含设计回溯，可从 implement/perform/refactor/evaluate 回到 plan）
 - **流程框架选择（flowstate 优先）**：会话中检测到 flowstate（`fst-*` 技能或 `using-flowstate` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）时，流程框架采用 flowstate 执行图（节点流转/DoD/HITL/Checkpoint 由 flowstate 驱动），moonbit-* 技能降为 MoonBit 专项执行层；无 flowstate 时本插件自包含完整管线。检测规则与分层详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」。
-- **工作区约定（无论有无 flowstate）**：计划/任务/脚本尝试一律放 `.agent-workplace/`（过程态，不提交 git）——`docs/plan/`（计划→阶段→批次→任务）、`docs/task/`（任务拆解）、`scripts/`（脚本尝试）；**不直接放项目原始 `docs/`**。无 flowstate 时为简化版（仅上述三目录），安装 flowstate 后升级完整版。详见 `references/project-contract.md` §二。
+- **工作区约定（区分插件自身 vs 用户项目）**：
+  - **插件自身开发**（本仓库）：`.agent-workplace/` 使用 **flowstate 完整版**（modes/ 实践库 + state/ checkpoint + docs/spec/），由 flowstate 流程框架驱动——本仓库开发遵循 flowstate 规范。
+  - **用户 MoonBit 项目**（使用本技能的目标项目）：`.agent-workplace/` 使用**简化版**——仅 `docs/plan/`（计划→阶段→批次→任务）、`docs/task/`（任务拆解）、`scripts/`（脚本尝试）三目录；目录结构由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate**（避免用户使用插件时有依赖）。
+  - 两者都**不直接放项目原始 `docs/`**，过程态一律进 `.agent-workplace/`（git 忽略）。详见 `references/project-contract.md` §二。
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。
 

@@ -28,6 +28,8 @@
 
 ## 二、规划与任务文档分离（放 .agent-workplace，不直接放项目 docs/）
 
+> 本节约定针对**用户 MoonBit 项目**（使用本技能的目标项目）；插件自身开发见仓库根 `.agent-workplace/`（flowstate 完整版）。
+
 | 路径 | 用途 | 规则 |
 |------|------|------|
 | `.agent-workplace/docs/plan/` | **计划文档**（路线图式规划） | 开发前先写计划：计划 → 阶段(Phase) → 批次(Batch) → 任务(Task)；长期方向与任务拆解分层，避免混入 |
@@ -37,8 +39,9 @@
 | `docs/requirements.md` | 需求文档（设计决策的权威来源） | plan 阶段产出 |
 
 > **为什么放 `.agent-workplace/`**：计划/任务/脚本是**过程态**，高频变动、不提交 git；
-> 直接放项目原始 `docs/` 会污染提交历史。`.agent-workplace/` 全目录被 gitignore
-> （无 flowstate 时为简化版：docs/plan + docs/task + scripts；安装 flowstate 后升级完整版）。
+> 直接放项目原始 `docs/` 会污染提交历史。`.agent-workplace/` 全目录被 gitignore。
+> **用户项目用简化版**（仅 docs/plan + docs/task + scripts 三目录，由 `moonbit-writing-plans` /
+> `moonbit-implement` 自行创建，无需模板、不依赖 flowstate）；**插件自身开发用 flowstate 完整版**。
 
 约定要点：
 - **路线图与任务拆解分层**：`.agent-workplace/docs/plan/` 管方向，`.agent-workplace/docs/task/` 管执行

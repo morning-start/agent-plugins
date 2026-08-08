@@ -126,6 +126,10 @@ These thoughts mean STOP — you are rationalizing:
 - **专项层**（moonbit-skills 负责）：MoonBit 工具链命令、项目类型模式、测试策略、安全审计、发布验收——**只提供能力，不重新定义流程**
 - 冲突时按 AGENTS.md「指令优先级」：用户要求 > 仓库约束 > 技能 > 参考
 
+**插件自身 vs 用户项目**：
+- **插件自身开发**（本仓库）：`.agent-workplace/` 为 flowstate **完整版**（modes/ + state/ + docs/spec/），按 flowstate 规范执行——本仓库开发即采用 flowstate 框架。
+- **用户 MoonBit 项目**（目标项目）：无 flowstate 时用**简化版**——仅 `docs/plan/`（计划→阶段→批次→任务）、`docs/task/`（任务拆解）、`scripts/`（脚本尝试）三目录，由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate**（避免用户使用插件时有依赖）；有 flowstate 时按上述流程层执行。
+
 ## Pipeline (recommended flow)
 
 ```
