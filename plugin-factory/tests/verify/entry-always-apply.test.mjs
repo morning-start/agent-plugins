@@ -7,11 +7,14 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = new URL('../../', import.meta.url);
-const skillPath = join(root, '../skills/using-pf/SKILL.md');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pfRoot = join(__dirname, '../..');
+const skillPath = join(pfRoot, 'skills/using-pf/SKILL.md');
+const skillsDir = join(pfRoot, 'skills');
 
 describe('entry-always-apply', () => {
   it('using-pf SKILL.md has alwaysApply: true in metadata', () => {
@@ -41,10 +44,9 @@ describe('entry-always-apply', () => {
   });
 
   it('other skills do not have alwaysApply by default', () => {
-    const skillsDir = join(root, '../skills');
-    const entries = /** @type {string[]} */ (
-      readFileSync(skillsDir, 'utf-8').split('\n').filter(Boolean)
-    );
+    const entries = readdirSync(skillsDir, { withFileTypes: true })
+      .filter(d => d.isDirectory())
+      .map(d => d.name);
 
     for (const entry of entries) {
       const skillMd = join(skillsDir, entry, 'SKILL.md');
