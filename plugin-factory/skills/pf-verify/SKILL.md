@@ -126,6 +126,8 @@ imply evals passed without a recorded result (honest evaluation claims).
 - `install.sh` / `install.ps1` present and executable;
 - version sync: `package.json` vs `.claude-plugin/plugin.json` vs `omp`/`pi` fields.
 
+- **Pre-commit hook**: `hooks/pre-commit.sh` + `.ps1` present and executable (enforced by `verify.mjs structure` as `missing-pre-commit-hook` WARN).
+
 ### 8. Report
 
 Every finding has the stable shape:

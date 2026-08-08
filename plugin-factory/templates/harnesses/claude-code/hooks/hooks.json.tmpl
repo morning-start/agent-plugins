@@ -35,6 +35,18 @@
           }
         ]
       }
+    ],
+    "PreCommit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/pre-commit.sh",
+            "shell": "bash",
+            "description": "Pre-commit structural gate + secrets scan"
+          }
+        ]
+      }
     ]
   }
 }

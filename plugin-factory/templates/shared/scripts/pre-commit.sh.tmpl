@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# pre-commit.sh — structural gate + security scan before commit.
+set -u
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Run structural validation
+echo "Running structural validation..."
+node "$root/scripts/verify.mjs" structure --root "$root"
+if [ $? -ne 0 ]; then
+  echo "pre-commit: structural validation failed" >&2
+  exit 1
+fi
+
+# Run secrets scan (basic pattern matching, zero dependencies)
+echo "Running secrets scan..."
+SECRET_PATTERNS=(
+  "password\s*[:=]\s*[\"'][^\"']{8,}[\"']"
+  "api[_-]?key\s*[:=]\s*[\"'][A-Za-z0-9]{20,}[\"']"
+  "secret\s*[:=]\s*[\"'][A-Za-z0-9+/]{20,}[\"']"
+  "aws[_-]?access[_-]?key[_-]?id\s*[:=]\s*[A-Z0-9]{20}"
+)
+
+found_secrets=0
+for pattern in "${SECRET_PATTERNS[@]}"; do
+  if grep -rqE "$pattern" --include='*.js' --include='*.ts' --include='*.mjs' --include='*.json' --include='*.sh' --include='*.ps1' --include='*.yaml' --include='*.yml' "$root" 2>/dev/null; then
+    echo "pre-commit: potential secret detected matching: $pattern" >&2
+    found_secrets=1
+  fi
+done
+
+if [ $found_secrets -ne 0 ]; then
+  echo "pre-commit: secrets scan failed — remove credentials before committing" >&2
+  exit 1
+fi
+
+echo "pre-commit: passed"
+exit 0

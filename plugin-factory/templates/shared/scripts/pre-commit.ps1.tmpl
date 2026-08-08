@@ -1,0 +1,38 @@
+# pre-commit.ps1 — structural gate + security scan before commit.
+param()
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = Join-Path $root ".."
+
+# Run structural validation
+Write-Host "Running structural validation..."
+node (Join-Path $root "scripts/verify.mjs") structure --root $root
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "pre-commit: structural validation failed" -ForegroundColor Red
+  exit 1
+}
+
+# Run secrets scan (basic pattern matching, zero dependencies)
+Write-Host "Running secrets scan..."
+$secretPatterns = @(
+  'password\s*[:=]\s*["\x27][^"\x27]{8,}["\x27]',
+  'api[_-]?key\s*[:=]\s*["\x27][A-Za-z0-9]{20,}["\x27]',
+  'secret\s*[:=]\s*["\x27][A-Za-z0-9+/]{20,}["\x27]',
+  'aws[_-]?access[_-]?key[_-]?id\s*[:=]\s*[A-Z0-9]{20}'
+)
+
+$foundSecrets = $false
+foreach ($pattern in $secretPatterns) {
+  $files = Get-ChildItem -Path $root -Include *.js,*.ts,*.mjs,*.json,*.sh,*.ps1,*.yaml,*.yml -Recurse -File | Where-Object { Select-String -Path $_.FullName -Pattern $pattern -Quiet }
+  if ($files) {
+    Write-Host "pre-commit: potential secret detected matching: $pattern" -ForegroundColor Yellow
+    $foundSecrets = $true
+  }
+}
+
+if ($foundSecrets) {
+  Write-Host "pre-commit: secrets scan failed — remove credentials before committing" -ForegroundColor Red
+  exit 1
+}
+
+Write-Host "pre-commit: passed"
+exit 0

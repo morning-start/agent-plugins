@@ -255,6 +255,15 @@ npm run validate     # structure audit (Agent Skills standard)
 - Hooks enforce, they do not replace: the same quality bars stay in `npm run
   validate` / `npm test` for CI regardless of local hooks.
 
+#### 6.5 Pre-commit hook with secrets scan
+
+Generated plugins include `hooks/pre-commit.sh` and `hooks/pre-commit.ps1` that run:
+- structural validation (`verify.mjs structure`)
+- basic secrets scan (zero-dependency regex patterns for passwords, API keys, tokens)
+
+The pre-commit hook is written but **not installed** automatically — the user decides per-repo.
+Reference: `references/hooks/claude-code.md` for installation instructions.
+
 ## Outputs
 
 - Consistent branch/worktree usage for parallel development.
