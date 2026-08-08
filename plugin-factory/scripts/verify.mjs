@@ -747,6 +747,31 @@ async function orchestrationChecks(root, findings) {
       }
     }
   }
+
+  // --- pipeline-consistency: validate pipeline-state.json integrity.
+  // Absence is fine (pre-v1 plugins don't have it); presence requires valid schema.
+  try {
+    const ps = await import("./pipeline-state.mjs");
+    const pipelineState = await ps.readState(root);
+    if (pipelineState !== null) {
+      const migration = ps.migrateState(pipelineState);
+      const validation = ps.validateState(migration);
+      if (!validation.valid) {
+        findings.push(
+          makeFinding(
+            "pipeline-consistency",
+            "pipeline-state.json",
+            "WARN",
+            `Fix pipeline state: ${validation.errors.join("; ")}`,
+            "Interrupted development state cannot be resumed reliably.",
+            true,
+          ),
+        );
+      }
+    }
+  } catch {
+    /* pipeline-state.mjs not available or read error — skip */
+  }
 }
 
 /* ------------------------------------------------------------------ */

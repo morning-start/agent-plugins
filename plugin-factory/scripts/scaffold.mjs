@@ -16,6 +16,7 @@ import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { writeState as writePipelineState } from "./pipeline-state.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
@@ -282,6 +283,18 @@ export async function scaffoldPlugin({
     const copied = await copySkillsForOpencode(absTarget, files);
     files.push(...copied);
   }
+
+  // Write initial pipeline state for cross-session resume.
+  await writePipelineState(absTarget, {
+    schema_version: 1,
+    pipeline: "development",
+    phase: "design",
+    status: "pending",
+    tasks: { total: 0, completed: 0, current: 1 },
+    last_updated: new Date().toISOString(),
+    next: "design:plan",
+  });
+  files.push("pipeline-state.json");
 
   files.sort();
 
