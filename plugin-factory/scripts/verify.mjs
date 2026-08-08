@@ -141,8 +141,8 @@ export async function collectHarnesses(root) {
 }
 
 /** Create one finding with the stable shape. */
-export function makeFinding(signal, file, severity, action, impact) {
-  return { signal, file, severity, action, impact };
+export function makeFinding(signal, file, severity, action, impact, learnable = false) {
+  return { signal, file, severity, action, impact, learnable };
 }
 
 /** Render findings as a severity-ranked table. */

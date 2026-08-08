@@ -101,5 +101,24 @@ The lifecycle probes are callable programmatically through the MCP server
 
 ## Status
 
+
+## Learnable Finding Routing (T-A3)
+
+When verify outputs a finding with `learnable: true`, route to `pf-learn` for
+knowledge capture. This is a WARN-level signal — not blocking, but worth
+addressing to prevent recurring bugs.
+
+The learnable signal is emitted by the following probes when the pattern is
+systematic (not one-off):
+
+| Signal | When learnable |
+|--------|----------------|
+| `broken-handoff` | Handoff gap appears in 2+ skills (routing convention missing) |
+| `missing-entry-skill` | Entry pattern missing from template (not project-specific) |
+| `lifecycle-status` | Lifecycle metadata missing systematically across skills |
+| `trigger-overlap` | Overlap due to naming convention gap |
+
+Do **not** mark one-off findings as learnable — log them to `scratch/` instead.
+Systematic gaps that need a rule → learnable.
 T2 complete — decision matrix probes are executable via `scripts/verify.mjs
 lifecycle`; Bash and PowerShell wrappers only forward arguments.

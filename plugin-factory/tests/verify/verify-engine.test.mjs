@@ -29,6 +29,7 @@ test("makeFinding produces the stable finding shape", () => {
     severity: "FAIL",
     action: "Create it.",
     impact: "Impact.",
+    learnable: false,
   });
 });
 
