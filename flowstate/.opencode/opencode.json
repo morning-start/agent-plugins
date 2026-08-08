@@ -1,0 +1,5 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "name": "flowstate",
+  "description": "Project development workflow plugin — dynamic soft orchestration via Agent Graph (requirements-incomplete / mid-change / continuous-iteration friendly)"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "flowstate",
+  "version": "0.1.0",
+  "description": "Project development workflow plugin — dynamic soft orchestration via Agent Graph (requirements-incomplete / mid-change / continuous-iteration friendly)",
+  "private": true,
+  "pi": {
+    "extensions": [".pi/extensions/fst-bootstrap.ts"],
+    "skills": ["skills"]
+  },
+  "omp": {
+    "extensions": [".pi/extensions/fst-bootstrap.ts"],
+    "skills": ["skills"]
+  }
+}

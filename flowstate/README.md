@@ -12,10 +12,24 @@ flowstate 把整个开发过程建模为一张**可执行的状态图（Agent Gr
 
 | 技能 | 管哪些节点 | 功能 | 最佳实践 |
 |------|-----------|------|---------|
+| `using-flowstate` | 入口路由 | 按场景路由到 fst-* | — |
 | `fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | Spec 模式 |
 | `fst-change` | N5 变更、N9 紧急 | F5/F9 | Plan 模式 |
 | `fst-review` | N6 测试、N7 灰度 | F6/F7 | Task 模式 |
 | `fst-iterate` | N4 迭代、N8 闭环 | F4/F8 | Goal + Task 模式 |
+
+## 多端支持（harnesses）
+
+flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原生加载。
+
+| 端 | manifest | 技能发现 | 入口引导 |
+|----|----------|---------|---------|
+| Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-flowstate` |
+| pi | `package.json` → `pi.skills` | `skills/` | `.pi/extensions/fst-bootstrap.ts` 注入 |
+| oh-my-pi (omp) | `package.json` → `omp.skills` | `skills/` | 复用 pi bootstrap（见 `OMP-NOTES.md`） |
+| opencode | `.opencode/opencode.json` | `.opencode/skills/`（预复制） | `.opencode/plugins/fst-bootstrap.ts` 注入（见 `.opencode/INSTALL.md`） |
+
+各端安装方式见对应端说明：`OMP-NOTES.md`（omp）、`.opencode/INSTALL.md`（opencode）。
 
 ## 工作区
 
