@@ -24,12 +24,22 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 
 | 端 | manifest | 技能发现 | 入口引导 |
 |----|----------|---------|---------|
-| Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-flowstate` |
+| Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-flowstate` + **SessionStart hook** 自动注入 |
 | pi | `package.json` → `pi.skills` | `skills/` | `.pi/extensions/fst-bootstrap.ts` 注入 |
 | oh-my-pi (omp) | `package.json` → `omp.skills` | `skills/` | 复用 pi bootstrap（见 `OMP-NOTES.md`） |
 | opencode | `.opencode/opencode.json` | `.opencode/skills/`（预复制） | `.opencode/plugins/fst-bootstrap.ts` 注入（见 `.opencode/INSTALL.md`） |
 
 各端安装方式见对应端说明：`OMP-NOTES.md`（omp）、`.opencode/INSTALL.md`（opencode）。
+
+## Hooks（质量门禁 / 会话引导）
+
+`hooks/` 提供 Claude Code 生命周期 hooks（bash + PowerShell 双变体）：
+
+| Hook | 事件 | 作用 |
+|------|------|------|
+| `session-start.sh` / `.ps1` | SessionStart | 注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
+
+> 轻量自包含：直接读 SKILL.md 输出，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。
 
 ## 工作区
 
