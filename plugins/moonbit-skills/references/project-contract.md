@@ -26,18 +26,23 @@
 - 已废弃的 block 建议集中在各目录的 `deprecated.mbt`，便于后续清理
 - MoonBit 代码为 **block style**：每个 block 以 `///|` 分隔，block 间顺序无关；重构时可逐 block 独立处理
 
-## 二、规划与任务文档分离
+## 二、规划与任务文档分离（放 .agent-workplace，不直接放项目 docs/）
 
 | 路径 | 用途 | 规则 |
 |------|------|------|
-| `docs/plans/` | **路线图式规划**（roadmap） | 只放长期方向（如 `YYYY-MM-DD-project-roadmap.md`），**不放任务拆解** |
-| `docs/tasks/` | **任务拆解文档**（分阶段实现计划） | 任务拆解**必须放这里**，不放 `docs/plans/` |
+| `.agent-workplace/docs/plan/` | **计划文档**（路线图式规划） | 开发前先写计划：计划 → 阶段(Phase) → 批次(Batch) → 任务(Task)；长期方向与任务拆解分层，避免混入 |
+| `.agent-workplace/docs/task/` | **任务拆解文档**（分阶段实现计划） | 任务拆解放这里，与计划分离；含验证命令 |
+| `.agent-workplace/scripts/` | **脚本尝试** | 探索性/实验性脚本，验证"怎么做才对"，不提交 |
 | `.moonbit-pipeline.json` | 管线状态（当前阶段、计划文件指针、任务进度） | 用作**会话检查点** |
 | `docs/requirements.md` | 需求文档（设计决策的权威来源） | plan 阶段产出 |
 
+> **为什么放 `.agent-workplace/`**：计划/任务/脚本是**过程态**，高频变动、不提交 git；
+> 直接放项目原始 `docs/` 会污染提交历史。`.agent-workplace/` 全目录被 gitignore
+> （无 flowstate 时为简化版：docs/plan + docs/task + scripts；安装 flowstate 后升级完整版）。
+
 约定要点：
-- **路线图与任务拆解分层**：`docs/plans/` 管方向，`docs/tasks/` 管执行；避免把任务级细节混入 roadmap
-- 会话开始时按序读取：`docs/plans/` → `docs/tasks/` → `.moonbit-pipeline.json`，恢复上下文
+- **路线图与任务拆解分层**：`.agent-workplace/docs/plan/` 管方向，`.agent-workplace/docs/task/` 管执行
+- 会话开始时按序读取：`.agent-workplace/docs/plan/` → `.agent-workplace/docs/task/` → `.moonbit-pipeline.json`，恢复上下文
 - `.moonbit-pipeline.json` 是跨会话的进度锚点（writing-plans 初始化，implement/verify/evaluate 更新）
 
 ## 三、进度与提交约定

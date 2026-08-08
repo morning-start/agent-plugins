@@ -256,7 +256,7 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
   "status": "in_progress",
   "project_type": "lib",
   "targets": ["native"],
-  "plan_file": "docs/plans/2026-07-29-topic-plan.md",
+  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
   "tasks": {
     "total": 7,
     "completed": 3,

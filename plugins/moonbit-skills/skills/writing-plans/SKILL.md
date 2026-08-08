@@ -21,7 +21,7 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 ### 可机械化自检
 
-- [ ] 已生成计划文件：有 flowstate 时落 `.agent-workplace/docs/plan/PLAN.md`（flowstate 规范）；无 flowstate 时落 `docs/plans/YYYY-MM-DD-{feature}-plan.md`
+- [ ] 已生成计划文件：落 `.agent-workplace/docs/plan/PLAN.md`（无 flowstate 简化版与有 flowstate 完整版均在此；仅目录结构深度不同）
 - [ ] 任务按 **Phase（阶段）** 分组：每个 Phase 对应一个模块，有明确的阶段目标和交付物
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
@@ -48,8 +48,8 @@ If you catch yourself doing any of these, you are violating the writing-plans co
 - 设计文档（plan 输出）未确认 → 等待 plan 完成
 - 任务拆解后用户认为粒度不合适 → 调整后重新输出
 - 需求中存在无法拆解的模糊点 → 标记为 blocked，请求澄清
-- 计划文档保存失败（目录不存在）→ 创建 `docs/plans/` 目录，重试
-- 项目定义了自定义文档布局（如 `AGENTS.md` 指定任务拆解放 `docs/tasks/`）→ **遵循项目约定**，通用契约式布局参考 [`references/project-contract.md`](../../references/project-contract.md)（经验式，非强制）
+- 计划文档保存失败（目录不存在）→ 创建 `.agent-workplace/docs/plan/` 目录，重试
+- 项目定义了自定义文档布局（如 `AGENTS.md` 指定任务拆解放 `.agent-workplace/docs/task/`）→ **遵循项目约定**，通用契约式布局参考 [`references/project-contract.md`](../../references/project-contract.md)（经验式，非强制）
 
 ## 输入
 
@@ -169,7 +169,7 @@ src/
 
 ### 3. 输出计划文档
 
-保存到 `docs/plans/YYYY-MM-DD-{feature}-plan.md`
+保存到 `.agent-workplace/docs/plan/PLAN.md`（过程态，不提交 git；无 flowstate 简化版与有 flowstate 完整版均在此）
 
 ## 任务结构
 
@@ -273,7 +273,7 @@ src/
   "status": "in_progress",
   "project_type": "lib",
   "targets": ["native"],
-  "plan_file": "docs/plans/2026-07-29-topic-plan.md",
+  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
   "tasks": {
     "total": 7,
     "completed": 0,
@@ -286,7 +286,7 @@ src/
 ```
 
 **Phase 切换检查点（进入新 Phase 前必做）**：
-1. 为 Phase 2 生成/获取新的拆解文档（`docs/tasks/` 或项目约定位置）
+1. 为 Phase 2 生成/获取新的拆解文档（`.agent-workplace/docs/task/` 或项目约定位置）
 2. 更新 `.moonbit-pipeline.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数
 3. 用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json` 校验状态文件合法
 4. 再开始 Phase 2 的第一个任务
@@ -305,7 +305,7 @@ src/
   ],
   "total_tasks": 7,
   "total_files": 5,
-  "plan_file": "docs/plans/2026-07-28-parser-plan.md",
+  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
   "state_file": ".moonbit-pipeline.json",
   "next": "implement"
 }
@@ -321,6 +321,6 @@ src/
 |------|------|------|
 | 设计文档不存在 | 缺少 `docs/requirements.md` | 提示先执行 `moonbit-plan` |
 | 任务拆解不完整 | 用户指出遗漏 | 补充缺失任务，重新编号 |
-| 计划文档保存失败 | 目录不存在 | 创建 `docs/plans/` 目录 |
+| 计划文档保存失败 | 目录不存在 | 创建 `.agent-workplace/docs/plan/` 目录 |
 | 任务间依赖不清晰 | 用户无法确定执行顺序 | 标注依赖关系，按拓扑排序 |
 | API 签名不明确 | plan 输出信息不足 | 回到 plan 补充 API 细节 |

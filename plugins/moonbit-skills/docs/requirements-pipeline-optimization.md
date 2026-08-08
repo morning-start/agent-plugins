@@ -147,4 +147,4 @@ plan ↔ writing-plans → scaffold → [testing ↔] implement ↔ code-review 
 
 ## 下一步
 
-进入 `moonbit-writing-plans` 产出 `docs/plans/2026-07-29-pipeline-optimization-plan.md`
+进入 `moonbit-writing-plans` 产出 `.agent-workplace/docs/plan/PLAN.md`

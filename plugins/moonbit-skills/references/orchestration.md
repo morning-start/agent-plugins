@@ -319,7 +319,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
   "primary_type": "parser",
   "capabilities": ["lexer", "tokenizer"],
   "targets": ["native"],
-  "plan_file": "docs/plans/2026-07-29-parser-plan.md",
+  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
   "tasks": {"total": 13, "completed": 4, "current": 5},
   "last_verification": "2026-07-29T10:25:00Z",
   "last_updated": "2026-07-29T10:30:00Z",

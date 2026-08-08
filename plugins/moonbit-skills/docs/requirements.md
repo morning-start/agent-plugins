@@ -131,4 +131,4 @@ testing（设计）→ implement（实现，TDD 循环不变）→ verify（验�
 
 ## 下一步
 
-进入 `moonbit-writing-plans` 产出 `docs/plans/2026-07-29-testing-skill-split-plan.md`
+进入 `moonbit-writing-plans` 产出 `.agent-workplace/docs/plan/PLAN.md`
