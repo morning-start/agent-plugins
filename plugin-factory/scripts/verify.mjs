@@ -273,6 +273,22 @@ async function structureChecks(root, findings) {
       );
     }
   }
+
+  // --- pre-commit-hook: verify hooks/pre-commit.sh exists when hooks/ directory is present.
+  let hooksDir = null;
+  try {
+    hooksDir = await readdir(join(root, "hooks"));
+  } catch {
+    /* no hooks directory */
+  }
+  if (hooksDir && hooksDir.length > 0) {
+    const hasPreCommit = hooksDir.some((f) => /^pre-commit\.(sh|ps1)$/.test(f));
+    if (!hasPreCommit) {
+      findings.push(
+        makeFinding("missing-pre-commit-hook", "hooks/", "WARN", "Add hooks/pre-commit.sh (and .ps1) for structural gate + secrets scan.", "No pre-commit hook found — commits bypass structural validation.", true),
+      );
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ */
