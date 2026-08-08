@@ -6,10 +6,10 @@
   "private": true,
 {{PACKAGE_HARNESS_FIELDS}}
   "scripts": {
-    "validate": "bash scripts/validate-structure.sh",
-    "validate:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1",
+    "validate": "{{VALIDATE_SCRIPT}}",
+    "validate:ps": "{{VALIDATE_PS_SCRIPT}}",
     "test": "node --test tests/**/*.test.mjs",
     "test:coverage": "node --experimental-test-coverage --test tests/**/*.test.mjs",
-    "lifecycle": "node scripts/verify.mjs lifecycle --format table"
+    "lifecycle": "{{LIFECYCLE_SCRIPT}}"
   }
 }

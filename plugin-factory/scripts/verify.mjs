@@ -131,6 +131,12 @@ export async function collectHarnesses(root) {
   } catch {
     /* not advertised */
   }
+  try {
+    await stat(join(root, ".codex-plugin", "hooks.json"));
+    harnesses.push("codex");
+  } catch {
+    /* not advertised */
+  }
   return harnesses;
 }
 
@@ -216,7 +222,7 @@ async function structureChecks(root, findings) {
     }
   }
 
-  // Hooks need bash + PowerShell pairs.
+  // Hooks need bash + a secondary shell (PowerShell or Nushell).
   let hooks = [];
   try {
     hooks = await readdir(join(root, "hooks"));
@@ -225,12 +231,14 @@ async function structureChecks(root, findings) {
   }
   for (const f of hooks) {
     if (!f.endsWith(".sh")) continue;
-    const ps1 = join(root, "hooks", f.replace(/\.sh$/, ".ps1"));
-    try {
-      await stat(ps1);
-    } catch {
+    const base = f.replace(/\.sh$/, "");
+    const ps1 = join(root, "hooks", `${base}.ps1`);
+    const nu = join(root, "hooks", `${base}.nu`);
+    const hasPs1 = await stat(ps1).then(() => true, () => false);
+    const hasNu = await stat(nu).then(() => true, () => false);
+    if (!hasPs1 && !hasNu) {
       findings.push(
-        makeFinding("missing-hook-pair", `hooks/${f}`, "FAIL", `Create hooks/${f.replace(/\.sh$/, ".ps1")}.`, "Hooks must ship bash + PowerShell variants."),
+        makeFinding("missing-hook-pair", `hooks/${f}`, "FAIL", `Create hooks/${base}.ps1 or hooks/${base}.nu.`, "Hooks must ship bash + a secondary shell variant."),
       );
     }
   }
@@ -356,6 +364,18 @@ async function harnessChecks(root, findings) {
           findings.push(
             makeFinding("missing-harness-artifact", ".opencode/skills", "FAIL", "Create .opencode/skills/ (or .agents/skills/).", "opencode cannot discover any skill."),
           );
+        }
+        break;
+      }
+      case "codex": {
+        for (const rel of [".codex-plugin/hooks.json"]) {
+          try {
+            await stat(join(root, rel));
+          } catch {
+            findings.push(
+              makeFinding("missing-harness-artifact", rel, "FAIL", `Create ${rel}.`, `Codex advertisement is missing ${rel}.`),
+            );
+          }
         }
         break;
       }
@@ -550,6 +570,17 @@ async function orchestrationChecks(root, findings) {
     if (!(await oc)) {
       findings.push(
         makeFinding("harness-gap", ".opencode/skills", "WARN", "Port skills into .opencode/skills/ (or .agents/skills/).", "opencode is advertised but no skill discovery path exists."),
+      );
+    }
+  }
+
+  // --- codex harness-gap: advertised but no .codex-plugin directory.
+  if (harnesses.includes("codex")) {
+    try {
+      await stat(join(root, ".codex-plugin"));
+    } catch {
+      findings.push(
+        makeFinding("harness-gap", ".codex-plugin", "WARN", "Add .codex-plugin/ for codex harness support.", "codex is advertised but no codex plugin directory exists."),
       );
     }
   }

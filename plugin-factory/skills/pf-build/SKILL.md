@@ -197,9 +197,15 @@ the pf-git version workflow (or `/pf-git`). The generated project's own
   artifacts (see `references/plugin-model.md` § 生成插件布局).
 - No unrequested harness file is generated (Claude-only request → no `.pi/`,
   `.opencode/`, or `OMP-NOTES.md`).
-- The generated project passes its own verifier: `npm run validate` and
-  `npm run validate:ps` (both invoke `scripts/verify.mjs` — the same engine as
-  plugin-factory itself).
+   - The generated project passes its own verifier: `npm run validate` and
+   `npm run validate:ps`. For Node.js plugins this invokes `scripts/verify.mjs`
+   (same engine as plugin-factory); for plugins with custom domain validators
+   (e.g. Python scripts), the command is declared in `package.json.scripts` and
+   documented in `AGENTS.md` Validation section.
+   - Validator declaration: if a plugin uses a custom validator (not `scripts/verify.mjs`),
+   the Validation section in `AGENTS.md` must record the commands, and
+   `package.json.scripts` must declare them. See
+   `references/plugin-model.md` § 9.
 - opencode skill discovery needs no manual `cp -r skills …` step — the scaffold
   copies rendered skills into `.opencode/skills/` automatically.
 - Per-harness manifests match `references/plugins/`.

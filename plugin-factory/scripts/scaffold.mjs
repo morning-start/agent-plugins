@@ -96,7 +96,7 @@ async function collectTemplateFiles(dir, root = dir) {
 /**
  * Build the substitution table for one scaffold run.
  */
-function buildValues({ name, prefix, description, userLang, harnesses }) {
+function buildValues({ name, prefix, description, userLang, harnesses, validationScripts }) {
   const values = {
     PLUGIN_NAME: name,
     PLUGIN_PREFIX: prefix,
@@ -104,6 +104,12 @@ function buildValues({ name, prefix, description, userLang, harnesses }) {
     USER_LANG: userLang,
     VERSION: SCAFFOLD_VERSION,
     VERSION_DATE: new Date().toISOString().slice(0, 10),
+    VALIDATE_SCRIPT: validationScripts?.validate ?? "bash scripts/validate-structure.sh",
+    VALIDATE_PS_SCRIPT: validationScripts?.validatePs ?? "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1",
+    LIFECYCLE_SCRIPT: validationScripts?.lifecycle ?? "node scripts/verify.mjs lifecycle --format table",
+    VALIDATION_INSTRUCTIONS: validationScripts
+      ? "Run npm run validate (and npm run validate:ps on Windows) before committing structural changes.\nRun npm run lifecycle before any release.\nSee scripts/ for custom domain validators."
+      : "Run npm run validate (and npm run validate:ps on Windows) before committing\nstructural changes; both invoke the same Node verifier.\nRun npm test (and npm run test:coverage) before any release.",
   };
   const bootstrapExt = `.pi/extensions/${prefix}-bootstrap.ts`;
   const hasPi = harnesses.includes("pi");
@@ -211,6 +217,7 @@ export async function scaffoldPlugin({
   userLang = DEFAULT_USER_LANG,
   harnesses = DEFAULT_HARNESSES,
   autoVerify = false,
+  validationScripts,
 }) {
   const errors = validateOptions({ name, prefix, target, harnesses });
   if (errors.length > 0) {
@@ -234,7 +241,7 @@ export async function scaffoldPlugin({
     throw err;
   }
 
-  const values = buildValues({ name, prefix, description, userLang, harnesses });
+  const values = buildValues({ name, prefix, description, userLang, harnesses, validationScripts });
 
   // Verify every requested harness has a template directory before writing.
   const harnessDirs = [];

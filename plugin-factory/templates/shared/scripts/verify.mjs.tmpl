@@ -117,6 +117,12 @@ export async function collectHarnesses(root) {
   } catch {
     /* not advertised */
   }
+  try {
+    await stat(join(root, ".codex-plugin", "hooks.json"));
+    harnesses.push("codex");
+  } catch {
+    /* not advertised */
+  }
   return harnesses;
 }
 
@@ -345,6 +351,18 @@ async function harnessChecks(root, findings) {
         }
         break;
       }
+      case "codex": {
+        for (const rel of [".codex-plugin/hooks.json"]) {
+          try {
+            await stat(join(root, rel));
+          } catch {
+            findings.push(
+              makeFinding("missing-harness-artifact", rel, "FAIL", `Create ${rel}.`, `Codex advertisement is missing ${rel}.`),
+            );
+          }
+        }
+        break;
+      }
       default:
         break;
     }
@@ -535,6 +553,17 @@ async function orchestrationChecks(root, findings) {
     if (!(await oc)) {
       findings.push(
         makeFinding("harness-gap", ".opencode/skills", "WARN", "Port skills into .opencode/skills/ (or .agents/skills/).", "opencode is advertised but no skill discovery path exists."),
+      );
+    }
+  }
+
+  // --- codex harness-gap: advertised but no .codex-plugin directory.
+  if (harnesses.includes("codex")) {
+    try {
+      await stat(join(root, ".codex-plugin"));
+    } catch {
+      findings.push(
+        makeFinding("harness-gap", ".codex-plugin", "WARN", "Add .codex-plugin/ for codex harness support.", "codex is advertised but no codex plugin directory exists."),
       );
     }
   }

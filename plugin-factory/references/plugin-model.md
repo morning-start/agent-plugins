@@ -31,8 +31,9 @@
 6. 安装说明（`install.sh` / `install.ps1` 或各端文档）。
 7. 方法论插件：引导/入口技能（`using-<plugin>`）+ 编排元数据
    （`references/orchestration-patterns.md`）。
-8. 语言策略记录在 `AGENTS.md`（Language policy 段）并按层应用（默认分层：
-   人维护层用用户语言、agent 执行层用英文——见 `references/design-principles.md`）。
+   9. 若插件使用自定义验证器（非 `scripts/verify.mjs`），须在 `AGENTS.md` 的
+   Validation 段记录命令，并在 `package.json.scripts` 里声明（如 Python 插件、
+   Nushell 插件等，各插件自行声明其验证入口）。
 
 ## 生成插件布局（模板）
 
