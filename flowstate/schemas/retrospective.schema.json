@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/retrospective.schema.json",
+  "title": "迭代回顾报告（5.7）",
+  "description": "flowstate 产出物：迭代回顾报告，对应 PRD §5.7 / fst-iterate（N8）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["iteration", "delivery", "changes", "metrics", "next_iteration"],
+  "properties": {
+    "iteration": { "type": "string", "description": "迭代号" },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "交付统计",
+      "properties": {
+        "planned": { "type": "integer" },
+        "completed": { "type": "integer" },
+        "dod_check_rate": { "type": "number", "description": "DoD 核销率（0~1）" }
+      }
+    },
+    "changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "变更统计",
+      "properties": {
+        "count": { "type": "integer" },
+        "by_level": {
+          "type": "object",
+          "description": "分级分布（轻微/中度/重大/紧急）",
+          "additionalProperties": { "type": "integer" }
+        },
+        "emergency_count": { "type": "integer" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "度量",
+      "properties": {
+        "completion_rate": { "type": "number", "description": "完成率（0~1）" },
+        "rework_rate": { "type": "number", "description": "返工率（0~1）" },
+        "backlog_count": { "type": "integer", "description": "需求池积压" },
+        "tech_debt_delta": { "type": "integer", "description": "技术债增减" }
+      }
+    },
+    "risks_tech_debt": { "type": "object", "description": "风险与技术债快照（引用 5.5/5.6）" },
+    "next_iteration": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "下轮建议",
+      "properties": {
+        "scope_confirmed": { "type": "boolean" },
+        "items": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

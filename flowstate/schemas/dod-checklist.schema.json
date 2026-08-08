@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/dod-checklist.schema.json",
+  "title": "迭代验收 Checklist（5.4 / DoD）",
+  "description": "flowstate 产出物：迭代验收 Checklist（DoD 逐项核销），对应 PRD §5.4 / fst-review（N6）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["iteration", "items", "all_passed"],
+  "properties": {
+    "iteration": { "type": "string", "description": "迭代号" },
+    "items": {
+      "type": "array",
+      "description": "DoD 核销项",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "label", "required", "passed"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": ["functional", "targeted_tests", "regression", "docs_synced", "change_archived", "pending_excluded"],
+            "description": "核销项标识"
+          },
+          "label": { "type": "string", "description": "核销项名称" },
+          "required": { "type": "boolean", "description": "是否必检（待定需求不纳入验收 = false）" },
+          "passed": { "type": "boolean", "description": "是否通过" }
+        }
+      }
+    },
+    "all_passed": { "type": "boolean", "description": "全部必检项是否通过（= 可进入灰度）" }
+  }
+}

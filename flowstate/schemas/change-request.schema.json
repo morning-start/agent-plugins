@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/change-request.schema.json",
+  "title": "变更申请单（5.3）",
+  "description": "flowstate 产出物：变更申请单（CR-xxx），对应 PRD §5.3 / fst-change（N5）与紧急通道（N9）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "req_original", "raised_by", "level", "decision"],
+  "properties": {
+    "id": { "type": "string", "description": "变更编号（CR-001）" },
+    "req_original": { "type": "string", "description": "需求原文（逐字记录，防口头需求）" },
+    "raised_by": { "type": "string", "description": "提出人 / 渠道（口头/IM/邮件）" },
+    "level": {
+      "type": "string",
+      "enum": ["轻微", "中度", "重大", "紧急"],
+      "description": "变更分级"
+    },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "影响评估",
+      "properties": {
+        "db_change": { "type": "boolean", "description": "是否改库" },
+        "refactor": { "type": "boolean", "description": "是否重构" },
+        "affects_old_features": { "type": "boolean", "description": "是否影响旧功能" },
+        "effort_estimate": { "type": "string", "description": "工时估算" },
+        "rework": { "type": "string", "description": "返工量" }
+      }
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["接受", "延后", "拒绝", "紧急直通"],
+      "description": "决策结果"
+    },
+    "approved_by": { "type": "string", "description": "审批人（重大变更必填）" },
+    "iteration": { "type": "string", "description": "排入迭代" },
+    "archived_at": { "type": "string", "description": "归档时间" }
+  }
+}

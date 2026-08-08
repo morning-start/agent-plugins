@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/risk-list.schema.json",
+  "title": "风险清单（5.5）",
+  "description": "flowstate 产出物：风险清单，对应 PRD §5.5 / fst-init（F1）与 fst-iterate（F8）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "description", "category", "likelihood", "impact", "mitigation", "owner", "status"],
+  "properties": {
+    "id": { "type": "string", "description": "风险编号" },
+    "description": { "type": "string", "description": "风险描述" },
+    "category": {
+      "type": "string",
+      "enum": ["需求变更", "技术", "排期", "资源"],
+      "description": "风险类别"
+    },
+    "likelihood": {
+      "type": "string",
+      "enum": ["高", "中", "低"],
+      "description": "可能性"
+    },
+    "impact": {
+      "type": "string",
+      "enum": ["高", "中", "低"],
+      "description": "影响程度"
+    },
+    "mitigation": { "type": "string", "description": "缓解措施" },
+    "owner": { "type": "string", "description": "责任人" },
+    "status": {
+      "type": "string",
+      "enum": ["开放", "缓解中", "已关闭"],
+      "description": "状态"
+    }
+  }
+}

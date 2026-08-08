@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/task.schema.json",
+  "title": "任务清单 docs/task（5.9）",
+  "description": "flowstate 产出物：任务清单（docs/task），每个 phase 下的任务分批次排列，对应 PRD §5.9 / fst-iterate（F4.1）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["phase_id", "batch_id", "tasks"],
+  "properties": {
+    "phase_id": { "type": "string", "description": "所属阶段（P1 / P2 / …）" },
+    "batch_id": { "type": "string", "description": "批次编号（B1 / B2 / …）" },
+    "tasks": {
+      "type": "array",
+      "description": "任务列表",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "desc", "cohesion"],
+        "properties": {
+          "id": { "type": "string", "description": "任务编号（P1-B1-T01）" },
+          "title": { "type": "string", "description": "任务标题" },
+          "desc": { "type": "string", "description": "任务内容描述" },
+          "cohesion": { "type": "string", "description": "内聚依据（与同批任务的共同模块/层级）" },
+          "deps": { "type": "array", "items": { "type": "string" }, "description": "前置任务 id" },
+          "status": {
+            "type": "string",
+            "enum": ["待开始", "进行中", "已完成", "已阻塞"],
+            "description": "状态"
+          }
+        }
+      }
+    }
+  }
+}

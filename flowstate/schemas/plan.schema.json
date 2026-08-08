@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/plan.schema.json",
+  "title": "开发计划 docs/plan（5.8）",
+  "description": "flowstate 产出物：开发计划（docs/plan），按大阶段拆分为多个 phase，对应 PRD §5.8 / fst-iterate（F4.1）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["iteration", "phases"],
+  "properties": {
+    "iteration": { "type": "string", "description": "迭代号" },
+    "phases": {
+      "type": "array",
+      "description": "phase 列表",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "goal", "rationale"],
+        "properties": {
+          "id": { "type": "string", "description": "阶段编号（P1 / P2 / …）" },
+          "name": { "type": "string", "description": "阶段名（如\"基础层\"\"核心流程\"）" },
+          "goal": { "type": "string", "description": "要做什么（本阶段目标与交付内容）" },
+          "rationale": { "type": "string", "description": "为什么做（业务/技术理由）" },
+          "req_ids": { "type": "array", "items": { "type": "string" }, "description": "关联需求 id" },
+          "deps": { "type": "array", "items": { "type": "string" }, "description": "前置 phase id" },
+          "status": {
+            "type": "string",
+            "enum": ["规划中", "进行中", "已完成"],
+            "description": "状态"
+          }
+        }
+      }
+    }
+  }
+}

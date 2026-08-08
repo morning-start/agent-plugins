@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/morning-start/agent-plugins/schemas/tech-debt.schema.json",
+  "title": "技术债清单（5.6）",
+  "description": "flowstate 产出物：技术债清单，对应 PRD §5.6 / fst-iterate（F4/F8）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "description", "reason", "status"],
+  "properties": {
+    "id": { "type": "string", "description": "债编号" },
+    "description": { "type": "string", "description": "妥协实现说明（骨架/配置化/硬编码）" },
+    "reason": { "type": "string", "description": "为何妥协（等待需求确认等）" },
+    "repay_iteration": { "type": "string", "description": "计划偿还迭代" },
+    "status": {
+      "type": "string",
+      "enum": ["待偿还", "偿还中", "已偿还"],
+      "description": "状态"
+    }
+  }
+}
