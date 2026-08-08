@@ -139,3 +139,23 @@ The full 8-question interview is for new plugins only.
 
 - No PRD → no design, no scaffolding (Iron Law 1).
 - The user answers; the agent writes and drives.
+
+## Iron Law
+
+```
+No PRD → no design, no scaffolding. Sign-off is mandatory.
+```
+
+## Red Flags — STOP and Rethink
+
+- Skipping the interview because the idea "seems obvious"
+- Paraphrasing user answers before confirmation
+- Asking several questions at once
+- Proceeding before sign-off
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] All 8 questions asked one at a time
+- [ ] User answers recorded verbatim
+- [ ] PRD includes non-goals
+- [ ] User confirmed sign-off

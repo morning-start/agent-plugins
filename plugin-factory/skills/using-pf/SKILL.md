@@ -145,3 +145,23 @@ Before executing the routed skill, state:
 - [ ] **Output contract**: the handoff artifact this step produces
 
 Unchecked → re-read the target skill before acting.
+
+## Iron Law
+
+```
+No PRD → no scaffold. Always route before acting.
+```
+
+## Red Flags — STOP and Rethink
+
+- Doing stage work instead of routing
+- Skipping intent check because "it seems obvious"
+- Routing without using the automated router
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] Target skill identified (pf-<skill> / scenario S#)
+- [ ] Iron Law restated for the target skill
+- [ ] Stop condition defined
+- [ ] Verify command identified
+- [ ] Output contract documented

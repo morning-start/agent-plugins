@@ -280,3 +280,22 @@ npm run validate     # structure audit (Agent Skills standard)
 New — shared git engineering sub-skill of plugin-factory; orchestrates the
 existing version engine (`scripts/version.mjs` + `release-check.mjs`) from git
 history. A standalone modern-engineering plugin may supersede it later.
+
+## Iron Law
+
+```
+Never bump version from desire alone — every bump must be commit-backed.
+```
+
+## Red Flags — STOP and Rethink
+
+- Editing versions by hand instead of using the engine
+- Creating worktrees without a feature scope
+- Implicitly tagging or pushing without user confirmation
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] Version bump has commit evidence
+- [ ] All manifests are in sync (version:check OK)
+- [ ] CHANGELOG has a feature-comment entry
+- [ ] No tag/push without explicit user confirmation

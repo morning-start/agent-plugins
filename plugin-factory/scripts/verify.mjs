@@ -255,6 +255,24 @@ async function structureChecks(root, findings) {
       );
     }
   }
+
+  // --- skill-structure: active skills must have Iron Law / Red Flags / 自检清单.
+  for (const s of skills) {
+    if (!s.text || s.dirName === "pf-learn") continue;
+    const rel = `skills/${s.rel}SKILL.md`;
+    const hasIronLaw = /##\s+Iron\s+Law/i.test(s.text);
+    const hasRedFlags = /##\s+Red\s+Flags/i.test(s.text);
+    const hasSelfCheck = /##\s+自检清单|##\s+Self-check/i.test(s.text);
+    const missing = [];
+    if (!hasIronLaw) missing.push("Iron Law");
+    if (!hasRedFlags) missing.push("Red Flags");
+    if (!hasSelfCheck) missing.push("自检清单");
+    if (missing.length > 0) {
+      findings.push(
+        makeFinding("skill-structure", rel, "WARN", `Add missing sections: ${missing.join(", ")}.`, "Skill is missing the three-section standard (Iron Law / Red Flags / 自检清单).", true),
+      );
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ */

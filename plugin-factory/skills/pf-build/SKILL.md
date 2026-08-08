@@ -217,3 +217,22 @@ the pf-git version workflow (or `/pf-git`). The generated project's own
 ## Status
 
 M1 complete — full build workflow above.
+
+## Iron Law
+
+```
+No manifest → no scaffold. No skill-creator → no skill body.
+```
+
+## Red Flags — STOP and Rethink
+
+- Writing skills by hand instead of routing to skill-creator
+- Skipping the build/verify/release flow
+- Ignoring the language policy layering
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] Manifest is signed off (from pf-design)
+- [ ] Skill-creator is available and confirmed
+- [ ] All skills pass eval via skill-creator
+- [ ] Generated plugin passes `npm run validate`

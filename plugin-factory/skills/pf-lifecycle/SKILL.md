@@ -122,3 +122,21 @@ Do **not** mark one-off findings as learnable — log them to `scratch/` instead
 Systematic gaps that need a rule → learnable.
 T2 complete — decision matrix probes are executable via `scripts/verify.mjs
 lifecycle`; Bash and PowerShell wrappers only forward arguments.
+
+## Iron Law
+
+```
+No runtime telemetry in v1 — structural signals only. Never fake v2 probes.
+```
+
+## Red Flags — STOP and Rethink
+
+- Claiming v2 signals (trigger-frequency, eval-pass-rate) as v1 results
+- Approving lifecycle actions without user confirmation
+- Bypassing pf-design / pf-build / pf-verify
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] All signals are v1 structural (no fake telemetry)
+- [ ] Recommendations are severity-ranked
+- [ ] User confirmed each action before execution

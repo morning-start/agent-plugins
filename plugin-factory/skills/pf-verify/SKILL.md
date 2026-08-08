@@ -180,3 +180,23 @@ is unavailable — live checks never modify global configuration.
 T2 complete — structural, harness, and lifecycle checks share one Node engine
 (`scripts/verify.mjs`); Bash and PowerShell wrappers only forward arguments.
 T5 complete — dogfood smoke evidence above.
+
+
+## Iron Law
+
+```
+No audit pass → no release. FAIL findings block everything.
+```
+
+## Red Flags — STOP and Rethink
+
+- Running verify without `--coverage` when release is imminent
+- Ignoring WARN findings that indicate structural debt
+- Passing a release with known FAIL findings
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] All FAIL findings resolved
+- [ ] Coverage warnings reviewed (opt-in via --coverage)
+- [ ] Verifier output saved as evidence
+- [ ] Release gate is the next step

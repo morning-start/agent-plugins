@@ -143,3 +143,22 @@ content, split out `pf-compose` (lifecycle-matrix "too large → split").
 ## Status
 
 M1 complete — full design workflow above. Skeletons previously noted are resolved.
+
+## Iron Law
+
+```
+No manifest → no scaffold. No user sign-off → no build.
+```
+
+## Red Flags — STOP and Rethink
+
+- Designing skills without a PRD source
+- Adding harness support without adapter conventions
+- Ignoring trigger overlap detection (run check-conflicts.mjs)
+
+## 自检清单 (Post-routing Self-Check)
+
+- [ ] PRD is signed off
+- [ ] All skills have CSO descriptions
+- [ ] Manifest lists all per-harness artifacts
+- [ ] Triggers are mutually exclusive (or declared in conflicts)
