@@ -33,6 +33,10 @@
 | glossary（术语表） | `docs/glossary.md` | `docs/glossary/` | 全程 | 推荐 |
 | change-request 定稿 | `docs/CR.md`（归档） | `docs/cr/` | F5 变更 | 定稿才落 |
 
+> **report（调研报告）不在此列**：Agent 调研信息（调研结论、对比分析、研究报告）属于
+> **过程态**，放 `.agent-workplace/report/`（不提交 git）；只有需要留档、可追溯的
+> **调研定稿**才提升到正式 `docs/report.md` 或 `docs/report/`。
+
 ## ADR 文件夹化（大项目示例）
 
 ```
@@ -52,6 +56,7 @@ docs/adr/
 |------|------|-------|
 | PRD / ADR / requirements / scope / risk / glossary 定稿 | 正式 `docs/` | ✅ |
 | plan / task / scripts / 草稿 / 变更单草稿 / checklist 草稿 | `.agent-workplace/` | ❌ |
+| **report（Agent 调研信息）** | `.agent-workplace/report/` | ❌（调研定稿才提升到正式 docs/） |
 | change-request 归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅ |
 
 ## 升级 / 降级规则

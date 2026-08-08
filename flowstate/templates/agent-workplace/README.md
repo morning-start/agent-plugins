@@ -46,6 +46,7 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 | `scripts/` | 可执行实验脚本 / 测试桩 |
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
 | `research/` | 研究/调研缓存（外部资料、备选方案） |
+| `report/` | 调研报告（Agent 调研结论、对比分析、研究报告） |
 | `state/goal.md` | Goal 模式：目标 + 自我评估记录 |
 | `state/checkpoint.json` | 断点续跑状态（图的 Checkpoint） |
 | `state/artifacts.json` | 产物注册表（跨阶段追踪） |
