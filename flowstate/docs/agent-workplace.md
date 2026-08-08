@@ -109,6 +109,34 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 - 团队协作时需在 `AGENTS.md` / `CLAUDE.md` 中说明此约定，避免他人误删或误提交；
 - `research/` 与 `scratch/` 若体积膨胀，Agent 可自行清理（保留最近产物即可）。
 
+## 模板与初始化（给其他项目用）
+
+`.agent-workplace/` 是**运行实例**（不提交 git）。其他项目要获得同样的工作区，
+使用随插件分发的**模板**（提交 git）：
+
+```
+flowstate/templates/agent-workplace/     # 工作区模板（干净骨架）
+```
+
+**初始化方式**（复制模板到目标项目）：
+
+```bash
+cp -r flowstate/templates/agent-workplace <目标项目>/.agent-workplace
+```
+
+并在目标项目 `.gitignore` 追加一行 `.agent-workplace/`。
+
+**模板 vs 实例**：
+
+| | `templates/agent-workplace/` | `.agent-workplace/` |
+|--|------------------------------|---------------------|
+| git 状态 | 提交（随插件分发） | 忽略（私有） |
+| 内容 | 干净骨架：modes/ 模式定义 + docs/ 模板 + state/ 初始状态 + 空目录 .gitkeep | 运行实例：plan/task/spec/state 随工作演进 |
+| 用途 | 复制初始化新项目 | 日常使用 |
+
+> 规则：**模板只放"定义与初始状态"，不放运行时数据**——更新模式定义时改模板
+> 并同步实例；实例中的过程产物（plan/task/state 内容）永不回写模板。
+
 ## 备选方案
 
 - `.agent/`（否决：与 `.agents` 混淆）。

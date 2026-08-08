@@ -33,6 +33,7 @@
 | 查为什么叫 flowstate / 前缀 fst- | `docs/ADR-0001-naming.md` |
 | 查为什么用图编排而不是线性流程 | `docs/ADR-0002-agent-graph.md` |
 | 查 Agent 私有工作区（.agent-workplace）怎么用 | `docs/agent-workplace.md` |
+| 给其他项目初始化工作区（复制模板） | `templates/agent-workplace/` · `docs/agent-workplace.md` §模板与初始化 |
 | 看一个项目怎么走完全流程 | `docs/PRD.md` §九（端到端示例） |
 
 ## 维护规则

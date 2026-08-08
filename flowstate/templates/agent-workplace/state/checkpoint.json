@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "current": {
+    "mode": "plan",
+    "node": null,
+    "phase": null,
+    "batch": null,
+    "updated_at": null
+  },
+  "done": [],
+  "pending": [],
+  "notes": "断点续跑状态：每阶段/批次完成时更新。mode: plan|spec|task|goal"
+}
