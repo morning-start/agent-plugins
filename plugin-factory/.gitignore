@@ -24,3 +24,6 @@ Thumbs.db
 workspace/
 .atomcode/
 .*/skills/
+
+# Agent private workspace
+.agent-workplace/

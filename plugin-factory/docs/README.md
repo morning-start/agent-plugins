@@ -11,7 +11,7 @@
 | **Tutorials（教程）** | 新手从零学会用 plugin-factory 生成一个插件 | `README.md`（快速上手）· `tests/smoke/`（dogfood 示例）· `templates/`（脚手架对照） |
 | **How-to（操作指南）** | 完成任务：创建/维护/分析/发布插件 | `commands/`（`/pf-*` 斜杠命令）· `docs/tasks/`（交付任务清单 T1–T6） |
 | **Reference（参考）** | 查规范：标准、契约、约定、探针、适配器 | `references/`（设计原则、ADR 约定、编排模式、生命周期矩阵、适配器/插件规格）· `docs/glossary.md`（术语）· `schemas/`（交接产物 JSON Schema 契约）· `scripts/`（可执行门禁） |
-| **Explanation（解释）** | 理解为什么：决策、分析、优化报告 | `docs/ADR-*.md`（架构决策记录）· `docs/report/`（分析报告：ecc/superpowers/optimization）· `references/design-principles.md`（铁律论证） |
+| **Explanation（解释）** | 理解为什么：决策、分析、优化报告 | `docs/ADR-*.md`（架构决策记录）· `docs/report/`（分析报告：ecc/superpowers/optimization）· `references/design-principles.md`（铁律论证）· `temp-docs/`（开发过程文档） |
 
 ## 快速导航
 
@@ -23,6 +23,7 @@
 | 查一个术语 | `docs/glossary.md` |
 | 查交接产物契约 | `schemas/README.md`（Schema 即契约，门禁校验） |
 | 查 ADR 怎么写 | `references/adr-conventions.md` |
+| 查开发进度 | `temp-docs/plan/`、`temp-docs/task/` |
 | 查生命周期探针 | `references/lifecycle-matrix.md`（11 个探针） |
 | 查编排模式 | `references/orchestration-patterns.md` |
 | 查某端（Claude Code/pi/opencode）适配 | `references/plugins/<端>.md` · `references/agent-adapters.md` |
