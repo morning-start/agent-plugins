@@ -50,7 +50,7 @@
 
 ## 支持的平台
 
-四个平台均由自举冒烟测试（`npm run smoke`）验证。一个平台只有在 manifest、引导、技能发现路径与冒烟检查齐备时才被声明支持（T1 契约）。
+五个平台均由自举冒烟测试（`npm run smoke`）验证。一个平台只有在 manifest、引导、技能发现路径与冒烟检查齐备时才被声明支持（T1 契约）。
 
 | 平台 | 技能发现 | Hooks | 命令 |
 |------|----------|-------|------|
@@ -58,6 +58,7 @@
 | **pi** | `package.json` → `pi.skills` | `.pi/extensions/<前缀>-bootstrap.ts` | `registerCommand` |
 | **oh-my-pi (omp)** | `package.json` → `omp` / `pi` 字段 | `.pi/extensions/<前缀>-bootstrap.ts` | `registerCommand` |
 | **opencode** | `.opencode/skills/`（scaffold 自动复制） | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
+| **Codex / ChatGPT** | `skills/`（`plugin.json` 指向 `./skills/`） | —（无 hooks 机制） | — |
 
 ---
 

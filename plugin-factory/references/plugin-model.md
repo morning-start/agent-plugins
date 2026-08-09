@@ -10,7 +10,7 @@
 
 | 组件 | 是什么 | 规范形式 | 各端说明 |
 |-----------|------------|----------------|---------------|
-| **skills** | 能力包：`SKILL.md` + 附属文件 | 每技能一目录，根部 `skills/` | Claude Code 插件 `skills/`、pi 包 `skills/`、opencode `.opencode/skills/` |
+| **skills** | 能力包：`SKILL.md` + 附属文件 | 每技能一目录，根部 `skills/` | Claude Code 插件 `skills/`、pi 包 `skills/`、opencode `.opencode/skills/`、codex `skills/`（`plugin.json` 指向 `./skills/`） |
 | **hooks** | 生命周期脚本（会话启动、工具调用、完成…） | `hooks/*.sh` + `hooks/*.ps1` + `hooks/hooks.json` | 各端事件模型不同（按端核实） |
 | **commands** | 斜杠命令 / 快捷方式 | `commands/*.md`（frontmatter description） | Claude Code `commands/`、opencode `.opencode/command/`、pi `/skill:` 强制调用 |
 | **agents / subagents** | 专用系统提示词的子代理 | `agents/*.md` | Claude Code `agents/`；他端可选 |
@@ -18,7 +18,7 @@
 | **references** | 共享设计/规格文档 | `references/*.md` | — |
 | **scripts** | 校验器、生成器、辅助脚本 | bash + PowerShell 成对 | 多 shell 要求 |
 | **tests / evals** | 基础设施与行为测试 | `tests/`、`evals/` | — |
-| **manifests** | 各端元数据 | `.claude-plugin/plugin.json`、`package.json`（`pi.skills`）、`.opencode/opencode.json` | — |
+| **manifests** | 各端元数据 | `.claude-plugin/plugin.json`、`package.json`（`pi.skills`）、`.opencode/opencode.json`、`.codex-plugin/plugin.json` | — |
 | **orchestration** | 入口点 / 触发链 / 交接产物 / 冲突（构件清单一等字段）；方法论插件的引导技能 | 构件清单的 `orchestration` 段 | 渲染进每个技能的 "next steps" + `using-<plugin>` 引导技能 |
 
 ## 插件必须包含的内容（发布门禁）
@@ -43,6 +43,7 @@
 ├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness（同一路径）
 ├── .opencode/opencode.json + plugins/      # opencode harness
 ├── .opencode/skills/                       # opencode 技能发现（scaffold 自动复制）
+├── .codex-plugin/plugin.json               # codex harness（skills 指向 ./skills/）
 ├── package.json                            # pi/omp 字段仅在请求对应 harness 时写入
 ├── skills/<skill-name>/SKILL.md            # 经 skill-creator 创建
 ├── commands/                            # /<prefix>-* 命令
@@ -66,6 +67,7 @@
    - opencode：`.opencode/opencode.json`、`.opencode/plugins/<prefix>-bootstrap.ts`、
      `.opencode/skills/`（技能自动复制，无需手工拷贝）
    - oh-my-pi：`.pi/extensions/<prefix>-bootstrap.ts` + `OMP-NOTES.md`
+   - codex：`.codex-plugin/plugin.json`
 2. 未请求的 harness 不生成任何文件（Claude-only → 无 `.pi/`、`.opencode/`）。
 3. `package.json` 的 `pi`/`omp` 字段只在对应 harness 产物实际渲染时写入
    （不声明悬空的 `pi.extensions` / `omp.extensions` 路径）。

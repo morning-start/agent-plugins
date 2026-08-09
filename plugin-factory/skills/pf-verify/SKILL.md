@@ -171,7 +171,7 @@ node mcp/verify-server.mjs --self-test         # one-shot, then exit
 
 The generated-plugin path is proven end-to-end by the static smoke test
 (`npm run smoke` → `tests/smoke/dogfood-smoke.test.mjs`): a clean temporary
-target is scaffolded with all four harnesses, the generated project runs its
+target is scaffolded with all five harnesses, the generated project runs its
 own verifier, the bootstrap marker appears exactly once per adapter (runtime
 shell parity for bash + PowerShell), and lifecycle probes report no `FAIL`.
 `npm run smoke:live` adds per-harness CLI lanes that `SKIP` when a harness CLI

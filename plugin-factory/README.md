@@ -50,7 +50,7 @@ You tell the agent *what you want*; it drives the rest: intent interview → PRD
 
 ## Supported harnesses
 
-All four harnesses are verified by the dogfood smoke test (`npm run smoke`). A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract).
+All five harnesses are verified by the dogfood smoke test (`npm run smoke`). A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract).
 
 | Harness | Skill discovery | Hooks | Commands |
 |---------|----------------|-------|----------|
@@ -58,6 +58,7 @@ All four harnesses are verified by the dogfood smoke test (`npm run smoke`). A h
 | **pi** | `package.json` → `pi.skills` | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
 | **oh-my-pi (omp)** | `package.json` → `omp` / `pi` fields | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
 | **opencode** | `.opencode/skills/` (auto-copied by scaffold) | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
+| **Codex / ChatGPT** | `skills/` (`plugin.json` → `./skills/`) | — (no hooks mechanism) | — |
 
 ---
 

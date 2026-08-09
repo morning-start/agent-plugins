@@ -6,11 +6,11 @@
 
 ## 技能发现
 
-| | Claude Code | pi | opencode |
-|---|---|---|---|
-| 项目 | 插件 `skills/`、`.claude/skills/` | `.pi/skills/`、`.agents/skills/`、包内 `skills/`（package.json 的 `pi.skills`） | `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` |
-| 全局 | `~/.claude/skills/`、`~/.agents/skills/` | `~/.pi/agent/skills/`、`~/.agents/skills/` | `~/.config/opencode/skills/`、`~/.claude/skills/`、`~/.agents/skills/` |
-| name == 目录 | 强制（标准） | 宽松（不强制） | v1 强制；⚠️ v2 用路径派生 ID，不强制 name==dir |
+| | Claude Code | pi | opencode | Codex / ChatGPT |
+|---|---|---|---|---|
+| 项目 | 插件 `skills/`、`.claude/skills/` | `.pi/skills/`、`.agents/skills/`、包内 `skills/`（package.json 的 `pi.skills`） | `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` | 插件 `skills/`（`plugin.json` 的 `skills` 字段指向 `./skills/`） |
+| 全局 | `~/.claude/skills/`、`~/.agents/skills/` | `~/.pi/agent/skills/`、`~/.agents/skills/` | `~/.config/opencode/skills/`、`~/.claude/skills/`、`~/.agents/skills/` | `~/.agents/plugins/marketplace.json` 个人级市场 |
+| name == 目录 | 强制（标准） | 宽松（不强制） | v1 强制；⚠️ v2 用路径派生 ID，不强制 name==dir | 遵循 Agent Skills 标准（name==目录） |
 
 ## SKILL.md frontmatter
 
@@ -45,13 +45,13 @@ pi/oh-my-pi 用 `.ts` 扩展（见 [`hooks/`](hooks/)）。
 
 ## 打包 / 安装
 
-**2026-08-01 已核实 — 逐端打包规格见 [`plugins/`](plugins/)（索引 `plugins-reference.md`）。**
+**2026-08-01 已核实（2026-08-09 补 codex）— 逐端打包规格见 [`plugins/`](plugins/)（索引 `plugins-reference.md`）。**
 
-| | Claude Code | pi | opencode |
-|---|---|---|---|
-| Manifest | `.claude-plugin/plugin.json`（name/description/version） | `package.json` → `pi.skills` + `pi.extensions` | 无（TS/JS 插件模块 + opencode.json） |
-| 结构 | 根部 `skills/`/`agents/`/`commands/` + `hooks/hooks.json` | `skills/` + `.pi/extensions/*.ts` | `.opencode/plugins/*.ts` |
-| 安装 | `/plugin install`、`claude --plugin-dir`、marketplace | `pi install git:github.com/<owner>/<repo>` | `.opencode/plugins/`、npm `plugin`（生态: opencode.ai/docs/ecosystem） |
+| | Claude Code | pi | opencode | Codex / ChatGPT |
+|---|---|---|---|---|
+| Manifest | `.claude-plugin/plugin.json`（name/description/version） | `package.json` → `pi.skills` + `pi.extensions` | 无（TS/JS 插件模块 + opencode.json） | `.codex-plugin/plugin.json`（name/version/description/skills） |
+| 结构 | 根部 `skills/`/`agents/`/`commands/` + `hooks/hooks.json` | `skills/` + `.pi/extensions/*.ts` | `.opencode/plugins/*.ts` | `skills/` + 可选 `.app.json` / `.mcp.json` / `assets/` |
+| 安装 | `/plugin install`、`claude --plugin-dir`、marketplace | `pi install git:github.com/<owner>/<repo>` | `.opencode/plugins/`、npm `plugin`（生态: opencode.ai/docs/ecosystem） | 本地市场 `.agents/plugins/marketplace.json`、`codex plugin marketplace add` |
 
 + **oh-my-pi (omp)**（Pi 的 fork）: 读取 `package.json` 的 `pi`/`omp` 字段
   (`extensions[]`/`skills`) — 见 [`plugins/oh-my-pi.md`](plugins/oh-my-pi.md)。

@@ -26,6 +26,10 @@
 - `pi.registerTool(def)`、`pi.registerCommand(name, def)`、`pi.registerShortcut(keys, def)`、
   `pi.registerFlag(name, def)`、`pi.sendMessage(...)`、`pi.sendUserMessage(...)`、
   `pi.appendEntry(type, data)`
+- **会话持久化**：`pi.appendEntry({key, value})` — 状态跨重启保留
+  （如待办列表、连接池；用 `pi.on("session_start")` 读取恢复）。
+- **Provider 注册**：异步工厂函数可 `pi.registerProvider(...)` 动态添加本地模型
+  （pi 会 await 异步工厂完成后再继续启动）。
 
 ## 事件
 
@@ -64,6 +68,11 @@ export default function (pi: ExtensionAPI): void {
 
 - 生成的 pi hooks = `.pi/extensions/<插件名>.ts` 中的 `pi.on(...)` 处理器。
 - 阻断 = `return {block:true}`；结果修改 = 返回修改后的结果。
+- **工具参数用 TypeBox schema**（`Type.Object` 等）——定义清晰且类型安全。
+- **分发注意**：通过 `pi install`（npm/git）分发的 pi 包，运行时依赖必须在
+  `dependencies`（安装默认 `--omit=dev`，**devDependencies 运行时不可用**）。
+- **开发提示**：`pi -e ./my-extension.ts` 快速测试单个扩展文件（无需放入
+  目录）；自动发现位置的扩展可用 `/reload` 热重载（`-e` 不支持）。
 
 ## 已验证不变量（T3 落地）
 

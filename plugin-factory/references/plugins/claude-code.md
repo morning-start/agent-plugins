@@ -19,19 +19,52 @@
 
 ## 插件结构
 
-每个插件位于**自己的目录**，包含 skills、agents、commands 或 hooks，
-可选带 `.claude-plugin/plugin.json` manifest：
+每个插件位于**自己的目录**，包含 skills、agents、commands、hooks、tools、
+MCP/LSP 或 monitors，可选带 `.claude-plugin/plugin.json` manifest：
 
 ```
 my-plugin/
 ├── .claude-plugin/plugin.json   # 身份：name, description, version
 ├── skills/                      # 命名空间 /my-plugin:skill-name
-├── agents/
+├── agents/                      # 子代理（Markdown，见下）
 ├── commands/
 ├── hooks/
 │   └── hooks.json               # 格式与 settings.json 的 "hooks" 对象一致
+├── tools/<tool-name>/index.ts   # 自定义工具（TypeBox schema）
+├── mcp.json                     # MCP server 配置
+├── lsp.json                     # LSP server 配置
+├── monitors/monitors.json       # 后台监控（stdout 作为通知）
+├── themes/<theme-name>.json     # 主题
 └── (rules/, references/, scripts/, tests/ — plugin-factory 扩展)
 ```
+
+**结构规则**：
+- 若插件**没有** `skills/` 目录且无 skills manifest 字段，根目录的 `SKILL.md`
+  会作为单个 skill 加载——注意显式设置 frontmatter `name`（否则回退到安装
+  目录名，市场安装时每次更新都会变）。
+- **路径可移植性**：所有路径引用使用 `${CLAUDE_PLUGIN_ROOT}` 变量
+  （相对插件根，与调用者 cwd 无关）——这是打包规范的一部分。
+
+### Agents（子代理）
+
+`agents/<name>.md`，Claude 可在适当时**自动调用**。frontmatter 字段：
+
+| 字段 | 说明 |
+|------|------|
+| `name` | 代理名称 |
+| `description` | 专长描述及调用时机 |
+| `model` | 使用的模型（如 sonnet） |
+| `effort` | 努力程度 |
+| `maxTurns` | 最大轮数 |
+| `disallowedTools` | 禁用的工具列表 |
+
+> **实测契约（ECC）**：agent frontmatter 的 `tools` 用**标量**（与
+> plugin.json 的数组规则相反）。
+
+### Boolean frontmatter 兼容值
+
+`disable-model-invocation` 等字段接受 `yes/no/on/off/1/0`（任意大小写）以及
+`true/false`；**v2.1.218 之前只识别 true/false**（版本兼容注意）。
 
 ### Manifest（`plugin.json`）
 
@@ -63,10 +96,18 @@ my-plugin/
 }
 ```
 
-## 测试
+## 测试与验证
 
-本地加载：`claude --plugin-dir ./my-plugin`。然后逐个测试命令、agents
-（`/context`）与每个被挂钩的事件；命中的钩子会出现在调试日志。
+- 本地加载：`claude --plugin-dir ./my-plugin`。然后逐个测试命令、agents
+  （`/context`）与每个被挂钩的事件；命中的钩子会出现在调试日志。
+- **热重载**：`/reload-plugins` 会话中途应用插件更改，无需重启；
+  配置未变的 MCP server 保持活跃连接，已更改的自动重连。
+- **验证已加载内容**：`claude -p '/extensions'` 列出所有已解析的扩展
+  （skill/command/hook/tool/MCP/theme 及其来源）。
+- **排障**：`claude --debug` 排查 LSP/MCP 初始化失败；检查
+  `/plugin Errors` 选项卡（Executable not found 等）。
+- **版本兼容注意**：`restartOnCrash` / `shutdownTimeout` 需要 v2.1.205+；
+  初始化失败的 LSP server 在 v2.1.205 前仍会声明扩展名并阻塞其他 server。
 
 ## 迁移（standalone → 插件）
 

@@ -8,7 +8,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- ADR conventions (`references/adr-conventions.md`) — trigger standard,
+- ADR conventions (`skills/pf-adr/SKILL.md`, extracted from the former
+  `references/adr-conventions.md`) — trigger standard,
   one-page template, `Proposed → Accepted → Superseded → Deprecated` status
   machine, immutability rule (supersede, never edit); existing ADR-0001/0002
   now carry explicit status + date fields.
@@ -36,6 +37,23 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`research/`, `docs/task/`) — private, gitignored process docs; `docs/` now
   holds only durable product docs (ADRs, glossary, templates). Documentation
   map, AGENTS.md conventions, and internal links updated accordingly.
+- `references/` restructured for clear responsibilities: ADR conventions
+  promoted to the `pf-adr` skill (routed from `pf-design` Heavy path);
+  stale duplicate schemas removed (`references/schemas/` — root `schemas/` is
+  the single authority); `orchestration-patterns.md` scenario catalog now
+  points at `scripts/routing-table.json` instead of duplicating it.
+- **Codex/ChatGPT harness added** (5th platform): scaffold renders
+  `.codex-plugin/plugin.json` (name/version/description/skills → `./skills/`),
+  `verify.mjs` detects and audits it, smoke + scaffold-contract tests cover it;
+  new `references/plugins/codex.md`, `agent-adapters.md`/`plugins-reference.md`/
+  `plugin-model.md`/READMEs updated to five harnesses.
+- Harness specs refreshed against the 2026-08-09 platform guides:
+  Claude Code gains LSP/Monitors/Tools/Themes components, agents frontmatter,
+  `${CLAUDE_PLUGIN_ROOT}` portability, `/reload-plugins` + `claude -p '/extensions'`
+  verification, Boolean frontmatter values; oh-my-pi re-documented as
+  Claude Code + Pi dual-form (discovery-surface merge + pi extensions);
+  pi gains `appendEntry`/`registerProvider`/TypeBox/devDependencies notes;
+  opencode gains dev-iteration notes.
 
 ## [0.1.0] - 2026-08-02
 

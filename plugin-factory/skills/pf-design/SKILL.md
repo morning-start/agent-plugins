@@ -123,8 +123,9 @@ references: [..]
 
 ### 6. Heavy path: record ADRs
 
-Architectural decisions (why this composition, why these harnesses) → `docs/ADR-*`
-in the generated plugin (and in plugin-factory's own `docs/` when applicable).
+Architectural decisions (why this composition, why these harnesses) → route to
+`pf-adr`: write `docs/ADR-*` in the generated plugin (and in plugin-factory's
+own `docs/` when applicable), following the ADR status machine.
 
 ## Acceptance (user sign-off — key decision)
 

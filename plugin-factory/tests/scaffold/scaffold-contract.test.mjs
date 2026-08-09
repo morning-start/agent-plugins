@@ -24,7 +24,7 @@ const BASE = {
   userLang: "zh-CN",
 };
 
-const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi"];
+const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi", "codex"];
 
 /** Required artifacts per harness (T1 file map). */
 const HARNESS_ARTIFACTS = {
@@ -37,6 +37,7 @@ const HARNESS_ARTIFACTS = {
   pi: [".pi/extensions/gr-bootstrap.ts"],
   opencode: [".opencode/opencode.json", ".opencode/plugins/gr-bootstrap.ts"],
   "oh-my-pi": [".pi/extensions/gr-bootstrap.ts", "OMP-NOTES.md"],
+  codex: [".codex-plugin/plugin.json"],
 };
 
 async function exists(p) {
@@ -48,7 +49,7 @@ async function exists(p) {
   }
 }
 
-test("all four harnesses produce their required artifacts", async () => {
+test("all five harnesses produce their required artifacts", async () => {
   await withTemp(async (tmp) => {
     const target = join(tmp, "git-release");
     const result = await scaffoldPlugin({ ...BASE, target, harnesses: ALL_HARNESSES });

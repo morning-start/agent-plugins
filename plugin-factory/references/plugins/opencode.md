@@ -36,6 +36,14 @@
 └── (skills 经 .opencode/skills/ 或 .agents/skills/ — 见 agent-adapters.md)
 ```
 
+## 开发迭代提示
+
+- 插件在**启动时加载**（npm 插件由 Bun 启动时自动安装并缓存
+  `~/.cache/opencode/node_modules/`）——修改本地插件文件后重启 opencode 生效。
+- 本地插件如需外部 npm 依赖：在 `.opencode/package.json` 声明，
+  启动时 `bun install` 自动安装。
+- 同名同版本 npm 包只加载一次；本地与 npm 同名但不同源的分别加载。
+
 ## 对 plugin-factory 的含义
 
 - 生成的 opencode 插件 = `.opencode/plugins/*.ts`（每个事件组一个模块）+

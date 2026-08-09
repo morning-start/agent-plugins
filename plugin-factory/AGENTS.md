@@ -7,7 +7,7 @@
 The user only provides *what the plugin should do*; the agent drives everything else
 through a software-development workflow (intent → design → build → verify → release → lifecycle).
 
-Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**, **oh-my-pi**. A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract, enforced by `scripts/scaffold.mjs`).
+Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**, **oh-my-pi**, **Codex/ChatGPT**. A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract, enforced by `scripts/scaffold.mjs`).
 
 ## How it works
 

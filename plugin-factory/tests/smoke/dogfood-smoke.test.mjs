@@ -63,7 +63,7 @@ async function withTemp(fn) {
   }
 }
 
-const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi"];
+const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi", "codex"];
 
 const REQUIRED_MANIFESTS = [
   ".claude-plugin/plugin.json",
@@ -74,6 +74,7 @@ const REQUIRED_MANIFESTS = [
   ".opencode/opencode.json",
   ".opencode/plugins/gr-bootstrap.ts",
   ".opencode/skills/gr-hello/SKILL.md",
+  ".codex-plugin/plugin.json",
   "OMP-NOTES.md",
   "package.json",
   "scripts/verify.mjs",

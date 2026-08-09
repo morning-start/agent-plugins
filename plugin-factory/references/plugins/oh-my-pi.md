@@ -13,14 +13,53 @@
 
 **oh-my-pi (omp)** 是 **Pi 的 fork**（badlogic/pi-mono，作者 mariozechner），重写为
 coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-my-pi/pi-coding-agent`。
+OMP 的插件系统同时兼容 **Claude Code** 与 **Pi** 两种形态。
 
 安装: `curl -fsSL https://omp.sh/install | sh`（Windows: `irm https://omp.sh/install.ps1 | iex`）、
 `bun install -g @oh-my-pi/pi-coding-agent`、`brew install can1357/tap/omp`。
 
-## 插件格式
+## 四大核心命令
 
-- 插件 = 一个仓库/包，通过 **`omp plugin install git:github.com/<owner>/<repo>`**（或
-  npm 包）安装。
+| 命令 | 效果 | 说明 |
+|------|------|------|
+| `omp install <source>` | 安装到 `~/.omp/plugins/` | 支持 npm/git/本地路径/marketplace 来源 |
+| `omp remove <name>` | 卸载并注销所有 surfaces | 清理彻底（反向撤销所有合并） |
+| `omp update [name]` | 重新获取已安装插件 | 批量更新 |
+| `omp list` | 显示已安装插件 | 含来源、版本、作用域 |
+
+- **项目级操作**：加 `-l`（`--scope project`）对当前仓库 `.omp/plugins/` 操作；
+  项目级安装**遮蔽**用户全局同名插件。团队共享：可将
+  `.omp/plugins/installed_plugins.json` 提交到仓库。
+- **开发热更新**：本地路径安装使用 **symlink + 文件监控**，修改即时生效，
+  无需重装。
+
+## 插件格式（双形态）
+
+### 形态 A — Claude Code 兼容（首选）
+
+OMP 的插件根布局直接镜像扩展目录结构，安装时把**每个子目录合并到对应的
+发现表面（discovery surfaces）**：
+
+```
+my-plugin/
+├── plugin.json              # name, version, description, entry points
+├── skills/<name>/SKILL.md   # → 技能
+├── commands/<name>.md       # → 命令模板
+├── hooks/pre/*.ts           # → 前置钩子
+├── hooks/post/*.ts          # → 后置钩子
+├── tools/<name>/index.ts    # → 自定义工具（TypeBox schema）
+├── mcp.json                 # → mcpServers 条目
+├── themes/<name>.json       # → 主题
+└── README.md
+```
+
+`plugin.json` 核心字段：`name`、`version`、`description`（必填）。
+卸载时**反向撤销**所有合并操作。marketplace 目录格式
+`.claude-plugin/marketplace.json` **与 Claude Code 兼容**——已有的
+Claude Code catalogs 可直接在 OMP 使用。
+
+### 形态 B — Pi 扩展（兼容）
+
 - 插件 manifest 从 **package.json 的 `omp`（或 `pi`）字段**读取（源码:
   `installer.ts` / `manager.ts` 读 `pkg.omp || pkg.pi`），支持 `extensions[]` 键
   （`PluginManifest.extensions?: string[]`，issue #433 已确认实现于 main v15.10.2）：
@@ -39,7 +78,15 @@ coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-m
 - **扩展接口与 pi 兼容**（issue #433: "most of their own extension interfaces are the
   same as those of omp"）→ 完整扩展 API/事件见 `hooks/pi.md`（pi/omp 共用）。
 - 重新加载: `/reload-plugins`。
-- 发布方式: 本地目录、marketplace、npm。
+
+## 安装来源（Sources）
+
+| 类型 | 示例 |
+|------|------|
+| npm 包 | `omp install @scope/plugin-foo`、`omp install my-plugin@^1.2.0` |
+| git 仓库 | `omp install github:user/repo`、`omp install user/repo#v1.0.0` |
+| 本地路径 | `omp install ./path/to/plugin`（symlink + watch，开发神器） |
+| marketplace | `omp marketplace add anthropics/claude-plugins-official` → `omp install code-review@claude-plugins-official` |
 
 ## Marketplace（插件市场）
 
@@ -86,8 +133,10 @@ coding-first 的终端 Agent（TypeScript/MIT，~19K stars）。核心包 `@oh-m
 
 ## 对 plugin-factory 的含义
 
-- 生成插件时在 `package.json` **同时写 `pi` 与 `omp` 字段**（extensions + skills），
-  同一产物兼容 pi 与 omp 两端安装（omp 读 `pkg.omp || pkg.pi`）。
+- **双形态并写**：生成的插件同时具备形态 A（根 `plugin.json` + `skills/`/
+  `commands/`/`hooks/pre|post` 目录——OMP 的 Claude Code 兼容表面）与形态 B
+  （`package.json` 的 `pi`/`omp` 字段 + `.pi/extensions/<插件名>.ts`），
+  同一产物兼容 Claude Code、pi、omp 三端安装。
 - 生成 `.pi/extensions/<插件名>.ts`（pi/omp 共用）；扩展 API 见 `hooks/pi.md`。
 - plugin-factory 自身（当前项目）应同步在 package.json 增加 `omp` 字段以支持
   `omp plugin install git:...` 安装（M2 落实）。

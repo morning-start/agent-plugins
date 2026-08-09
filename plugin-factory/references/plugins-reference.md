@@ -17,12 +17,14 @@
 | opencode | [`plugins/opencode.md`](plugins/opencode.md) | 无（TS/JS 插件模块 + opencode.json） | `.opencode/plugins/`、npm `plugin`（生态: opencode.ai/docs/ecosystem） |
 | pi | [`plugins/pi.md`](plugins/pi.md) | `package.json` → `pi.skills` / `pi.extensions` | `pi install git:github.com/<owner>/<repo>` |
 | oh-my-pi (omp) | [`plugins/oh-my-pi.md`](plugins/oh-my-pi.md) | `package.json` → `pi`/`omp` 字段 (`extensions[]`/`skills`) | `omp plugin install git:...` / npm |
+| Codex / ChatGPT | [`plugins/codex.md`](plugins/codex.md) | `.codex-plugin/plugin.json`（name/version/description/skills） | 本地市场（`.agents/plugins/marketplace.json`）、`codex plugin marketplace add` |
 
 ## 跨端打包规则（发布门禁）
 
 1. 每个对外宣称的端都有对应 manifest（见上表各文件）。
 2. 技能规范位置为根部 `skills/`（Agent Skills 标准）；opencode 需在
    `.opencode/skills/` 或 `.agents/skills/` 放一份副本（发现路径——`agent-adapters.md`）。
+   Codex 用 `skills` 字段指向 `./skills/`，无需副本。
 3. 双语 README（`README.md` + `README.zh-CN.md`）、`AGENTS.md`/`CLAUDE.md`、
    安装脚本（`install.sh` / `install.ps1`）。
 4. **产物契约（T1 生效，`scripts/scaffold.mjs` 强制）**：一个 harness 只有在

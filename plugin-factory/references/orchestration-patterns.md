@@ -110,18 +110,20 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
 
 ### 场景目录
 
-| # | 场景 | 入口 | 技能序列 | 说明 |
-|---|------|------|----------|------|
-| S1 | 从零创建 | /pf-new | intent(Full) → design → build → verify → release | 现有线性流程只是这一个场景 |
-| S2 | 新增技能 | /pf-maintain | intent(Change) → design(增量) → build(单技能) → verify → release | 给现有插件加技能 |
-| S3 | 改进技能 | /pf-maintain | intent(Change 轻) → build(skill-creator 循环) → verify → release | 描述/步骤/评测优化 |
-| S4 | 技能重组（拆分/合并） | /pf-analyze 或 /pf-maintain | analyze → design → build → verify → release | 生命周期建议驱动 |
-| S5 | 单技能退役 | /pf-maintain | analyze(确认) → build(移除) → verify → release | **维护的一部分**，非插件死亡 |
-| S6 | 多端移植 | /pf-maintain | design(适配器) → build(新端渲染) → verify → release | 为现有插件加端 |
-| S7 | 编排优化 | /pf-maintain | design(编排) → build(重渲染路由) → verify → release | 换触发链/入口 |
-| S8 | 配置/依赖维护 | /pf-maintain | build(修复) → verify → release | hooks/manifest/依赖 |
-| S9 | 例行发布 | /pf-release | verify → pf-git（版本提升 + CHANGELOG）→ release gate → 显式 tag/push | 版本演进 |
-| S10 | 生命周期分析 | /pf-analyze | analyze → 建议 → 路由到 S4/S5/S7 | 纯结构 |
+> **单一权威**：S1–S10 场景定义、触发关键词、路由路径全部集中在
+> `scripts/routing-table.json`（引擎 `scripts/route-intent.mjs` 读取，
+> `skills/using-pf/SKILL.md` 表格由 `scripts/render-routing.mjs` 渲染，
+> `verify.mjs` 防漂移）。**不要在本文件重复维护场景表**——新增/修改场景时
+> 只编辑 JSON，然后 `node scripts/render-routing.mjs`。
+
+场景全景（详情以 routing-table.json 为准）：
+
+| 范围 | 场景 |
+|------|------|
+| 创建 | S1 从零创建（intent Full → design → build → verify → release） |
+| 维护 | S2 新增技能 · S3 改进技能 · S4 重组 · S5 单技能退役 · S6 多端移植 · S7 编排优化 · S8 配置/依赖 |
+| 发布 | S9 例行发布（verify → pf-git → release gate → 显式 tag/push） |
+| 分析 | S10 生命周期分析（纯结构 → 路由到 S4/S5/S7） |
 
 ### 编排规则（循环而非线性）
 

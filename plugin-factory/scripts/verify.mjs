@@ -132,7 +132,7 @@ export async function collectHarnesses(root) {
     /* not advertised */
   }
   try {
-    await stat(join(root, ".codex-plugin", "hooks.json"));
+    await stat(join(root, ".codex-plugin", "plugin.json"));
     harnesses.push("codex");
   } catch {
     /* not advertised */
@@ -402,7 +402,7 @@ async function harnessChecks(root, findings) {
         break;
       }
       case "codex": {
-        for (const rel of [".codex-plugin/hooks.json"]) {
+        for (const rel of [".codex-plugin/plugin.json"]) {
           try {
             await stat(join(root, rel));
           } catch {
