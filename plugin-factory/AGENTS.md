@@ -81,7 +81,9 @@ When sources conflict, follow this order — higher wins:
 
 Each file keeps a single authority. Do not copy long workflows, command
 tables, or directory trees into this file — read the authoritative source.
-The routing table lives only in `skills/using-pf/SKILL.md`; other files
+The routing data lives only in `scripts/routing-table.json`; the Skill
+Priority + Trigger Matrix tables in `skills/using-pf/SKILL.md` are rendered
+from it by `scripts/render-routing.mjs` (verify fails on drift). Other files
 reference it, never duplicate it (avoids drift).
 
 ## This repo is a target instance
@@ -104,6 +106,14 @@ and acceptance conventions apply to this repository as well.
   implementation, plus `hooks.json` metadata where the harness requires it.
 - **Skill creation is delegated**: plugin-factory never re-implements skill authoring or
   evaluation — it orchestrates **skill-creator** (Anthropic) for create/test/iterate.
+- **Routing single source**: pf-* intent routing data lives only in `scripts/routing-table.json`
+  (scenario/skill/path/keywords/priority/trigger). To change routing, edit the JSON, then run
+  `node scripts/render-routing.mjs` to re-render the tables in `skills/using-pf/SKILL.md`.
+  Never hand-edit those tables — `npm run verify` fails on drift (`routing-table-drift`).
+- **Report placement**: analysis/research reports (e.g. ecc/superpowers/optimization studies)
+  are private research — put them in `.agent-workplace/research/` (gitignored), not in `docs/`.
+  Delivery-task records (T1–T6) live in `.agent-workplace/docs/task/`. `docs/` holds only
+  durable product docs (ADRs, glossary, templates).
 
 ## Quality bars (enforced by `scripts/verify.mjs` / `npm run verify`)
 
@@ -122,6 +132,7 @@ and acceptance conventions apply to this repository as well.
 
 ```
 plugin-factory/
+├── .agent-workplace/              # agent private workspace (gitignored): research/, docs/task/, state/
 ├── .claude-plugin/plugin.json    # Claude Code plugin manifest
 ├── .pi/extensions/               # pi/oh-my-pi bootstrap extension
 ├── .opencode/                    # opencode config, plugin + INSTALL.md
@@ -129,15 +140,17 @@ plugin-factory/
 ├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
 ├── references/                   # shared design docs (adapters, model, lifecycle matrix, hooks)
-├── scripts/                      # scaffold/verify/lifecycle/version/release (Node core + shell wrappers)
+├── scripts/                      # scaffold/verify/lifecycle/version/release/routing (Node core + shell wrappers)
 ├── templates/                    # shared/ + harnesses/ scaffold templates
-├── docs/                         # ADRs, glossary, tasks, reports
+├── docs/                         # ADRs, glossary, templates (no reports/tasks — see .agent-workplace/)
 └── tests/                        # contract + smoke tests (scaffold/verify/bootstrap/release/smoke)
 ```
 
 ## Working here
 
 - Before editing a skill, read the matching `references/*.md` doc so conventions stay in sync.
+- To change routing, edit `scripts/routing-table.json` and run `node scripts/render-routing.mjs`;
+  do not edit the SKILL.md tables by hand (verify fails on drift).
 - When you change a convention, update the affected `references/` docs and the CHANGELOG.
 - Keep every deliverable verifiable: run `npm test` and `npm run validate` after changes
   (add contract tests under `tests/` for any new script).

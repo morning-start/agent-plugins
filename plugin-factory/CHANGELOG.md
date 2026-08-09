@@ -22,6 +22,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   declaration and the contract-fixture convention; `docs/glossary.md` gains
   ADR / Spec-anchored / Contract fixture terms.
 
+### Changed
+
+- Intent routing unified under a single source of truth:
+  `scripts/routing-table.json` now holds all pf-* routes (scenario/skill/
+  path/keywords/priority/trigger); `scripts/route-intent.mjs` reads it instead
+  of a hardcoded table; `scripts/routing-render.mjs` + `scripts/render-routing.mjs`
+  render the Skill Priority + Trigger Matrix tables in `skills/using-pf/SKILL.md`
+  from the JSON (supports `--check`); `scripts/verify.mjs` gains a
+  `routing-table-drift` FAIL check (no-op for generated plugins without the JSON).
+- Analysis reports (`docs/report/`, `docs/skill-optimization-report.md`) and
+  delivery-task records (`docs/tasks/`) moved into `.agent-workplace/`
+  (`research/`, `docs/task/`) — private, gitignored process docs; `docs/` now
+  holds only durable product docs (ADRs, glossary, templates). Documentation
+  map, AGENTS.md conventions, and internal links updated accordingly.
+
 ## [0.1.0] - 2026-08-02
 
 **Baseline release: multi-harness scaffold, verifier engine, bootstrap

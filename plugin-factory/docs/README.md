@@ -9,16 +9,16 @@
 | 象限 | 用户需求 | 本仓库位置 |
 |------|----------|-----------|
 | **Tutorials（教程）** | 新手从零学会用 plugin-factory 生成一个插件 | `README.md`（快速上手）· `tests/smoke/`（dogfood 示例）· `templates/`（脚手架对照） |
-| **How-to（操作指南）** | 完成任务：创建/维护/分析/发布插件 | `commands/`（`/pf-*` 斜杠命令）· `docs/tasks/`（交付任务清单 T1–T6） |
+| **How-to（操作指南）** | 完成任务：创建/维护/分析/发布插件 | `commands/`（`/pf-*` 斜杠命令）· `docs/templates/`（变更/场景模板）。交付任务记录 T1–T6 属开发过程文档，见 `.agent-workplace/docs/task/`（gitignored） |
 | **Reference（参考）** | 查规范：标准、契约、约定、探针、适配器 | `references/`（设计原则、ADR 约定、编排模式、生命周期矩阵、适配器/插件规格）· `docs/glossary.md`（术语）· `schemas/`（交接产物 JSON Schema 契约）· `scripts/`（可执行门禁） |
-| **Explanation（解释）** | 理解为什么：决策、分析、优化报告 | `docs/ADR-*.md`（架构决策记录）· `docs/report/`（分析报告：ecc/superpowers/optimization）· `references/design-principles.md`（铁律论证）· `temp-docs/`（开发过程文档） |
+| **Explanation（解释）** | 理解为什么：决策、设计原则 | `docs/ADR-*.md`（架构决策记录）· `references/design-principles.md`（铁律论证）· `temp-docs/`（开发过程文档）。分析报告（ecc/superpowers/optimization 等）属私有研究，已移入 `.agent-workplace/research/`（不提交 git） |
 
 ## 快速导航
 
 | 我想… | 去这里 |
 |-------|--------|
 | 了解项目是做什么的 | `README.md` / `README.zh-CN.md` |
-| 生成一个新插件 | `commands/pf-new.md` → `skills/using-pf/SKILL.md`（路由表权威位置） |
+| 生成一个新插件 | `commands/pf-new.md` → `skills/using-pf/SKILL.md`（路由入口） |
 | 查一条铁律 | `AGENTS.md` § Design principles（8 条精炼版）· `references/design-principles.md`（详细论证） |
 | 查一个术语 | `docs/glossary.md` |
 | 查交接产物契约 | `schemas/README.md`（Schema 即契约，门禁校验） |
@@ -32,7 +32,7 @@
 ## 维护规则
 
 - 新文档先归位到四象限，再写入内容；**不要**在多个位置复制同一内容。
-- 路由表只存在于 `skills/using-pf/SKILL.md`（单一权威，避免漂移）。
+- 路由数据唯一权威是 `scripts/routing-table.json`；SKILL.md 的路由表格由 `scripts/render-routing.mjs` 渲染（verify 防漂移），不要手改。
 - 修改 `references/` 或 `docs/` 约定时，同步更新本文导航与 CHANGELOG。
 - 判断位置的原则：文档回答"是什么/规范" → reference；"怎么做" → how-to；
   "为什么" → explanation；"入门跟做" → tutorial。
