@@ -8,7 +8,7 @@ metadata:
     status: active
     version: 0.1.0
     created: 2026-08-01
-    updated: 2026-08-02
+    updated: 2026-08-09
   keywords_zh: "生命周期, 技能拆分, 技能合并, 重组, 移植, 退役, 演进"
 ---
 

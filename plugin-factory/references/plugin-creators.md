@@ -16,6 +16,8 @@
 | **opencode 插件体系** | https://opencode.ai/docs/plugins/ | TS 插件 + 事件系统（无独立 creator CLI 可确认） | 吸收 | 由 agent 按 hooks/opencode.md 直接生成 `.opencode/plugins/*.ts` |
 | **oh-my-pi (omp)** | https://omp.sh · https://github.com/can1357/oh-my-pi（Pi 的 fork） | 自带插件管理器（`omp plugin install git:/npm:`）；官方说法 "Ask omp to write the piece you're missing" | 吸收 | 无独立 creator CLI；agent 按 plugins/oh-my-pi.md 固化规格直接生成；omp 本身可协助生成扩展 |
 
+| **Codex / ChatGPT plugin-creator** | ChatGPT Work 内置 `@plugin-creator`、Codex 内置 `$plugin-creator`（生成 `.codex-plugin/plugin.json` + 组织插件目录 + 可选本地市场条目） | 插件清单 + skills + MCP + 本地市场测试 | **吸收** | Codex 端的官方脚手架：scaffold 的 codex harness 参照其生成形状（`.codex-plugin/plugin.json`）；本地市场测试流程与 pf-verify 的 codex 检查互补（见 `plugins/codex.md`） |
+
 ## 决策规则（固化）
 
 1. **skill 层 → 调用 skill-creator**（唯一创建路径，铁律 #2）。

@@ -256,6 +256,38 @@ async function structureChecks(root, findings) {
     }
   }
 
+  // --- hook-event: Claude Code hook event names must be on the whitelist
+  // (guards typos like `postToolUse` vs `PostToolUse`). Baseline: the 29
+  // events from the 2026-08-09 guide (references/hooks/claude-code.md),
+  // extended with `PreCommit` (community-documented event, used by pf's
+  // pre-commit gate) and `PreCompletion` (pf's pre-completion gate event).
+  // Only applies when hooks/hooks.json exists (plugins without hooks are fine).
+  const CLAUDE_HOOK_EVENTS = new Set([
+    "SessionStart", "SessionEnd", "Setup", "UserPromptSubmit", "UserPromptExpansion",
+    "PreToolUse", "PermissionRequest", "PermissionDenied", "PostToolUse",
+    "PostToolUseFailure", "PostToolBatch", "Notification", "MessageDisplay",
+    "SubagentStart", "SubagentStop", "TaskCreated", "TaskCompleted", "Stop",
+    "StopFailure", "TeammateIdle", "InstructionsLoaded", "ConfigChange",
+    "CwdChanged", "DirectoryAdded", "FileChanged", "WorktreeCreate",
+    "WorktreeRemove", "PreCompact", "PostCompact", "Elicitation", "ElicitationResult",
+    "PreCommit", "PreCompletion",
+  ]);
+  const hooksJsonPath = join(root, "hooks", "hooks.json");
+  try {
+    const hooksJson = await readJson(hooksJsonPath);
+    for (const eventName of Object.keys(hooksJson.hooks ?? {})) {
+      if (!CLAUDE_HOOK_EVENTS.has(eventName)) {
+        findings.push(
+          makeFinding("hook-event", "hooks/hooks.json", "WARN", `Use a valid Claude Code hook event (found "${eventName}").`, "An unknown hook event never fires — check the 29-event list in references/hooks/claude-code.md."),
+        );
+      }
+    }
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      /* invalid JSON already reported above */
+    }
+  }
+
   // --- skill-structure: active skills must have Iron Law / Red Flags / 自检清单.
   for (const s of skills) {
     if (!s.text || s.dirName === "pf-learn") continue;

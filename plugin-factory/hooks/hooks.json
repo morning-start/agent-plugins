@@ -65,6 +65,28 @@
           }
         ]
       }
+    ],
+    "PreCommit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/pre-commit.sh",
+            "shell": "bash",
+            "description": "Pre-commit gate (workspace boundary + secrets scan)"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/pre-commit.ps1",
+            "shell": "powershell",
+            "description": "Pre-commit gate (workspace boundary + secrets scan)"
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,16 +1,26 @@
 # Claude Code hooks — 规格固化
 
-> **固化于：2026-08-01** · 来源：https://code.claude.com/docs/en/hooks （参考），
+> **固化于：2026-08-01** · **2026-08-09 复核（指南 v2.0）** · 来源：https://code.claude.com/docs/en/hooks （参考），
 > 指南：https://code.claude.com/docs/en/hooks-guide
 > **复核**：仅当 Claude Code 发布破坏性 hooks 变更或接线运行时失败时复核。
 > 不要预先重搜；为这一端复核时不要动其他端文件。
 
 ## 模型
 
-- 钩子是**用户自定义的 shell 命令**、HTTP 端点或 LLM prompt，在 Claude Code
-  生命周期的特定点自动执行。
+- 钩子是**用户自定义的 shell 命令**、HTTP 端点、MCP 工具、LLM prompt 或 agent，
+  在 Claude Code 生命周期的特定点自动执行。
 - 输入：JSON 上下文经 **stdin**（command 钩子）或 POST body（HTTP 钩子）传入。
 - 输出：可选 JSON 决策，写 stdout。
+
+## Hook 类型
+
+| 类型 | 用途 | 示例 |
+|------|------|------|
+| `command` | 执行 shell 命令或脚本 | 格式化代码、运行 linter |
+| `http` | POST 事件 JSON 到 URL | 发送通知到 webhook |
+| `mcp_tool` | 在 MCP server 上调用工具 | 外部验证 |
+| `prompt` | LLM 评估提示（`$ARGUMENTS` 占位符） | 安全审查 |
+| `agent` | 运行 agentic 验证器 | 复杂验证任务 |
 
 ## 事件与节奏
 
@@ -21,11 +31,12 @@
 - agentic 循环中每次工具调用：`PreToolUse`、`PostToolUse`
   （`EndConversation` 调用两者都跳过）
 
-完整事件表：
+完整事件表（29 个）：
 
 | 事件 | 触发时机 |
 |-------|-----------|
 | `SessionStart` | 会话开始或恢复 |
+| `SessionEnd` | 会话终止 |
 | `Setup` | `--init-only`，或 `-p` 模式下的 `--init`/`--maintenance`（CI 准备） |
 | `UserPromptSubmit` | 提交 prompt 后、Claude 处理前 |
 | `UserPromptExpansion` | 用户输入的命令展开为 prompt、到达 Claude 前；可阻断展开 |
@@ -44,10 +55,20 @@
 | `InstructionsLoaded` | CLAUDE.md 或 `.claude/rules/*.md` 加载进上下文 |
 | `ConfigChange` | 会话中配置文件变更 |
 | `CwdChanged` | 工作目录变更（如 `cd`） |
+| `DirectoryAdded` | 中途添加工作目录时 |
 | `FileChanged` | 被监视文件在磁盘上变更（`matcher` = 要监视的文件名） |
 | `WorktreeCreate` / `WorktreeRemove` | worktree 创建 / 移除 |
 | `PreCompact` / `PostCompact` | 上下文压缩前 / 后 |
 | `Elicitation` | MCP 服务器请求用户输入 |
+| `ElicitationResult` | 用户响应 MCP 后 |
+
+> ⚠️ **MCP 工具匹配必须用作用域名称**：针对插件自己 MCP server 的 hook，
+> 匹配器写 `mcp__plugin_<plugin-name>_<server-name>__<tool>`、server 字段写
+> `plugin:<plugin-name>:<server-name>`；裸服务器键的匹配器**永远不会触发**。
+
+> **事件白名单扩展（pf 自身模板使用）**：除上述官方 29 事件外，
+> `PreCommit`（社区文档确认；pf 的 pre-commit 门禁）与 `PreCompletion`
+> （pf 的完成前门禁）也在 `scripts/verify.mjs` 的 hook-event 白名单内。
 
 ## 配置字段
 

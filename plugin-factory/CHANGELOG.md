@@ -67,6 +67,29 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `<name>-v<version>.zip` (zero-dependency pure Node zip writer, UTF-8 names),
   gated on the structural + harness verifier passing (`tests/release/package-plugin.test.mjs`);
   exposed as `npm run package` and documented in `/pf-release`.
+- **Claude Code spec refreshed to guide v2.0** (2026-08-09):
+  `references/plugins/claude-code.md` gains the full manifest schema
+  (`$schema`/`displayName`/`defaultEnabled`, component-path fields with
+  add/replace/merge semantics, `userConfig`, `dependencies`, `channels`),
+  install scopes (user/project/local/managed), skills-dir zero-install
+  discovery, `${CLAUDE_PLUGIN_DATA}` + `${CLAUDE_PROJECT_DIR}` path system,
+  CLI command set, and version strategies; `references/hooks/claude-code.md`
+  gains the 5 hook types (command/http/mcp_tool/prompt/agent), the 29-event
+  list (`DirectoryAdded`, `ElicitationResult`, `SessionEnd`), and the
+  scoped MCP-tool matcher rule. Scaffold's claude-code `plugin.json.tmpl`
+  updated to the full field set. `scripts/verify.mjs` adds a `hook-event`
+  whitelist check (typos like `postToolUse` flagged; `PreCommit`/
+  `PreCompletion` extended for pf's own gates) with
+  `tests/verify/hook-event.test.mjs`.
+- **Generated README gains Quick Start + Uninstall sections** — scaffold now
+  renders per-harness usage guidance (how to trigger skills, verify install
+  e.g. `claude -p '/extensions'`) and uninstall commands alongside the
+  existing Install section, in both `README.md` and `README.zh-CN.md`.
+- **Final consistency pass (2026-08-09)**: root `plugin.json` +
+  `.claude-plugin/plugin.json` descriptions now name all five harnesses
+  (added Codex); `skills/pf-lifecycle/SKILL.md` lifecycle metadata refreshed;
+  `references/plugin-creators.md` records the Codex/ChatGPT `@plugin-creator` /
+  `$plugin-creator` scaffolding tool (absorbed).
 
 ## [0.1.0] - 2026-08-02
 

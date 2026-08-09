@@ -153,6 +153,65 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   values.HARNESS_INSTALL = installSections.join("\n\n");
 
+  // README quick-start sections (how to USE the plugin + verify install),
+  // rendered per advertised harness.
+  const quickStartSections = [];
+  if (harnesses.includes("claude-code")) {
+    quickStartSections.push(
+      `### Claude Code\n\nStart a new session with the plugin loaded. Claude auto-triggers\nskills from their "Use when…" descriptions; you can also invoke commands\ndirectly (\`/${prefix}-<command>\`).\n\nVerify the install:\n\n\`\`\`sh\nclaude -p '/extensions'   # lists every loaded skill/command/hook/tool/MCP\n\`\`\``,
+    );
+  }
+  if (hasPi) {
+    quickStartSections.push(
+      `### pi\n\nSkills are discovered automatically on install. Force-invoke one with\n\`/skill:<skill-name>\`; slash commands via \`/skill:${prefix}-<command>\`.\n\nVerify: run \`/reload\` then ask the agent to use the skill.`,
+    );
+  }
+  if (hasOmp) {
+    quickStartSections.push(
+      `### oh-my-pi (omp)\n\nSkills and commands are merged into the discovery surfaces on install.\nVerify: \`omp -p '/extensions'\` lists every loaded skill/command/hook/tool.`,
+    );
+  }
+  if (harnesses.includes("opencode")) {
+    quickStartSections.push(
+      `### opencode\n\nPlugins load at startup from \`.opencode/plugins/\`; skills auto-trigger\nfrom their descriptions. Restart opencode after adding the plugin.`,
+    );
+  }
+  if (harnesses.includes("codex")) {
+    quickStartSections.push(
+      `### Codex / ChatGPT\n\nAfter install from the local marketplace, start a new conversation and\n@mention the plugin or let its skills auto-trigger. Verify the plugin\nappears in the Plugins directory.`,
+    );
+  }
+  values.HARNESS_QUICKSTART = quickStartSections.join("\n\n");
+
+  // README uninstall sections per advertised harness.
+  const uninstallSections = [];
+  if (harnesses.includes("claude-code")) {
+    uninstallSections.push(
+      `### Claude Code\n\n\`\`\`sh\nclaude plugin uninstall ${name}\n\`\`\`\nOr delete the plugin directory (no uninstall step needed for skills-dir plugins).`,
+    );
+  }
+  if (hasPi) {
+    uninstallSections.push(
+      `### pi\n\n\`\`\`sh\npi remove ${name}\n\`\`\``,
+    );
+  }
+  if (hasOmp) {
+    uninstallSections.push(
+      `### oh-my-pi (omp)\n\n\`\`\`sh\nomp remove ${name}\n\`\`\``,
+    );
+  }
+  if (harnesses.includes("opencode")) {
+    uninstallSections.push(
+      `### opencode\n\nRemove the plugin's files from \`.opencode/plugins/\` (and its skill copy\nfrom \`.opencode/skills/\`) and restart opencode.`,
+    );
+  }
+  if (harnesses.includes("codex")) {
+    uninstallSections.push(
+      `### Codex / ChatGPT\n\nRemove the plugin entry from the marketplace (or delete the copied plugin\ndirectory) and restart the app.`,
+    );
+  }
+  values.HARNESS_UNINSTALL = uninstallSections.join("\n\n");
+
   // install.sh lines per advertised harness ($src = script directory).
   const shLines = [];
   if (harnesses.includes("claude-code")) shLines.push('echo "  Claude Code: claude --plugin-dir $src"');
