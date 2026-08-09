@@ -178,16 +178,17 @@ Policy values: `tiered` (default) / `english` (all English) / `native` (all `use
 ### 8. Hand off to git engineering
 
 Once the standalone project is generated and verified, apply git discipline per
-`pf-git`: create a feature branch (or worktree) for the plugin work, follow
-Conventional Commits, and manage version bumps / CHANGELOG from git history via
-the pf-git version workflow (or `/pf-git`). The generated project's own
+`pf-git`: create a feature branch (or worktree) for the plugin work and follow
+Conventional Commits; manage version bumps / CHANGELOG from git history via
+`pf-version` (or `/pf-version`). The generated project's own
 `scripts/verify.mjs` + `version.mjs` engine is used by the release gate.
 
 ## Outputs
 
 - Standalone plugin project (new directory/repo) ready for `pf-verify`.
 - Per-skill eval summaries (evidence for the release gate).
-- Git engineering handoff (branch/worktree/commit/version conventions from pf-git).
+- Git engineering handoff (branch/worktree/commit from pf-git; version from
+  pf-version).
 
 ## Acceptance
 

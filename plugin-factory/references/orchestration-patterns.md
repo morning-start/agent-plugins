@@ -1,8 +1,8 @@
 # 编排模式库（Orchestration Patterns）
 
-> **固化于：2026-08-01** · references 固化集的一部分。
-> **规则**：生成插件的编排设计遵循本文——不要重复搜网。仅当模式变更或某端引导
-> 规格变更时复核。
+> **固化于：2026-08-01** · **2026-08-09 精简** · references 固化集的一部分。
+> **规则**：生成插件的编排设计遵循本文与 `skills/pf-compose/SKILL.md`——不要重复搜网。
+> 仅当模式变更或某端引导规格变更时复核。
 
 ## 为什么存在
 
@@ -11,30 +11,9 @@
 superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → review），
 而非单个技能。
 
-两个层次：
-
-- **L1 — plugin-factory 自身管线**：pf-intent → pf-design → pf-build → pf-verify →
-  pf-release → pf-lifecycle，靠交接产物衔接（PRD → 构件清单 → 插件 → 审计报告）。
-  路由在 `commands/pf-*` 与各技能末尾的 "route to X next" 段落。
-- **L2 — 生成插件的技能**：生成插件内部技能的组合。
-
-## 编排元数据（构件清单一等字段）
-
-pf-design 在构件清单中产出 `orchestration` 段：
-
-```yaml
-orchestration:
-  entryPoints: [using-<plugin>]                   # 引导/入口技能（方法论插件 ≤1）
-  chains:
-    - [brainstorming, writing-plans, tdd, review]  # 有序触发链
-  handoffs:                                        # 交接产物协议
-    brainstorming: design.md
-    writing-plans: plan.md
-  conflicts: []                                    # 互斥触发域
-```
-
-pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps → route to X"），
-并生成引导入口技能。
+**执行者**：编排设计的具体工作流（元数据契约、触发链规则、单一入口、
+`using-<plugin>` 引导设计）在 **`skills/pf-compose/SKILL.md`**——本文档只保留
+模式库（冷知识）；功能规则以 pf-compose 技能为准。
 
 ## 模式
 
@@ -66,15 +45,6 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
 
 - 规则：无环；每个技能可从入口到达。
 
-## 触发链设计规则
-
-1. **方法论插件单一入口**：`using-<plugin>` 引导技能 + 各端 session-start 钩子。
-2. **触发域互斥**：两个技能的 CSO 描述不得匹配同一场景；已声明的重叠放在
-   `orchestration.conflicts`，由 pf-verify 强制。
-3. **交接产物协议**：每个技能声明 consumes/produces；pf-verify 检查每个链环的
-   产物确实由上游生产。
-4. **末尾路由**：每个技能以 "After this, route to X" 结尾，agent 无需重新决策即可流转。
-
 ## 方法论插件案例（superpowers）
 
 - 入口：`using-superpowers` 引导；经 session-start 钩子 / CLAUDE.md / AGENTS.md 激活。
@@ -82,13 +52,6 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
   subagent-driven-development → test-driven-development → requesting-code-review →
   finishing-a-development-branch。
 - 每个技能独立可触发（CSO），靠产物衔接（设计文档 → 计划 → worktree）。
-
-## 复杂度阈值（pf-compose 拆出规则）
-
-- pf-design 在 M1 承担编排设计。
-- 若 pf-design 超过 ~300 行，或编排指导超过其内容的 1/3，按生命周期矩阵
-  "过重→拆分" 拆出 `pf-compose` 子技能（仅编排设计）。决策记录在构件清单的
-  orchestration 溯源中。
 
 ## 插件生命周期场景（状态机）
 
@@ -122,7 +85,7 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
 |------|------|
 | 创建 | S1 从零创建（intent Full → design → build → verify → release） |
 | 维护 | S2 新增技能 · S3 改进技能 · S4 重组 · S5 单技能退役 · S6 多端移植 · S7 编排优化 · S8 配置/依赖 |
-| 发布 | S9 例行发布（verify → pf-git → release gate → 显式 tag/push） |
+| 发布 | S9 例行发布（verify → pf-version → release gate → 显式 tag/push） |
 | 分析 | S10 生命周期分析（纯结构 → 路由到 S4/S5/S7） |
 
 ### 编排规则（循环而非线性）
@@ -142,5 +105,5 @@ pf-build 把它渲染进每个技能的 SKILL.md（"When to use" + "next steps �
 
 ## 复核节奏
 
-- 固化于 **2026-08-01**。仅当模式变更或某端引导规格变更时更新
-  （交叉引用 `references/hooks/`）。
+- 固化于 **2026-08-01**，2026-08-09 精简（编排功能规则移入 `skills/pf-compose/`）。
+- 仅当模式变更或某端引导规格变更时更新（交叉引用 `references/hooks/`）。

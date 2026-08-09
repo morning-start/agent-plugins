@@ -5,9 +5,9 @@
     {
       "scenario": "S9",
       "skill": "/pf-release",
-      "path": "verify -> pf-git version bump -> release",
+      "path": "verify -> pf-version bump -> release",
       "keywords": ["release", "bump version", "bump", "tag it", "发布", "升版本", "打标签", "发版"],
-      "priority": [{ "intent": "Release an existing plugin", "route": "S9 → `/pf-release` (verify → pf-git version bump → release)" }],
+      "priority": [{ "intent": "Release an existing plugin", "route": "S9 → `/pf-release` (verify → pf-version bump → release)" }],
       "trigger": { "en": "\"release\", \"bump version\", \"tag\"", "zh": "\"发布\", \"升版本\", \"打标签\"", "route": "`/pf-release` (S9)" }
     },
     {
@@ -65,11 +65,11 @@
     },
     {
       "scenario": "S7",
-      "skill": "pf-design (orchestration)",
+      "skill": "pf-compose",
       "path": "orchestration tweak -> build -> verify -> release",
       "keywords": ["orchestration", "rework orchestration", "entry point", "改编排", "换入口", "编排"],
-      "priority": [{ "intent": "Orchestration tweak", "route": "S7 → `pf-design` (orchestration) → build → verify → release" }],
-      "trigger": { "en": "\"rework orchestration\", \"entry\"", "zh": "\"改编排\", \"换入口\"", "route": "`pf-design` (S7)" }
+      "priority": [{ "intent": "Orchestration tweak", "route": "S7 → `pf-compose` → design → build → verify → release" }],
+      "trigger": { "en": "\"rework orchestration\", \"entry\"", "zh": "\"改编排\", \"换入口\"", "route": "`pf-compose` (S7)" }
     },
     {
       "scenario": "S8",

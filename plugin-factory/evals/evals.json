@@ -48,7 +48,7 @@
       "id": 4,
       "name": "release-version-bump",
       "prompt": "We finished the changes, bump the version and release the plugin.",
-      "expected_output": "Route to S9 /pf-release: verify (exit 0), pf-git version management (SemVer from commits, user-confirmed), release gate, explicit tag/push only on request.",
+      "expected_output": "Route to S9 /pf-release: verify (exit 0), pf-version version management (SemVer from commits, user-confirmed), release gate, explicit tag/push only on request.",
       "assertions": [
         "routes to /pf-release (S9)",
         "runs verify before any bump",

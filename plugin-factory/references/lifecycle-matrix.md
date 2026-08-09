@@ -15,23 +15,19 @@ S7 编排优化）。**单技能退役属于维护（S5）**，与插件整体�
 
 ## 信号 → 建议
 
+> **去重（2026-08-09）**：信号→建议决策表已在 `skills/pf-lifecycle/SKILL.md`
+> 的 "Executable probes" 章节内嵌（热，执行时直接查）；本文件保留冷知识部分。
+
 | 信号（纯结构） | 探针（`scripts/verify.mjs lifecycle`） | 严重度 | 如何度量 | 建议 |
 |--------------------------|----------------|---------|----------------|----------------|
-| 生命周期状态缺失 | `lifecycle-status` | WARN | 技能 frontmatter 无 `metadata.lifecycle` 字段，或 `status` 不是 active/deprecated/retired | **补充**生命周期元数据（status/version/created/updated） |
-| 技能退役/弃用 | `lifecycle-status` | INFO | `lifecycle.status` 为 deprecated 或 retired | **清理**：退役技能应安排移除，弃用技能应标注替代方案 |
-| 技能过大（重+厚） | `skill-too-large` | WARN | 行数 > ~300、标题层级 > 3 | **拆分**为聚焦技能，或**重组**：抽取 `references/` |
-| 触发域重叠 | `trigger-overlap` | WARN（完全重叠 FAIL） | 归一化关键词 Jaccard ≥ 0.85；完全相同 → FAIL | **合并**为一个技能；保留场景并集 |
-| 内容耦合 / 指导重复 | `repeated-guidance` | WARN | 同一 `##` 标题在 ≥3 个技能中重复 | **重组**：抽取共享 `references/` |
-| 层级过深 | `nested-skill-tree` | WARN | 嵌套 `skills/` 深度 > 2 | **扁平化** / 重组为平铺命名空间 |
-| 多端缺口 | `harness-gap` | WARN | 宣称 opencode 但无根 `skills/` 源（opencode.json 声明的单一技能源） | **移植**（按适配器渲染，见 agent-adapters.md） |
-| 僵尸技能 | `zombie-skill` | WARN | 无触发式 description 且无支持文件（references/tests/assets） | **退役**或**演进**（v2 重写） |
-| 命名冲突 | `name-collision` | FAIL | 技能名跨位置重复（>1 处） | **改名**，加项目前缀 |
-| 版本漂移 | `version-drift` | WARN | package.json / plugin.json / 技能 metadata 版本不一致 | **对齐**版本（单一事实来源） |
 | 链路断裂 | `broken-handoff` | FAIL | 技能 body 的 route/handoff/next 引用不存在的技能 | **修复编排**（重新链接 / 重排） |
 | 孤儿技能 | `orphan-skill` | WARN | 从任何入口/链均不可达（入口存在时） | **重组**：补入口链接，或合并 |
 | 入口缺失 | `missing-entry-skill` | FAIL | 项目声明 `using-<plugin>` 路径但无入口技能 | **新增** `using-<plugin>` 入口技能 |
 
-编排健康探针（链路断裂 / 孤儿技能 / 入口缺失）遵循
+完整信号表（lifecycle-status / skill-too-large / trigger-overlap /
+repeated-guidance / nested-skill-tree / harness-gap / zombie-skill /
+name-collision / version-drift 等）见 `skills/pf-lifecycle/SKILL.md` § Executable
+probes。编排健康探针（链路断裂 / 孤儿技能 / 入口缺失）遵循
 `references/orchestration-patterns.md` 中的模式，已在 T2 落地为
 `verify.mjs lifecycle`（`npm run lifecycle`；`--format json` 输出机器可读 findings）。
 

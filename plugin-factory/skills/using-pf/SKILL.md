@@ -60,9 +60,9 @@ When multiple scenarios match, route by intent — first match wins:
 | Reorganize (split/merge) skills | S4 → `pf-analyze` → design → build → verify → release |
 | Retire one skill | S5 → `pf-analyze` (confirm) → build (remove) → verify → release |
 | Add a harness (port) | S6 → `pf-design` (adapters) → build → verify → release |
-| Orchestration tweak | S7 → `pf-design` (orchestration) → build → verify → release |
+| Orchestration tweak | S7 → `pf-compose` → design → build → verify → release |
 | Config / dependency fix | S8 → `pf-build` (fix) → verify → release |
-| Release an existing plugin | S9 → `/pf-release` (verify → pf-git version bump → release) |
+| Release an existing plugin | S9 → `/pf-release` (verify → pf-version bump → release) |
 | Analyze lifecycle health | S10 → `pf-analyze` → recommendations → route to S4/S5/S7 |
 | Just a question | answer directly; no scenario |
 <!-- ROUTING-PRIORITY:END -->
@@ -90,7 +90,7 @@ JSON by `scripts/render-routing.mjs` — edit the JSON, then re-render
 | "split", "merge", "reorganize" | "拆分", "合并", "重组" | `pf-analyze` (S4) |
 | "retire", "remove this skill" | "退役", "删掉这个技能" | `pf-analyze` → build (S5) |
 | "port", "add opencode/pi" | "移植", "加个平台" | `pf-design` (S6) |
-| "rework orchestration", "entry" | "改编排", "换入口" | `pf-design` (S7) |
+| "rework orchestration", "entry" | "改编排", "换入口" | `pf-compose` (S7) |
 | "fix config", "fix hooks" | "修配置", "修 hook" | `pf-build` (S8) |
 | "release", "bump version", "tag" | "发布", "升版本", "打标签" | `/pf-release` (S9) |
 | "analyze", "health", "what should evolve" | "分析", "健康检查", "该演进了" | `pf-analyze` (S10) |

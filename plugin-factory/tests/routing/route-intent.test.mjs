@@ -51,7 +51,7 @@ test("port / add-harness intents route to S6", () => {
 test("orchestration tweak routes to S7", () => {
   const r = routeIntent("rework the orchestration");
   assert.equal(r.scenario, "S7");
-  assert.equal(r.skill, "pf-design (orchestration)");
+  assert.equal(r.skill, "pf-compose");
 });
 
 test("config/hook fix routes to S8", () => {

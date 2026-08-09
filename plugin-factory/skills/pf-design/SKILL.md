@@ -1,6 +1,6 @@
 ---
 name: pf-design
-description: Use when a signed-off PRD exists for a plugin, when planning which skills, hooks, commands, and rules a plugin needs, when designing skill orchestration (trigger chains, handoffs, entry points), when mapping a plugin to Claude Code/pi/opencode/oh-my-pi manifests, or when routed from /pf-design or pf-intent's full path.
+description: Use when a signed-off PRD exists for a plugin, when planning which skills, hooks, commands, and rules a plugin needs, when designing skill orchestration (trigger chains, handoffs, entry points), when mapping a plugin to Claude Code/pi/opencode/oh-my-pi manifests, or when routed from /pf-design or pf-intent's full path. Heavy orchestration design is delegated to pf-compose.
 tags: [pf, pf-design, plugin, design, architecture, manifest, orchestration]
 metadata:
   prefix: pf
@@ -8,7 +8,7 @@ metadata:
     status: active
     version: 0.1.0
     created: 2026-08-01
-    updated: 2026-08-02
+    updated: 2026-08-09
   keywords_zh: "插件设计, 构件清单, 架构, 编排设计, 设计文档"
 ---
 
@@ -78,24 +78,21 @@ WARN (`tool-name-ref`) — rewrite the phrasing as an action, never silence the 
 
 ### 4. Design orchestration
 
-Follow `references/orchestration-patterns.md`:
+Route to `pf-compose` when orchestration design is involved (entry points,
+trigger chains, handoffs, conflicts, `using-<plugin>` bootstrap). It owns the
+patterns (Chain/Star/Bus/DAG), the orchestration metadata contract, and the
+single-entry rule; this skill records the outcome in the manifest.
 
-- **Entry points**: methodology plugins need exactly one bootstrap skill
-  (`using-<plugin>`) + per-harness session-start hooks.
-- **Chains**: ordered trigger chains with handoffs; each link's artifact must be
-  produced upstream.
-- **Conflicts**: trigger domains must be mutually exclusive; detect them
-  **automatically** — never by hand:
+Trigger conflicts are detected **automatically** — never by hand:
 
-  ```bash
-  node scripts/check-conflicts.mjs --manifest <manifest.json>   # or --root <plugin-dir>
-  ```
+```bash
+node scripts/check-conflicts.mjs --manifest <manifest.json>   # or --root <plugin-dir>
+```
 
-  `check-conflicts.mjs` (reusing verify.mjs's `keywordBag`/`jaccard`) computes
-  Jaccard similarity over every skill's trigger domain; identical domains are
-  FAIL (merge them), similarity ≥ 0.85 is WARN (merge, or declare the exception
-  in `orchestration.conflicts` with the reported score). Empty output = clean.
-- Every skill ends with "After this, route to X" (rendered by pf-build).
+`check-conflicts.mjs` (reusing verify.mjs's `keywordBag`/`jaccard`) computes
+Jaccard similarity over every skill's trigger domain; identical domains are
+FAIL (merge them), similarity ≥ 0.85 is WARN (merge, or declare the exception
+in `orchestration.conflicts` with the reported score). Empty output = clean.
 
 ### 5. Emit the component manifest
 
@@ -136,14 +133,10 @@ own `docs/` when applicable), following the ADR status machine.
 - Language policy from the PRD is carried into the manifest (`language` section).
 - User confirms the manifest before `pf-build` runs.
 
-## Complexity threshold (extract pf-compose)
-
-If orchestration guidance makes this skill exceed ~300 lines or more than 1/3 of its
-content, split out `pf-compose` (lifecycle-matrix "too large → split").
-
 ## Status
 
-M1 complete — full design workflow above. Skeletons previously noted are resolved.
+M1 complete — full design workflow above; orchestration design lives in
+`pf-compose` (split 2026-08-09).
 
 ## Iron Law
 
