@@ -27,13 +27,18 @@ never creates tags or pushes remotes — those are explicit, user-confirmed step
    (split / merge / reorganize / port / retire) when applicable.
 5. **Bilingual README** — sync `README.md` (English) and `README.zh-CN.md`
    (Chinese edition); both must reflect the new version and features.
-6. **Review the diff** — confirm the bump + docs changes look correct.
+6. **Package (optional, gated)** — `npm run package` (or
+   `node scripts/package-plugin.mjs --root .`) builds a distributable
+   `<name>-v<version>.zip`; packaging **refuses to run when the structural +
+   harness verifier has any FAIL finding** (validation is the quality gate,
+   mirroring the release gate itself).
+7. **Review the diff** — confirm the bump + docs changes look correct.
 
 ## Publish (explicit, only when the user requests distribution)
 
-7. **Tag** — `git tag v<version>` (e.g. `v0.1.0`). Tagging is an explicit
+8. **Tag** — `git tag v<version>` (e.g. `v0.1.0`). Tagging is an explicit
    publication action, not a side effect of preparation.
-8. **Push** — `git push` / `git push --tags` only when the user asked for
+9. **Push** — `git push` / `git push --tags` only when the user asked for
    distribution.
 
 ## Rules

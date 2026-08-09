@@ -70,6 +70,7 @@ plugin-factory/
 ├── .pi/extensions/               # pi / oh-my-pi bootstrap extension
 ├── .opencode/                    # opencode config + INSTALL.md
 ├── skills/                       # pf-* workflow sub-skills (canonical location)
+├── roles/                        # subagent prompts (component-author, manifest-reviewer, plugin-analyzer, bundle-advisor)
 ├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
 ├── references/                   # shared design docs (adapters, plugin model, lifecycle matrix)

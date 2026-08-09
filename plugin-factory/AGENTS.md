@@ -110,6 +110,11 @@ and acceptance conventions apply to this repository as well.
   (scenario/skill/path/keywords/priority/trigger). To change routing, edit the JSON, then run
   `node scripts/render-routing.mjs` to re-render the tables in `skills/using-pf/SKILL.md`.
   Never hand-edit those tables — `npm run verify` fails on drift (`routing-table-drift`).
+- **Roles (subagents)**: parallelizable subagent prompts live in `roles/*.md`
+  (`component-author`, `manifest-reviewer`, `plugin-analyzer`, `bundle-advisor`). Spawn them
+  with *Read `roles/<name>.md` and follow it*; they return JSON only. Component authoring is
+  still delegated to skill-creator (Iron Law 2) — roles orchestrate, they never re-implement
+  skill authoring.
 - **Report placement**: analysis/research reports (e.g. ecc/superpowers/optimization studies)
   are private research — put them in `.agent-workplace/research/` (gitignored), not in `docs/`.
   Delivery-task records (T1–T6) live in `.agent-workplace/docs/task/`. `docs/` holds only
@@ -137,6 +142,7 @@ plugin-factory/
 ├── .pi/extensions/               # pi/oh-my-pi bootstrap extension
 ├── .opencode/                    # opencode config, plugin + INSTALL.md
 ├── skills/                       # pf-* workflow sub-skills (canonical location)
+├── roles/                        # subagent prompts (component-author, manifest-reviewer, plugin-analyzer, bundle-advisor)
 ├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
 ├── references/                   # shared design docs (adapters, model, lifecycle matrix, hooks)

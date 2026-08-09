@@ -70,6 +70,7 @@ plugin-factory/
 ├── .pi/extensions/               # pi / oh-my-pi 引导扩展
 ├── .opencode/                    # opencode 配置 + INSTALL.md
 ├── skills/                       # pf-* 工作流子技能（规范位置）
+├── roles/                        # 子代理提示词（component-author、manifest-reviewer、plugin-analyzer、bundle-advisor）
 ├── commands/                     # /pf-* 斜杠命令
 ├── hooks/                        # 会话启动引导（多 shell）
 ├── references/                   # 设计文档（适配器、插件模型、生命周期矩阵）

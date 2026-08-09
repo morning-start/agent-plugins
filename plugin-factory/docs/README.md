@@ -10,7 +10,7 @@
 |------|----------|-----------|
 | **Tutorials（教程）** | 新手从零学会用 plugin-factory 生成一个插件 | `README.md`（快速上手）· `tests/smoke/`（dogfood 示例）· `templates/`（脚手架对照） |
 | **How-to（操作指南）** | 完成任务：创建/维护/分析/发布插件 | `commands/`（`/pf-*` 斜杠命令）· `docs/templates/`（变更/场景模板）。交付任务记录 T1–T6 属开发过程文档，见 `.agent-workplace/docs/task/`（gitignored） |
-| **Reference（参考）** | 查规范：标准、契约、约定、探针、适配器 | `references/`（设计原则、编排模式、生命周期矩阵、适配器/插件规格）· ADR 约定见 `skills/pf-adr/SKILL.md` · `docs/glossary.md`（术语）· `schemas/`（交接产物 JSON Schema 契约）· `scripts/`（可执行门禁） |
+| **Reference（参考）** | 查规范：标准、契约、约定、探针、适配器 | `references/`（设计原则、编排模式、生命周期矩阵、适配器/插件规格）· ADR 约定见 `skills/pf-adr/SKILL.md` · `docs/glossary.md`（术语）· `schemas/`（交接产物 JSON Schema 契约）· `scripts/`（可执行门禁：verify/bundle/package）· `roles/`（子代理提示词） |
 | **Explanation（解释）** | 理解为什么：决策、设计原则 | `docs/ADR-*.md`（架构决策记录）· `references/design-principles.md`（铁律论证）· `temp-docs/`（开发过程文档）。分析报告（ecc/superpowers/optimization 等）属私有研究，已移入 `.agent-workplace/research/`（不提交 git） |
 
 ## 快速导航

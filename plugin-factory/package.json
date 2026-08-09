@@ -43,6 +43,7 @@
     "version:audit": "node scripts/version.mjs audit",
     "release:check": "node scripts/release-check.mjs",
     "smoke": "node --test tests/smoke/dogfood-smoke.test.mjs",
-    "smoke:live": "node tests/smoke/run-live.mjs"
+    "smoke:live": "node tests/smoke/run-live.mjs",
+    "package": "node scripts/package-plugin.mjs"
   }
 }

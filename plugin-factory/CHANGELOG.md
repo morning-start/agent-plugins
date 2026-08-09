@@ -54,6 +54,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Claude Code + Pi dual-form (discovery-surface merge + pi extensions);
   pi gains `appendEntry`/`registerProvider`/TypeBox/devDependencies notes;
   opencode gains dev-iteration notes.
+- **Bundle recommendation** (two-stage, inspired by plugin-creator):
+  `scripts/recommend-bundles.mjs` clusters standalone skills by multiset-Jaccard
+  similarity (name 2x weight, connected components) into candidate bundles +
+  singletons (`tests/design/bundles.test.mjs`); `roles/bundle-advisor.md`
+  reviews the Stage-1 JSON qualitatively (accept/split/merge/reject + plugin
+  naming). Wired into `/pf-analyze` and `pf-lifecycle` (S4 reorganize path).
+- **Subagent roles** (`roles/`): `component-author`, `manifest-reviewer`,
+  `plugin-analyzer`, `bundle-advisor` — spawnable prompts returning JSON only;
+  component authoring stays delegated to skill-creator (Iron Law 2).
+- **Distributable packaging**: `scripts/package-plugin.mjs` builds a
+  `<name>-v<version>.zip` (zero-dependency pure Node zip writer, UTF-8 names),
+  gated on the structural + harness verifier passing (`tests/release/package-plugin.test.mjs`);
+  exposed as `npm run package` and documented in `/pf-release`.
 
 ## [0.1.0] - 2026-08-02
 

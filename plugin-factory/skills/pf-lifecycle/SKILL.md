@@ -93,6 +93,37 @@ probe) and reports **endangered dependencies**: when skill B is `deprecated` or
 (`endangered-dependency`) — the dependent chain must be reworked before B is
 cleaned up. A skill's retirement therefore never silently breaks its dependents.
 
+## Bundle recommendation (two-stage: deterministic + qualitative)
+
+For **a directory of standalone skills** ("how should these become plugins?"),
+recommend groupings with two stages — heuristics first, LLM review second:
+
+**Stage 1 — deterministic clustering (`scripts/recommend-bundles.mjs`):**
+
+```text
+node scripts/recommend-bundles.mjs --root <dir> [--threshold 0.18] [--min-bundle 2]
+  [--output-md bundle-report.md] [--output-json bundle-report.json]
+```
+
+Jaccard similarity over skill name (2x weight) + description, connected
+components above the threshold become candidate bundles; the rest are
+singletons with a closest-neighbor reason. Same input → same output; the
+threshold table (≥0.40 safe, 0.20–0.40 review, 0.12–0.20 needs review, <0.08
+unrelated) is printed in the report.
+
+**Stage 2 — qualitative review (`roles/bundle-advisor.md`):**
+
+Feed the Stage-1 JSON to the `bundle-advisor` role (spawn pattern:
+*Read `roles/bundle-advisor.md` and follow it.*). It opens each SKILL.md and
+runs four coherence tests (role overlap, job-to-be-done, cold-start, trigger
+context), then decides per candidate: `accept` / `split` / `merge` / `reject`,
+names each plugin after its real role + work, and classifies every singleton
+(`solo-plugin` / `merge-into:<bundle>` / `drop`).
+
+Respect Iron Law 5 throughout: one plugin = one fixed business scenario,
+single entry, one user goal. Approved bundles execute through
+`pf-design` → `pf-build` → `pf-verify` (S4 reorganize path) — never bypass.
+
 ## MCP exposure
 
 The lifecycle probes are callable programmatically through the MCP server
