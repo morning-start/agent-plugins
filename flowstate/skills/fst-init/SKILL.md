@@ -1,9 +1,19 @@
 ---
 name: fst-init
 description: Use when starting a new project, when requirements are vague ("build X" / "help me think through this project"), or when a project needs its core baseline locked before planning. Guides project kickoff: 3 core baselines, requirements layering, scope freeze, and flexible design (N1~N3 in the flowstate execution graph).
+metadata:
+  prefix: fst
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-08
+    updated: 2026-08-09
+  keywords_zh: "立项, 需求分层, 范围冻结, 柔性设计, 核心底线"
 ---
 
 # fst-init — 立项初始化（N1 立项 / N2 冻结 / N3 设计）
+
+> 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-init 独有内容。
 
 ## 职责
 

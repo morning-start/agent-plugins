@@ -1,0 +1,17 @@
+{
+  "id": "CR-001",
+  "req_original": "用户反馈：订单列表页加载超 3 秒，需优化。",
+  "raised_by": "产品/IM",
+  "level": "中度",
+  "impact": {
+    "db_change": false,
+    "refactor": true,
+    "affects_old_features": false,
+    "effort_estimate": "2人天",
+    "rework": "低"
+  },
+  "decision": "接受",
+  "approved_by": "morning-start",
+  "iteration": "iter-004",
+  "archived_at": "2026-08-09T10:00:00Z"
+}

@@ -1,9 +1,19 @@
 ---
 name: fst-change
 description: Use when any new requirement or requirement change appears (verbal, IM, email), or on production incidents. Handles change control: record original requirement, grade the change (minor/moderate/major/emergency), impact assessment, and hotfix fast-track with backfill (N5+N9 in the flowstate execution graph).
+metadata:
+  prefix: fst
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-08
+    updated: 2026-08-09
+  keywords_zh: "变更管控, 变更分级, 影响评估, 紧急通道, Hotfix, 需求变更"
 ---
 
 # fst-change — 变更管控（N5 变更 / N9 紧急通道）
+
+> 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-change 独有内容。
 
 ## 职责
 

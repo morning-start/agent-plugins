@@ -1,0 +1,10 @@
+{
+  "id": "RISK-001",
+  "description": "需求挤压排期",
+  "category": "其他类别",
+  "likelihood": "中",
+  "impact": "高",
+  "mitigation": "走变更流程",
+  "owner": "morning-start",
+  "status": "缓解中"
+}

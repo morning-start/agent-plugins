@@ -1,9 +1,19 @@
 ---
 name: fst-review
 description: Use when an iteration is complete, after any change lands, or before release. Handles acceptance: change-targeted testing, core regression, smoke tests for skeletons, gray-release plan and sign-off (DoD checklist) (N6~N7 in the flowstate execution graph).
+metadata:
+  prefix: fst
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-08
+    updated: 2026-08-09
+  keywords_zh: "验收, DoD, 回归测试, 冒烟测试, 灰度发布"
 ---
 
 # fst-review — 验收审查（N6 测试 / N7 灰度）
+
+> 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-review 独有内容。
 
 ## 职责
 

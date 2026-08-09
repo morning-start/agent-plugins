@@ -1,0 +1,12 @@
+{
+  "iteration": "iter-004",
+  "items": [
+    { "key": "functional", "label": "功能完成（含骨架冒烟）", "required": true, "passed": true },
+    { "key": "targeted_tests", "label": "变更针对性测试通过", "required": true, "passed": true },
+    { "key": "regression", "label": "核心主干回归通过", "required": true, "passed": true },
+    { "key": "docs_synced", "label": "文档同步", "required": true, "passed": true },
+    { "key": "change_archived", "label": "变更记录归档", "required": true, "passed": true },
+    { "key": "pending_excluded", "label": "待定需求不纳入验收", "required": false, "passed": true }
+  ],
+  "all_passed": true
+}

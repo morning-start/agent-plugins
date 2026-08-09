@@ -1,0 +1,7 @@
+{
+  "id": "CR-001",
+  "req_original": "用户反馈：订单列表页加载超 3 秒，需优化。",
+  "raised_by": "产品/IM",
+  "level": "不存在的分级",
+  "decision": "接受"
+}

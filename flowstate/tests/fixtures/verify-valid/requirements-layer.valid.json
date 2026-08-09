@@ -1,0 +1,10 @@
+{
+  "id": "REQ-001",
+  "title": "订单列表分页加载",
+  "source": "产品",
+  "layer": "刚性核心",
+  "priority": "P0",
+  "status": "已冻结",
+  "known_gaps": ["分页大小是否可配置待确认"],
+  "iteration": "iter-004"
+}

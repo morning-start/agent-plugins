@@ -1,0 +1,13 @@
+{
+  "phase_id": "P1",
+  "batch_id": "B1",
+  "tasks": [
+    {
+      "id": "P1-B1-T01",
+      "title": "订单表结构设计",
+      "desc": "定表结构",
+      "cohesion": "数据层",
+      "status": "未知状态"
+    }
+  ]
+}

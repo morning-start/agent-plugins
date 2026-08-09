@@ -1,0 +1,8 @@
+{
+  "iteration": "iter-004",
+  "in_scope": ["REQ-001", "REQ-002"],
+  "out_scope": ["REQ-003（暂不做，缺用户验证）"],
+  "frozen_core": ["REQ-001"],
+  "change_rule": "迭代内新增需求统一走 fst-change 变更流程",
+  "signed_by": "morning-start / 2026-08-09"
+}

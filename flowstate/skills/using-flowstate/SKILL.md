@@ -1,6 +1,14 @@
 ---
 name: using-flowstate
 description: Use when a project needs flowstate's development workflow — starting a new project, planning an iteration, handling requirement changes, or accepting/releasing work. Routes to the right fst-* skill based on the situation (entry point for pi/oh-my-pi/opencode bootstraps).
+metadata:
+  prefix: fst
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-08
+    updated: 2026-08-09
+  keywords_zh: "flowstate入口, 路由, 流程编排, 状态图, 引导"
 ---
 
 # using-flowstate — 入口路由

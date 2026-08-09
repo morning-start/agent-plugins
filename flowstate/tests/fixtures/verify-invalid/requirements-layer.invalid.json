@@ -1,0 +1,8 @@
+{
+  "id": "REQ-001",
+  "title": "订单列表分页加载",
+  "source": "未知来源",
+  "layer": "刚性核心",
+  "priority": "P0",
+  "status": "已冻结"
+}

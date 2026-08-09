@@ -1,0 +1,7 @@
+{
+  "iteration": "iter-004",
+  "in_scope": "REQ-001, REQ-002",
+  "frozen_core": ["REQ-001"],
+  "change_rule": "变更走流程",
+  "signed_by": "morning-start"
+}

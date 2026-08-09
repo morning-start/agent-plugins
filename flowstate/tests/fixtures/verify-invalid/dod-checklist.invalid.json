@@ -1,0 +1,7 @@
+{
+  "iteration": "iter-004",
+  "items": [
+    { "key": "unknown_key", "label": "未知项", "required": true, "passed": true }
+  ],
+  "all_passed": true
+}

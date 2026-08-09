@@ -1,0 +1,8 @@
+{
+  "iteration": "iter-004",
+  "delivery": { "planned": 10, "completed": 9, "dod_check_rate": 0.9 },
+  "changes": { "count": 3, "by_level": { "轻微": 2, "中度": 1 }, "emergency_count": 0 },
+  "metrics": { "completion_rate": 0.9, "rework_rate": 0.05, "backlog_count": 12, "tech_debt_delta": 1 },
+  "risks_tech_debt": { "ref": "RISK-001" },
+  "next_iteration": { "scope_confirmed": true, "items": ["REQ-003", "REQ-004"] }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "TD-001",
+  "description": "分页大小暂写死为 20，未配置化",
+  "reason": "等待分页配置需求确认",
+  "repay_iteration": "iter-005",
+  "status": "待偿还"
+}

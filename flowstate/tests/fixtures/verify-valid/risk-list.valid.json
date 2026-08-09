@@ -1,0 +1,10 @@
+{
+  "id": "RISK-001",
+  "description": "需求池新增紧急需求导致排期挤压",
+  "category": "需求变更",
+  "likelihood": "中",
+  "impact": "高",
+  "mitigation": "变更走 fst-change 分级审批，紧急走 hotfix 直通车",
+  "owner": "morning-start",
+  "status": "缓解中"
+}

@@ -1,0 +1,6 @@
+{
+  "iteration": "iter-004",
+  "delivery": { "planned": 10, "completed": 9, "dod_check_rate": 1.5 },
+  "changes": { "count": 3 },
+  "metrics": { "completion_rate": 0.9 }
+}
