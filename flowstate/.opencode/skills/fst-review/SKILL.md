@@ -1,15 +1,25 @@
 ---
 name: fst-review
 description: Use when an iteration is complete, after any change lands, or before release. Handles acceptance: change-targeted testing, core regression, smoke tests for skeletons, gray-release plan and sign-off (DoD checklist) (N6~N7 in the flowstate execution graph).
+metadata:
+  prefix: fst
+  lifecycle:
+    status: active
+    version: 0.1.0
+    created: 2026-08-08
+    updated: 2026-08-09
+  keywords_zh: "验收, DoD, 回归测试, 冒烟测试, 灰度发布"
 ---
 
 # fst-review — 验收审查（N6 测试 / N7 灰度）
+
+> 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-review 独有内容。
 
 ## 职责
 
 迭代/变更的验收环节：**变更针对性测试 → 核心回归 → 骨架冒烟 → 灰度方案 → DoD 核销 → 放量决策**。边开发边改需求的场景下，旧功能易被新改动破坏，测试不能只测新功能。
 
-## The Iron Law
+## Iron Law
 
 ```
 NO DOD, NO SHIP
@@ -77,7 +87,8 @@ NO DOD, NO SHIP
 
 ### 6. 交接
 
-- 测试报告、回归结果、缺陷清单写入正式 `docs/` 或 `.agent-workplace/`（过程态）
+- 测试报告、回归结果、缺陷清单：**定稿**写正式 `docs/`（提交），过程态草稿落 `.agent-workplace/`（不提交 git）；落点规则见 `fst-workplace`
+- DoD 核销清单：定稿随验收记录写正式 `docs/`，草稿落 `.agent-workplace/`
 - 反馈汇总标记遗漏需求 → 需求池
 
 ## 用户 vs Agent 分工
@@ -112,6 +123,14 @@ NO DOD, NO SHIP
   "defects": []
 }
 ```
+
+## 自检清单
+
+- [ ] 变更针对性测试已覆盖改动点 + 关联影响点
+- [ ] 核心主干回归通过
+- [ ] 骨架冒烟通过（未确认需求不深测）
+- [ ] DoD 逐项核销，全部 ✅ 才进灰度
+- [ ] 测试报告/DoD 定稿写 `docs/`，过程态草稿落 `.agent-workplace/`
 
 ## 下一步
 

@@ -19,7 +19,7 @@ metadata:
 
 需求变更与线上事故的管控入口：**记录原文 → 变更分级 → 影响评估 → 审批排期 → 落地 → 归档**。杜绝口头需求无痕消失，防止范围蔓延与烂尾。
 
-## The Iron Law
+## Iron Law
 
 ```
 NO CHANGE WITHOUT A CHANGE RECORD
@@ -72,7 +72,8 @@ NO CHANGE WITHOUT A CHANGE RECORD
 
 - 用户确认分级；重大变更人工审批
 - 确认排期（本轮收尾 / 下轮 / 需求池）
-- 生成**变更申请单**（schema 5.3），归档后记录变更原因（可追溯）
+- 生成**变更申请单**（schema 5.3）：草稿落 `.agent-workplace/`（过程态），
+  归档定稿写正式 `docs/cr/` 或 `docs/CR.md`（提交）；落点规则见 `fst-workplace`
 
 ### 5. 紧急通道（Hotfix，N9）
 
@@ -115,6 +116,14 @@ NO CHANGE WITHOUT A CHANGE RECORD
   "scheduled_iteration": "iter-004"
 }
 ```
+
+## 自检清单
+
+- [ ] 需求原文已逐字记录（未脑补、未转述美化）
+- [ ] 变更分级已由用户确认；重大变更已人工审批
+- [ ] 变更申请单已生成：草稿落 `.agent-workplace/`，归档定稿落 `docs/cr/` 或 `docs/CR.md`
+- [ ] Hotfix 已走直通车并在 24h 内补单
+- [ ] 变更记录已归档，原因可追溯
 
 ## 下一步
 

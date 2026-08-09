@@ -19,7 +19,7 @@ metadata:
 
 迭代开发与持续迭代闭环的执行引导：**docs/plan（分 phase）→ docs/task（分批）→ 按批实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
 
-## The Iron Law
+## Iron Law
 
 ```
 NO PLAN, NO CODE; NO BATCH, NO WORK
@@ -59,6 +59,9 @@ NO PLAN, NO CODE; NO BATCH, NO WORK
 
 phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
+> 落点：docs/plan 为**过程态**，默认落 `.agent-workplace/docs/plan/`（不提交 git），
+> 见 `fst-workplace`。
+
 ### 2. 细化 docs/task（分批）
 
 每个 phase 下的任务**分批次（batch）**，分批依据：
@@ -67,6 +70,9 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 - **实现顺序**：先做前置依赖（建表 → 接口 → 页面），后做上层；同批任务可连续完成、可整体验证
 
 目标：批次间递进有序、每批可独立验证（编译/冒烟），避免任务零散跳跃。
+
+> 落点：docs/task 为**过程态**，默认落 `.agent-workplace/docs/task/`（不提交 git），
+> 见 `fst-workplace`。
 
 ### 3. 按批次实现（Git 分支开发，F4.2）
 
@@ -129,6 +135,14 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
   "next_iteration": { "scope_confirmed": true, "items": ["..."] }
 }
 ```
+
+## 自检清单
+
+- [ ] docs/plan 与 docs/task 已写（过程态落 `.agent-workplace/docs/`）
+- [ ] 任务已分批（内聚 + 顺序），每批可独立验证
+- [ ] 变更单已归档才开分支（一个变更单 = 一个功能分支）
+- [ ] 技术债已登记（schema 5.6）
+- [ ] 迭代回顾报告已生成（schema 5.7）
 
 ## 下一步
 

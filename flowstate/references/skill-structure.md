@@ -10,7 +10,7 @@ flowstate 的 4 个 fst-* 技能（`fst-init` / `fst-change` / `fst-iterate` / `
 
 一句话说明本技能在流程中的职责：管哪些环节（Nx）、核心动作是什么。不展开细节。
 
-## The Iron Law
+## Iron Law
 
 不可违反的契约，用代码块强调（`NO ... WITHOUT ...` 句式）；违反即流程破坏。
 附 2~3 条展开解释。
@@ -39,6 +39,12 @@ flowstate 的 4 个 fst-* 技能（`fst-init` / `fst-change` / `fst-iterate` / `
 ## 输出
 
 结构化 JSON 产出物契约（字段与 `schemas/` 对齐），作为本技能的交接产物。
+
+## 自检清单
+
+技能执行完毕后的自查项（勾选式，与 Iron Law / Red Flags 呼应）：
+确认关键步骤已执行、产出物已落对位置（定稿 `docs/`、过程态 `.agent-workplace/`）、
+无违反契约的行为。
 
 ## 下一步
 

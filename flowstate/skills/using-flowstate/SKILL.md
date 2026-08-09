@@ -21,6 +21,7 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 | 任何新需求/改动（口头/IM/邮件）、线上事故 | `fst-change` | N5 变更 / N9 紧急 |
 | 迭代完成、变更落地后、准备上线 | `fst-review` | N6 测试 / N7 灰度 |
 | 迭代开始、迭代回顾、下轮排期 | `fst-iterate` | N4 开发 / N8 持续迭代 |
+| 工作区初始化 / 落点判断 / 过程态管理 | `fst-workplace` | 基础能力（横切 N1~N9） |
 
 ## 路由规则
 
@@ -29,9 +30,53 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 - 验收/上线前 → `fst-review`
 - 开发/回顾 → `fst-iterate`
 - 拿不准 → 先 `fst-init` 锁底线，再按流转判据路由
+- 需要工作区初始化 / 落点判断 / 过程态管理 → `fst-workplace`
+  （其他技能只引用它，不重复定义工作区规则）
 
 ## 核心原则（贯穿所有技能）
 
 - **不追求一次性需求完备，只守住核心底线**
 - **所有变更可追溯、可评估、不烂尾**
 - **小步快跑、动态补全**；拒绝代码硬编排，图是逻辑蓝图，由 Agent 框架动态软编排驱动
+- **工作区先行**：新项目首次使用由 `fst-init` 初始化（调用 `fst-workplace`）；
+  过程态私有区不提交 git，落点规则见 `fst-workplace`
+
+## 基础概念（30 秒版，单点维护）
+
+flowstate 的核心概念各有**单一权威位置**，其他技能只引用、不重复定义：
+
+| 概念 | 一句话 | 权威位置 |
+|------|--------|---------|
+| **.agent-workplace** | Agent 私有工作区：过程态草稿/脚本/state 全部不提交 git | `fst-workplace`（初始化与落点的唯一权威） |
+| **Agent Graph（执行图）** | N1~N9 状态图：节点=环节、边=DoD、闸门=HITL、检查点=Checkpoint | `docs/PRD.md` §七 · `.agent-workplace/modes/graph.md` |
+| **产出物 schema** | 5.1~5.9 产出物的 JSON 契约，可脚本校验 | `schemas/`（9 个 schema） |
+| **DoD（完成定义）** | 验收逐项核销，全部 ✅ 才放行 | `fst-review` · schema 5.4 |
+
+> 规则：**概念只在入口概述，细节在权威位置单点维护**——需要初始化/落点/字段/核销
+> 细节时去对应权威位置；不要在多个技能里重复写同一规范。
+
+## Iron Law
+
+```
+NO ROUTING, NO WORK; NO ENTRY, NO SKILL
+```
+
+- 未先路由到正确的 fst-* 技能 → 不得开始任何流程动作
+- 新项目/需求模糊 → 必须先走 `fst-init`（锁底线），不得跳步
+- 拿不准场景 → 回退到 `fst-init`，不猜
+
+## Red Flags — STOP and Re-evaluate
+
+如果发现自己正在做这些事，说明违反了 using-flowstate 契约：
+
+- 跳过路由，直接凭"经验"调用某个 fst-* 技能
+- 场景已明确（如线上事故）却不走 `fst-change` 紧急通道
+- 项目无 `.agent-workplace/` 却开始写过程态产物（应先初始化）
+
+**All of these mean: Stop. Route first, then execute.**
+
+## 自检清单
+
+- [ ] 已按场景路由到唯一的 fst-* 技能
+- [ ] 拿不准时已回退到 `fst-init` 锁底线
+- [ ] 入口提及的落点/初始化规则已指向 `fst-workplace`（未在本技能重复定义）
