@@ -23,7 +23,7 @@ S7 编排优化）。**单技能退役属于维护（S5）**，与插件整体�
 | 触发域重叠 | `trigger-overlap` | WARN（完全重叠 FAIL） | 归一化关键词 Jaccard ≥ 0.85；完全相同 → FAIL | **合并**为一个技能；保留场景并集 |
 | 内容耦合 / 指导重复 | `repeated-guidance` | WARN | 同一 `##` 标题在 ≥3 个技能中重复 | **重组**：抽取共享 `references/` |
 | 层级过深 | `nested-skill-tree` | WARN | 嵌套 `skills/` 深度 > 2 | **扁平化** / 重组为平铺命名空间 |
-| 多端缺口 | `harness-gap` | WARN | 宣称 opencode 但无 `.opencode/skills/`（或 `.agents/skills/`） | **移植**（按适配器渲染，见 agent-adapters.md） |
+| 多端缺口 | `harness-gap` | WARN | 宣称 opencode 但无根 `skills/` 源（opencode.json 声明的单一技能源） | **移植**（按适配器渲染，见 agent-adapters.md） |
 | 僵尸技能 | `zombie-skill` | WARN | 无触发式 description 且无支持文件（references/tests/assets） | **退役**或**演进**（v2 重写） |
 | 命名冲突 | `name-collision` | FAIL | 技能名跨位置重复（>1 处） | **改名**，加项目前缀 |
 | 版本漂移 | `version-drift` | WARN | package.json / plugin.json / 技能 metadata 版本不一致 | **对齐**版本（单一事实来源） |

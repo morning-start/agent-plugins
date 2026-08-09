@@ -1,6 +1,6 @@
 ---
 name: pf-git
-description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when setting up git hooks for commit/merge quality gates, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-version, /pf-release, or using-pf.
+description: Use when a plugin project needs git engineering discipline, when creating or merging feature branches, when using git worktrees for parallel development, when writing or enforcing commit messages, when setting up git hooks for commit/merge quality gates, when managing version updates and feature changelogs from git history, when deciding the next SemVer from commits, when bumping declared manifest versions, when tagging a release, or when routed from /pf-git, /pf-release, or using-pf.
 tags: [pf, pf-git, git, branch, worktree, semver, changelog, release, version]
 metadata:
   prefix: pf
@@ -18,16 +18,13 @@ metadata:
 
 The plugin-factory git engineering skill: feature-branch workflows, git
 worktrees for parallel development, commit-message conventions, and
-**version management driven by git history** (SemVer decision → manifest bump →
-CHANGELOG feature comments → release gate → explicit tag). It is the shared git
-capability used across plugin-factory workflows — referenced by `pf-build`,
-`using-pf` (S9 release), and future engineering plugins. A standalone
-modern-engineering plugin may supersede this skill later; they will iterate on
-each other.
+**version management driven by git history** (SemVer → manifest bump →
+CHANGELOG → release gate → explicit tag), shared across plugin-factory
+workflows (`pf-build`, `using-pf` S9, future engineering plugins).
 
 Version arithmetic and manifest sync are **delegated to the existing engine**
-(`scripts/version.mjs` via `scripts/bump-version.sh` / `.ps1`); this skill
-never hand-edits versions or re-parses manifests in shell.
+(`scripts/version.mjs` via `scripts/bump-version.sh` / `.ps1`); never hand-edit
+versions or re-parse manifests in shell.
 
 ## When to Use
 
@@ -38,12 +35,11 @@ never hand-edits versions or re-parses manifests in shell.
 - The user asks "bump the version" / "what should the next version be".
 - A release is being prepared and the version + CHANGELOG entry must be decided
   from git history.
-- Routed from `/pf-git`, `/pf-version`, `/pf-release`, or `using-pf` (S9).
+- Routed from `/pf-git`, `/pf-release`, or `using-pf` (S9).
 
-Do **not** use when only structural changes are being verified — that is
-`pf-verify`. Do not use for single-skill lifecycle decisions — that is
-`pf-lifecycle`. Do not create a worktree or branch without a clear feature
-scope — branch per feature, not per whim.
+Do **not** use for structural-only verification (`pf-verify`) or single-skill
+lifecycle decisions (`pf-lifecycle`). Do not create a worktree/branch without a
+clear feature scope — branch per feature, not per whim.
 
 ## Workflow
 
@@ -186,7 +182,7 @@ then automate — never nag per commit:
 
 Batch discipline: run at most **5 consecutive tasks** per batch, then stop,
 report, and reach a **commit checkpoint** (verify + commit) before continuing
-(≤3 if the platform cannot compact sessions).
+(≤3 if the platform cannot compact sessions). Run at most 5 tasks per batch.
 
 ### 6. Git hooks — local quality gates
 
@@ -194,17 +190,16 @@ Hooks make the conventions mechanical: **commit-msg** enforces Conventional
 Commits, **pre-commit** runs lint / structure checks before anything is committed.
 They are local to each clone (not shared automatically) — install them per repo.
 
-#### 6.1 Where hooks live
+### 6.1 Where hooks live
 
 - Default: `git hooks` are looked up in `.git/hooks/` (untracked, per-clone).
 - Tracked alternative: keep hook scripts in the repo (e.g. `githooks/`) and point
   git at them so every clone gets the same gates:
   `git config core.hooksPath githooks`.
 - The scaffolded plugin keeps hooks portable: commit-msg/pre-commit are **bash +
-  PowerShell pairs** (project multi-shell convention) where the harness supports
-  them; git itself only runs hooks from `core.hooksPath`, so either place works.
+  PowerShell pairs**; git runs hooks from `core.hooksPath`, so either place works.
 
-#### 6.2 commit-msg hook — Conventional Commits validation
+### 6.2 commit-msg hook — Conventional Commits validation
 
 Gate the commit **subject** format `type(scope)!: subject`:
 
@@ -225,7 +220,7 @@ fi
   the hook may additionally require a footer when the subject carries `!`.
 - Keep the hook permissive on the body: only the subject is machine-checked here.
 
-#### 6.3 pre-commit hook — lint / structure gate
+### 6.3 pre-commit hook — lint / structure gate
 
 Run the project's fast checks before committing; fail the commit on any break:
 
@@ -242,8 +237,12 @@ npm run validate     # structure audit (Agent Skills standard)
 - If a check is intentionally skipped on some commits (e.g. docs-only), gate it
   on the changed files (`git diff --cached --name-only`) rather than disabling
   the hook.
+- Generated plugins include `hooks/pre-commit.sh` / `.ps1` (structural
+  validation + basic secrets scan) — written but **not installed**
+  automatically; the user decides per-repo.
+  Reference: `references/hooks/claude-code.md` for installation.
 
-#### 6.4 Rules
+### 6.4 Rules
 
 - **Never install hooks implicitly** — the user decides whether a repo gets
   `commit-msg` / `pre-commit` hooks (per-repo config, may collide with their
@@ -254,15 +253,6 @@ npm run validate     # structure audit (Agent Skills standard)
   `AGENTS.md` validation section) so the gates are discoverable.
 - Hooks enforce, they do not replace: the same quality bars stay in `npm run
   validate` / `npm test` for CI regardless of local hooks.
-
-#### 6.5 Pre-commit hook with secrets scan
-
-Generated plugins include `hooks/pre-commit.sh` and `hooks/pre-commit.ps1` that run:
-- structural validation (`verify.mjs structure`)
-- basic secrets scan (zero-dependency regex patterns for passwords, API keys, tokens)
-
-The pre-commit hook is written but **not installed** automatically — the user decides per-repo.
-Reference: `references/hooks/claude-code.md` for installation instructions.
 
 ## Outputs
 
@@ -286,9 +276,8 @@ Reference: `references/hooks/claude-code.md` for installation instructions.
 
 ## Status
 
-New — shared git engineering sub-skill of plugin-factory; orchestrates the
-existing version engine (`scripts/version.mjs` + `release-check.mjs`) from git
-history. A standalone modern-engineering plugin may supersede it later.
+New — shared git engineering sub-skill of plugin-factory; a standalone
+modern-engineering plugin may supersede it later.
 
 ## Iron Law
 

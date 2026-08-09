@@ -8,7 +8,7 @@
 
 | | Claude Code | pi | opencode | Codex / ChatGPT |
 |---|---|---|---|---|
-| 项目 | 插件 `skills/`、`.claude/skills/` | `.pi/skills/`、`.agents/skills/`、包内 `skills/`（package.json 的 `pi.skills`） | `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` | 插件 `skills/`（`plugin.json` 的 `skills` 字段指向 `./skills/`） |
+| 项目 | 插件 `skills/`、`.claude/skills/` | `.pi/skills/`、`.agents/skills/`、包内 `skills/`（package.json 的 `pi.skills`） | 插件 `skills/`（`opencode.json` 的 `skills` 字段指向 `./skills/`） | 插件 `skills/`（`plugin.json` 的 `skills` 字段指向 `./skills/`） |
 | 全局 | `~/.claude/skills/`、`~/.agents/skills/` | `~/.pi/agent/skills/`、`~/.agents/skills/` | `~/.config/opencode/skills/`、`~/.claude/skills/`、`~/.agents/skills/` | `~/.agents/plugins/marketplace.json` 个人级市场 |
 | name == 目录 | 强制（标准） | 宽松（不强制） | v1 强制；⚠️ v2 用路径派生 ID，不强制 name==dir | 遵循 Agent Skills 标准（name==目录） |
 

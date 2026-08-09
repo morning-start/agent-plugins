@@ -414,21 +414,13 @@ async function harnessChecks(root, findings) {
             );
           }
         }
-        // A discoverable skill path must exist (opencode does not scan root skills/).
-        const skillPaths = [".opencode/skills", ".agents/skills", ".claude/skills"];
-        let found = false;
-        for (const p of skillPaths) {
-          try {
-            await stat(join(root, p));
-            found = true;
-            break;
-          } catch {
-            /* try next */
-          }
-        }
-        if (!found) {
+        // Skills come from the single root `skills/` source, declared in
+        // opencode.json (moonbit-style: one source, no per-harness copies).
+        try {
+          await stat(join(root, "skills"));
+        } catch {
           findings.push(
-            makeFinding("missing-harness-artifact", ".opencode/skills", "FAIL", "Create .opencode/skills/ (or .agents/skills/).", "opencode cannot discover any skill."),
+            makeFinding("missing-harness-artifact", "skills", "FAIL", "Create skills/ (the single skill source declared by opencode.json).", "opencode cannot discover any skill."),
           );
         }
         break;
@@ -638,17 +630,11 @@ async function orchestrationChecks(root, findings) {
   // --- harness-gap: advertised harness without a discoverable skill path.
   const harnesses = await collectHarnesses(root);
   if (harnesses.includes("opencode")) {
-    const oc = [".opencode/skills", ".agents/skills", ".claude/skills"].some(async (p) => {
-      try {
-        await stat(join(root, p));
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    if (!(await oc)) {
+    try {
+      await stat(join(root, "skills"));
+    } catch {
       findings.push(
-        makeFinding("harness-gap", ".opencode/skills", "WARN", "Port skills into .opencode/skills/ (or .agents/skills/).", "opencode is advertised but no skill discovery path exists."),
+        makeFinding("harness-gap", "skills", "WARN", "Create skills/ (declared as the single skill source in opencode.json).", "opencode is advertised but no skill source exists."),
       );
     }
   }

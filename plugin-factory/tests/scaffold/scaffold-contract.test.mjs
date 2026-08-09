@@ -86,8 +86,11 @@ test("all five harnesses produce their required artifacts", async () => {
     ]) {
       assert.ok(await exists(join(target, rel)), `missing shared artifact: ${rel}`);
     }
-    // opencode skill discovery copy exists
-    assert.ok(await exists(join(target, ".opencode", "skills", "gr-hello", "SKILL.md")));
+    // opencode reads skills from the single root skills/ source, declared
+    // in opencode.json (moonbit-style — no .opencode/skills copy).
+    assert.ok(await exists(join(target, "skills", "gr-hello", "SKILL.md")));
+    const ocJson = JSON.parse(await readFile(join(target, ".opencode", "opencode.json"), "utf8"));
+    assert.ok(Array.isArray(ocJson.skills) && ocJson.skills.includes("./skills/"), "opencode.json must declare ./skills/ as the skill source");
     // package.json references only files that exist in the tree
     const pkg = JSON.parse(await readFile(join(target, "package.json"), "utf8"));
     for (const target2 of pkg.pi?.extensions ?? []) {

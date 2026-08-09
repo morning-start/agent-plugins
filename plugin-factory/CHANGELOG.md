@@ -98,6 +98,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   theme `base`/`overrides`), the full troubleshooting guide (quick-reference
   table, validator error messages, hook/MCP/debug procedures), and the
   20-item best-practice checklist (dev / architecture / test / security).
+- **opencode skills: single-source (moonbit-style)** — generated plugins keep
+  one `skills/` directory; `opencode.json` declares `skills: ["./skills/"]`
+  instead of scaffold copying skills into `.opencode/skills/`. scaffold.mjs
+  drops `copySkillsForOpencode`; verify.mjs (and the generated-project
+  template) now require the root `skills/` source, not `.opencode/skills/`.
+  Tests, READMEs, references, and pf-build/pf-verify skills updated; the
+  long-standing `.opencode/skills` FAIL baseline disappears (verify is now
+  clean for the plugin-factory root).
 
 ## [0.1.0] - 2026-08-02
 

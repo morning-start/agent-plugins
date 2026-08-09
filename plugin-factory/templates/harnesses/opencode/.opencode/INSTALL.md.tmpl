@@ -5,14 +5,15 @@
 ## Install
 
 1. Copy this plugin directory into your project (opencode picks up
-   `.opencode/plugins/` and `.opencode/skills/` automatically).
-2. Restart opencode so it rescans plugin and skill directories.
+   `.opencode/plugins/` automatically).
+2. Restart opencode so it rescans plugin directories.
 
 ## Skill discovery
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/` —
-NOT the repo-root `skills/` directory. The scaffold copies each rendered skill
-into `.opencode/skills/` so no manual copy step is required.
+Skills live in **one source**: the plugin-root `skills/` directory. `opencode.json`
+declares `"skills": ["./skills/"]`, so opencode reads them straight from that
+single source — no per-harness copies are needed. If you install the plugin
+globally, copy `skills/` into `~/.config/opencode/skills/<plugin>/` instead.
 
 ## Use
 

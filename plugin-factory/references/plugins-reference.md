@@ -22,9 +22,9 @@
 ## 跨端打包规则（发布门禁）
 
 1. 每个对外宣称的端都有对应 manifest（见上表各文件）。
-2. 技能规范位置为根部 `skills/`（Agent Skills 标准）；opencode 需在
-   `.opencode/skills/` 或 `.agents/skills/` 放一份副本（发现路径——`agent-adapters.md`）。
-   Codex 用 `skills` 字段指向 `./skills/`，无需副本。
+2. 技能规范位置为根部 `skills/`（Agent Skills 标准，单一源）；
+   Codex 用 `skills` 字段指向 `./skills/`，opencode 用 `opencode.json` 的
+   `skills` 字段指向 `./skills/` — 均为单一源，无需副本。
 3. 双语 README（`README.md` + `README.zh-CN.md`）、`AGENTS.md`/`CLAUDE.md`、
    安装脚本（`install.sh` / `install.ps1`）。
 4. **产物契约（T1 生效，`scripts/scaffold.mjs` 强制）**：一个 harness 只有在

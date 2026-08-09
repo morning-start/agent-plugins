@@ -41,7 +41,7 @@
     },
     {
       "scenario": "S4",
-      "skill": "pf-analyze",
+      "skill": "pf-lifecycle",
       "path": "split/merge/reorganize -> design -> build -> verify -> release",
       "keywords": ["split", "merge", "reorganize", "拆分", "合并", "重组"],
       "priority": [{ "intent": "Reorganize (split/merge) skills", "route": "S4 → `pf-analyze` → design → build → verify → release" }],
@@ -49,7 +49,7 @@
     },
     {
       "scenario": "S5",
-      "skill": "pf-analyze (confirm)",
+      "skill": "pf-lifecycle",
       "path": "confirm retire -> build (remove) -> verify -> release",
       "keywords": ["retire", "remove this skill", "remove skill", "退役", "删掉这个技能", "删除技能", "移除技能"],
       "priority": [{ "intent": "Retire one skill", "route": "S5 → `pf-analyze` (confirm) → build (remove) → verify → release" }],
@@ -81,7 +81,7 @@
     },
     {
       "scenario": "S10",
-      "skill": "pf-analyze",
+      "skill": "pf-lifecycle",
       "path": "lifecycle health -> recommendations -> route to S4/S5/S7",
       "keywords": ["analyze", "health", "what should evolve", "分析", "健康检查", "演进", "该演进了"],
       "priority": [{ "intent": "Analyze lifecycle health", "route": "S10 → `pf-analyze` → recommendations → route to S4/S5/S7" }],

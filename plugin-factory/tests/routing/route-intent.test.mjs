@@ -26,18 +26,18 @@ test("improve intents route to S3 light Change", () => {
   assert.equal(r.skill, "pf-intent (Change, light)");
 });
 
-test("reorganize intents route to S4 pf-analyze", () => {
+test("reorganize intents route to S4 pf-lifecycle", () => {
   for (const t of ["split the skills", "合并技能"]) {
     const r = routeIntent(t);
     assert.equal(r.scenario, "S4", t);
-    assert.equal(r.skill, "pf-analyze", t);
+    assert.equal(r.skill, "pf-lifecycle", t);
   }
 });
 
 test("retire intents route to S5", () => {
   const r = routeIntent("retire this skill");
   assert.equal(r.scenario, "S5");
-  assert.equal(r.skill, "pf-analyze (confirm)");
+  assert.equal(r.skill, "pf-lifecycle");
 });
 
 test("port / add-harness intents route to S6", () => {
@@ -71,7 +71,7 @@ test("release intents route to S9", () => {
 test("lifecycle analysis routes to S10", () => {
   const r = routeIntent("analyze plugin health");
   assert.equal(r.scenario, "S10");
-  assert.equal(r.skill, "pf-analyze");
+  assert.equal(r.skill, "pf-lifecycle");
 });
 
 test("general questions answer directly, no scenario", () => {

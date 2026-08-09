@@ -42,7 +42,7 @@
         "ends with verify -> release"
       ],
       "should_trigger": true,
-      "skills": ["pf-analyze"]
+      "skills": ["pf-lifecycle"]
     },
     {
       "id": 4,
@@ -70,7 +70,7 @@
         "recommendations route to S4/S5/S7"
       ],
       "should_trigger": true,
-      "skills": ["pf-analyze"]
+      "skills": ["pf-lifecycle"]
     },
     {
       "id": 6,

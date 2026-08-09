@@ -143,7 +143,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     installSections.push(
-      "### opencode\n\nCopy the plugin directory into your project — opencode picks up\n`.opencode/plugins/` and `.opencode/skills/` automatically (see `.opencode/INSTALL.md`).",
+      "### opencode\n\nCopy the plugin directory into your project — opencode picks up\n`.opencode/plugins/` and reads skills from `skills/` via `opencode.json`\n(see `.opencode/INSTALL.md`).",
     );
   }
   if (harnesses.includes("codex")) {
@@ -173,7 +173,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     quickStartSections.push(
-      `### opencode\n\nPlugins load at startup from \`.opencode/plugins/\`; skills auto-trigger\nfrom their descriptions. Restart opencode after adding the plugin.`,
+      `### opencode\n\nPlugins load at startup from \`.opencode/plugins/\`; skills come from the\nsingle \`skills/\` source declared in \`opencode.json\`. Restart opencode after\nadding the plugin.`,
     );
   }
   if (harnesses.includes("codex")) {
@@ -202,7 +202,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     uninstallSections.push(
-      `### opencode\n\nRemove the plugin's files from \`.opencode/plugins/\` (and its skill copy\nfrom \`.opencode/skills/\`) and restart opencode.`,
+      `### opencode\n\nRemove the plugin's files from \`.opencode/plugins/\` and the \`skills/\`\ndeclaration from \`opencode.json\`, then restart opencode.`,
     );
   }
   if (harnesses.includes("codex")) {
@@ -251,21 +251,6 @@ async function planTemplates(templateDir, values, seen) {
     plan.push({ outRel, text });
   }
   return plan;
-}
-
-/** Copy every rendered skill under `<target>/skills/` into `.opencode/skills/`. */
-async function copySkillsForOpencode(absTarget, files) {
-  const skillDirs = files.filter((f) => f.startsWith("skills/") && f.endsWith("/SKILL.md"));
-  const copied = [];
-  for (const skillFile of skillDirs) {
-    const relUnderSkills = skillFile.slice("skills/".length);
-    const src = join(absTarget, skillFile);
-    const dest = join(absTarget, ".opencode", "skills", relUnderSkills);
-    await mkdir(dirname(dest), { recursive: true });
-    await writeFile(dest, await readFile(src, "utf8"), "utf8");
-    copied.push(`.opencode/skills/${relUnderSkills}`);
-  }
-  return copied;
 }
 
 /**
@@ -343,12 +328,6 @@ export async function scaffoldPlugin({
   }
 
   const files = plan.map((p) => p.outRel);
-
-  // opencode discovers skills under `.opencode/skills/` — no manual copy step.
-  if (harnesses.includes("opencode")) {
-    const copied = await copySkillsForOpencode(absTarget, files);
-    files.push(...copied);
-  }
 
   // Write initial pipeline state for cross-session resume.
   await writePipelineState(absTarget, {

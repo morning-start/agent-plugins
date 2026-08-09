@@ -73,7 +73,6 @@ const REQUIRED_MANIFESTS = [
   ".pi/extensions/gr-bootstrap.ts",
   ".opencode/opencode.json",
   ".opencode/plugins/gr-bootstrap.ts",
-  ".opencode/skills/gr-hello/SKILL.md",
   ".codex-plugin/plugin.json",
   "OMP-NOTES.md",
   "package.json",

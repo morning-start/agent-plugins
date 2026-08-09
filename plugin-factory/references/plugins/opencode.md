@@ -33,7 +33,7 @@
 ├── .opencode/
 │   ├── opencode.json          # 配置（name/description；可选 "plugin" npm 数组）
 │   └── plugins/               # *.ts / *.js 插件模块（即 "hooks"）
-└── (skills 经 .opencode/skills/ 或 .agents/skills/ — 见 agent-adapters.md)
+└── (skills 经根 `skills/` 单一源，opencode.json 声明 `skills: ["./skills/"]` — 见 agent-adapters.md)
 ```
 
 ## 开发迭代提示

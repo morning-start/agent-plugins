@@ -77,8 +77,9 @@ node scripts/verify.mjs structure --root <dir> --format json
 - pi: `package.json` → `pi.skills` + `pi.extensions` — `plugins/pi.md`.
 - oh-my-pi: `package.json` also carries the `omp` field (`pkg.omp` preferred,
   `pkg.pi` fallback) — `plugins/oh-my-pi.md`.
-- opencode: `.opencode/opencode.json` + `.opencode/plugins/` + a discoverable
-  skill path (`.opencode/skills/` or `.agents/skills/`) — `plugins/opencode.md`.
+- opencode: `.opencode/opencode.json` + `.opencode/plugins/` + the root
+  `skills/` source declared by `opencode.json` (`skills: ["./skills/"]`) —
+  `plugins/opencode.md`.
 
 Each advertised harness must have its complete artifact set; the engine emits
 `missing-harness-artifact` FAIL findings otherwise.
