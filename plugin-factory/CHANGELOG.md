@@ -90,6 +90,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (added Codex); `skills/pf-lifecycle/SKILL.md` lifecycle metadata refreshed;
   `references/plugin-creators.md` records the Codex/ChatGPT `@plugin-creator` /
   `$plugin-creator` scaffolding tool (absorbed).
+- **Claude Code guide v2.0 fully absorbed** (2026-08-09):
+  `references/plugins/claude-code.md` completes the remaining sections —
+  agents frontmatter (`memory`/`background`/`isolation`/`skills`/`tools` +
+  security limits), MCP/LSP/Monitors/Themes component fields (LSP required
+  `extensionToLanguage`, monitors `when:on-skill-invoke` + run constraints,
+  theme `base`/`overrides`), the full troubleshooting guide (quick-reference
+  table, validator error messages, hook/MCP/debug procedures), and the
+  20-item best-practice checklist (dev / architecture / test / security).
 
 ## [0.1.0] - 2026-08-02
 

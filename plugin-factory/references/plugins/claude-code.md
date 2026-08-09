@@ -50,17 +50,25 @@ my-plugin/
 
 `agents/<name>.md`，Claude 可在适当时**自动调用**。frontmatter 字段：
 
-| 字段 | 说明 |
-|------|------|
-| `name` | 代理名称 |
-| `description` | 专长描述及调用时机 |
-| `model` | 使用的模型（如 sonnet） |
-| `effort` | 努力程度 |
-| `maxTurns` | 最大轮数 |
-| `disallowedTools` | 禁用的工具列表 |
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `name` | string | 代理名称 |
+| `description` | string | 专长描述及调用时机 |
+| `model` | string | 使用的模型（如 sonnet） |
+| `effort` | string | 努力程度 |
+| `maxTurns` | number | 最大轮次 |
+| `tools` | array | 可用工具列表 |
+| `disallowedTools` | array | 禁用工具 |
+| `skills` | array | 关联技能 |
+| `memory` | string | 内存配置 |
+| `background` | string | 背景上下文（系统提示） |
+| `isolation` | string | 仅支持 `"worktree"` |
+
+**安全限制**（子代理不支持）：`hooks`、`mcpServers`、`permissionMode`。
 
 > **实测契约（ECC）**：agent frontmatter 的 `tools` 用**标量**（与
-> plugin.json 的数组规则相反）。
+> plugin.json 的数组规则相反）。调用方式：自动（上下文判断）、手动
+> `@<plugin>:<agent>`、UI @-mention 提前出现。
 
 ### Boolean frontmatter 兼容值
 
@@ -171,6 +179,71 @@ MCP server 用 `NODE_PATH: "${CLAUDE_PLUGIN_DATA}/node_modules"`。
 }
 ```
 
+### MCP Servers（外部工具）
+
+`mcpServers` 键（或 `.mcp.json`），启用插件时**自动启动**、以标准 MCP 工具
+形式出现、独立于用户 MCP servers 配置；`/reload-plugins` 后配置不变的保持连接：
+
+```json
+{
+  "mcpServers": {
+    "plugin-database": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": { "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data" }
+    }
+  }
+}
+```
+
+### LSP Servers（代码智能）
+
+`lspServers` 键（或 `.lsp.json`）。**必需字段**：`command`（LSP 二进制，须在
+PATH 中）、`extensionToLanguage`（扩展名 → 语言映射，如 `{".go": "go"}`）。
+
+| 可选字段 | 默认值 | 说明 |
+|---------|--------|------|
+| `args` | - | 命令行参数 |
+| `transport` | `stdio` | `stdio` 或 `socket` |
+| `env` | - | 环境变量 |
+| `startupTimeout` | - | 启动超时（毫秒） |
+| `shutdownTimeout` | 无超时 | 关闭超时 |
+| `restartOnCrash` | `true` | 崩溃后重启（v2.1.205+） |
+| `maxRestarts` | - | 最大重启次数 |
+| `diagnostics` | `true` | 编辑后推送诊断 |
+
+**注意**：语言服务器二进制须**单独安装**；同一扩展名多 servers → 第一个注册
+生效，其余不启动；初始化失败的 server 被跳过（不影响其他）。
+官方 LSP 插件：pyright-lsp（`pip install pyright`）、typescript-lsp
+（`npm i -g typescript-language-server typescript`）、rust-analyzer-lsp。
+
+### Monitors（后台监控，实验性）
+
+`experimental.monitors`（或 `monitors/monitors.json`），数组：
+
+| 字段 | 必需 | 说明 |
+|------|------|------|
+| `name` | ✅ | 插件内唯一标识符（防重复进程） |
+| `command` | ✅ | 持久后台 shell 命令 |
+| `description` | | 任务面板/通知摘要 |
+| `when` | | `"always"`（默认）或 `"on-skill-invoke:<skill-name>"` |
+
+`command` 支持 `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_PLUGIN_DATA}` /
+`${CLAUDE_PROJECT_DIR}` / `${ENV_VAR}` 替换；**不能引用 `${user_config.*}`**、
+进程不接收 `CLAUDE_PLUGIN_OPTION_*`。仅在交互式 CLI 会话运行、与 hooks 同信任
+级别（无沙盒）；会话中途禁用插件**不会停止**已在运行的 monitors。
+
+### Themes（颜色主题，实验性）
+
+`experimental.themes`（或 `themes/`）：
+
+```json
+{ "name": "Dracula", "base": "dark", "overrides": { "claude": "#bd93f9", "error": "#ff5555" } }
+```
+
+选择主题持久化为 `custom:<plugin-name>:<slug>`；插件主题**只读**，
+按 `Ctrl+E` 复制到 `~/.claude/themes/` 以便编辑副本。
+
 ## 测试与验证
 
 - 本地加载：`claude --plugin-dir ./my-plugin`。然后逐个测试命令、agents
@@ -226,6 +299,106 @@ LSP（command/args/env/workspaceFolder）中解析。⚠️ 已安装插件**无
   `details`、`tag`、`validate --strict`。
 - **数据目录生命周期**：`${CLAUDE_PLUGIN_DATA}` 更新后保留前版本约 7 天、
   从最后一个范围卸载时自动删除、CLI 默认删除（`--keep-data` 保留）。
+
+## 故障排除（2026-08-09 指南 v2.0 §12）
+
+### 常见问题速查表
+
+| 问题 | 原因 | 解决方案 |
+|------|------|----------|
+| Plugin 未加载 | 无效 plugin.json | `claude plugin validate` |
+| Skills 未出现 | 目录结构错误 | 确保 skills/ 在根目录，不在 `.claude-plugin/` 内 |
+| Hooks 未触发 | 脚本不可执行 | `chmod +x script.sh` |
+| MCP server 失败 | 缺少 `${CLAUDE_PLUGIN_ROOT}` | 对所有路径使用该变量 |
+| 路径错误 | 使用了绝对路径 | 所有路径必须相对且以 `./` 开头 |
+| LSP Executable not found | 语言服务器未安装 | 安装对应二进制文件 |
+
+### 验证错误消息
+
+```
+Invalid JSON syntax: Unexpected token } in position 142
+→ 检查缺少/多余的逗号、未引用的字符串
+
+name: Required
+→ 缺少必需字段
+
+Plugin has a corrupt manifest file: JSON parse error: ...
+→ JSON 语法错误
+
+No commands found in custom directory: ./cmds
+→ 路径存在但不包含有效文件
+
+Plugin directory not found at: ./plugins/my-plugin
+→ marketplace.json 中 source.path 指向不存在目录
+
+Conflicting manifests: both plugin.json and marketplace entry specify components
+→ 删除重复定义或设置 strict: false
+```
+
+### Hook 故障排除
+
+1. `chmod +x ./scripts/your-script.sh`；检查 shebang。
+2. 使用 `${CLAUDE_PLUGIN_ROOT}`：`"\"${CLAUDE_PLUGIN_ROOT}\"/scripts/script.sh"`。
+3. 事件名区分大小写：`PostToolUse` 不是 `postToolUse`。
+4. matcher 模式：`"matcher": "Write|Edit"`；hook 类型有效：command/http/mcp_tool/prompt/agent。
+5. 手动测试：`./scripts/your-script.sh`。
+
+### MCP Server 故障排除
+
+Server 未启动：检查命令存在且可执行 → 验证所有路径使用 `${CLAUDE_PLUGIN_ROOT}`
+→ `claude --debug` 查看初始化错误 → 在 Claude Code 外手动测试 server。
+工具未出现：`.mcp.json` 或 plugin.json 配置正确？Server 正确实现 MCP 协议？
+调试输出检查连接超时？
+
+### 目录结构常见错误
+
+```
+❌ 组件放在 .claude-plugin/ 内（只有 plugin.json 允许在那里）
+❌ 使用了目录外绝对路径（安装后无效）
+✅ 组件都在插件根目录：commands/、agents/、hooks/、skills/
+```
+
+## 最佳实践清单（2026-08-09 指南 v2.0 §13）
+
+### 开发阶段
+
+1. **`claude plugin init` 脚手架** — 不要手敲目录结构。
+2. **先单一 skill，再渐进添加** — 验证后再加 hooks/MCP/agents。
+3. **`${CLAUDE_PLUGIN_ROOT}` 用于所有路径** — 确保可移植性。
+4. **设置 skill frontmatter `name`** — 避免不稳定的回退名称。
+5. **`claude plugin validate` 经常跑** — CI 中加 `--strict`。
+
+### 架构设计
+
+6. **关注点分离** — 一个插件一个功能域。
+7. **`defaultEnabled: false`** — 有成本/外部连接的插件默认关闭。
+8. **显式版本管理** — 发布用语义化版本；内部迭代省略 version 用 git SHA。
+9. **持久数据目录存依赖** — `${CLAUDE_PLUGIN_DATA}` 存 node_modules/venv。
+10. **`userConfig` 而非手动编辑 settings** — 让用户通过 UI 配置。
+
+### 测试与调试
+
+11. **`/reload-plugins` 热重载** — 无需重启即可测试大部分更改。
+12. **`claude --debug`** — 排查加载/MCP/LSP 问题。
+13. **`claude plugin details`** — 查看 token 成本估算。
+14. **`-p '/extensions'`** — 验证所有组件正确加载。
+15. **SKILL.md 更改即时生效** — 其他组件需要 reload。
+
+### 安全与性能
+
+16. **审查 hooks 和 tools** — 每轮运行的代码。
+17. **monitor 数量控制** — 每个占一个持久进程。
+18. **LSP 冲突意识** — 同扩展名只有一个 server 生效。
+19. **项目级安装优先** — 未审查代码用 `--scope project`。
+20. **固定 Git tag/npm 版本** — 不跟踪 main。
+
+### 版本兼容注意（速查）
+
+- Boolean frontmatter: v2.1.218 前只接受 `true/false`
+- `restartOnCrash`/`shutdownTimeout`: v2.1.205+
+- `defaultEnabled`: v2.1.154+
+- `plugin prune`: v2.1.121+
+- `${user_config.*}` 在 shell 中的行为变更: v2.1.207+
 
 ## 迁移（standalone → 插件）
 
