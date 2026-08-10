@@ -1,0 +1,10 @@
+{
+  "name": "INVALID NAME!",
+  "version": "1.0.0",
+  "goals": [],
+  "platforms": ["unknown-harness"],
+  "complexity": {
+    "score": -1,
+    "verdict": "Unknown"
+  }
+}

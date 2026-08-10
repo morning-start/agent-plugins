@@ -1,0 +1,51 @@
+{
+  "name": "demo-plugin",
+  "version": "0.1.0",
+  "background": "We need a plugin to automate code review tasks for our team.",
+  "goals": [
+    "Reduce manual review time by 50%",
+    "Catch common bugs before human review"
+  ],
+  "features": [
+    "analyze-pull-request: scan PR diffs for common issues",
+    "generate-review-comments: produce actionable review comments"
+  ],
+  "scenarios": [
+    {
+      "context": "Developer opens a PR",
+      "trigger": "PR webhook fires",
+      "expected": "Plugin analyzes diff and posts review comments"
+    },
+    {
+      "context": "Team lead checks review quality",
+      "trigger": "Runs /review-stats command",
+      "expected": "Plugin shows coverage and catch-rate metrics"
+    }
+  ],
+  "non_goals": [
+    "Auto-merge PRs",
+    "Replace human reviewers"
+  ],
+  "platforms": ["claude-code"],
+  "language": {
+    "policy": "tiered",
+    "user_lang": "zh-CN",
+    "agent_lang": "en"
+  },
+  "complexity": {
+    "signals": {
+      "skills": 3,
+      "hooks": true,
+      "extra_harnesses": 0,
+      "rules_agents": false,
+      "cross_scenario": false
+    },
+    "score": 3,
+    "verdict": "Medium",
+    "path": "full"
+  },
+  "signoff": {
+    "confirmed": true,
+    "date": "2026-08-09"
+  }
+}

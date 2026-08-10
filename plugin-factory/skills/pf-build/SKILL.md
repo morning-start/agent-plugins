@@ -175,7 +175,23 @@ Per the manifest `language` section (default **tiered** —
 
 Policy values: `tiered` (default) / `english` (all English) / `native` (all `user_lang`).
 
-### 8. Hand off to git engineering
+### 8. Auto-verify the generated project (mandatory)
+
+Before handing off, run the structural verifier on the generated project:
+
+```bash
+node scripts/verify.mjs structure --root <generated-plugin-dir>
+```
+
+If any FAIL findings exist, fix them before proceeding. Common issues:
+- Missing frontmatter in SKILL.md files
+- Skill name doesn't match parent directory
+- Missing hook shell variants (.sh / .ps1)
+- Missing harness artifacts
+
+This catches structural errors at build time rather than release time.
+
+### 9. Hand off to git engineering
 
 Once the standalone project is generated and verified, apply git discipline per
 `pf-git`: create a feature branch (or worktree) for the plugin work and follow
@@ -236,4 +252,5 @@ No manifest → no scaffold. No skill-creator → no skill body.
 - [ ] Manifest is signed off (from pf-design)
 - [ ] Skill-creator is available and confirmed
 - [ ] All skills pass eval via skill-creator
+- [ ] Auto-verify passes (no FAIL findings)
 - [ ] Generated plugin passes `npm run validate`

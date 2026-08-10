@@ -1,0 +1,44 @@
+{
+  "name": "demo-plugin",
+  "version": "0.1.0",
+  "scenario": "Automated code review for pull requests",
+  "components": {
+    "skills": [
+      {
+        "name": "analyze-pr",
+        "capability": "Scan PR diffs for common issues",
+        "triggers": ["analyze PR", "review PR", "check diff"]
+      },
+      {
+        "name": "generate-comments",
+        "capability": "Produce actionable review comments",
+        "triggers": ["generate review", "post comments"]
+      },
+      {
+        "name": "review-stats",
+        "capability": "Show coverage and catch-rate metrics",
+        "triggers": ["review stats", "show metrics"]
+      }
+    ],
+    "hooks": [
+      { "event": "session-start", "action": "load review rules" }
+    ],
+    "commands": ["/review-stats"],
+    "rules": ["Always review before merge"]
+  },
+  "orchestration": {
+    "entryPoints": ["using-demo"],
+    "chains": [["analyze-pr", "generate-comments"]],
+    "handoffs": { "analyze-pr": "diff-analysis.md" },
+    "conflicts": []
+  },
+  "language": {
+    "policy": "tiered",
+    "user_lang": "zh-CN",
+    "agent_lang": "en"
+  },
+  "signoff": {
+    "confirmed": true,
+    "date": "2026-08-09"
+  }
+}

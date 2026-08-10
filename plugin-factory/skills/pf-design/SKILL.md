@@ -118,6 +118,19 @@ orchestration:
 references: [..]
 ```
 
+### 5b. Validate the manifest (automated)
+
+After emitting the component manifest, validate it against the schema:
+
+```bash
+node scripts/validate-schema.mjs --schema schemas/component-manifest.schema.json --input <manifest.json>
+```
+
+Fix any validation errors before presenting for user sign-off. Common issues:
+- Missing required fields (name, version, scenario, components, orchestration, language, signoff)
+- Skill names don't match `^[a-z0-9]+(-[a-z0-9]+)*$`
+- Entry points don't match `^using-[a-z0-9-]+$`
+
 ### 6. Heavy path: record ADRs
 
 Architectural decisions (why this composition, why these harnesses) → route to
@@ -154,5 +167,6 @@ No manifest → no scaffold. No user sign-off → no build.
 
 - [ ] PRD is signed off
 - [ ] All skills have CSO descriptions
+- [ ] Manifest passes schema validation (`validate-schema.mjs`)
 - [ ] Manifest lists all per-harness artifacts
 - [ ] Triggers are mutually exclusive (or declared in conflicts)

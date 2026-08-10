@@ -55,6 +55,12 @@ Elicitation rules:
 - Challenge vague answers with a concrete counter-example ("what if …?").
 - Record verbatim; never silently paraphrase what the user said.
 
+Adaptive rules (skip when answer is already known):
+
+- Q6 (Platforms) answered with exactly one harness → skip multi-harness signals in Q7.
+- User provides a written PRD draft → skip Q1–Q4, go directly to Q5–Q8 + PRD refinement.
+- Change mode (existing plugin) → skip full interview entirely, use the Change mode template below.
+
 ### 2. Write the one-page PRD
 
 ```
@@ -69,6 +75,19 @@ Elicitation rules:
 ## Complexity signals  skills ~N · hooks Y/N · multi-harness Y/N · rules/agents Y/N
 ## Sign-off          user confirmation + date
 ```
+
+### 2b. Validate the PRD (automated)
+
+After writing the PRD, save it as JSON (or structured markdown) and validate against the schema:
+
+```bash
+node scripts/validate-schema.mjs --schema schemas/prd.schema.json --input <prd.json>
+```
+
+If validation fails, fix the PRD before proceeding to the complexity gate. Common issues:
+- Missing required fields (background, goals, features, scenarios, non_goals, platforms, language, signoff)
+- Name doesn't match `^[a-z0-9]+(-[a-z0-9]+)*$`
+- Goals or features arrays are empty
 
 ### 3. Apply the complexity gate (automated)
 
@@ -155,7 +174,9 @@ No PRD → no design, no scaffolding. Sign-off is mandatory.
 
 ## 自检清单 (Post-routing Self-Check)
 
-- [ ] All 8 questions asked one at a time
+- [ ] All 8 questions asked one at a time (or adaptive skips applied)
 - [ ] User answers recorded verbatim
 - [ ] PRD includes non-goals
+- [ ] PRD passes schema validation (`validate-schema.mjs`)
+- [ ] Complexity gate applied (automated, not manual)
 - [ ] User confirmed sign-off
