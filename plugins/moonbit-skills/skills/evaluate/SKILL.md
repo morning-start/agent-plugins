@@ -1,6 +1,6 @@
 ---
 name: moonbit-evaluate
-description: "Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'ship', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first. After evaluation approval, delegate deployment to moonbit-cd."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when evaluating or publishing a MoonBit project — the LAST step before publishing. Triggered by user phrases like 'publish', 'release', 'ship', 'ready to ship', 'final check', or after all verification passes. Make sure verify passed first. After evaluation approval, delegate deployment to moonbit-cd."
 ---
 
 # Evaluate — 验收评估 + 发布准备

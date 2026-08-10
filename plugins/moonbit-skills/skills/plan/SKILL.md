@@ -1,6 +1,6 @@
 ---
 name: moonbit-plan
-description: "Use FIRST before any MoonBit implementation work — when the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present) or when the user explicitly asks to build a MoonBit tool/lib/parser/CLI; do NOT use outside one. Use FIRST before any MoonBit implementation work — when the user says 'I want to build X', 'create a new project', 'write a parser/CLI/lib', 'make a MoonBit tool', or any project initiation request. Do NOT skip to implementation — always plan first."
 ---
 
 # Plan — 需求澄清 + 设计决策

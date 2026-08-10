@@ -1,6 +1,6 @@
 ---
 name: moonbit-task
-description: "Use when executing a single implementation task end-to-end — implementing one module or feature with test-first TDD (RED → GREEN → VERIFY), item-by-item acceptance, and quality delivery. Activated by user phrases like 'implement this task', 'finish this task', '实现这个任务', '完成单一模块', '逐项验收', or after moonbit-writing-plans hands off a single task."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when executing a single implementation task end-to-end — implementing one module or feature with test-first TDD (RED → GREEN → VERIFY), item-by-item acceptance, and quality delivery. Activated by user phrases like 'implement this task', 'finish this task', '实现这个任务', '完成单一模块', '逐项验收', or after moonbit-writing-plans hands off a single task."
 ---
 
 # Task — 单一任务实现

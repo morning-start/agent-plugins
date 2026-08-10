@@ -1,6 +1,6 @@
 ---
 name: moonbit-code-review
-description: "Use when requesting code review between implementation tasks, after completing a feature, or before merging — to verify work meets MoonBit quality standards. Triggered after each implement task or on user request."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when requesting code review between implementation tasks, after completing a feature, or before merging — to verify work meets MoonBit quality standards. Triggered after each implement task or on user request."
 ---
 
 # Code Review — MoonBit 代码审查

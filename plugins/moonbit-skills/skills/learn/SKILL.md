@@ -1,6 +1,6 @@
 ---
 name: moonbit-learn
-description: "Use when learning from bugs and updating the MoonBit skill system. Triggered by user phrases like 'learn', 'remember this', 'update the skill', or after moonbit-implement encounters a bug that required human intervention."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when learning from bugs and updating the MoonBit skill system. Triggered by user phrases like 'learn', 'remember this', 'update the skill', or after moonbit-implement encounters a bug that required human intervention."
 ---
 
 # Learn — 吸收错误，自我优化

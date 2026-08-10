@@ -1,6 +1,6 @@
 ---
 name: moonbit-scaffold
-description: "Use when generating a MoonBit project skeleton. Triggered by user phrases like 'scaffold', 'generate', 'skeleton', or when moon.mod is missing and a new project needs file structure. Dynamically generates project files based on type and user choices — no pre-made templates."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present) or when the user explicitly asks to scaffold a MoonBit project; do NOT use outside one. Use when generating a MoonBit project skeleton. Triggered by user phrases like 'scaffold', 'generate', 'skeleton', or when moon.mod is missing and a new project needs file structure. Dynamically generates project files based on type and user choices — no pre-made templates."
 ---
 
 # Scaffold — 动态生成项目骨架

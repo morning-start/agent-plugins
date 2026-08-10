@@ -1,6 +1,6 @@
 ---
 name: moonbit-security
-description: "Use when designing or reviewing security for a MoonBit project — threat modeling, dependency vulnerability scanning, security design review, and security audit integration. Triggered by user phrases like 'security review', 'threat model', 'security audit', 'vulnerability scan', 'secure design', 'dependencies check', '安全审计', '安全设计', '依赖扫描'. Also triggered when verify E2 reports security findings. Do NOT use for verification gate checks (use moonbit-verify E2) — this skill is about SECURITY-BY-DESIGN, not final audit."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when designing or reviewing security for a MoonBit project — threat modeling, dependency vulnerability scanning, security design review, and security audit integration. Triggered by user phrases like 'security review', 'threat model', 'security audit', 'vulnerability scan', 'secure design', 'dependencies check', '安全审计', '安全设计', '依赖扫描'. Also triggered when verify E2 reports security findings. Do NOT use for verification gate checks (use moonbit-verify E2) — this skill is about SECURITY-BY-DESIGN, not final audit."
 ---
 
 # Security — 安全左移

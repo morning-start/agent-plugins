@@ -1,6 +1,6 @@
 ---
 name: moonbit-init
-description: "Use when initializing a MoonBit project with git hooks for quality gates. Triggered by user phrases like 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', or when a new MoonBit project needs CI-style local checks."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when initializing a MoonBit project with git hooks for quality gates. Triggered by user phrases like 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', or when a new MoonBit project needs CI-style local checks."
 ---
 
 # Init — 项目初始化 + Git Hooks

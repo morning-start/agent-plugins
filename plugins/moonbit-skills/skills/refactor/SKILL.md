@@ -1,6 +1,6 @@
 ---
 name: moonbit-refactor
-description: "Use when refactoring code, managing technical debt, or eliminating code smells — with existing tests green. Triggered by 'refactor', 'technical debt', 'code smell', '重构', '技术债务', '坏味', '清理代码'. Do NOT use for new features or bug fixes."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when refactoring code, managing technical debt, or eliminating code smells — with existing tests green. Triggered by 'refactor', 'technical debt', 'code smell', '重构', '技术债务', '坏味', '清理代码'. Do NOT use for new features or bug fixes."
 ---
 
 # Refactor — 重构

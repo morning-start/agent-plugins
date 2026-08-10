@@ -1,6 +1,6 @@
 ---
 name: moonbit-verify
-description: "Use when running MoonBit verification gates — before claiming any work is done. Triggered by user phrases like 'check', 'audit', 'verify', 'test', 'quality', 'is it ready', or 'does it pass'. Do NOT skip this before claiming done — always verify first."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when running MoonBit verification gates — before claiming any work is done. Triggered by user phrases like 'check', 'audit', 'verify', 'test', 'quality', 'is it ready', or 'does it pass'. Do NOT skip this before claiming done — always verify first."
 ---
 
 # Verify — 三级检测门禁

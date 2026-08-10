@@ -1,6 +1,6 @@
 ---
 name: moonbit-git
-description: "Use when performing Git operations during MoonBit development — creating feature branches, committing task deliverables, merging branches, or considering parallel worktree. Triggered when a feature implementation needs a branch, when a task is accepted and ready to commit, or when parallel feature work is considered. One-time authorization: ask once, record approval in the target project's AGENTS.md, then auto commit+merge per task. Branch-per-feature: never modify main directly."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when performing Git operations during MoonBit development — creating feature branches, committing task deliverables, merging branches, or considering parallel worktree. Triggered when a feature implementation needs a branch, when a task is accepted and ready to commit, or when parallel feature work is considered. One-time authorization: ask once, record approval in the target project's AGENTS.md, then auto commit+merge per task. Branch-per-feature: never modify main directly."
 ---
 
 # Git — 分支工作流与提交契约

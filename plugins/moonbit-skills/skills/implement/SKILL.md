@@ -1,6 +1,6 @@
 ---
 name: moonbit-implement
-description: "Use when implementing MoonBit features, fixing bugs, or debugging code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'debug', 'error', or after a plan is approved."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when implementing MoonBit features, fixing bugs, or debugging code — before writing any production code. Activated by user phrases like 'implement', 'write code', 'add feature', 'fix this bug', 'debug', 'error', or after a plan is approved."
 ---
 
 # Implement — TDD 实现

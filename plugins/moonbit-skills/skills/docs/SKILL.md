@@ -1,6 +1,6 @@
 ---
 name: moonbit-docs
-description: "Use when writing, maintaining, or reviewing documentation for a MoonBit project — API docs (docstring), README, CHANGELOG, user guides, migration notes, and ADRs. Triggered by user phrases like 'write docs', 'add docstring', 'generate README', 'update changelog', 'write user guide', 'create ADR', 'document this', 'migration guide', 'add examples'. Also triggered when evaluate checks report doc completeness issues."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when writing, maintaining, or reviewing documentation for a MoonBit project — API docs (docstring), README, CHANGELOG, user guides, migration notes, and ADRs. Triggered by user phrases like 'write docs', 'add docstring', 'generate README', 'update changelog', 'write user guide', 'create ADR', 'document this', 'migration guide', 'add examples'. Also triggered when evaluate checks report doc completeness issues."
 ---
 
 # Docs — 文档即代码

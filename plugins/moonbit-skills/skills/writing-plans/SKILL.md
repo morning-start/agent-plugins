@@ -1,6 +1,6 @@
 ---
 name: moonbit-writing-plans
-description: "Use when transitioning from design to implementation — after moonbit-plan completes and the architecture/API are decided, but before moonbit-implement starts. Breaks the design into bite-sized implementation tasks."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when transitioning from design to implementation — after moonbit-plan completes and the architecture/API are decided, but before moonbit-implement starts. Breaks the design into bite-sized implementation tasks."
 ---
 
 # Writing Plans — MoonBit 实现计划

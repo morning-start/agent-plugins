@@ -1,6 +1,6 @@
 ---
 name: moonbit-cd
-description: "Use when deploying or rolling back a MoonBit project — deployment strategy selection, artifact management, rollback planning, and release channel distribution (native binary / wasm / lib). Triggered AFTER evaluate approval, by user phrases like 'deploy', 'rollout', 'release to users', 'publish binary', 'distribute', 'deploy to production', 'set up CD', 'release channels'. Do NOT use for CI pipeline setup (use moonbit-ci) or release readiness (use moonbit-evaluate)."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when deploying or rolling back a MoonBit project — deployment strategy selection, artifact management, rollback planning, and release channel distribution (native binary / wasm / lib). Triggered AFTER evaluate approval, by user phrases like 'deploy', 'rollout', 'release to users', 'publish binary', 'distribute', 'deploy to production', 'set up CD', 'release channels'. Do NOT use for CI pipeline setup (use moonbit-ci) or release readiness (use moonbit-evaluate)."
 ---
 
 # CD — 持续部署

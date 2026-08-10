@@ -1,6 +1,6 @@
 ---
 name: moonbit-testing
-description: "Use when designing tests, writing test code, or iterating on test organization — before or alongside implementation. Triggered by 'how to test', 'write tests', 'test organization', '测试架构', '写测试', '测试组织', '补测试', '测试重构'."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when designing tests, writing test code, or iterating on test organization — before or alongside implementation. Triggered by 'how to test', 'write tests', 'test organization', '测试架构', '写测试', '测试组织', '补测试', '测试重构'."
 ---
 
 # Testing — 测试设计与编写

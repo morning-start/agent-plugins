@@ -1,6 +1,6 @@
 ---
 name: using-moonbit-skills
-description: "Use at session start as bootstrap skill — establishes the MoonBit Skills workflow and routes user intent to the correct moonbit-* skill before any action. Check this before ANY response or action."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present) or when the user explicitly mentions MoonBit/moon CLI; do NOT activate outside one. Routes user intent to the correct moonbit-* skill before any action. Check this before ANY response or action."
 alwaysApply: true
 ---
 
@@ -58,6 +58,11 @@ When multiple skills match, route by intent:
 
 ## Trigger Matrix
 
+> ⚠️ **前置条件**：以下触发词**仅在 MoonBit 项目上下文**（当前目录存在 `moon.mod`
+> 或 `*.mbt` 文件，或用户明确提及 MoonBit / moon CLI 命令）时生效。非 MoonBit
+> 项目（Python/JS/Rust/其他）中的同名词（build/docs/check/test/git 等）**不得**
+> 路由到 moonbit-* 技能——直接回答或按其他插件流程处理。
+
 | User says (English) | User says (中文) | Skill |
 |---|---|---|
 | "init", "setup", "hooks", "initialize" | "初始化", "设置", "钩子" | `moonbit-init` |
@@ -90,7 +95,7 @@ These thoughts mean STOP — you are rationalizing:
 | "This is just a simple question" | Questions are tasks. Check for skills. |
 | "I need more context first" | Skill check comes BEFORE clarifying questions. |
 | "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "This is not a MoonBit project" | Skills may still apply — check intent. |
+| "This is not a MoonBit project" | Do NOT route to moonbit skills — answer directly. |
 | "I'll just fix this quickly" | Skill check comes BEFORE any action. |
 | "I remember this skill" | Skills evolve. Read current version. |
 | "I don't need a skill for this" | If a skill exists, use it. |

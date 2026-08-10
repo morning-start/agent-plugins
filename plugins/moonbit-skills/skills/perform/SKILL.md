@@ -1,6 +1,6 @@
 ---
 name: moonbit-perform
-description: "Use when optimizing performance, benchmarking, or analyzing bottlenecks — after implementation is functionally correct. Triggered by 'optimize performance', 'benchmark', 'profile', '性能优化', '性能瓶颈', '测量', '基线对比'. Do NOT use for functional implementation."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when optimizing performance, benchmarking, or analyzing bottlenecks — after implementation is functionally correct. Triggered by 'optimize performance', 'benchmark', 'profile', '性能优化', '性能瓶颈', '测量', '基线对比'. Do NOT use for functional implementation."
 ---
 
 # Perform — 性能优化
