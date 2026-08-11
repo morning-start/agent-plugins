@@ -22,7 +22,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, parseFrontmatter, keywordBag, jaccard } from "./verify.mjs";
+import { collectSkills, keywordBag, jaccard } from "./verify.mjs";
 
 /** Overlap threshold matching verify.mjs's trigger-overlap probe. */
 export const OVERLAP_THRESHOLD = 0.85;
@@ -58,10 +58,8 @@ export async function skillsFromRoot(root) {
   const collected = await collectSkills(root);
   const out = [];
   for (const s of collected) {
-    if (!s.text) continue;
-    const fm = parseFrontmatter(s.text);
-    if (!fm) continue;
-    out.push({ name: s.dirName, triggers: fm.description ?? "" });
+    if (!s.text || !s.fm) continue;
+    out.push({ name: s.dirName, triggers: s.fm.description ?? "" });
   }
   return out;
 }

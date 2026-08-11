@@ -19,7 +19,7 @@
  */
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, collectSkillRefs, parseFrontmatter } from "./verify.mjs";
+import { collectSkills, collectSkillRefs, LIFECYCLE_STATUS_RE } from "./verify.mjs";
 
 /**
  * Build the dependency graph: for every skill, the set of skills it references.
@@ -48,7 +48,7 @@ export function endangeredDependents(skills) {
   const statusOf = new Map();
   for (const s of skills) {
     if (!s.text) continue;
-    const m = s.text.match(/lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/);
+    const m = LIFECYCLE_STATUS_RE.exec(s.text);
     if (m) statusOf.set(s.dirName, m[1]);
   }
   const graph = buildDependencyGraph(skills);

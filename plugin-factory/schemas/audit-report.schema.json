@@ -4,18 +4,17 @@
   "title": "Audit report (verify.mjs output)",
   "description": "Finding shape emitted by scripts/verify.mjs across structure / harness / orchestration / lifecycle layers.",
   "type": "object",
-  "required": ["layer", "findings", "summary"],
+  "required": ["root", "findings"],
   "properties": {
-    "layer": { "enum": ["structure", "harness", "orchestration", "lifecycle"] },
-    "root": { "type": "string", "description": "Audited root directory (relative)." },
+    "root": { "type": "string", "description": "Audited root directory (absolute or relative)." },
     "findings": { "type": "array", "items": { "type": "object", "required": ["signal", "file", "severity", "action", "impact"], "properties": {
       "signal": { "type": "string", "description": "Probe identifier, e.g. frontmatter-missing, version-drift, orphan-skill." },
       "file": { "type": "string", "description": "Relative path of the offending file." },
       "severity": { "enum": ["FAIL", "WARN", "INFO"] },
       "action": { "type": "string", "description": "Recommended fix." },
-      "impact": { "type": "string", "description": "Why this matters." }
-    } } },
-    "summary": { "type": "object", "required": ["fail", "warn", "info"], "properties": { "fail": { "type": "integer", "minimum": 0 }, "warn": { "type": "integer", "minimum": 0 }, "info": { "type": "integer", "minimum": 0 } } }
+      "impact": { "type": "string", "description": "Why this matters." },
+      "learnable": { "type": "boolean", "description": "Whether this finding can be used for learning/teaching." }
+    } } }
   },
   "additionalProperties": false
 }

@@ -25,7 +25,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, parseFrontmatter, keywordBag } from "./verify.mjs";
+import { collectSkills, keywordBag } from "./verify.mjs";
 
 export const DEFAULT_THRESHOLD = 0.18;
 export const DEFAULT_MIN_BUNDLE = 2;
@@ -77,10 +77,8 @@ export async function skillsFromRoot(root) {
   const collected = await collectSkills(root);
   const out = [];
   for (const s of collected) {
-    if (!s.text) continue;
-    const fm = parseFrontmatter(s.text);
-    if (!fm) continue;
-    out.push({ name: s.dirName, description: fm.description ?? "" });
+    if (!s.text || !s.fm) continue;
+    out.push({ name: s.dirName, description: s.fm.description ?? "" });
   }
   return out;
 }

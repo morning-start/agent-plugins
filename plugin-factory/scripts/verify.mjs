@@ -44,6 +44,28 @@ const SKELETON_HEADINGS = new Set([
   "common mistakes",
 ]);
 
+/** Claude Code hook event whitelist (29 events from 2026-08-09 guide + community). */
+const CLAUDE_HOOK_EVENTS = new Set([
+  "SessionStart", "SessionEnd", "Setup", "UserPromptSubmit", "UserPromptExpansion",
+  "PreToolUse", "PermissionRequest", "PermissionDenied", "PostToolUse",
+  "PostToolUseFailure", "PostToolBatch", "Notification", "MessageDisplay",
+  "SubagentStart", "SubagentStop", "TaskCreated", "TaskCompleted", "Stop",
+  "StopFailure", "TeammateIdle", "InstructionsLoaded", "ConfigChange",
+  "CwdChanged", "DirectoryAdded", "FileChanged", "WorktreeCreate",
+  "WorktreeRemove", "PreCompact", "PostCompact", "Elicitation", "ElicitationResult",
+  "PreCommit", "PreCompletion",
+]);
+
+/** Harness manifest detection — data-driven replacement for repeated try/stat. */
+const HARNESS_MANIFESTS = [
+  { file: ".claude-plugin/plugin.json", name: "claude-code" },
+  { file: ".opencode/opencode.json", name: "opencode" },
+  { file: ".codex-plugin/plugin.json", name: "codex" },
+];
+
+/** Lifecycle status regex — single source for all lifecycle probes. */
+export const LIFECYCLE_STATUS_RE = /lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/;
+
 /** Parse the YAML frontmatter block of a markdown skill/command file. */
 export function parseFrontmatter(text) {
   const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text);
@@ -65,7 +87,8 @@ export async function readJson(path) {
 /**
  * Collect skill directories under `<root>/skills/`, recording nesting depth
  * (depth 1 = skills/<name>/SKILL.md). Missing SKILL.md files are reported by
- * the structure layer.
+ * the structure layer. Each skill object includes a cached `fm` (parsed
+ * frontmatter) to avoid repeated parsing across checks.
  */
 export async function collectSkills(root) {
   const out = [];
@@ -88,7 +111,8 @@ export async function collectSkills(root) {
           /* missing SKILL.md handled by structure checks */
         }
         if (text !== null || (await isLikelySkillDir(full))) {
-          out.push({ dirName: entry.name, rel: `${prefix}${entry.name}/`, path: skillFile, depth, text });
+          const fm = text ? parseFrontmatter(text) : null;
+          out.push({ dirName: entry.name, rel: `${prefix}${entry.name}/`, path: skillFile, depth, text, fm });
         }
         await walk(full, depth + 1, `${prefix}${entry.name}/`);
       }
@@ -111,31 +135,22 @@ async function isLikelySkillDir(dir) {
 /** Determine which harnesses the plugin advertises (by existing manifests). */
 export async function collectHarnesses(root) {
   const harnesses = [];
-  const pkg = join(root, "package.json");
+  // Package.json harnesses (pi/omp)
   try {
-    const json = await readJson(pkg);
+    const json = await readJson(join(root, "package.json"));
     if (json.pi) harnesses.push("pi");
     if (json.omp) harnesses.push("oh-my-pi");
   } catch {
     /* no package.json */
   }
-  try {
-    await stat(join(root, ".claude-plugin", "plugin.json"));
-    harnesses.push("claude-code");
-  } catch {
-    /* not advertised */
-  }
-  try {
-    await stat(join(root, ".opencode", "opencode.json"));
-    harnesses.push("opencode");
-  } catch {
-    /* not advertised */
-  }
-  try {
-    await stat(join(root, ".codex-plugin", "plugin.json"));
-    harnesses.push("codex");
-  } catch {
-    /* not advertised */
+  // File-based harness detection
+  for (const { file, name } of HARNESS_MANIFESTS) {
+    try {
+      await stat(join(root, ...file.split("/")));
+      harnesses.push(name);
+    } catch {
+      /* not advertised */
+    }
   }
   return harnesses;
 }
@@ -158,12 +173,11 @@ function sortFindings(findings) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Layer 1 — structure                                                 */
+/* Layer 1 — structure (extracted sub-checks)                          */
 /* ------------------------------------------------------------------ */
 
-async function structureChecks(root, findings) {
-  const skills = await collectSkills(root);
-
+/** Validate skill frontmatter: name, description trigger, length. */
+function skillFrontmatterChecks(skills, findings) {
   for (const s of skills) {
     const rel = `skills/${s.rel}SKILL.md`;
     if (!s.text) {
@@ -172,14 +186,13 @@ async function structureChecks(root, findings) {
       );
       continue;
     }
-    const fm = parseFrontmatter(s.text);
-    if (!fm) {
+    if (!s.fm) {
       findings.push(
         makeFinding("missing-frontmatter", rel, "FAIL", "Add YAML frontmatter delimited by --- markers.", "Skill metadata is unreadable."),
       );
       continue;
     }
-    const name = fm.name || "";
+    const name = s.fm.name || "";
     if (name !== s.dirName) {
       findings.push(
         makeFinding("name-mismatch", rel, "FAIL", `Set frontmatter name to "${s.dirName}".`, "The skill name does not match its directory."),
@@ -190,7 +203,7 @@ async function structureChecks(root, findings) {
         makeFinding("invalid-name", rel, "FAIL", "Use lowercase letters, digits, and hyphens.", "The name violates the agent-skills naming standard."),
       );
     }
-    const desc = fm.description || "";
+    const desc = s.fm.description || "";
     if (!desc.startsWith("Use when")) {
       findings.push(
         makeFinding("description-trigger", rel, "FAIL", 'Start description with "Use when…".', "The model cannot decide when to trigger the skill."),
@@ -202,8 +215,10 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
 
-  // Commands must carry a frontmatter description.
+/** Commands must carry a frontmatter description. */
+async function commandChecks(root, findings) {
   let commands = [];
   try {
     commands = await readdir(join(root, "commands"));
@@ -221,8 +236,10 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
 
-  // Hooks need bash + a secondary shell (PowerShell or Nushell).
+/** Hooks need bash + a secondary shell (PowerShell or Nushell). */
+async function hookPairChecks(root, findings) {
   let hooks = [];
   try {
     hooks = await readdir(join(root, "hooks"));
@@ -242,8 +259,10 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
 
-  // Declared JSON files must be valid JSON.
+/** Declared JSON files must be valid JSON. */
+async function jsonValidityChecks(root, findings) {
   for (const rel of ["package.json", ".claude-plugin/plugin.json", "hooks/hooks.json", ".opencode/opencode.json"]) {
     const abs = join(root, rel);
     try {
@@ -255,23 +274,10 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- hook-event: Claude Code hook event names must be on the whitelist
-  // (guards typos like `postToolUse` vs `PostToolUse`). Baseline: the 29
-  // events from the 2026-08-09 guide (references/hooks/claude-code.md),
-  // extended with `PreCommit` (community-documented event, used by pf's
-  // pre-commit gate) and `PreCompletion` (pf's pre-completion gate event).
-  // Only applies when hooks/hooks.json exists (plugins without hooks are fine).
-  const CLAUDE_HOOK_EVENTS = new Set([
-    "SessionStart", "SessionEnd", "Setup", "UserPromptSubmit", "UserPromptExpansion",
-    "PreToolUse", "PermissionRequest", "PermissionDenied", "PostToolUse",
-    "PostToolUseFailure", "PostToolBatch", "Notification", "MessageDisplay",
-    "SubagentStart", "SubagentStop", "TaskCreated", "TaskCompleted", "Stop",
-    "StopFailure", "TeammateIdle", "InstructionsLoaded", "ConfigChange",
-    "CwdChanged", "DirectoryAdded", "FileChanged", "WorktreeCreate",
-    "WorktreeRemove", "PreCompact", "PostCompact", "Elicitation", "ElicitationResult",
-    "PreCommit", "PreCompletion",
-  ]);
+/** Claude Code hook event names must be on the whitelist. */
+async function hookEventCheck(root, findings) {
   const hooksJsonPath = join(root, "hooks", "hooks.json");
   try {
     const hooksJson = await readJson(hooksJsonPath);
@@ -282,13 +288,13 @@ async function structureChecks(root, findings) {
         );
       }
     }
-  } catch (err) {
-    if (err.code !== "ENOENT") {
-      /* invalid JSON already reported above */
-    }
+  } catch {
+    /* missing or invalid hooks.json — already reported by jsonValidityChecks */
   }
+}
 
-  // --- skill-structure: active skills must have Iron Law / Red Flags / 自检清单.
+/** Active skills must have Iron Law / Red Flags / 自检清单. */
+function skillStructureChecks(skills, findings) {
   for (const s of skills) {
     if (!s.text || s.dirName === "pf-learn") continue;
     const rel = `skills/${s.rel}SKILL.md`;
@@ -305,8 +311,10 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- pre-commit-hook: verify hooks/pre-commit.sh exists when hooks/ directory is present.
+/** Verify hooks/pre-commit.sh exists when hooks/ directory is present. */
+async function preCommitHookCheck(root, findings) {
   let hooksDir = null;
   try {
     hooksDir = await readdir(join(root, "hooks"));
@@ -321,6 +329,17 @@ async function structureChecks(root, findings) {
       );
     }
   }
+}
+
+async function structureChecks(root, findings) {
+  const skills = await collectSkills(root);
+  skillFrontmatterChecks(skills, findings);
+  await commandChecks(root, findings);
+  await hookPairChecks(root, findings);
+  await jsonValidityChecks(root, findings);
+  await hookEventCheck(root, findings);
+  skillStructureChecks(skills, findings);
+  await preCommitHookCheck(root, findings);
 }
 
 /* ------------------------------------------------------------------ */
@@ -444,7 +463,7 @@ async function harnessChecks(root, findings) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Layer 3 — orchestration / lifecycle probes                         */
+/* Layer 3 — orchestration / lifecycle probes (extracted sub-checks)   */
 /* ------------------------------------------------------------------ */
 
 /** Normalized keyword bag for trigger-overlap comparison. */
@@ -467,13 +486,8 @@ export function jaccard(a, b) {
   return union === 0 ? 0 : inter / union;
 }
 
-async function orchestrationChecks(root, findings) {
-  const skills = await collectSkills(root);
-  const names = new Set(skills.map((s) => s.dirName));
-  const entrySkills = skills.filter((s) => /^using-/.test(s.dirName));
-  const methods = skills.filter((s) => s.text !== null && s.depth === 1);
-
-  // --- missing-entry-skill: methodology plugin without using-<plugin> entry.
+/** Methodology plugin without using-<plugin> entry. */
+async function missingEntrySkillCheck(root, skills, entrySkills, findings) {
   const declaredEntry = await declaresEntryPath(root);
   if (declaredEntry && entrySkills.length === 0) {
     findings.push(
@@ -486,8 +500,10 @@ async function orchestrationChecks(root, findings) {
       ),
     );
   }
+}
 
-  // --- broken-handoff: chained skills reference skills that do not exist.
+/** Chained skills reference skills that do not exist. */
+function brokenHandoffCheck(skills, names, findings) {
   for (const s of skills) {
     if (!s.text) continue;
     const rel = `skills/${s.rel}SKILL.md`;
@@ -501,26 +517,31 @@ async function orchestrationChecks(root, findings) {
       }
     }
   }
+}
 
-  // --- orphan-skill: non-entry skill unreachable from any entry or chain.
-  if (entrySkills.length > 0) {
-    const reachable = new Set(entrySkills.map((s) => s.dirName));
-    const allText = skills.filter((s) => s.text).map((s) => s.text).join("\n");
-    for (const s of skills) {
-      if (reachable.has(s.dirName)) continue;
-      if (new RegExp(`\\b${escapeRegExp(s.dirName)}\\b`).test(allText) || new RegExp(`\\b${escapeRegExp(s.dirName)}\\b`).test(await rootIndexText(root))) {
-        reachable.add(s.dirName);
-      }
-    }
-    for (const s of skills) {
-      if (reachable.has(s.dirName) || /^using-/.test(s.dirName)) continue;
-      findings.push(
-        makeFinding("orphan-skill", `skills/${s.rel}SKILL.md`, "WARN", "Link this skill from an entry point or chain, or merge it.", "The skill is unreachable from any entry or chain."),
-      );
+/** Non-entry skill unreachable from any entry or chain. */
+async function orphanSkillCheck(root, skills, entrySkills, findings) {
+  if (entrySkills.length === 0) return;
+  const reachable = new Set(entrySkills.map((s) => s.dirName));
+  const allText = skills.filter((s) => s.text).map((s) => s.text).join("\n");
+  const rootText = await rootIndexText(root);
+  for (const s of skills) {
+    if (reachable.has(s.dirName)) continue;
+    const re = new RegExp(`\\b${escapeRegExp(s.dirName)}\\b`);
+    if (re.test(allText) || re.test(rootText)) {
+      reachable.add(s.dirName);
     }
   }
+  for (const s of skills) {
+    if (reachable.has(s.dirName) || /^using-/.test(s.dirName)) continue;
+    findings.push(
+      makeFinding("orphan-skill", `skills/${s.rel}SKILL.md`, "WARN", "Link this skill from an entry point or chain, or merge it.", "The skill is unreachable from any entry or chain."),
+    );
+  }
+}
 
-  // --- skill-too-large: line count or heading depth beyond thresholds.
+/** Line count or heading depth beyond thresholds. */
+function skillTooLargeCheck(skills, findings) {
   for (const s of skills) {
     if (!s.text) continue;
     const rel = `skills/${s.rel}SKILL.md`;
@@ -538,13 +559,15 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- trigger-overlap: two descriptions matching the same intent.
-  const withDesc = skills.filter((s) => s.text && parseFrontmatter(s.text)?.description);
+/** Two descriptions matching the same intent. */
+function triggerOverlapCheck(skills, findings) {
+  const withDesc = skills.filter((s) => s.text && s.fm?.description);
   for (let i = 0; i < withDesc.length; i++) {
     for (let j = i + 1; j < withDesc.length; j++) {
-      const a = parseFrontmatter(withDesc[i].text).description;
-      const b = parseFrontmatter(withDesc[j].text).description;
+      const a = withDesc[i].fm.description;
+      const b = withDesc[j].fm.description;
       const bagA = keywordBag(a);
       const bagB = keywordBag(b);
       const sim = jaccard(bagA, bagB);
@@ -562,11 +585,10 @@ async function orchestrationChecks(root, findings) {
       }
     }
   }
+}
 
-  // --- repeated-guidance: identical headings repeated across skills.
-  // A plugin may declare its shared skill-skeleton headings in
-  // references/skill-structure.md (its "##" headings). Declared headings are
-  // structure, not duplicated guidance — same treatment as SKELETON_HEADINGS.
+/** Identical headings repeated across skills. */
+async function repeatedGuidanceCheck(root, skills, findings) {
   const rootSkeleton = new Set();
   try {
     const ss = await readFile(join(root, "references", "skill-structure.md"), "utf8");
@@ -598,8 +620,10 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- nested-skill-tree: skill nesting deeper than the allowed depth.
+/** Skill nesting deeper than the allowed depth. */
+function nestedSkillTreeCheck(skills, findings) {
   for (const s of skills) {
     if (s.depth > MAX_SKILL_NESTING) {
       findings.push(
@@ -607,28 +631,28 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- lifecycle-status: check skill frontmatter for lifecycle metadata.
+/** Check skill frontmatter for lifecycle metadata. */
+function lifecycleStatusCheck(skills, findings) {
   for (const s of skills) {
     if (!s.text) continue;
     const rel = `skills/${s.rel}SKILL.md`;
-    const hasLifecycleStatus = /lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/.test(s.text);
-    if (!hasLifecycleStatus) {
+    const statusMatch = LIFECYCLE_STATUS_RE.exec(s.text);
+    if (!statusMatch) {
       findings.push(
         makeFinding("lifecycle-status", rel, "WARN", "Add lifecycle metadata (status/version/created/updated) to the skill frontmatter.", "Skill is missing lifecycle metadata."),
       );
-    } else {
-      const statusMatch = s.text.match(/lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/);
-      if (statusMatch && (statusMatch[1] === "deprecated" || statusMatch[1] === "retired")) {
-        findings.push(
-          makeFinding("lifecycle-status", rel, "INFO", `Skill is ${statusMatch[1]}. Consider removing or replacing it.`, "Deprecated/retired skills should be cleaned up."),
-        );
-      }
+    } else if (statusMatch[1] === "deprecated" || statusMatch[1] === "retired") {
+      findings.push(
+        makeFinding("lifecycle-status", rel, "INFO", `Skill is ${statusMatch[1]}. Consider removing or replacing it.`, "Deprecated/retired skills should be cleaned up."),
+      );
     }
   }
+}
 
-  // --- harness-gap: advertised harness without a discoverable skill path.
-  const harnesses = await collectHarnesses(root);
+/** Advertised harness without a discoverable skill path. */
+async function harnessGapCheck(root, harnesses, findings) {
   if (harnesses.includes("opencode")) {
     try {
       await stat(join(root, "skills"));
@@ -638,8 +662,6 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
-
-  // --- codex harness-gap: advertised but no .codex-plugin directory.
   if (harnesses.includes("codex")) {
     try {
       await stat(join(root, ".codex-plugin"));
@@ -649,13 +671,14 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- zombie-skill: no trigger description, references, or tests.
+/** No trigger description, references, or tests. */
+async function zombieSkillCheck(root, skills, findings) {
   for (const s of skills) {
     if (!s.text) continue;
     const rel = `skills/${s.rel}SKILL.md`;
-    const fm = parseFrontmatter(s.text);
-    const hasTrigger = fm?.description?.startsWith("Use when");
+    const hasTrigger = s.fm?.description?.startsWith("Use when");
     const dir = join(root, "skills", s.rel.replace(/\/$/, ""));
     const hasSupport = await dirHasSupport(dir);
     if (!hasTrigger && !hasSupport) {
@@ -664,8 +687,10 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- name-collision: duplicate skill names across sources.
+/** Duplicate skill names across sources. */
+function nameCollisionCheck(skills, findings) {
   const seenNames = new Map();
   for (const s of skills) {
     if (!seenNames.has(s.dirName)) seenNames.set(s.dirName, []);
@@ -678,8 +703,10 @@ async function orchestrationChecks(root, findings) {
       );
     }
   }
+}
 
-  // --- version-drift: root plugin version vs skill versions.
+/** Root plugin version vs skill versions. */
+async function versionDriftCheck(root, skills, findings) {
   const versions = new Set();
   const versionSources = [];
   let pkg = null;
@@ -703,8 +730,7 @@ async function orchestrationChecks(root, findings) {
   }
   for (const s of skills) {
     if (!s.text) continue;
-    const fm = parseFrontmatter(s.text);
-    const meta = fm?.metadata;
+    const meta = s.fm?.metadata;
     if (typeof meta === "string") {
       // metadata written as a single-line YAML value: "metadata: { version: 0.1.0 }"
       const v = /version\s*:\s*([0-9][^\s,}]*)/.exec(meta);
@@ -712,109 +738,109 @@ async function orchestrationChecks(root, findings) {
         versions.add(v[1]);
         versionSources.push(`skills/${s.dirName}:${v[1]}`);
       }
-    } else if (meta && typeof meta === "object" && meta.version) {
-      versions.add(String(meta.version));
-      versionSources.push(`skills/${s.dirName}:${meta.version}`);
     }
+    // Note: parseFrontmatter only returns string values, so the typeof meta === "object"
+    // branch is unreachable — removed as dead code.
   }
   if (versions.size > 1) {
     findings.push(
       makeFinding("version-drift", "package.json", "WARN", "Align all declared versions to a single source of truth.", `Declared versions differ: ${[...versionSources].join(", ")}.`),
     );
   }
+}
 
-  // --- adr-status: ADR numbering continuity and status-field hygiene.
-  // Absence of docs/ADR-*.md is fine (only significant decisions get ADRs);
-  // present ADRs must form a readable, immutable decision chain.
+/** ADR numbering continuity and status-field hygiene. */
+async function adrStatusCheck(root, findings) {
   let adrFiles = [];
   try {
     adrFiles = (await readdir(join(root, "docs"))).filter((f) => /^ADR-\d{4}-.+\.md$/.test(f));
   } catch {
     /* no docs directory — no ADRs to check */
   }
-  if (adrFiles.length > 0) {
-    const numbers = adrFiles.map((f) => Number(/^ADR-(\d{4})-/.exec(f)?.[1] ?? NaN));
-    const seen = new Map();
-    for (const f of adrFiles) {
-      const n = Number(/^ADR-(\d{4})-/.exec(f)?.[1] ?? NaN);
-      if (Number.isNaN(n)) continue;
-      if (!seen.has(n)) seen.set(n, []);
-      seen.get(n).push(f);
+  if (adrFiles.length === 0) return;
+
+  const numbers = adrFiles.map((f) => Number(/^ADR-(\d{4})-/.exec(f)?.[1] ?? NaN));
+  const seen = new Map();
+  for (let i = 0; i < adrFiles.length; i++) {
+    const n = numbers[i];
+    if (Number.isNaN(n)) continue;
+    if (!seen.has(n)) seen.set(n, []);
+    seen.get(n).push(adrFiles[i]);
+  }
+  for (const [n, files] of seen) {
+    if (files.length > 1) {
+      findings.push(
+        makeFinding("adr-status", files.join(", "), "WARN", `Renumber ADR-${String(n).padStart(4, "0")} — one number per decision.`, "Duplicate ADR numbers break the decision log."),
+      );
     }
-    for (const [n, files] of seen) {
-      if (files.length > 1) {
-        findings.push(
-          makeFinding("adr-status", files.join(", "), "WARN", `Renumber ADR-${String(n).padStart(4, "0")} — one number per decision.`, "Duplicate ADR numbers break the decision log."),
-        );
-      }
+  }
+  const sorted = [...numbers].filter((n) => !Number.isNaN(n)).sort((a, b) => a - b);
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] - sorted[i - 1] > 1) {
+      findings.push(
+        makeFinding("adr-status", "docs/", "INFO", `ADR sequence jumps from ${sorted[i - 1]} to ${sorted[i]} — add the missing record.`, "A gap suggests a missing decision record."),
+      );
     }
-    const sorted = [...numbers].filter((n) => !Number.isNaN(n)).sort((a, b) => a - b);
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i] - sorted[i - 1] > 1) {
-        findings.push(
-          makeFinding("adr-status", "docs/", "INFO", `ADR sequence jumps from ${sorted[i - 1]} to ${sorted[i]} — add the missing record.`, "A gap suggests a missing decision record."),
-        );
-      }
+  }
+  const STATUS_RE = /^(Proposed|Accepted|Superseded|Deprecated)/;
+  for (const f of adrFiles) {
+    const text = await readFile(join(root, "docs", f), "utf8");
+    const statusLine = text.split(/\r?\n/).find((l) => /^\s*-\s*\*\*状态\*\*/.test(l));
+    if (!statusLine) {
+      findings.push(
+        makeFinding("adr-status", `docs/${f}`, "WARN", "Add a '**状态**: Accepted' status field.", "An ADR without a status cannot be read as a decision chain."),
+      );
+      continue;
     }
-    const STATUS_RE = /^(Proposed|Accepted|Superseded|Deprecated)/;
-    for (const f of adrFiles) {
-      const text = await readFile(join(root, "docs", f), "utf8");
-      const statusLine = text.split(/\r?\n/).find((l) => /^\s*-\s*\*\*状态\*\*/.test(l));
-      if (!statusLine) {
+    const status = (statusLine.match(/\*\*状态\*\*:\s*(.+)/)?.[1] ?? "").trim();
+    if (!STATUS_RE.test(status)) {
+      findings.push(
+        makeFinding("adr-status", `docs/${f}`, "WARN", `Use one of Proposed/Accepted/Superseded/Deprecated (found "${status}").`, "Unknown ADR status."),
+      );
+    } else if (status.startsWith("Superseded")) {
+      const selfNum = /^ADR-(\d{4})/.exec(f)?.[1];
+      const hasLink = [...text.matchAll(/ADR-(\d{4})/g)].some((m) => m[1] !== selfNum);
+      if (!hasLink) {
         findings.push(
-          makeFinding("adr-status", `docs/${f}`, "WARN", "Add a '**状态**: Accepted' status field.", "An ADR without a status cannot be read as a decision chain."),
+          makeFinding("adr-status", `docs/${f}`, "WARN", "Link the superseding ADR (e.g. 'Superseded by ADR-0003').", "A superseded ADR without a link breaks the chain."),
         );
-        continue;
-      }
-      const status = (statusLine.match(/\*\*状态\*\*:\s*(.+)/)?.[1] ?? "").trim();
-      if (!STATUS_RE.test(status)) {
-        findings.push(
-          makeFinding("adr-status", `docs/${f}`, "WARN", `Use one of Proposed/Accepted/Superseded/Deprecated (found "${status}").`, "Unknown ADR status."),
-        );
-      } else if (status.startsWith("Superseded")) {
-        const selfNum = /^ADR-(\d{4})/.exec(f)?.[1];
-        const hasLink = [...text.matchAll(/ADR-(\d{4})/g)].some((m) => m[1] !== selfNum);
-        if (!hasLink) {
-          findings.push(
-            makeFinding("adr-status", `docs/${f}`, "WARN", "Link the superseding ADR (e.g. 'Superseded by ADR-0003').", "A superseded ADR without a link breaks the chain."),
-          );
-        }
       }
     }
   }
+}
 
-  // --- spec-trace: handoff schema contract integrity (spec-anchored, Iron Law 6).
-  // Every schema must parse, and every handoff schema needs positive + negative
-  // contract fixtures; absence of schemas/ is fine (generated plugins don't ship one).
+/** Handoff schema contract integrity (spec-anchored, Iron Law 6). */
+async function specTraceCheck(root, findings) {
   let schemaFiles = [];
   try {
     schemaFiles = (await readdir(join(root, "schemas"))).filter((f) => f.endsWith(".schema.json"));
   } catch {
     /* no schemas directory — no contract to trace */
   }
-  if (schemaFiles.length > 0) {
-    for (const f of schemaFiles) {
-      try {
-        await readJson(join(root, "schemas", f));
-      } catch {
-        findings.push(
-          makeFinding("spec-trace", `schemas/${f}`, "WARN", `Fix JSON syntax in schemas/${f}.`, "An unparsable schema cannot act as a contract."),
-        );
-      }
-    }
-    for (const sub of ["verify-valid", "verify-invalid"]) {
-      try {
-        await stat(join(root, "tests", "fixtures", sub));
-      } catch {
-        findings.push(
-          makeFinding("spec-trace", `tests/fixtures/${sub}`, "WARN", `Create tests/fixtures/${sub}/ with contract examples.`, "A schema without positive/negative fixtures is unverified (spec-anchored)."),
-        );
-      }
+  if (schemaFiles.length === 0) return;
+
+  for (const f of schemaFiles) {
+    try {
+      await readJson(join(root, "schemas", f));
+    } catch {
+      findings.push(
+        makeFinding("spec-trace", `schemas/${f}`, "WARN", `Fix JSON syntax in schemas/${f}.`, "An unparsable schema cannot act as a contract."),
+      );
     }
   }
+  for (const sub of ["verify-valid", "verify-invalid"]) {
+    try {
+      await stat(join(root, "tests", "fixtures", sub));
+    } catch {
+      findings.push(
+        makeFinding("spec-trace", `tests/fixtures/${sub}`, "WARN", `Create tests/fixtures/${sub}/ with contract examples.`, "A schema without positive/negative fixtures is unverified (spec-anchored)."),
+      );
+    }
+  }
+}
 
-  // --- pipeline-consistency: validate pipeline-state.json integrity.
-  // Absence is fine (pre-v1 plugins don't have it); presence requires valid schema.
+/** Validate pipeline-state.json integrity. */
+async function pipelineConsistencyCheck(root, findings) {
   try {
     const ps = await import("./pipeline-state.mjs");
     const pipelineState = await ps.readState(root);
@@ -839,6 +865,29 @@ async function orchestrationChecks(root, findings) {
   }
 }
 
+async function orchestrationChecks(root, findings) {
+  const skills = await collectSkills(root);
+  const names = new Set(skills.map((s) => s.dirName));
+  const entrySkills = skills.filter((s) => /^using-/.test(s.dirName));
+  const harnesses = await collectHarnesses(root);
+
+  await missingEntrySkillCheck(root, skills, entrySkills, findings);
+  brokenHandoffCheck(skills, names, findings);
+  await orphanSkillCheck(root, skills, entrySkills, findings);
+  skillTooLargeCheck(skills, findings);
+  triggerOverlapCheck(skills, findings);
+  await repeatedGuidanceCheck(root, skills, findings);
+  nestedSkillTreeCheck(skills, findings);
+  lifecycleStatusCheck(skills, findings);
+  await harnessGapCheck(root, harnesses, findings);
+  await zombieSkillCheck(root, skills, findings);
+  nameCollisionCheck(skills, findings);
+  await versionDriftCheck(root, skills, findings);
+  await adrStatusCheck(root, findings);
+  await specTraceCheck(root, findings);
+  await pipelineConsistencyCheck(root, findings);
+}
+
 /* ------------------------------------------------------------------ */
 /* Coverage check (VFY-2) — opt-in, configurable severity              */
 /* ------------------------------------------------------------------ */
@@ -858,7 +907,7 @@ async function coverageChecks(root, findings, mode) {
   for (const s of skills) {
     if (!s.text) continue;
     const rel = `skills/${s.rel}SKILL.md`;
-    const statusMatch = s.text.match(/lifecycle:\s*\n\s+status:\s+(active|deprecated|retired)/);
+    const statusMatch = LIFECYCLE_STATUS_RE.exec(s.text);
     if (!statusMatch || statusMatch[1] !== "active") continue; // only active skills are covered
     if (await skillHasTest(root, s.dirName, s.text)) continue;
     findings.push(
