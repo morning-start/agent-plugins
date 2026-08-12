@@ -133,6 +133,7 @@ ${piToolMapping()}
   }
 }
 
+// Canonical stripFrontmatter — keep in sync with hooks/pre/session-start.ts.
 function stripFrontmatter(content: string): string {
   const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
   return (match ? match[1] : content).trim();
@@ -150,6 +151,7 @@ Pi does not ship a standard subagent tool. If a subagent tool such as \`subagent
 Pi does not ship a standard task-list tool. If an installed todo/task tool is available, use it. Otherwise track work in plan files or a repo-local \`TODO.md\` when task tracking is needed. Treat older \`TodoWrite\` references as this task-tracking action.`;
 }
 
+// Keep in sync with hooks/pre/session-start.ts.
 function messageContainsBootstrap(message: unknown): boolean {
   const content = (message as { content?: unknown }).content;
   if (typeof content === "string") return content.includes(BOOTSTRAP_MARKER);

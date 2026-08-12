@@ -101,11 +101,13 @@ OMP does not ship a standard task-list tool. If an installed todo/task tool is a
   }
 }
 
+// Canonical stripFrontmatter — keep in sync with .pi/extensions/moonbit-skills.ts.
 function stripFrontmatter(content: string): string {
   const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
   return (match ? match[1] : content).trim();
 }
 
+// Keep in sync with .pi/extensions/moonbit-skills.ts.
 function messageContainsBootstrap(message: unknown): boolean {
   const content = (message as { content?: unknown }).content;
   if (typeof content === "string") return content.includes(BOOTSTRAP_MARKER);

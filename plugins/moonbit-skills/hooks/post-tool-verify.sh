@@ -7,9 +7,15 @@
 # Receives tool event JSON on stdin, runs lightweight MoonBit verification
 # if the tool modified a .mbt/.mbti file, and outputs result as JSON.
 #
-# Design principle (from skills/verify/SKILL.md):
+# DESIGN PRINCIPLE (from skills/verify/SKILL.md):
 #   "NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE"
 #   — acceptable warnings, never acceptable errors.
+#
+# CANONICAL SOURCE: hooks/shared/verify-moonbit.ts
+# This shell script reimplements the same logic for platforms that cannot
+# run TypeScript directly. When updating verification logic, keep both
+# implementations in sync — same error regex, same warning regex, same
+# exit-code semantics (2 = block, 0 = allow).
 #
 # Output format (stdout JSON):
 #   Claude Code/Codex/Kimi: exit code 2 = block, 0 = allow; stderr shown to model
