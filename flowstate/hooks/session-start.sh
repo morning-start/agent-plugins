@@ -15,6 +15,8 @@ if [ ! -f "$entry" ]; then
 fi
 
 # Strip YAML frontmatter (--- ... ---) and leading blank lines; prepend marker.
+# Keep regex in sync with .pi/extensions/fst-bootstrap.ts, .opencode/plugins/fst-bootstrap.ts,
+# and hooks/session-start.ps1.
 body="$(
   awk '
     BEGIN { infront = 0; started = 0 }

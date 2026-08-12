@@ -14,6 +14,8 @@ if (-not (Test-Path $entry)) {
 }
 
 # Read file, strip YAML frontmatter (--- ... ---) and leading blank lines.
+# Keep regex in sync with .pi/extensions/fst-bootstrap.ts, .opencode/plugins/fst-bootstrap.ts,
+# and hooks/session-start.sh (awk variant).
 $raw = Get-Content -Raw -LiteralPath $entry
 $body = [regex]::Replace($raw, '^\s*---\r?\n[\s\S]*?\r?\n---\r?\n?', '')
 $body = $body -replace '^\s*\r?\n', ''

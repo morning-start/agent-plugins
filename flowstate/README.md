@@ -31,6 +31,8 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 
 各端安装方式见对应端说明：`OMP-NOTES.md`（omp）、`.opencode/INSTALL.md`（opencode）。
 
+> **双 manifest 设计**：根 `plugin.json` 是 pi/omp 的最小 manifest（name/version/description）；`.claude-plugin/plugin.json` 是 Claude Code manifest（含 tags、keywords、skills、commands）。两者的 name/version/description 保持同步。
+
 ## Hooks（质量门禁 / 会话引导）
 
 `hooks/` 提供 Claude Code 生命周期 hooks（bash + PowerShell 双变体）：

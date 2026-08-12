@@ -28,6 +28,8 @@ function loadEntry(root) {
   } catch {
     return null;
   }
+  // Canonical frontmatter regex — keep in sync with .opencode/plugins/fst-bootstrap.ts,
+  // hooks/session-start.sh (awk), and hooks/session-start.ps1 ([regex]).
   const m = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/.exec(raw);
   const body = m ? raw.slice(m[0].length).replace(/^\s*\r?\n/, "") : raw.trim();
   cached = {

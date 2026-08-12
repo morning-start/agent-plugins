@@ -2,7 +2,7 @@
 
 > 本目录是 Agent 的私有工作区：**全部内容不提交 git**（根 `.gitignore` 一行 `.agent-workplace/`）。
 > 要提交的内容从一开始就写在项目正式目录（`docs/` 等），本目录不存在"转正"路径。
-> 详细规范见项目 `docs/agent-workplace.md`；**正式 docs/ 的文档组织见 `docs/documentation-structure.md`（PRD 必选、双模式、ADR 文件夹化）**。
+> 详细规范见项目 `docs/agent-workplace.md`。
 
 ## 文档系统衔接（过程态 vs 正式 docs）
 
