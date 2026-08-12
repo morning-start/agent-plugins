@@ -55,7 +55,7 @@
 
 | 技能 | 职责边界 | 不可越权 |
 |---|---|---|
-| `moonbit-init` | 项目级质量门禁配置 | 不负责项目内容生成 |
+| `moonbit-init` | 项目接入评估（状态检测 + 能力矩阵）+ .agent-workplace/ 初始化 + 质量门禁配置 | 不负责项目内容生成、不负责架构设计 |
 | `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 不替代 verify 运行门禁；不负责部署执行（归 cd） |
 | `moonbit-cd`（新增） | 部署策略、制品管理、回滚预案、发布渠道 | 不替代 verify 门禁；不判定"可发布"（归 evaluate） |
 | `moonbit-docs`（新增） | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 不做发布前预览校验（归 evaluate） |

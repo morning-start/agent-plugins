@@ -1,13 +1,19 @@
 ---
 name: moonbit-init
-description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when initializing a MoonBit project with git hooks for quality gates. Triggered by user phrases like 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', or when a new MoonBit project needs CI-style local checks."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when initializing or adopting a MoonBit project into the moonbit-skills workflow. Triggered by user phrases like 'init', 'setup hooks', 'add githooks', 'configure git hooks', 'initialize project', 'onboard', 'adopt', '接入', '已有项目', 'existing project', or when a MoonBit project needs quality gates, workspace setup, or CI-style local checks."
 ---
 
-# Init — 项目初始化 + Git Hooks
+# Init — 项目接入 + 质量门禁 + 工作区初始化
 
 ## 职责
 
-为 MoonBit 项目配置本地质量门禁。**Agent 检测项目→创建钩子→配置 git→验证可用。** 检查按阶段划分，成本低的放 pre-commit，成本高的放 pre-push。
+将已有或新建的 MoonBit 项目接入 moonbit-skills 工作流。**Agent 检测项目→评估状态→创建工作区→配置质量门禁→推荐下一步。**
+
+覆盖两种场景：
+- **新项目**：`moon new` 后直接 init，配置 hooks + 工作区
+- **已有项目**：已有 `moon.mod` + `.mbt` 代码，但没用过 moonbit-skills → 评估现状、补齐缺失、接入工作流
+
+检查按阶段划分，成本低的放 pre-commit，成本高的放 pre-push。
 
 ## 三档检测体系
 
@@ -55,10 +61,11 @@ If you catch yourself doing any of these, you are violating the init contract:
 
 ## 停止条件
 
-- 不是 MoonBit 项目（无 moon.mod 且无 moon.mod.json）→ 提示用户创建项目
+- 不是 MoonBit 项目（无 moon.mod 且无 moon.mod.json）→ 提示用户创建项目或运行 `moon new`
 - 不是 git 仓库 → 提示用户 `git init`
 - `moon` 命令不可用 → 提示安装 MoonBit 工具链
 - 已有 hooksPath 且用户拒绝覆盖 → 保留现有配置，标记为 blocked
+- `.agent-workplace/` 已存在且结构完整 → 跳过创建，只做评估
 
 ## 执行流程
 
@@ -91,7 +98,69 @@ git rev-parse --git-dir >/dev/null 2>&1 && echo "Git: OK" || echo "Git: MISSING"
 | 混合存在（新旧格式都有） | 过渡状态 | 优先使用新格式，忽略旧格式 |
 | 仅旧格式 | 旧项目 | 提示迁移，但继续配置 hooks |
 
-### 2. 创建钩子脚本
+### 2. 评估项目状态（ASSESS）
+
+检测项目已有和缺失的能力，生成评估矩阵：
+
+```bash
+# 代码
+HAS_CODE=$(find . -name "*.mbt" -not -path "./.agent-workplace/*" | head -1)
+
+# 测试
+HAS_TESTS=$(find . -name "*_test.mbt" -not -path "./.agent-workplace/*" | head -1)
+
+# Git hooks
+HAS_HOOKS=$(git config core.hooksPath 2>/dev/null || echo "")
+
+# CI
+HAS_CI=$(test -f .github/workflows/*.yml && echo "yes" || echo "")
+
+# .agent-workplace/
+HAS_WORKPLACE=$(test -d .agent-workplace && echo "yes" || echo "")
+
+# Documentation
+HAS_DOCS=$(test -f README.md && echo "yes" || echo "")
+```
+
+评估结果用于推荐下一步（见 §6）。
+
+### 3. 创建 .agent-workplace/（工作区初始化）
+
+按 AGENTS.md 定义的**简化版**结构创建 agent 工作区：
+
+```
+.agent-workplace/
+├── docs/
+│   ├── plan/          # 计划→阶段→批次→任务
+│   └── task/          # 任务拆解
+├── scripts/           # 脚本尝试
+└── README.md          # 工作区说明
+```
+
+创建逻辑：
+
+```bash
+mkdir -p .agent-workplace/docs/plan
+mkdir -p .agent-workplace/docs/task
+mkdir -p .agent-workplace/scripts
+
+# 写入 README
+cat > .agent-workplace/README.md << 'EOF'
+# .agent-workplace/
+
+Agent 的私有工作区，不提交到 git。
+
+- `docs/plan/` — 实现计划（阶段→批次→任务）
+- `docs/task/` — 任务拆解详情
+- `scripts/` — 脚本尝试和临时文件
+
+由 moonbit-skills 自动创建，遵循 AGENTS.md 工作区约定。
+EOF
+```
+
+**不覆盖已有目录**：如果 `.agent-workplace/` 已存在，只补充缺失的子目录。
+
+### 4. 创建钩子脚本
 
 将以下文件写入项目：
 
@@ -131,7 +200,7 @@ chmod +x .githooks/pre-commit .githooks/pre-push
 
 > **不要内联脚本内容**。仓库 `hooks/` 中的脚本是唯一权威来源；内联副本会与之漂移。
 
-### 3. 配置 git
+### 5. 配置 git
 
 ```bash
 # 检查是否已有 hooksPath
@@ -146,14 +215,14 @@ else
 fi
 ```
 
-### 4. 可选：安装 moon-audit
+### 6. 可选：安装 moon-audit
 
 ```bash
 # 如果用户需要安全审计
 moon add minie135/moon-audit
 ```
 
-### 5. 验证钩子
+### 7. 验证钩子
 
 ```bash
 # 确保钩子可执行
@@ -196,19 +265,36 @@ bash .githooks/pre-commit
 
 ```json
 {
-  "status": "initialized | blocked",
+  "status": "initialized | on-boarded | blocked",
   "project_type": "lib",
+  "assessment": {
+    "has_code": true,
+    "has_tests": true,
+    "has_ci": false,
+    "has_hooks": true,
+    "has_workplace": true,
+    "has_docs": true
+  },
   "hooks_created": [".githooks/pre-commit", ".githooks/pre-push"],
+  "workplace_created": true,
   "git_configured": true,
   "moon_audit_installed": true,
   "validation": {
     "pre_commit": "passed",
     "pre_push": "passed"
   },
-  "next": "implement | scaffold"
+  "next": "plan | writing-plans | implement | testing"
 }
 ```
 
-## 下一步
+## 推荐下一步（按评估结果路由）
 
-初始化完成后，可以进入 `moonbit-scaffold` 生成项目骨架，或直接进入 `moonbit-implement` 开始开发。
+| 项目状态 | 推荐入口 | 说明 |
+|---------|---------|------|
+| 新项目，无代码 | `moonbit-plan` | 从需求澄清和架构设计开始 |
+| 已有代码，无测试 | `moonbit-testing` | 先补测试，再继续开发 |
+| 已有代码+测试，无计划文档 | `moonbit-writing-plans` | 为已有代码建立任务追踪 |
+| 已有代码+测试+计划 | `moonbit-implement` | 直接进入 TDD 开发 |
+| 需要重构/优化 | `moonbit-refactor` 或 `moonbit-perform` | 按用户意图路由 |
+
+初始化完成后向用户展示评估矩阵和推荐入口，由用户决定下一步。

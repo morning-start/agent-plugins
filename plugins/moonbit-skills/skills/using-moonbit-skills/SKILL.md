@@ -37,6 +37,7 @@ When multiple skills match, route by intent:
 | 状态 / 意图 | 技能 |
 |-------------|------|
 | 新项目或未决定架构/API | `moonbit-plan` |
+| 已有 MoonBit 项目、接入 moonbit-skills | `moonbit-init` |
 | 设计已批准、需要任务分解 | `moonbit-writing-plans` |
 | 生成项目骨架 | `moonbit-scaffold` |
 | 配置本地 git hooks 质量门禁 | `moonbit-init` |
@@ -65,7 +66,7 @@ When multiple skills match, route by intent:
 
 | User says (English) | User says (中文) | Skill |
 |---|---|---|
-| "init", "setup", "hooks", "initialize" | "初始化", "设置", "钩子" | `moonbit-init` |
+| "init", "setup", "hooks", "initialize", "onboard", "adopt", "existing project" | "初始化", "设置", "钩子", "接入", "已有项目" | `moonbit-init` |
 | "ci", "github actions", "workflow", "continuous integration", "commit-msg" | "CI", "工作流", "持续集成", "commit message" | `moonbit-ci` |
 | "docs", "documentation", "readme", "changelog", "docstring", "adr" | "文档", "README", "CHANGELOG", "docstring", "写文档" | `moonbit-docs` |
 | "build", "create", "new", "I want to make" | "我要做", "写一个", "创建", "开发" | `moonbit-plan` |
@@ -152,7 +153,7 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 
 | Skill | When to Use |
 |-------|-------------|
-| `moonbit-init` | New project, setup git hooks, quality gates |
+| `moonbit-init` | Project onboarding (existing or new), assess state, setup .agent-workplace/, git hooks, quality gates |
 | `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement |
 | `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs |
 | `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning |
