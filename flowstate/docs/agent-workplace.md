@@ -57,7 +57,7 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 | 模式 | 适用场景 | 产物 | 核心机制 |
 |------|---------|------|---------|
 | **Plan 模式** | 边界清晰、执行前需确认步骤（中小功能、模块重构、缺陷修复） | `docs/plan/PLAN.md` | 先探索后计划，计划待确认才执行 |
-| **Spec 方略** | 迭代开发默认：任务需"做到什么算完成"可验证 | `docs/task/TASKS.md`（含 acceptance）+ 可选 `docs/spec/checklist.md` | phase→task→spec：每任务带验收标准，逐项核销 |
+| **Spec 方略** | 迭代开发默认方略：常规需求、验收点清晰，任务需"做到什么算完成"可验证 | `docs/task/TASKS.md`（含 acceptance）+ 可选 `docs/spec/checklist.md` | phase→task→spec：每任务带验收标准，逐项核销 |
 | **Loop 方略（goal loop agent）** | 目标明确、需自动持续推进（修测试、批量迁移、持续排查） | `state/goal.md` | phase→loop / phase→task→loop：完成条件 + 每轮自评，达标才停 |
 | **Graph 方略** | 依赖复杂、可并行、按拓扑推进 | `docs/task/TASKS.md`（`deps` 字段）+ 可选 `docs/task/graph.md` | phase→graph / phase→task→graph：节点=任务、边=依赖/DoD，拓扑执行 |
 

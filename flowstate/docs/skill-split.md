@@ -37,7 +37,7 @@
 | fst-init | Spec 模式 | 访谈澄清 + 需求→计划→任务三链，产出 requirements.md |
 | fst-change | Plan 模式 | 先探索后计划，变更影响评估待确认后执行 |
 | fst-review | DoD 核销清单（schema 5.4） | 验收清单逐项勾选核销（DoD） |
-| fst-iterate | Spec 方略 + Loop 方略 + Graph 方略 | 每 phase 声明方略：spec（任务带验收标准逐项核销，默认）/ loop（目标循环）/ graph（任务依赖图） |
+| fst-iterate | Spec 方略 + Loop 方略 + Graph 方略 | 先盘点本轮需求（含变更单 CR），按需求特征选方略：spec（验收标准核销，默认）/ loop（目标循环）/ graph（任务依赖图） |
 
 ## 每技能详情
 
@@ -87,11 +87,12 @@
 - **触发**：迭代开始、迭代结束回顾、新迭代排期
 - **输入**：柔性 PRD、迭代范围说明书、需求池
 - **AI 动作**：
+  - 先盘点本轮需求（REQ-xxx + CR-xxx 变更单 + 需求池条目）→ 按需求特征选方略 → 用户确认
   - 开发前写 docs/plan（分 phase：要做什么/为什么做/声明方略 spec|loop|graph）→ 细化 docs/task（分批：内聚+顺序；spec 方略下任务带验收标准）
   - 按方略实现（spec 逐项核销 / loop 目标循环自评 / graph deps 拓扑推进）；一批一验（构建/冒烟）；按功能开 Git 分支（F4.2：一个变更单一个分支）
   - 维护技术债清单；迭代末生成回顾报告（度量/变更统计/风险）
   - 需求池优先级排序建议
-- **人工动作**：确认 phase/批次划分、确认下轮迭代范围
+- **人工动作**：**确认方略选型**、确认 phase/批次划分、确认下轮迭代范围
 - **产出物（schema）**：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan（含 strategy 字段）、5.9 docs/task（含 acceptance 字段）
 - **关联最佳实践**：Spec 方略（默认，任务带验收标准核销）+ Loop 方略（迭代闭环 N8→N4 loop）+ Graph 方略（依赖图）
 - **DoD**：DoD 全部核销 → 回顾完成 + 下轮范围确定

@@ -33,13 +33,14 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 
-**fst-iterate 的三种方略**（每 phase 在 `docs/plan` 声明 `strategy`，默认 `spec`）：
+**fst-iterate 的三种方略（需求驱动选择）**：先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
 
-| 方略 | 链条 | 定位 | 可验证 |
+| 需求特征 | 方略 | 链条 | 可验证 |
 |------|------|------|--------|
-| **spec**（默认） | `phase→task→spec` | 每个任务带验收标准（acceptance），逐项核销——取代旧 todo 勾选清单 | ✅ 任务完成 = 验收核销 |
-| **loop** | `phase→loop` / `phase→task→loop` | 目标循环：完成条件 → 每轮自评 → 达标停止 | ✅ 每轮有验证信号 |
-| **graph** | `phase→graph` / `phase→task→graph` | 任务依赖图：deps 拓扑推进、可并行 | ✅ 每节点 DoD 守卫 |
+| 常规开发、验收点清晰 | **spec**（默认） | `phase→task→spec` | ✅ 任务完成 = 验收核销 |
+| 目标明确但边界模糊、需反复逼近 | **loop** | `phase→loop` / `phase→task→loop` | ✅ 每轮有验证信号 |
+| 依赖复杂、跨模块、可并行 | **graph** | `phase→graph` / `phase→task→graph` | ✅ 每节点 DoD 守卫 |
+| 一句话能说清 diff 的简单任务 | 不进方略，直接做 | todo 轻量清单 | — |
 
 ### 产出模板（校验层）
 

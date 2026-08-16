@@ -84,9 +84,10 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 - 简单任务（一句话说清 diff）→ 直接做，跳过计划
 - 边界清晰、需确认步骤 → Plan 模式（`docs/plan/PLAN.md`）
-- 迭代开发默认 → Spec 方略（`phase→task→spec`，任务带验收标准逐项核销）
-- 目标明确、自动长跑 → Loop 方略（`state/goal.md`，每轮自我评估，达标才停）
-- 依赖复杂、可并行 → Graph 方略（任务用 `deps` 标依赖，拓扑推进）
+- 迭代开发 → 先盘点本轮需求（含变更单），按需求特征选方略：
+  - 常规开发、验收点清晰 → Spec 方略（`phase→task→spec`，任务带验收标准逐项核销）
+  - 目标明确、自动长跑 → Loop 方略（`state/goal.md`，每轮自我评估，达标才停）
+  - 依赖复杂、可并行 → Graph 方略（任务用 `deps` 标依赖，拓扑推进）
 
 ### 5. 维护
 
