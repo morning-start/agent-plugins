@@ -19,10 +19,10 @@
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
 | **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `modes/graph.md` + `state/` |
-| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec / Task / Goal 等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
+| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
 
 **关系**：流程的每个步骤，都可以**选用合适的最佳实践**去执行——
-N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
+N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
 更新实践不推翻流程。框架定"流程怎么走"，实践定"这一步怎么做更好"。
 
 > 本项目是"现代化的流程性开发"：整个开发过程由原来的**人驱动**变为
@@ -33,14 +33,13 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 
 | 路径 | 用途 |
 |------|------|
-| `modes/graph.md` | **流程框架**：Agent 执行图（节点/边/循环/HITL/Checkpoint） |
+| `modes/graph.md` | **流程框架**：Agent 执行图（节点/边/循环/HITL/Checkpoint）+ Graph 方略 |
 | `modes/plan.md` | 最佳实践：Plan 模式（先探索后计划） |
-| `modes/spec.md` | 最佳实践：Spec 模式（需求→计划→任务三链） |
-| `modes/task.md` | 最佳实践：Task 模式（编号勾选、分批验证） |
-| `modes/goal.md` | 最佳实践：Goal 模式（loop agent，自我评估续跑） |
+| `modes/spec.md` | 最佳实践：Spec 方略（phase→task→spec，任务带验收标准可验证） |
+| `modes/goal.md` | 最佳实践：Loop 方略（goal loop agent，自我评估续跑） |
 | `docs/requirements.md` | 需求清单（Spec 模式起点） |
 | `docs/plan/` | Plan 模式产物：PLAN.md（分 phase） |
-| `docs/task/` | Task 模式产物：TASKS.md（分批次） |
+| `docs/task/` | Spec/Graph 方略产物：TASKS.md（分批次：内聚 + 验收标准/依赖） |
 | `docs/spec/` | Spec 模式产物：spec.md + tasks.md + checklist.md |
 | `docs/decisions.md` | 决策记录（重要取舍、理由、否决项） |
 | `scripts/` | 可执行实验脚本 / 测试桩 |
@@ -61,8 +60,9 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 
 - 简单任务（一句话能说清 diff）→ **直接做**，跳过计划
 - 边界清晰、需确认步骤 → **Plan 模式**（`docs/plan/PLAN.md`，计划待确认才执行）
-- 范围大、需对齐验收 → **Spec 模式**（`docs/spec/`：spec + tasks + checklist）
-- 计划已定、按清单推进 → **Task 模式**（`docs/task/TASKS.md`，编号勾选、分批验证）
-- 目标明确、自动长跑 → **Goal 模式**（`state/goal.md`，每轮自我评估，达标才停）
+- 迭代开发默认 → **Spec 方略**（`phase→task→spec`，任务带验收标准，逐项核销）
+- 目标明确、自动长跑 → **Loop 方略**（`state/goal.md`，每轮自我评估，达标才停）
+- 依赖复杂、可并行 → **Graph 方略**（`docs/task/TASKS.md` 用 `deps` 标依赖，拓扑推进）
+- 简单任务（一句话能说清 diff）→ **直接做**，用轻量 todo 清单跟踪，不进方略
 
 详细规则见 `modes/*.md`。

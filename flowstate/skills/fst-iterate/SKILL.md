@@ -17,7 +17,23 @@ metadata:
 
 ## 职责
 
-迭代开发与持续迭代闭环的执行引导：**docs/plan（分 phase）→ docs/task（分批）→ 按批实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
+迭代开发与持续迭代闭环的执行引导：**docs/plan（分 phase）→ 每 phase 选方略（spec/loop/graph）→ docs/task（分批，含验收标准）→ 按方略实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
+
+## 方略（strategy）选择
+
+每个 phase 在 `docs/plan` 中声明执行方略（`strategy` 字段，默认 `spec`），决定该 phase 内任务如何组织与验证：
+
+| 方略 | 链条 | 定位 | 可验证 | 权威位置 |
+|------|------|------|--------|---------|
+| **spec**（默认） | `phase→task→spec` | 每个任务带验收标准（acceptance），逐项核销 | ✅ 任务完成 = 验收标准核销 | `modes/spec.md` |
+| **loop** | `phase→loop` / `phase→task→loop` | 目标驱动循环：完成条件 → 每轮自评 → 达标停止 | ✅ 每轮有验证信号 | `modes/goal.md` |
+| **graph** | `phase→graph` / `phase→task→graph` | 任务按依赖图编排：deps 拓扑推进、可并行 | ✅ 每节点 DoD 守卫 | `modes/graph.md` |
+
+**选择规则**：
+- 常规开发、每步可验收 → `spec`（默认，取代旧 todo 勾选清单）
+- 目标明确、长跑、反复逼近 → `loop`
+- 依赖复杂、可并行、按拓扑推进 → `graph`
+- 简单一句话任务 → 直接做，用轻量 todo 清单跟踪，不进任何方略
 
 ## Iron Law
 
@@ -52,19 +68,20 @@ NO PLAN, NO CODE; NO BATCH, NO WORK; NO TEST, NO MERGE
 
 ## 执行流程
 
-### 1. 写 docs/plan（分 phase）
+### 1. 写 docs/plan（分 phase + 声明方略）
 
 根据迭代范围，按**大阶段**拆分多个 phase（如：基础层 → 核心流程 → 交互/外围 → 打磨/上线准备）。每个 phase 写清：
 
 - **要做什么**（目标与交付内容，关联需求 id）
 - **为什么做**（业务/技术理由，防止"为做而做"）
+- **方略**（`strategy`：`spec` / `loop` / `graph`，默认 `spec`，见上文「方略选择」表）
 
 phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 > 落点：docs/plan 为**过程态**，默认落 `.agent-workplace/docs/plan/`（不提交 git），
 > 见 `fst-workplace`。
 
-### 2. 细化 docs/task（分批）
+### 2. 细化 docs/task（分批 + 验收标准）
 
 每个 phase 下的任务**分批次（batch）**，分批依据：
 
@@ -73,10 +90,16 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 目标：批次间递进有序、每批可独立验证（编译/冒烟），避免任务零散跳跃。
 
+按 phase 声明的方略组织任务：
+
+- `spec`（默认）→ 每个任务带**验收标准（acceptance）**，完成 = 验收标准逐项核销
+- `loop` → 该 phase/task 走目标循环（`state/goal.md` 完成条件 + 每轮自评）
+- `graph` → 任务用 `deps` 标依赖边，按拓扑推进、可并行
+
 > 落点：docs/task 为**过程态**，默认落 `.agent-workplace/docs/task/`（不提交 git），
 > 见 `fst-workplace`。
 
-### 3. 按批次实现（Git 分支开发，F4.2）
+### 3. 按方略实现（Git 分支开发，F4.2）
 
 **分支规范**（示例，可配置）：
 
@@ -138,9 +161,10 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 ## 关联最佳实践
 
-- **Goal 模式**（`.agent-workplace/modes/goal.md`）：迭代闭环（N8→N4 loop），设定完成条件、每轮自我评估
-- **Task 模式**（`.agent-workplace/modes/task.md`）：分批执行（docs/task 勾选）
-- 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan、5.9 docs/task
+- **Spec 方略**（`.agent-workplace/modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
+- **Loop 方略**（`.agent-workplace/modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
+- **Graph 方略**（`.agent-workplace/modes/graph.md`）：任务依赖图，deps 拓扑推进、可并行
+- 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan（含 strategy 字段）、5.9 docs/task（含 acceptance 字段）
 
 ## 输出
 
@@ -164,7 +188,11 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 ## 自检清单
 
 - [ ] docs/plan 与 docs/task 已写（过程态落 `.agent-workplace/docs/`）
+- [ ] 每个 phase 已声明方略（`strategy`：spec / loop / graph，默认 spec）
 - [ ] 任务已分批（内聚 + 顺序），每批可独立验证
+- [ ] spec 方略：任务带验收标准（acceptance），完成 = 逐项核销
+- [ ] loop 方略：完成条件 + 每轮自评已写入 `state/goal.md`
+- [ ] graph 方略：任务已用 `deps` 标依赖，按拓扑推进
 - [ ] **每批完成后已通过批次验收 Gate（`npm test` + 构建 + 冒烟 + 自检）**
 - [ ] 变更单已归档才开分支（一个变更单 = 一个功能分支）
 - [ ] 技术债已登记（schema 5.6）

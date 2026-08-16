@@ -100,7 +100,7 @@ NO DOD, NO SHIP
 
 ## 关联最佳实践
 
-- **Task 模式**（`.agent-workplace/modes/task.md`）：验收清单勾选核销（DoD）
+- **DoD 核销清单**（schema 5.4 `dod-checklist`）：逐项勾选核销，全部 ✅ 才可放行
 - 产出物 schema：5.4 迭代验收 Checklist
 
 ## 输出

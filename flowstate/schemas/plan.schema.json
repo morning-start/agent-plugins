@@ -20,6 +20,12 @@
           "name": { "type": "string", "description": "阶段名（如\"基础层\"\"核心流程\"）" },
           "goal": { "type": "string", "description": "要做什么（本阶段目标与交付内容）" },
           "rationale": { "type": "string", "description": "为什么做（业务/技术理由）" },
+          "strategy": {
+            "type": "string",
+            "enum": ["spec", "loop", "graph"],
+            "default": "spec",
+            "description": "执行方略：spec=任务带验收标准逐项核销（默认）；loop=目标循环；graph=任务依赖图"
+          },
           "req_ids": { "type": "array", "items": { "type": "string" }, "description": "关联需求 id" },
           "deps": { "type": "array", "items": { "type": "string" }, "description": "前置 phase id" },
           "status": {

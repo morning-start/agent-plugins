@@ -1,27 +1,39 @@
-# Spec 模式
+# Spec 方略（phase→task→spec）
 
-> 适用：范围较大、需先对齐方案与验收标准的任务（系统级任务、大规模重构、多人协作）。
-> 核心：**需求 → 计划 → 任务三链式链接**，验收清单驱动，便于复用与协作。
+> 适用：迭代开发中让每个任务**可验证**的默认方略。
+> 核心：**任务带验收标准（acceptance）→ 逐项核销 → 未核销不算完成**。
+
+## 定位
+
+phase→task→spec 是 fst-iterate 迭代开发的默认任务组织方略（取代旧 todo 勾选清单）：
+
+| 形态 | 链条 | 关键差异 |
+|------|------|---------|
+| **spec（本文件）** | phase→task→spec | 每个任务带**验收标准**，完成 = 验收标准逐项核销 |
+| todo（仅简单任务） | 不进方略 | 一句话能说清 diff 的简单任务直接做，用轻量清单跟踪（见 `fst-workplace` 模式选择） |
 
 ## 流程
 
-1. **访谈**：先向用户澄清需求（技术实现、边界、取舍），不急于写文档
-2. **写 requirements.md**：`docs/requirements.md`——需求编号（REQ-xxx）+ 标题 +
-   优先级（P0~P3）+ 验收标准（acceptance）
-3. **写 plan.md**：`docs/plan/PLAN.md`——每条计划项**链接到对应需求**，标注优先级，
-   按逻辑分组
-4. **写 tasks.md + checklist.md**：`docs/spec/` 下——
-   - `tasks.md`：枚举任务，每个任务链接到 plan 项 + 需求，按阶段分组（Setup → 核心 → 进阶 → 测试）
-   - `checklist.md`：验收清单（逐项核销）
-5. **待确认**：首次创建后暂停，用户确认/编辑后才执行
-6. **执行**：按任务清单推进，状态随进度自动更新
-
-## 关键原则
-
-- 规格**自包含**：命名涉及的文件与接口、明确**范围外（out of scope）**、以端到端验证步骤收尾
-- 每个新/改任务保持与需求、plan 项的链接，防止漂移
-- Spec 文档可纳入版本控制，作为项目知识资产（定稿时提升到正式 `docs/`）
+1. **写任务清单**：`docs/task/TASKS.md`——编号（`P1-B1-T01`）+ 标题 + 描述 +
+   **验收标准（acceptance）** + 分批（内聚 + 实现顺序）
+2. **每个任务必须带验收标准**：
+   - 验收标准是**可验证的断言**（"XX 接口返回 200 且字段 Y 非空"、"冒烟测试通过"、
+     "Schema 校验通过"），不是"实现 XX"
+   - 无法客观验证的任务 → 拆细、补验证手段，或标记「待确认」，不写"大概完成"
+3. **逐批执行 + 核销**：
+   - 每批完成后：对照本批任务的验收标准**逐项核销**
+   - 核销手段：构建 / 冒烟 / 测试 / Schema 校验（批次验收 Gate）
+   - 未核销的验收项 → 记录到技术债或阻塞，**不标"已完成"**
+4. **沉淀验收清单**（可选）：汇总跨任务验收项为 `docs/spec/checklist.md`，
+   供 `fst-review` 的 DoD 核销直接引用
 
 ## 产物
 
-`docs/requirements.md` · `docs/plan/PLAN.md` · `docs/spec/spec.md` · `docs/spec/tasks.md` · `docs/spec/checklist.md`
+`docs/task/TASKS.md`（任务含 acceptance 字段）· 可选 `docs/spec/checklist.md`
+
+## 关联
+
+- todo 只用于简单任务（一句话能说清 diff，直接做）；迭代内任务一律走本方略（spec）或 loop / graph 方略
+- 与 `fst-review` 衔接：任务验收标准汇总为 DoD 核销项（schema 5.4）
+- 任务 schema 含 `acceptance` 字段（见 `schemas/task.schema.json`）
+- 与 Graph 方略衔接：spec 定义"每节点做到什么算完成"，graph 定义"节点之间怎么走"

@@ -71,8 +71,8 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 | 路径 | 用途 |
 |------|------|
-| `modes/graph.md` | 流程框架：Agent 执行图（节点/边/循环/HITL/Checkpoint） |
-| `modes/plan.md` / `spec.md` / `task.md` / `goal.md` | 最佳实践：Plan / Spec / Task / Goal 模式 |
+| `modes/graph.md` | 流程框架：Agent 执行图（节点/边/循环/HITL/Checkpoint）+ Graph 方略 |
+| `modes/plan.md` / `spec.md` / `goal.md` | 最佳实践：Plan 模式 / Spec 方略 / Loop 方略 |
 | `docs/plan/` `docs/task/` `docs/spec/` | 过程态计划/任务/规格草稿 |
 | `docs/decisions.md` | 决策记录（DEC-xxx） |
 | `scripts/` | 可执行实验脚本 / 测试桩 |
@@ -84,9 +84,9 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 - 简单任务（一句话说清 diff）→ 直接做，跳过计划
 - 边界清晰、需确认步骤 → Plan 模式（`docs/plan/PLAN.md`）
-- 范围大、需对齐验收 → Spec 模式（`docs/spec/`）
-- 计划已定、按清单推进 → Task 模式（`docs/task/TASKS.md`）
-- 目标明确、自动长跑 → Goal 模式（`state/goal.md`，每轮自我评估，达标才停）
+- 迭代开发默认 → Spec 方略（`phase→task→spec`，任务带验收标准逐项核销）
+- 目标明确、自动长跑 → Loop 方略（`state/goal.md`，每轮自我评估，达标才停）
+- 依赖复杂、可并行 → Graph 方略（任务用 `deps` 标依赖，拓扑推进）
 
 ### 5. 维护
 

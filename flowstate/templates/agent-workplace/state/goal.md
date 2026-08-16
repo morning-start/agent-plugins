@@ -1,6 +1,6 @@
 # Goal 状态（loop agent 目标 + 自我评估）
 
-> Goal 模式核心文件：每轮执行结束更新，对照完成条件自我评估。
+> Loop 方略核心文件（`phase→loop` / `phase→task→loop`）：每轮执行结束更新，对照完成条件自我评估。
 
 ## 目标定义
 

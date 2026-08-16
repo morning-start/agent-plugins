@@ -37,10 +37,10 @@
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
 | **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `modes/graph.md` + `state/` |
-| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec / Task / Goal 等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
+| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
 
 **关系**：流程的每个步骤，都可以**选用合适的最佳实践**去执行——
-N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
+N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
 更新实践不推翻流程。框架定"流程怎么走"，实践定"这一步怎么做更好"。
 
 > **项目本质**：这是"现代化的流程性开发"——整个开发过程由原来的**人驱动**
@@ -57,15 +57,16 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 | 模式 | 适用场景 | 产物 | 核心机制 |
 |------|---------|------|---------|
 | **Plan 模式** | 边界清晰、执行前需确认步骤（中小功能、模块重构、缺陷修复） | `docs/plan/PLAN.md` | 先探索后计划，计划待确认才执行 |
-| **Spec 模式** | 范围大、需对齐方案与验收标准（系统级、大重构、多人协作） | `docs/spec/`（spec.md + tasks.md + checklist.md） | 需求 → 计划 → 任务三链式链接，验收清单驱动 |
-| **Task 模式** | 计划已定、按清单推进 | `docs/task/TASKS.md` | 编号 + 勾选 + 分阶段分批，每批可验证 |
-| **Goal 模式（loop agent）** | 目标明确、需自动持续推进（修测试、批量迁移、持续排查） | `state/goal.md` | 设定完成条件，每轮自我评估，达标才停 |
+| **Spec 方略** | 迭代开发默认：任务需"做到什么算完成"可验证 | `docs/task/TASKS.md`（含 acceptance）+ 可选 `docs/spec/checklist.md` | phase→task→spec：每任务带验收标准，逐项核销 |
+| **Loop 方略（goal loop agent）** | 目标明确、需自动持续推进（修测试、批量迁移、持续排查） | `state/goal.md` | phase→loop / phase→task→loop：完成条件 + 每轮自评，达标才停 |
+| **Graph 方略** | 依赖复杂、可并行、按拓扑推进 | `docs/task/TASKS.md`（`deps` 字段）+ 可选 `docs/task/graph.md` | phase→graph / phase→task→graph：节点=任务、边=依赖/DoD，拓扑执行 |
 
 **选择规则**：
 - 能用一句话描述 diff 的简单任务 → 跳过计划，直接做；
 - 不确定方案、改多文件、不熟悉代码 → 进 Plan 模式；
-- 需要沉淀需求/验收给后续复用 → 进 Spec 模式；
-- 长跑、无人值守 → 进 Goal 模式（配合 checkpoint 断点续跑）。
+- 迭代开发、每步可验收 → 进 Spec 方略（默认）；
+- 长跑、无人值守 → 进 Loop 方略（配合 checkpoint 断点续跑）；
+- 依赖复杂、可并行 → 进 Graph 方略。
 
 ## 目录结构
 
@@ -76,14 +77,14 @@ N4 迭代开发可用 Task 模式、N1 立项可用 Spec 的访谈环节；换�
 ├── docs/                        # 过程文档（Agent 全权管理）
 │   ├── requirements.md          #   需求清单（Spec 模式起点：需求编号 + 优先级 + 验收）
 │   ├── plan/                    #   Plan 模式：PLAN.md（分 phase：要做什么、为什么做）
-│   ├── task/                    #   Task 模式：TASKS.md（分批次：内聚程度 + 实现顺序）
+│   ├── task/                    #   Spec/Graph 方略产物：TASKS.md（分批次：内聚 + 验收标准/依赖）
 │   ├── spec/                    #   Spec 模式：spec.md + tasks.md + checklist.md
 │   └── decisions.md             #   决策记录（重要取舍、理由、否决项）
 ├── scripts/                     # 可执行实验脚本（shell / 测试桩，Agent 用来验证想法）
 ├── scratch/                     # 一次性探索产物（{YYYYMMDD}-{type}-{slug}，如 20260808-plan-todo-app）
 ├── research/                    # 研究/调研缓存（外部资料、备选方案、对比结论）
 └── state/                       # Agent 运行时状态
-    ├── goal.md                  #   Goal 模式：目标定义 + 自我评估记录（loop agent 核心）
+    ├── goal.md                  #   Loop 方略（goal loop agent）：目标定义 + 自我评估记录
     ├── checkpoint.json          #   断点续跑：当前节点 / phase / batch / 已完成列表
     └── artifacts.json           #   产物注册表：跨阶段追踪产出物与状态（可选）
 ```
