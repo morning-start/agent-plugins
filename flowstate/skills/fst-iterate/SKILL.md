@@ -30,7 +30,7 @@ metadata:
 | 来源 | 内容 | 落点 |
 |------|------|------|
 | 迭代范围说明书（fst-init 签署） | 本轮排期需求（REQ-xxx） | `docs/` 正式区 |
-| 变更申请单（fst-change 归档） | 本轮落地的变更（CR-xxx，含影响评估） | `docs/cr/` |
+| 变更申请单（fst-change 归档） | 本轮落地的变更（CR-xxx，含影响评估）——**变更只规划了"做什么"，实现由本技能驱动** | `docs/cr/` |
 | 需求池（fst-init/fst-change 维护） | 排入本轮的条目（含优先级） | 需求池 |
 
 盘点产物：**本轮需求清单**（新功能 / 需求改动 / 缺陷修复 / 技术债偿还 分类标注）。
@@ -65,6 +65,7 @@ metadata:
 
 ```
 NO PLAN, NO CODE; NO BATCH, NO WORK; NO TEST, NO MERGE
+ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 ```
 
 - 开发前必须先写 `docs/plan`（分 phase：要做什么/为什么做）与 `docs/task`（分批：内聚 + 顺序）
@@ -72,6 +73,7 @@ NO PLAN, NO CODE; NO BATCH, NO WORK; NO TEST, NO MERGE
 - **每批完成后必须通过基础测试（Schema 验证 + 构建 + 冒烟）才能进下一批**
 - 一个功能/变更单 = 一个 Git 分支，分支干净合并，不污染主干
 - 每批结束更新 docs/task 状态（Checkpoint），中断可续跑
+- **所有代码实现必须经过本技能**：fst-init / fst-change / fst-review 只做各自的规划与约束，不做执行；实现统一由本技能按方略驱动
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -83,8 +85,9 @@ NO PLAN, NO CODE; NO BATCH, NO WORK; NO TEST, NO MERGE
 - 变更单未归档就开新分支 / 直接在主干上开发
 - 批次未跑测试就进下一批（"先跳过，最后一起测"）
 - 迭代结束不写回顾报告、不更新技术债清单
+- **变更单归档后由 fst-change 直接写代码（应由本技能执行）**
 
-**All of these mean: Stop. Plan first, batch second, code third.**
+**All of these mean: Stop. Plan first, batch second, code third. All execution through fst-iterate.**
 
 ## 停止条件
 
@@ -192,7 +195,7 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 盘点本轮需求清单、按需求特征建议方略、写 docs/plan（phase + 声明方略）、细化 docs/task（分批 + 验收标准）、按方略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议 |
+| **Agent** | 盘点本轮需求清单（含 fst-change 归档的 CR-xxx）、按需求特征建议方略、写 docs/plan（phase + 声明方略）、细化 docs/task（分批 + 验收标准）、按方略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
 | **用户** | **确认方略选型**、确认 phase/批次划分、确认下轮迭代范围、迭代末验收 |
 
 ## 关联最佳实践
@@ -232,7 +235,7 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 - [ ] loop 方略：完成条件 + 每轮自评已写入 `state/goal.md`
 - [ ] graph 方略：任务已用 `deps` 标依赖，按拓扑推进
 - [ ] **每批完成后已通过批次验收 Gate（`npm test` + 构建 + 冒烟 + 自检）**
-- [ ] 变更单已归档才开分支（一个变更单 = 一个功能分支）
+- [ ] 变更单已归档才开分支（一个变更单 = 一个功能分支）；变更的实现由本技能驱动，非 fst-change
 - [ ] 技术债已登记（schema 5.6）
 - [ ] 迭代回顾报告已生成（schema 5.7）
 

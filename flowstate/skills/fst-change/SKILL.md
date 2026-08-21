@@ -17,17 +17,21 @@ metadata:
 
 ## 职责
 
-需求变更与线上事故的管控入口：**记录原文 → 变更分级 → 影响评估 → 审批排期 → 落地 → 归档**。杜绝口头需求无痕消失，防止范围蔓延与烂尾。
+需求变更与线上事故的**规划与约束**入口：**记录原文 → 变更分级 → 影响评估 → 审批排期 → 归档**。杜绝口头需求无痕消失，防止范围蔓延与烂尾。
+
+> **只规划约束，不做执行**。本技能产出变更申请单、影响评估、排期——这些都是"决定做什么、不做什么、约束是什么"。具体怎么实现、怎么写代码、怎么分批，全部交给 `fst-iterate`。
 
 ## Iron Law
 
 ```
 NO CHANGE WITHOUT A CHANGE RECORD
+PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 ```
 
 - 任何新需求/改动（口头、IM、邮件）必须**先记录需求原文**，否则不得改动代码
 - 变更单未归档 + 未排期 → 不得开分支、不得动代码
 - 重大变更必须人工审批后重启开发
+- **本技能只做规划与约束（记录、分级、评估、审批、排期、归档），不做任何代码实现——实现交给 `fst-iterate`**
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -38,8 +42,9 @@ NO CHANGE WITHOUT A CHANGE RECORD
 - 变更分级由 Agent 单方面定死，未给用户确认机会
 - 重大变更未暂停当前开发就直接改
 - 线上事故不补录变更单（hotfix 也要 24h 内补）
+- **变更归档后自己动手写代码/分批实现（应交给 fst-iterate）**
 
-**All of these mean: Stop. Record the change first.**
+**All of these mean: Stop. Record the change first. Execution belongs to fst-iterate.**
 
 ## 停止条件
 
@@ -83,16 +88,23 @@ NO CHANGE WITHOUT A CHANGE RECORD
 2. 修复 + 针对性验证
 3. 上线后 **24 小时内补录变更申请单 + 影响评估 + 复盘**
 
-### 6. 落地 + 同步
+### 6. 交接（不做执行，交给 fst-iterate）
 
-变更落地后，同步更新 PRD/设计文档；变更记录归档（与 fst-iterate 的 Git 分支联动：一个变更单 = 一个功能分支）。
+变更单归档 + 排期确认后，本技能的工作**到此结束**：
+
+- **变更单归档**：定稿写正式 `docs/cr/` 或 `docs/CR.md`（提交）
+- **PRD/设计文档同步**：如果变更影响已有设计文档，在变更单中标注需同步的文档清单（由 fst-iterate 执行时一并更新）
+- **交接信号**：变更单就绪 → 通知用户"变更已归档，可进入 fst-iterate 排期实现"
+
+> ⚠️ 本技能**不写代码、不开分支、不做分批实现**。一个变更单 = 一个功能分支，分支开发由 `fst-iterate` 按方略执行。
 
 ## 用户 vs Agent 分工
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 记录需求原文、建议分级、生成影响评估草稿、生成变更申请单、hotfix 影响面评估与补单提醒 |
+| **Agent** | 记录需求原文、建议分级、生成影响评估草稿、生成变更申请单、hotfix 影响面评估与补单提醒。**不做代码实现** |
 | **用户** | 确认变更分级、审批重大变更、确认排期、处理紧急事故 |
+| **fst-iterate** | 变更单归档后的所有执行：方略设计、分批实现、Git 分支开发、验收 Gate |
 
 ## 关联最佳实践
 
@@ -124,7 +136,8 @@ NO CHANGE WITHOUT A CHANGE RECORD
 - [ ] 变更申请单已生成：草稿落 `.agent-workplace/`，归档定稿落 `docs/cr/` 或 `docs/CR.md`
 - [ ] Hotfix 已走直通车并在 24h 内补单
 - [ ] 变更记录已归档，原因可追溯
+- [ ] 未做任何代码实现（实现交给 fst-iterate）
 
 ## 下一步
 
-变更归档 + 排期确认 → 落地开发（fst-iterate）→ 变更针对性测试（fst-review）。紧急通道补单完成后同样进入验证流程。
+变更单归档 + 排期确认 → **fst-iterate**（盘点本轮需求时纳入本变更单 CR-xxx，按方略设计与实现）→ fst-review（变更针对性测试）。紧急通道补单完成后同样走 fst-iterate → fst-review。
