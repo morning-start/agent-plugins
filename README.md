@@ -51,3 +51,14 @@ agent-plugins/
 git subtree pull --prefix=plugins/moonbit-skills <moonbit-skills-上游> master
 git subtree pull --prefix=plugin-factory <plugin-factory-上游> master
 ```
+
+## 友情链接
+
+- [LINUX DO](https://linux.do)
+- <p>
+  本项目的 AI API 支持由
+  <a href="https://tokeness.io">
+    Tokeness.io
+  </a>
+  赞助提供。
+</p>
