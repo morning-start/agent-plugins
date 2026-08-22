@@ -10,6 +10,8 @@
 编排处理**一组技能如何协作**：发现、触发顺序、交接产物、冲突避免。
 superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → review），
 而非单个技能。
+技能之间的**职责边界与协作纪律**（规划/执行分离、内部路由技能、入口场景覆盖）
+见 `skill-boundaries.md`（flowstate 实战沉淀）。
 
 **执行者**：编排设计的具体工作流（元数据契约、触发链规则、单一入口、
 `using-<plugin>` 引导设计）在 **`skills/pf-compose/SKILL.md`**——本文档只保留
