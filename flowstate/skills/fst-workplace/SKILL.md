@@ -31,14 +31,14 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 - `.agent-workplace/` 全部内容不提交 git（根 `.gitignore` 一行 `.agent-workplace/`）
 - 写任何内容前先判断"这个最终要提交吗"——要 → 从一开始写在正式 `docs/`；
   不要 → 写 `.agent-workplace/`
-- **无"转正"路径**：`.agent-workplace/` 内容不得被复制/迁移到正式目录再提交
+- **发布必须显式确认**：过程稿可以在用户确认后发布为正式文档；发布必须保留来源、版本和确认记录，不得静默覆盖正式文档
 
 ## Red Flags — STOP and Re-evaluate
 
 如果发现自己正在做这些事，说明违反了 fst-workplace 契约：
 
 - 项目没有 `.agent-workplace/` 就开始写过程态草稿（没初始化）
-- 把 `.agent-workplace/` 里的内容复制到正式 `docs/` 再提交（转正路径）
+- 未经确认就把 `.agent-workplace/` 里的内容发布到正式 `docs/`
 - 把定稿（PRD/ADR/DoD 验收/变更单归档）写在 `.agent-workplace/` 里不提交
 - 忘了在 `.gitignore` 追加 `.agent-workplace/`，导致私区被提交
 - 每个技能各写一套工作区规则（应引用本技能单点维护）
@@ -81,12 +81,9 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 > 模式与框架**不在工作区内**：操作模式权威源在 `references/agent-modes/*.md`，
 > 流程框架权威源在 `references/flow-graph.md`（插件绑定，随插件分发）。
 
-### 4. 模式选择（30 秒版）
+### 4. 与执行策略的关系
 
-迭代内方略选择由 `fst-mode-router` 负责（`fst-iterate` 内部路由）；模式定义见 `references/agent-modes/`（todo / spec / goal / graph）。本技能只提供落点，不重复模式规则：
-
-- 简单任务（一句话说清 diff）→ 直接做，todo 轻量清单（产物落 `.agent-workplace/docs/task/`）
-- 迭代内任务 → 由 `fst-iterate` 调 `fst-mode-router` 按需求特征选方略，本技能不越权选择
+工作区不选择执行策略，也不驱动生命周期流程。它只为其他技能提供稳定落点：`fst-iterate` 负责选择 lightweight todo 或 `spec` / `loop` / `graph`，并将过程态 plan/task/state 写入 `.agent-workplace/`。
 
 ### 5. 维护
 
@@ -131,7 +128,7 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 - [ ] `.agent-workplace/` 已存在且 `.gitignore` 含条目
 - [ ] 模板目录完整（docs / scripts / scratch / research / report / state）
 - [ ] 写前已判断提交边界（定稿 `docs/`、过程态 `.agent-workplace/`）
-- [ ] 无「转正」路径行为（未把私区内容复制到正式目录）
+- [ ] 过程稿发布到正式目录前已有用户确认和版本记录
 - [ ] `state/checkpoint.json` 已更新（断点续跑可用）
 
 ## 下一步

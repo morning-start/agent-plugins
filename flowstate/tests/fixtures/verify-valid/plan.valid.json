@@ -6,6 +6,7 @@
       "name": "基础层",
       "goal": "数据模型与基础设施定型",
       "rationale": "后续流程的依赖基础",
+      "strategy": "spec",
       "req_ids": ["REQ-001"],
       "deps": [],
       "status": "已完成"
@@ -15,6 +16,7 @@
       "name": "核心流程",
       "goal": "订单列表主链路跑通",
       "rationale": "核心业务价值",
+      "strategy": "spec",
       "req_ids": ["REQ-002"],
       "deps": ["P1"],
       "status": "进行中"

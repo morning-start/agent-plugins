@@ -11,7 +11,7 @@
 | `risk-list.schema.json` | 5.5 | 风险清单 |
 | `tech-debt.schema.json` | 5.6 | 技术债清单 |
 | `retrospective.schema.json` | 5.7 | 回顾报告 |
-| `plan.schema.json` | 5.8 | docs/plan 产物（phase 含 `strategy` 方略字段：spec/loop/graph） |
+| `plan.schema.json` | 5.8 | docs/plan 产物（formal phase 必须含 `strategy` 字段：spec/loop/graph（trivial todo 不进入正式 plan）） |
 | `task.schema.json` | 5.9 | docs/task 产物（任务含 `acceptance` 验收标准、`deps` 依赖边） |
 
 所有 schema 使用 JSON Schema draft-07，`$id` 前缀为 `https://github.com/morning-start/agent-plugins/schemas/`。

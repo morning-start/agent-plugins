@@ -1,5 +1,5 @@
 ---
-description: 迭代开发与持续迭代闭环：盘点本轮需求（含变更）→ 按需求特征选方略 → 方略设计（docs/plan + docs/task）→ 按方略实现（spec/loop/graph）→ Git 分支开发 → 技术债 → 迭代回顾（对应 fst-iterate 技能）。
+description: 迭代开发与持续迭代闭环：盘点本轮需求（含变更）→ 判断 trivial/formal 并选择方略 → 方略设计（docs/plan + docs/task）→ 按方略实现（spec/loop/graph；trivial 走 lightweight todo）→ Git 分支开发 → 技术债 → 迭代回顾（对应 fst-iterate 技能）。
 ---
 
 # /fst-iterate — 迭代循环
@@ -19,7 +19,7 @@ description: 迭代开发与持续迭代闭环：盘点本轮需求（含变更�
   - 常规开发、验收点清晰 → `spec`（默认）：任务带验收标准，逐项核销
   - 目标明确但边界模糊、需反复逼近 → `loop`：目标循环（完成条件 → 每轮自评 → 达标停止）
   - 依赖复杂、跨模块、可并行 → `graph`：任务依赖图（deps 拓扑推进、可并行）
-  - 一句话能说清 diff 的简单任务 → 不进方略，直接做（todo 轻量清单）
+  - 一句话能说清 diff 的简单任务 → 走 lightweight todo path，不进入正式 plan 的 `strategy`，仍经过 `fst-iterate` 并做最小验证
 
 **1. 方略设计：写 docs/plan**（分 phase + 声明方略）：按大阶段拆分（基础层 → 核心流程 → 交互/外围 → 打磨/上线准备），每 phase 写清"要做什么 / 为什么做"，并声明执行方略（来自第 0 步选型）
 
@@ -40,10 +40,10 @@ description: 迭代开发与持续迭代闭环：盘点本轮需求（含变更�
 ## 规则
 
 - 先盘点需求，再选方略，后设计，最后执行——不盘点直接开写 plan 属于跳过决策
-- 每个 phase 必须声明方略（来自需求特征选型），任务必须可验证（验收标准核销 / 每轮自评 / 节点 DoD）
+- 每个 formal phase 必须声明 `spec` / `loop` / `graph`；trivial todo 不创建正式 phase；任务必须可验证（验收标准核销 / 每轮自评 / 节点 DoD）
 - 不写 plan/task 不动代码；任务不分批不实现（一批一验）
 - 未确认需求只做骨架开发（骨架须过冒烟）
-- 变更单未归档不得开新分支
+- 变更单未归档不得开新分支；简单任务也不得绕过 `fst-iterate`
 
 ## 下一步
 

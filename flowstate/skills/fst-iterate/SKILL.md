@@ -1,6 +1,6 @@
 ---
 name: fst-iterate
-description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: docs/plan (phases), docs/task (batches), Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph). Per-phase execution mode (spec/loop/graph/todo) is routed and confirmed by the internal fst-mode-router skill; this skill consumes the confirmed ModePlan and drives all execution.
+description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: docs/plan (phases), docs/task (batches), Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph). Chooses the lightweight todo path for trivial diffs or a formal execution strategy (spec/loop/graph) for larger work, then drives planning, execution, and verification.
 metadata:
   prefix: fst
   lifecycle:
@@ -19,14 +19,19 @@ metadata:
 
 迭代开发与持续迭代闭环的执行引导：**盘点本轮需求（含变更）→ 按需求特征选方略（spec/loop/graph）→ 方略设计（docs/plan + docs/task）→ 按方略实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
 
-## 方略（strategy）选择——由 fst-mode-router 负责
+## 方略（strategy）选择
 
-方略选择由内部技能 `fst-mode-router` 负责：**盘点本轮需求**（范围说明书 REQ + 已归档 CR + 需求池条目，按新功能/改动/缺陷/技术债分类）→ **按需求特征为每个 phase 选** `spec` / `loop` / `graph` / `todo` → **说明理由并取得用户确认**，输出 `ModePlan`。
+先判断复杂度，再选择正式执行策略：
 
-`fst-iterate` 只消费已确认的 `ModePlan`：把每个 phase 落成 `docs/plan`（声明 strategy）+ `docs/task`（分批 + 验收标准），然后按方略执行（见下方执行流程 §1/§2）。
+1. **Trivial 判断**：单点、低风险、无需探索且能用一句话说清 diff，则走 lightweight todo path；不进入正式 plan 的 `strategy` 字段，也不要求用户确认 todo，只保留轻量 task 清单并做最小验证。
+2. **Formal 判断**：其他任务选择并确认一种正式策略：`spec`（验收标准清晰，默认）、`loop`（目标明确但需要多轮逼近）或 `graph`（依赖复杂且需要并行）。
 
-> 方略不是拍脑袋选的，而是由本轮迭代的需求决定的——**先盘点需求，再选方略，后设计，最后执行**；不盘点需求直接开写 plan 属于跳过决策。
-> 详细判断规则见 `skills/fst-mode-router/SKILL.md`；各模式执行方法见 `references/agent-modes/`（todo / spec / goal / graph）。
+策略是执行维度而非互斥任务类型：Graph 节点可以使用 Spec 验收，Loop 轮次也可以包含 Graph 子任务。选择规则：**单点、低风险、无需探索 → lightweight todo；验收标准清晰 → spec；目标明确但需要多轮逼近 → loop；依赖复杂且需要并行 → graph。** 拿不准时优先 `spec`；只有 formal 任务的策略选择需要用户确认。
+
+`fst-iterate` 负责把 formal phase 落成 `docs/plan`（声明 strategy）+ `docs/task`（分批 + 验收标准），把 trivial diff 落成轻量 task，然后按策略执行。
+
+> 方略不是拍脑袋选的，而是由本轮迭代的需求决定的——**先盘点需求，再判断 trivial/formal，formal 再确认策略，后设计，最后执行**；不盘点需求直接开写 plan 属于跳过决策。
+> 各模式执行方法见 `references/agent-modes/`（todo / spec / loop / graph；goal.md 仅为兼容文件名）。
 
 ## Iron Law
 
@@ -64,15 +69,13 @@ ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 
 ## 执行流程
 
-### 0. 调用方略路由（需求驱动，前置）
+### 0. 盘点需求并选择执行路径（需求驱动，前置）
 
-调用 `fst-mode-router`，按上文规则盘点需求并取得用户确认，返回每个 phase 的 `ModePlan`：
+1. 盘点本轮需求清单：REQ-xxx、已归档 CR-xxx 和需求池条目，并按新功能/改动/缺陷/技术债分类。
+2. 判断是否为 trivial diff：单点、低风险、无需探索且能用一句话说清。如果是，直接进入 lightweight todo path，不要求用户确认 todo，也不把 todo 写入正式 plan。
+3. 如果不是 trivial，选择 `spec` / `loop` / `graph` 之一，展示需求摘要、选择理由和主要风险，取得用户确认后再进入 plan/task 设计。
 
-1. **接收本轮需求清单**：REQ-xxx + 已归档 CR-xxx + 需求池条目
-2. **接收已确认的 mode**：每个 phase 一个 `ModePlan`
-3. **进入 plan/task 设计**：未确认不得写计划或动代码
-
-> 铁律：**先盘点需求，再选方略，后设计，最后执行**——不盘点需求直接开写 plan 属于跳过决策。
+> 铁律：**先盘点需求，再判断 trivial/formal，formal 再确认策略，后设计，最后执行。**
 
 ### 1. 方略设计：写 docs/plan（分 phase + 声明方略）
 
@@ -80,7 +83,7 @@ ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 
 - **要做什么**（目标与交付内容，关联需求 id）
 - **为什么做**（业务/技术理由，防止"为做而做"）
-- **方略**（`strategy`：`spec` / `loop` / `graph`，来自第 0 步的选型）
+- **方略**（formal 任务使用 `strategy`：`spec` / `loop` / `graph`；trivial 任务走 lightweight todo path，不写 strategy）
 
 phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
@@ -162,17 +165,15 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 消费 `fst-mode-router` 返回的已确认 `ModePlan`，写 docs/plan（phase + 声明方略）、细化 docs/task（分批 + 验收标准）、按方略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
+| **Agent** | 盘点需求、判断 trivial/formal、为 formal 任务选择并取得确认，写 docs/plan（phase + strategy）、细化 docs/task（分批 + 验收标准）、按策略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
 | **用户** | **确认方略选型**、确认 phase/批次划分、确认下轮迭代范围、迭代末验收 |
 
 ## 关联最佳实践
 
-- **方略路由**：`skills/fst-mode-router/SKILL.md`（需求盘点、mode 选择、用户确认、ModePlan 交接）
-
 - **Spec 方略**（`references/agent-modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
 - **Loop 方略**（`references/agent-modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
 - **Graph 方略**（`references/agent-modes/graph.md`）：任务依赖图，deps 拓扑推进、可并行
-- **Todo 模式**（`references/agent-modes/todo.md`）：简单任务直接做，轻量清单
+- **Lightweight todo**（`references/agent-modes/todo.md`）：trivial diff 的轻量清单与最小验证
 - 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan（含 strategy 字段）、5.9 docs/task（含 acceptance 字段）
 
 ## 输出
@@ -197,9 +198,9 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 ## 自检清单
 
 - [ ] 已盘点本轮需求清单（REQ-xxx + CR-xxx + 需求池条目，按新功能/改动/缺陷/技术债分类）
-- [ ] 已由 `fst-mode-router` 选择方略并经用户确认（spec / loop / graph / todo）
+- [ ] 已盘点需求，并判断为 lightweight todo 或 formal strategy
 - [ ] docs/plan 与 docs/task 已写（过程态落 `.agent-workplace/docs/`）
-- [ ] 每个 phase 已声明方略（`strategy`：spec / loop / graph）
+- [ ] 每个 formal phase 已声明方略（`strategy`：spec / loop / graph）；trivial phase 未写 strategy
 - [ ] 任务已分批（内聚 + 顺序），每批可独立验证
 - [ ] spec 方略：任务带验收标准（acceptance），完成 = 逐项核销
 - [ ] loop 方略：完成条件 + 每轮自评已写入 `state/goal.md`

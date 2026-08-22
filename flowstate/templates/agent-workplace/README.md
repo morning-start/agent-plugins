@@ -1,7 +1,7 @@
 # .agent-workplace — Agent 私有工作区
 
 > 本目录是 Agent 的私有工作区：**全部内容不提交 git**（根 `.gitignore` 一行 `.agent-workplace/`）。
-> 要提交的内容从一开始就写在项目正式目录（`docs/` 等），本目录不存在"转正"路径。
+> 过程稿默认不提交；经用户确认后可以发布为正式文档，并保留来源、版本和确认记录。
 > 详细规范见项目 `docs/agent-workplace.md`。
 
 ## 文档系统衔接（过程态 vs 正式 docs）
@@ -10,7 +10,7 @@
 |------|------|-------|
 | PRD / ADR / requirements / scope / risk / glossary **定稿** | 正式 `docs/`（按 `documentation-structure.md` 组织） | ✅ |
 | plan / task / spec 草稿 / decisions 草稿 / 脚本尝试 | 本目录（`.agent-workplace/`） | ❌ |
-| change-request 归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅ |
+| change-request 归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅（须经确认发布） |
 
 ## 两层架构（先看懂全局）
 
@@ -19,7 +19,7 @@
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
 | **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `references/flow-graph.md`（插件侧） + `state/` |
-| **操作模式（agent-modes/）** | 解决**单一问题**的方法：todo / Spec（方略）/ Goal（Loop 方略）/ Graph（方略）等 | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
+| **操作模式（agent-modes/）** | 解决**单一问题**的方法：lightweight todo / Spec / Loop / Graph等 | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
 
 **关系**：流程的每个步骤，都可以**选用合适的操作模式**去执行——
 N4 迭代开发可用 Spec/Loop/Graph 方略；换模式不改变流程框架，
@@ -57,10 +57,10 @@ N4 迭代开发可用 Spec/Loop/Graph 方略；换模式不改变流程框架，
 
 ## 最佳实践怎么选（30 秒版）
 
-- 简单任务（一句话能说清 diff）→ **直接做**，轻量 todo 清单跟踪，不进方略（见 `references/agent-modes/todo.md`）
+- 简单任务（一句话能说清 diff）→ 由 `fst-iterate 的“方略选择”章节` 选择 **todo**，经 `fst-iterate` 执行并做最小验证（见 `references/agent-modes/todo.md`）
 - 迭代开发 → **先盘点本轮需求（含变更单），按需求特征选方略**：
   - 常规开发、验收点清晰 → **Spec 方略**（`references/agent-modes/spec.md`，`phase→task→spec`，任务带验收标准，逐项核销）
   - 目标明确、自动长跑 → **Loop 方略**（`references/agent-modes/goal.md`，`state/goal.md`，每轮自我评估，达标才停）
   - 依赖复杂、可并行 → **Graph 方略**（`references/agent-modes/graph.md`，`docs/task/TASKS.md` 用 `deps` 标依赖，拓扑推进）
 
-详细规则见对应模式：`references/agent-modes/todo|spec|goal|graph.md`。
+详细规则见对应模式：`references/agent-modes/todo.md`、`spec.md`、`goal.md`、`graph.md`。

@@ -19,14 +19,14 @@ flowstate 是一个**项目开发全流程规范插件**：引导 AI 编程助�
 |------|------|
 | **可执行状态图** | 把整个开发过程建模为 N1~N9 状态图，DoD 判据控制沿边流转，**图为逻辑蓝图、动态软编排**——由各端 Agent 框架原生驱动，不做代码级硬编排 |
 | **规划与执行分离** | `fst-change` 只做规划与约束（记录原文 → 分级 → 影响评估 → 审批排期 → 归档），**不写代码**；所有实现统一由 `fst-iterate` 作为唯一执行入口按方略驱动。唯一例外是线上事故 Hotfix（N9）——先修后补单，24h 内补录变更单 |
-| **需求驱动方略** | 方略不是拍脑袋选的，由**本轮迭代的需求**决定（spec / loop / graph），不同 phase 可按各自需求特征选不同方略 |
+| **需求驱动方略** | 方略不是拍脑袋选的，由**本轮迭代的需求**决定（lightweight todo / spec / loop / graph），不同 phase 可按各自需求特征选不同方略 |
 | **DoD 守卫 + HITL 闸门** | 未核销不得沿边前进；底线确认、范围签署、PRD 评审、变更分级、DoD 核销、放量决策**强制暂停等人** |
 | **Checkpoint 断点续跑** | 每个节点完成即保存状态，中断可续跑 |
 | **私有工作区 + 提交门禁** | `.agent-workplace/` 过程态永不提交 git，PreCommit 钩子硬性拦截 |
 
 <p align="center">
   <img src="./assets/readme/section-overview.svg" width="100%"
-       alt="功能总览：技能 7、命令 4、Schema 9、钩子、工作区">
+       alt="功能总览：技能 6、命令 4、Schema 9、钩子、工作区">
 </p>
 
 ## 功能总览
@@ -35,7 +35,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 | 交付物 | 数量 | 作用 |
 |--------|------|------|
-| 技能 `skills/` | 7 | 分场景引导（入口路由 + 5 个流程技能 + 1 个内部方略路由） |
+| 技能 `skills/` | 6 | 分场景引导（入口路由 + 5 个流程技能；方略选择内联于 fst-iterate） |
 | 命令 `commands/` | 4 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 9 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / …） |
 | 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |
@@ -61,7 +61,6 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
 | `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8（**唯一执行入口**） | Spec / Loop / Graph 方略 |
 | `fst-workplace` | — | 横切 N1~N9 | 工作区初始化 / 落点判断 / 过程态管理 | — |
-| `fst-mode-router` | —（内部） | `fst-iterate` 内部 | 按 phase 选择并确认执行方略 | — |
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 
@@ -74,7 +73,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 常规开发、验收点清晰 | **spec**（默认） | `phase→task→spec` | ✅ 任务完成 = 验收核销 |
 | 目标明确但边界模糊、需反复逼近 | **loop** | `phase→loop` / `phase→task→loop` | ✅ 每轮有验证信号 |
 | 依赖复杂、跨模块、可并行 | **graph** | `phase→graph` / `phase→task→graph` | ✅ 每节点 DoD 守卫 |
-| 一句话能说清 diff 的简单任务 | 不进方略，直接做 | todo 轻量清单 | — |
+| 已批准范围内的一句话 diff | lightweight todo | `fst-iterate` 内最小执行路径 | 最小验证 |
 
 ### 产出模板（校验层）
 

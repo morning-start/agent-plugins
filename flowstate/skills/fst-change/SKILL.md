@@ -19,7 +19,7 @@ metadata:
 
 需求变更与线上事故的**规划与约束**入口：**记录原文 → 变更分级 → 影响评估 → 审批排期 → 归档**。杜绝口头需求无痕消失，防止范围蔓延与烂尾。
 
-> **只规划约束，不做执行**。本技能产出变更申请单、影响评估、排期——这些都是"决定做什么、不做什么、约束是什么"。具体怎么实现、怎么写代码、怎么分批，全部交给 `fst-iterate`。
+> **常规变更只规划约束，不做执行**。本技能产出变更申请单、影响评估、排期；具体实现全部交给 `fst-iterate`。唯一例外是 N9 线上 Hotfix：允许先修复阻断事故，之后必须补录并回到 `fst-review`。
 
 ## Iron Law
 
@@ -31,7 +31,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 - 任何新需求/改动（口头、IM、邮件）必须**先记录需求原文**，否则不得改动代码
 - 变更单未归档 + 未排期 → 不得开分支、不得动代码
 - 重大变更必须人工审批后重启开发
-- **本技能只做规划与约束（记录、分级、评估、审批、排期、归档），不做任何代码实现——实现交给 `fst-iterate`**
+- **常规变更只做规划与约束；N9 Hotfix 是唯一允许先执行的例外**
 
 ## Red Flags — STOP and Re-evaluate
 
@@ -84,9 +84,9 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 线上事故**不适用常规流程**，走直通车——**先修后补单**：
 
-1. 立即评估影响面（Agent 协助，5 分钟内）
-2. 修复 + 针对性验证
-3. 上线后 **24 小时内补录变更申请单 + 影响评估 + 复盘**
+1. 立即评估影响面（Agent 协助，5 分钟内）并建立紧急 checkpoint
+2. 仅修复阻断事故 + 做针对性验证，不顺手扩展范围
+3. 上线后 **24 小时内补录变更申请单 + 影响评估 + 复盘**，再交给 `fst-review`
 
 ### 6. 交接（不做执行，交给 fst-iterate）
 
@@ -104,7 +104,8 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 |---|--------|
 | **Agent** | 记录需求原文、建议分级、生成影响评估草稿、生成变更申请单、hotfix 影响面评估与补单提醒。**不做代码实现** |
 | **用户** | 确认变更分级、审批重大变更、确认排期、处理紧急事故 |
-| **fst-iterate** | 变更单归档后的所有执行：方略设计、分批实现、Git 分支开发、验收 Gate |
+| **fst-iterate** | 常规变更归档后的所有执行：方略设计、分批实现、Git 分支开发、验收 Gate |
+| **N9 Hotfix** | 允许先修阻断事故；补单后必须进入 `fst-review`，不得绕过验收 |
 
 ## 关联最佳实践
 
@@ -140,4 +141,4 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 下一步
 
-变更单归档 + 排期确认 → **fst-iterate**（盘点本轮需求时纳入本变更单 CR-xxx，按方略设计与实现）→ fst-review（变更针对性测试）。紧急通道补单完成后同样走 fst-iterate → fst-review。
+变更单归档 + 排期确认 → **fst-iterate**（盘点本轮需求时纳入本变更单 CR-xxx，按方略设计与实现）→ fst-review（变更针对性测试）。紧急通道补单完成后直接进入 `fst-review`；若需要后续非紧急扩展，再由 `fst-change` 建立常规 CR 并进入 `fst-iterate`。

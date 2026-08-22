@@ -23,8 +23,9 @@
           "cohesion": { "type": "string", "description": "内聚依据（与同批任务的共同模块/层级）" },
           "acceptance": {
             "type": "array",
+            "minItems": 1,
             "items": { "type": "string" },
-            "description": "验收标准（spec 方略必填）：可验证的断言，逐项核销后才算完成"
+            "description": "验收标准：每个任务至少一个可验证断言，逐项核销后才算完成"
           },
           "deps": { "type": "array", "items": { "type": "string" }, "description": "前置任务 id（graph 方略的依赖边）" },
           "status": {
