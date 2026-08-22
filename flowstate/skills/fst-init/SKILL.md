@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-09
   keywords_zh: "立项, 需求分层, 范围冻结, 柔性设计, 核心底线"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-init — 立项初始化（N1 立项 / N2 冻结 / N3 设计）

@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-09
   keywords_zh: "验收, DoD, 回归测试, 冒烟测试, 灰度发布"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-review — 验收审查（N6 测试 / N7 灰度）

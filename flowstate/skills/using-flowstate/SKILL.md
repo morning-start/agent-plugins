@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-09
   keywords_zh: "flowstate入口, 路由, 流程编排, 状态图, 引导"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # using-flowstate — 入口路由

@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-09
   keywords_zh: "变更管控, 变更分级, 影响评估, 紧急通道, Hotfix, 需求变更"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-change — 变更管控（N5 变更 / N9 紧急通道）

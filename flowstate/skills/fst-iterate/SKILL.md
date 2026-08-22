@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-09
   keywords_zh: "迭代, 分批开发, Git分支, 技术债, 回顾, docs/plan, docs/task"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-iterate — 迭代循环（N4 开发 / N8 持续迭代）

@@ -4,8 +4,8 @@
   "description": "Project development workflow plugin — dynamic soft orchestration via Agent Graph (requirements-incomplete / mid-change / continuous-iteration friendly)",
   "private": true,
   "scripts": {
-    "test": "node --test tests/validate-schemas.mjs",
-    "validate": "node --test tests/validate-schemas.mjs"
+    "test": "node --test tests/**/*.test.mjs",
+    "validate": "node --test tests/**/*.test.mjs"
   },
   "pi": {
     "extensions": [".pi/extensions/fst-bootstrap.ts"],

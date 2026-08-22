@@ -9,6 +9,7 @@ metadata:
     created: 2026-08-09
     updated: 2026-08-09
   keywords_zh: "工作区, .agent-workplace, 落点, 提交边界, 初始化, 过程态, 定稿"
+  tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-workplace — Agent 私有工作区管理（基础概念：.agent-workplace）
