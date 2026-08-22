@@ -3,7 +3,7 @@
 - **状态**: Accepted（已接受）
 - **日期**: 2026-08-08
 - **来源**: 基于 PRD §四（功能 F1~F9）、§七（执行图 N1~N9）、§五（产出物 5.1~5.9）、
-  `.agent-workplace/modes/`（graph 框架 + plan/spec/task/goal 最佳实践）设计。
+  操作模式（`references/agent-modes/`：todo/spec/goal/graph，插件绑定）设计。
   草稿见 `.agent-workplace/docs/spec/skill-split-draft.md`（过程态，不提交）。
 - **用途**: 为后续迭代编写 4 个 SKILL.md 提供权威拆分依据（PRD §十一-2 落地）。
 
@@ -30,11 +30,11 @@
 | fst-review | 5.4 迭代验收 Checklist |
 | fst-iterate | 5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan、5.9 docs/task |
 
-## 关联最佳实践（modes/*.md）
+## 关联最佳实践（references/agent-modes/）
 
 | 技能 | 主要最佳实践 | 用法 |
 |------|-------------|------|
-| fst-init | Spec 模式 | 访谈澄清 + 需求→计划→任务三链，产出 requirements.md |
+| fst-init | 流程框架 | N1~N3 立项/冻结/设计节点，访谈澄清 + 需求分层（框架见 `references/flow-graph.md`） |
 | fst-change | Plan 模式 | 先探索后计划，变更影响评估待确认后执行 |
 | fst-review | DoD 核销清单（schema 5.4） | 验收清单逐项勾选核销（DoD） |
 | fst-iterate | Spec 方略 + Loop 方略 + Graph 方略 | 先盘点本轮需求（含变更单 CR），按需求特征选方略：spec（验收标准核销，默认）/ loop（目标循环）/ graph（任务依赖图） |
@@ -52,7 +52,7 @@
   - 方案设计：主干冻结 + 柔性预留（可配置化/参数化/状态预留）
 - **人工动作**：确认 3 底线、签署范围说明书、评审柔性 PRD
 - **产出物（schema）**：5.1 需求分层清单、5.2 迭代范围说明书、5.5 风险清单
-- **关联最佳实践**：Spec 模式（访谈 + 需求→计划→任务三链）
+- **关联最佳实践**：流程框架（N1~N3 节点，见 `references/flow-graph.md`）
 - **DoD**：3 底线书面确认 → 范围签署 → 柔性 PRD 通过
 
 ### fst-change（变更管控：N5 + N9）

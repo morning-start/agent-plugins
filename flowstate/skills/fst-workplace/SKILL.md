@@ -57,8 +57,8 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 - 复制插件模板：`flowstate/templates/agent-workplace/` → 项目根 `.agent-workplace/`
 - 项目 `.gitignore` 追加一行 `.agent-workplace/`
-- 校验模板完整性：`modes/`、`docs/`、`scripts/`、`scratch/`、`research/`、
-  `state/`、`README.md` 均存在
+- 校验模板完整性：`docs/`、`scripts/`、`scratch/`、`research/`、
+  `report/`、`state/`、`README.md` 均存在
 
 ### 2. 落点判断（写任何内容前，硬性）
 
@@ -71,14 +71,15 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 | 路径 | 用途 |
 |------|------|
-| `modes/graph.md` | 流程框架：Agent 执行图（节点/边/循环/HITL/Checkpoint）+ Graph 方略 |
-| `modes/plan.md` / `spec.md` / `goal.md` | 最佳实践：Plan 模式 / Spec 方略 / Loop 方略 |
 | `docs/plan/` `docs/task/` `docs/spec/` | 过程态计划/任务/规格草稿 |
 | `docs/decisions.md` | 决策记录（DEC-xxx） |
 | `scripts/` | 可执行实验脚本 / 测试桩 |
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
 | `research/` `report/` | 调研缓存 / 调研报告 |
 | `state/goal.md` `state/checkpoint.json` `state/artifacts.json` | 运行时状态（Goal / 断点 / 产物注册） |
+
+> 模式与框架**不在工作区内**：操作模式权威源在 `references/agent-modes/*.md`，
+> 流程框架权威源在 `references/flow-graph.md`（插件绑定，随插件分发）。
 
 ### 4. 模式选择（30 秒版）
 
@@ -93,8 +94,8 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 - 节点完成即保存状态：产出物 + 流转记录 → `state/checkpoint.json`（断点续跑）
 - `research/` 与 `scratch/` 体积膨胀 → 自行清理（保留最近产物）
-- 更新 `modes/*.md` 定义时改模板 `templates/agent-workplace/` 并同步实例；
-  实例中的过程产物永不回写模板
+- 更新模式定义 → 改**技能权威源** `references/agent-modes/*.md`（插件绑定，随插件分发），
+  工作区内无副本、无需同步；实例中的过程产物永不回写插件
 
 ## 用户 vs Agent 分工
 
@@ -118,7 +119,7 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
   "status": "initialized | present | maintained",
   "workspace": ".agent-workplace/",
   "gitignore_entry": true,
-  "directories": ["modes", "docs", "scripts", "scratch", "research", "report", "state"],
+  "directories": ["docs", "scripts", "scratch", "research", "report", "state"],
   "commit_boundary": {
     "committed": "formal docs/ (PRD, ADR, DoD acceptance, change archive)",
     "private": ".agent-workplace/ (drafts, decisions, scripts, state)"
@@ -130,7 +131,7 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 ## 自检清单
 
 - [ ] `.agent-workplace/` 已存在且 `.gitignore` 含条目
-- [ ] 模板目录完整（modes / docs / scripts / scratch / research / report / state）
+- [ ] 模板目录完整（docs / scripts / scratch / research / report / state）
 - [ ] 写前已判断提交边界（定稿 `docs/`、过程态 `.agent-workplace/`）
 - [ ] 无「转正」路径行为（未把私区内容复制到正式目录）
 - [ ] `state/checkpoint.json` 已更新（断点续跑可用）

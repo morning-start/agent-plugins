@@ -18,12 +18,12 @@
 
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
-| **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `modes/graph.md` + `state/` |
-| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
+| **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `references/flow-graph.md`（插件侧） + `state/` |
+| **操作模式（agent-modes/）** | 解决**单一问题**的方法：todo / Spec（方略）/ Goal（Loop 方略）/ Graph（方略）等 | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
 
-**关系**：流程的每个步骤，都可以**选用合适的最佳实践**去执行——
-N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
-更新实践不推翻流程。框架定"流程怎么走"，实践定"这一步怎么做更好"。
+**关系**：流程的每个步骤，都可以**选用合适的操作模式**去执行——
+N4 迭代开发可用 Spec/Loop/Graph 方略；换模式不改变流程框架，
+更新模式不推翻流程。框架定"流程怎么走"，模式定"这一步怎么做更好"。
 
 > 本项目是"现代化的流程性开发"：整个开发过程由原来的**人驱动**变为
 > **Agent 配合人驱动**——Agent 承担执行与验证，人在 HITL 闸门处做关键决策，
@@ -33,10 +33,6 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 
 | 路径 | 用途 |
 |------|------|
-| `modes/graph.md` | **流程框架**：Agent 执行图（节点/边/循环/HITL/Checkpoint）+ Graph 方略 |
-| `modes/plan.md` | 最佳实践：Plan 模式（先探索后计划） |
-| `modes/spec.md` | 最佳实践：Spec 方略（phase→task→spec，任务带验收标准可验证） |
-| `modes/goal.md` | 最佳实践：Loop 方略（goal loop agent，自我评估续跑） |
 | `docs/requirements.md` | 需求清单（Spec 模式起点） |
 | `docs/plan/` | Plan 模式产物：PLAN.md（分 phase） |
 | `docs/task/` | Spec/Graph 方略产物：TASKS.md（分批次：内聚 + 验收标准/依赖） |
@@ -46,23 +42,25 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
 | `research/` | 研究/调研缓存（外部资料、备选方案） |
 | `report/` | 调研报告（Agent 调研结论、对比分析、研究报告） |
-| `state/goal.md` | Goal 模式：目标 + 自我评估记录 |
+| `state/goal.md` | Loop 方略：目标 + 自我评估记录 |
 | `state/checkpoint.json` | 断点续跑状态（图的 Checkpoint） |
 | `state/artifacts.json` | 产物注册表（跨阶段追踪） |
+
+> 模式与框架**不在本工作区内**：操作模式权威在 `references/agent-modes/*.md`，
+> 流程框架权威在 `references/flow-graph.md`（均为插件绑定，随插件分发）。
 
 ## 流程框架（Graph）怎么走
 
 - 流程 = 可执行状态图：节点是环节（F1~F9），边是 DoD 判据，闸门等人确认
 - **未核销不能沿边前进**；**HITL 闸门必须等人**；**变更必须走 N5**；**断点必存**
-- 完整规则见 `modes/graph.md` 与项目 `docs/PRD.md` §七
+- 完整规则见 `references/flow-graph.md` 与项目 `docs/PRD.md` §七
 
 ## 最佳实践怎么选（30 秒版）
 
-- 简单任务（一句话能说清 diff）→ **直接做**，用轻量 todo 清单跟踪，不进方略
-- 边界清晰、需确认步骤 → **Plan 模式**（`docs/plan/PLAN.md`，计划待确认才执行）
+- 简单任务（一句话能说清 diff）→ **直接做**，轻量 todo 清单跟踪，不进方略（见 `references/agent-modes/todo.md`）
 - 迭代开发 → **先盘点本轮需求（含变更单），按需求特征选方略**：
-  - 常规开发、验收点清晰 → **Spec 方略**（`phase→task→spec`，任务带验收标准，逐项核销）
-  - 目标明确、自动长跑 → **Loop 方略**（`state/goal.md`，每轮自我评估，达标才停）
-  - 依赖复杂、可并行 → **Graph 方略**（`docs/task/TASKS.md` 用 `deps` 标依赖，拓扑推进）
+  - 常规开发、验收点清晰 → **Spec 方略**（`references/agent-modes/spec.md`，`phase→task→spec`，任务带验收标准，逐项核销）
+  - 目标明确、自动长跑 → **Loop 方略**（`references/agent-modes/goal.md`，`state/goal.md`，每轮自我评估，达标才停）
+  - 依赖复杂、可并行 → **Graph 方略**（`references/agent-modes/graph.md`，`docs/task/TASKS.md` 用 `deps` 标依赖，拓扑推进）
 
-详细规则见 `modes/*.md`。
+详细规则见对应模式：`references/agent-modes/todo|spec|goal|graph.md`。

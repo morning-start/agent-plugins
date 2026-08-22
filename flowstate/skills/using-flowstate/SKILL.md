@@ -49,7 +49,7 @@ flowstate 的核心概念各有**单一权威位置**，其他技能只引用、
 | 概念 | 一句话 | 权威位置 |
 |------|--------|---------|
 | **.agent-workplace** | Agent 私有工作区：过程态草稿/脚本/state 全部不提交 git | `fst-workplace`（初始化与落点的唯一权威） |
-| **Agent Graph（执行图）** | N1~N9 状态图：节点=环节、边=DoD、闸门=HITL、检查点=Checkpoint | `docs/PRD.md` §七 · `.agent-workplace/modes/graph.md` |
+| **Agent Graph（执行图）** | N1~N9 状态图：节点=环节、边=DoD、闸门=HITL、检查点=Checkpoint | `docs/PRD.md` §七 · `references/flow-graph.md`（流程框架） · `references/agent-modes/graph.md`（图模式） |
 | **产出物 schema** | 5.1~5.9 产出物的 JSON 契约，可脚本校验 | `schemas/`（9 个 schema） |
 | **DoD（完成定义）** | 验收逐项核销，全部 ✅ 才放行 | `fst-review` · schema 5.4 |
 

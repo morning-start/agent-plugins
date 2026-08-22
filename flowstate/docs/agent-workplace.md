@@ -8,8 +8,9 @@
 - **迭代**: v0.3 — 吸收 Plan / Spec / Task / Goal 四工作模式与业界工作区
   最佳实践（TRAE Plan·Spec·Goal、Codex/Claude plan mode、Junie spec-driven、
   maestro-flow `.workflow/` 结构），补充 modes/、research/、requirements、
-  decisions、goal 状态等；v0.3 加入 **Graph 流程框架**（modes/graph.md）与
-  "流程框架 vs 最佳实践"两层解耦架构。
+  decisions、goal 状态等；v0.3 加入 **Graph 流程框架**（现 `references/flow-graph.md`）与
+  "流程框架 vs 最佳实践"两层解耦架构。v0.4 模式升级为**插件绑定技能**
+  （`references/agent-modes/`），工作区不再承载模式定义。
 
 ## 核心规则（铁律）
 
@@ -36,11 +37,11 @@
 
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
-| **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `modes/graph.md` + `state/` |
-| **最佳实践库（modes/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `modes/*.md` |
+| **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `references/flow-graph.md` + `state/` |
+| **操作模式（skills/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
 
 **关系**：流程的每个步骤，都可以**选用合适的最佳实践**去执行——
-N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环节；换实践不改变流程框架，
+N4 迭代开发可用 Spec/Loop/Graph 方略；换实践不改变流程框架，
 更新实践不推翻流程。框架定"流程怎么走"，实践定"这一步怎么做更好"。
 
 > **项目本质**：这是"现代化的流程性开发"——整个开发过程由原来的**人驱动**
@@ -49,8 +50,8 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 
 ## 最佳实践库（如何选）
 
-> 下表是**最佳实践库**的成员（解决单一问题的方法）；**流程框架（Graph）**不是实践，
-> 而是整套流程的结构，见 `modes/graph.md`——每个流程步骤在框架内选用下列实践执行。
+> 下表是**操作模式**的成员（解决单一问题的方法）；**流程框架（Graph）**不是实践，
+> 而是整套流程的结构，见 `references/flow-graph.md`——每个流程步骤在框架内选用下列模式执行。
 
 按任务特征选择工作模式，产物落在对应目录：
 
@@ -72,8 +73,7 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 
 ```
 .agent-workplace/                # Agent 私有工作区（gitignore 一条全免）
-├── README.md                    # 工作区地图：模式选择指南 + 目录说明（Agent 自解释入口）
-├── modes/                       # 工作模式定义：graph（流程框架）+ plan/spec/task/goal（最佳实践）
+├── README.md                    # 工作区地图：目录说明 + 落点规则（Agent 自解释入口）
 ├── docs/                        # 过程文档（Agent 全权管理）
 │   ├── requirements.md          #   需求清单（Spec 模式起点：需求编号 + 优先级 + 验收）
 │   ├── plan/                    #   Plan 模式：PLAN.md（分 phase：要做什么、为什么做）
@@ -94,9 +94,10 @@ N4 迭代开发可用 Spec/Loop/Graph 方略、N1 立项可用 Spec 的访谈环
 - PRD §四 F4.1 的 `docs/plan`、`docs/task` 默认落在 `.agent-workplace/docs/` 下；
 - PRD §七 Checkpoint 的产出物状态（docs/plan、docs/task、变更单草稿）落
   `.agent-workplace/state/`；
-- **modes/graph.md = PRD §七 执行图（Agent 执行图）** 的工作区落地：
+- **`references/flow-graph.md` = PRD §七 执行图（Agent 执行图）** 的插件侧权威：
   节点=流程环节、边=DoD 判据、HITL=人工闸门、Checkpoint=state/checkpoint.json；
   flowstate 插件按图驱动 Agent 执行时，本工作区就是图的执行载体；
+  操作模式（Plan / Spec / Loop / Graph 方略）权威在 `references/agent-modes/*.md`，工作区内不复制；
 - **Goal 模式 = PRD §七 的迭代闭环（N8→N4）** 在单次长任务中的体现：
   设定完成条件 → 每轮自我评估（对照 DoD/验收清单）→ 未达标继续、达标停止；
 - 任何需要留档、可追溯、可评审的**定稿**（如 SPEC 定稿、验收记录）写入项目
@@ -134,11 +135,12 @@ cp -r flowstate/templates/agent-workplace <目标项目>/.agent-workplace
 | | `templates/agent-workplace/` | `.agent-workplace/` |
 |--|------------------------------|---------------------|
 | git 状态 | 提交（随插件分发） | 忽略（私有） |
-| 内容 | 干净骨架：modes/ 模式定义 + docs/ 模板 + state/ 初始状态 + 空目录 .gitkeep | 运行实例：plan/task/spec/state 随工作演进 |
+| 内容 | 干净骨架：docs/ 模板 + state/ 初始状态 + 空目录 .gitkeep（**不含模式定义**——模式在 `references/agent-modes/`，插件绑定） | 运行实例：plan/task/spec/state 随工作演进 |
 | 用途 | 复制初始化新项目 | 日常使用 |
 
-> 规则：**模板只放"定义与初始状态"，不放运行时数据**——更新模式定义时改模板
-> 并同步实例；实例中的过程产物（plan/task/state 内容）永不回写模板。
+> 规则：**模板只放"目录骨架与初始状态"，不放运行时数据与模式定义**——模式更新
+> 改技能权威源 `references/agent-modes/*.md`（随插件分发，无工作区副本）；实例中的
+> 过程产物（plan/task/state 内容）永不回写插件。
 
 ## 备选方案
 

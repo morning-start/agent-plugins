@@ -200,9 +200,10 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 ## 关联最佳实践
 
-- **Spec 方略**（`.agent-workplace/modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
-- **Loop 方略**（`.agent-workplace/modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
-- **Graph 方略**（`.agent-workplace/modes/graph.md`）：任务依赖图，deps 拓扑推进、可并行
+- **Spec 方略**（`references/agent-modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
+- **Loop 方略**（`references/agent-modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
+- **Graph 方略**（`references/agent-modes/graph.md`）：任务依赖图，deps 拓扑推进、可并行
+- **Todo 模式**（`references/agent-modes/todo.md`）：简单任务直接做，轻量清单
 - 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan（含 strategy 字段）、5.9 docs/task（含 acceptance 字段）
 
 ## 输出

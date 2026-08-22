@@ -101,7 +101,7 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ## 关联最佳实践
 
-- **Spec 模式**（`.agent-workplace/modes/spec.md`）：访谈澄清 + 需求→计划→任务三链
+- **流程框架**（`references/flow-graph.md`）：N1~N3 立项/冻结/设计节点在该框架内的执行
 - **工作区管理**（`fst-workplace`）：初始化 + 落点规则 + 目录结构（单点维护）
 - 产出物 schema：5.1 需求分层清单、5.2 迭代范围说明书、5.5 风险清单
 

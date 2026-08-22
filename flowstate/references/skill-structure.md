@@ -34,7 +34,7 @@ flowstate 的 4 个 fst-* 技能（`fst-init` / `fst-change` / `fst-iterate` / `
 
 ## 关联最佳实践
 
-相关模式（`.agent-workplace/modes/*`）与产出物 schema 的引用。
+相关操作模式（`references/agent-modes/*.md`）与产出物 schema 的引用。
 
 ## 输出
 
