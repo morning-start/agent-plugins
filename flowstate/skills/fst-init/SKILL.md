@@ -103,6 +103,7 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 - **流程框架**（`references/flow-graph.md`）：N1~N3 立项/冻结/设计节点在该框架内的执行
 - **工作区管理**（`fst-workplace`）：初始化 + 落点规则 + 目录结构（单点维护）
+- **Spec 模式**（`references/agent-modes/spec.md`）：访谈澄清 + 需求→计划→任务三链，验收标准可验证
 - 产出物 schema：5.1 需求分层清单、5.2 迭代范围说明书、5.5 风险清单
 
 ## 输出

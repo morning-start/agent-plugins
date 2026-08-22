@@ -34,7 +34,7 @@ N4 迭代开发可用 Spec/Loop/Graph 方略；换模式不改变流程框架，
 | 路径 | 用途 |
 |------|------|
 | `docs/requirements.md` | 需求清单（Spec 模式起点） |
-| `docs/plan/` | Plan 模式产物：PLAN.md（分 phase） |
+| `docs/plan/` | 计划草稿：PLAN.md（分 phase：要做什么、为什么做） |
 | `docs/task/` | Spec/Graph 方略产物：TASKS.md（分批次：内聚 + 验收标准/依赖） |
 | `docs/spec/` | Spec 模式产物：spec.md + tasks.md + checklist.md |
 | `docs/decisions.md` | 决策记录（重要取舍、理由、否决项） |

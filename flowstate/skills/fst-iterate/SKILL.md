@@ -1,6 +1,6 @@
 ---
 name: fst-iterate
-description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: docs/plan (phases), docs/task (batches), Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph).
+description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: docs/plan (phases), docs/task (batches), Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph). Per-phase execution mode (spec/loop/graph/todo) is routed and confirmed by the internal fst-mode-router skill; this skill consumes the confirmed ModePlan and drives all execution.
 metadata:
   prefix: fst
   lifecycle:
@@ -19,47 +19,14 @@ metadata:
 
 迭代开发与持续迭代闭环的执行引导：**盘点本轮需求（含变更）→ 按需求特征选方略（spec/loop/graph）→ 方略设计（docs/plan + docs/task）→ 按方略实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
 
-## 方略（strategy）选择——需求驱动
+## 方略（strategy）选择——由 fst-mode-router 负责
 
-> **方略不是拍脑袋选的，而是由本轮迭代的需求决定的**。这里的"需求"不是整个项目需求，
-> 而是**本轮迭代要交付/要改动的那部分**——范围说明书内的排期需求 + 已归档变更单（CR-xxx，来自 fst-change）+
-> 需求池中排入本轮的条目。先盘点，再按需求特征选方略。
+方略选择由内部技能 `fst-mode-router` 负责：**盘点本轮需求**（范围说明书 REQ + 已归档 CR + 需求池条目，按新功能/改动/缺陷/技术债分类）→ **按需求特征为每个 phase 选** `spec` / `loop` / `graph` / `todo` → **说明理由并取得用户确认**，输出 `ModePlan`。
 
-### 第 1 步：盘点本轮需求（输入）
+`fst-iterate` 只消费已确认的 `ModePlan`：把每个 phase 落成 `docs/plan`（声明 strategy）+ `docs/task`（分批 + 验收标准），然后按方略执行（见下方执行流程 §1/§2）。
 
-| 来源 | 内容 | 落点 |
-|------|------|------|
-| 迭代范围说明书（fst-init 签署） | 本轮排期需求（REQ-xxx） | `docs/` 正式区 |
-| 变更申请单（fst-change 归档） | 本轮落地的变更（CR-xxx，含影响评估）——**变更只规划了"做什么"，实现由本技能驱动** | `docs/cr/` |
-| 需求池（fst-init/fst-change 维护） | 排入本轮的条目（含优先级） | 需求池 |
-
-盘点产物：**本轮需求清单**（新功能 / 需求改动 / 缺陷修复 / 技术债偿还 分类标注）。
-
-### 第 2 步：按需求特征选方略
-
-| 需求特征（本轮需求的具体形态） | 方略 | 链条 |
-|------|------|------|
-| 常规功能开发、验收点清晰（每步可验证） | `spec`（默认） | `phase→task→spec` |
-| 目标明确但边界模糊、需反复逼近（修测试、批量迁移、持续排查） | `loop` | `phase→loop` / `phase→task→loop` |
-| 依赖复杂、跨模块、可并行（大重构、多变更联动） | `graph` | `phase→graph` / `phase→task→graph` |
-| 一句话能说清 diff 的简单任务 | 不进方略，直接做 | todo 轻量清单 |
-
-**规则**：
-- 一个 phase 对应一组内聚需求，选一种方略；不同 phase 可按各自需求特征选不同方略
-- 拿不准 → 先盘点需求，按"验收点是否清晰 / 是否长跑 / 依赖是否复杂"三问判断
-- 简单任务混在复杂 phase 里 → 按该 phase 方略走，不单开方略
-
-### 第 3 步：方略设计（产出 docs/plan + docs/task）
-
-按所选方略设计本轮任务组织：
-
-| 方略 | 设计要点 | 产物 |
-|------|---------|------|
-| `spec` | 任务清单 + 每任务验收标准（acceptance），逐项核销 | `docs/task/TASKS.md` |
-| `loop` | 完成条件 + 每轮工作边界 + 评估标准 | `state/goal.md` + checkpoint |
-| `graph` | 任务节点 + `deps` 依赖边 + 每节点 DoD | `docs/task/TASKS.md` + `docs/task/graph.md` |
-
-设计完成（plan/task 就绪）后才进入执行——**先设计后执行，不设计不动工**。
+> 方略不是拍脑袋选的，而是由本轮迭代的需求决定的——**先盘点需求，再选方略，后设计，最后执行**；不盘点需求直接开写 plan 属于跳过决策。
+> 详细判断规则见 `skills/fst-mode-router/SKILL.md`；各模式执行方法见 `references/agent-modes/`（todo / spec / goal / graph）。
 
 ## Iron Law
 
@@ -97,13 +64,13 @@ ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 
 ## 执行流程
 
-### 0. 盘点本轮需求 + 选方略（需求驱动，前置）
+### 0. 调用方略路由（需求驱动，前置）
 
-按上文「方略选择——需求驱动」三步执行：
+调用 `fst-mode-router`，按上文规则盘点需求并取得用户确认，返回每个 phase 的 `ModePlan`：
 
-1. **盘点本轮需求**：范围说明书排期需求（REQ-xxx）+ 已归档变更单（CR-xxx）+ 需求池排入条目 → 产出**本轮需求清单**（新功能/需求改动/缺陷修复/技术债偿还分类）
-2. **按需求特征选方略**：每 phase 一组内聚需求选一种方略（spec / loop / graph / 简单任务直接做）
-3. **确认方略**：向用户说明"本轮需求长什么样 → 为什么选这个方略"，用户确认后再设计
+1. **接收本轮需求清单**：REQ-xxx + 已归档 CR-xxx + 需求池条目
+2. **接收已确认的 mode**：每个 phase 一个 `ModePlan`
+3. **进入 plan/task 设计**：未确认不得写计划或动代码
 
 > 铁律：**先盘点需求，再选方略，后设计，最后执行**——不盘点需求直接开写 plan 属于跳过决策。
 
@@ -195,10 +162,12 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 盘点本轮需求清单（含 fst-change 归档的 CR-xxx）、按需求特征建议方略、写 docs/plan（phase + 声明方略）、细化 docs/task（分批 + 验收标准）、按方略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
+| **Agent** | 消费 `fst-mode-router` 返回的已确认 `ModePlan`，写 docs/plan（phase + 声明方略）、细化 docs/task（分批 + 验收标准）、按方略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
 | **用户** | **确认方略选型**、确认 phase/批次划分、确认下轮迭代范围、迭代末验收 |
 
 ## 关联最佳实践
+
+- **方略路由**：`skills/fst-mode-router/SKILL.md`（需求盘点、mode 选择、用户确认、ModePlan 交接）
 
 - **Spec 方略**（`references/agent-modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
 - **Loop 方略**（`references/agent-modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
@@ -228,7 +197,7 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 ## 自检清单
 
 - [ ] 已盘点本轮需求清单（REQ-xxx + CR-xxx + 需求池条目，按新功能/改动/缺陷/技术债分类）
-- [ ] 已按需求特征选方略并经用户确认（spec / loop / graph，简单任务直接做）
+- [ ] 已由 `fst-mode-router` 选择方略并经用户确认（spec / loop / graph / todo）
 - [ ] docs/plan 与 docs/task 已写（过程态落 `.agent-workplace/docs/`）
 - [ ] 每个 phase 已声明方略（`strategy`：spec / loop / graph）
 - [ ] 任务已分批（内聚 + 顺序），每批可独立验证

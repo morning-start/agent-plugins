@@ -1,6 +1,6 @@
 ---
 name: fst-workplace
-description: Use when a project needs the agent-private workspace (.agent-workplace) initialized, when deciding where an artifact should live (committed docs/ vs private .agent-workplace/), or when applying the commit-boundary rules. Owns the workspace contract: initialization, artifact placement, directory structure, and mode selection (single point of maintenance).
+description: Use when a project needs the agent-private workspace (.agent-workplace) initialized, when deciding where an artifact should live (committed docs/ vs private .agent-workplace/), or when applying the commit-boundary rules. Owns the workspace contract: initialization, artifact placement, directory structure, and runtime state (single point of maintenance).
 metadata:
   prefix: fst
   lifecycle:
@@ -8,7 +8,7 @@ metadata:
     version: 0.1.0
     created: 2026-08-09
     updated: 2026-08-09
-  keywords_zh: "工作区, .agent-workplace, 落点, 提交边界, 初始化, 过程态, 定稿, 模式选择"
+  keywords_zh: "工作区, .agent-workplace, 落点, 提交边界, 初始化, 过程态, 定稿"
 ---
 
 # fst-workplace — Agent 私有工作区管理（基础概念：.agent-workplace）
@@ -83,12 +83,10 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 ### 4. 模式选择（30 秒版）
 
-- 简单任务（一句话说清 diff）→ 直接做，跳过计划
-- 边界清晰、需确认步骤 → Plan 模式（`docs/plan/PLAN.md`）
-- 迭代开发 → 先盘点本轮需求（含变更单），按需求特征选方略：
-  - 常规开发、验收点清晰 → Spec 方略（`phase→task→spec`，任务带验收标准逐项核销）
-  - 目标明确、自动长跑 → Loop 方略（`state/goal.md`，每轮自我评估，达标才停）
-  - 依赖复杂、可并行 → Graph 方略（任务用 `deps` 标依赖，拓扑推进）
+迭代内方略选择由 `fst-mode-router` 负责（`fst-iterate` 内部路由）；模式定义见 `references/agent-modes/`（todo / spec / goal / graph）。本技能只提供落点，不重复模式规则：
+
+- 简单任务（一句话说清 diff）→ 直接做，todo 轻量清单（产物落 `.agent-workplace/docs/task/`）
+- 迭代内任务 → 由 `fst-iterate` 调 `fst-mode-router` 按需求特征选方略，本技能不越权选择
 
 ### 5. 维护
 

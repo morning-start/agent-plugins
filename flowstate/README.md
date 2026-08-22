@@ -26,7 +26,7 @@ flowstate 是一个**项目开发全流程规范插件**：引导 AI 编程助�
 
 <p align="center">
   <img src="./assets/readme/section-overview.svg" width="100%"
-       alt="功能总览：技能 6、命令 4、Schema 9、钩子、工作区">
+       alt="功能总览：技能 7、命令 4、Schema 9、钩子、工作区">
 </p>
 
 ## 功能总览
@@ -35,7 +35,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 | 交付物 | 数量 | 作用 |
 |--------|------|------|
-| 技能 `skills/` | 6 | 分场景引导（入口路由 + 5 个流程技能） |
+| 技能 `skills/` | 7 | 分场景引导（入口路由 + 5 个流程技能 + 1 个内部方略路由） |
 | 命令 `commands/` | 4 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 9 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / …） |
 | 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |
@@ -45,7 +45,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 <p align="center">
   <img src="./assets/readme/badge-fst-init.svg" width="200" alt="fst-init：N1~N3 立项、冻结、设计，Spec 模式">
-  <img src="./assets/readme/badge-fst-change.svg" width="200" alt="fst-change：N5 变更、N9 紧急通道，Plan 模式，只规划不执行">
+  <img src="./assets/readme/badge-fst-change.svg" width="200" alt="fst-change：N5 变更、N9 紧急通道，先探索后计划，只规划不执行">
   <img src="./assets/readme/badge-fst-review.svg" width="200" alt="fst-review：N6 测试、N7 灰度，DoD 核销">
 </p>
 <p align="center">
@@ -57,14 +57,15 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 |------|------|-----------|------|---------|
 | `using-flowstate` | — | 入口路由 | 按场景路由到 fst-* | — |
 | `fst-init` | `/fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | Spec 模式 |
-| `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | Plan 模式 |
+| `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | 先探索后计划 |
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
 | `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8（**唯一执行入口**） | Spec / Loop / Graph 方略 |
 | `fst-workplace` | — | 横切 N1~N9 | 工作区初始化 / 落点判断 / 过程态管理 | — |
+| `fst-mode-router` | —（内部） | `fst-iterate` 内部 | 按 phase 选择并确认执行方略 | — |
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 
-### fst-iterate 的三种方略（需求驱动选择）
+### fst-iterate 的四种方略（需求驱动选择）
 
 先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
 

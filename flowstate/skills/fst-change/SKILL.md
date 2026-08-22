@@ -108,7 +108,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 关联最佳实践
 
-- **先探索后计划**（变更影响评估）：探索现状 → 计划待用户确认才执行（Plan 思路，见 `references/agent-modes/todo.md` 的简单任务边界）
+- **先探索后计划**（变更影响评估）：探索现状 → 影响评估 → 计划待用户确认才执行（Plan 思路；影响点清单供 `fst-review` 做变更针对性测试）
 - 产出物 schema：5.3 变更申请单
 
 ## 输出

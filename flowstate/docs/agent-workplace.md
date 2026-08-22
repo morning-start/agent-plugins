@@ -57,17 +57,20 @@ N4 迭代开发可用 Spec/Loop/Graph 方略；换实践不改变流程框架，
 
 | 模式 | 适用场景 | 产物 | 核心机制 |
 |------|---------|------|---------|
-| **Plan 模式** | 边界清晰、执行前需确认步骤（中小功能、模块重构、缺陷修复） | `docs/plan/PLAN.md` | 先探索后计划，计划待确认才执行 |
+| **Todo 模式** | 一句话能说清 diff 的简单任务（改 typo、加日志、重命名） | 轻量 todo 清单 | 不进方略，直接做 |
 | **Spec 方略** | 迭代开发默认方略：常规需求、验收点清晰，任务需"做到什么算完成"可验证 | `docs/task/TASKS.md`（含 acceptance）+ 可选 `docs/spec/checklist.md` | phase→task→spec：每任务带验收标准，逐项核销 |
 | **Loop 方略（goal loop agent）** | 目标明确、需自动持续推进（修测试、批量迁移、持续排查） | `state/goal.md` | phase→loop / phase→task→loop：完成条件 + 每轮自评，达标才停 |
 | **Graph 方略** | 依赖复杂、可并行、按拓扑推进 | `docs/task/TASKS.md`（`deps` 字段）+ 可选 `docs/task/graph.md` | phase→graph / phase→task→graph：节点=任务、边=依赖/DoD，拓扑执行 |
 
+> 模式定义权威在 `references/agent-modes/`（todo / spec / goal / graph）。变更影响评估的
+> 「先探索后计划」是 `fst-change` 的内部方法（非独立模式），评估待用户确认后才执行。
+
 **选择规则**：
-- 能用一句话描述 diff 的简单任务 → 跳过计划，直接做；
-- 不确定方案、改多文件、不熟悉代码 → 进 Plan 模式；
+- 能用一句话描述 diff 的简单任务 → Todo 模式，直接做；
 - 迭代开发、每步可验收 → 进 Spec 方略（默认）；
 - 长跑、无人值守 → 进 Loop 方略（配合 checkpoint 断点续跑）；
-- 依赖复杂、可并行 → 进 Graph 方略。
+- 依赖复杂、可并行 → 进 Graph 方略；
+- 迭代内方略选择由 `fst-iterate` 调 `fst-mode-router` 完成；变更的探索与评估走 `fst-change`。
 
 ## 目录结构
 
@@ -76,7 +79,7 @@ N4 迭代开发可用 Spec/Loop/Graph 方略；换实践不改变流程框架，
 ├── README.md                    # 工作区地图：目录说明 + 落点规则（Agent 自解释入口）
 ├── docs/                        # 过程文档（Agent 全权管理）
 │   ├── requirements.md          #   需求清单（Spec 模式起点：需求编号 + 优先级 + 验收）
-│   ├── plan/                    #   Plan 模式：PLAN.md（分 phase：要做什么、为什么做）
+│   ├── plan/                    #   计划草稿：PLAN.md（分 phase：要做什么、为什么做）
 │   ├── task/                    #   Spec/Graph 方略产物：TASKS.md（分批次：内聚 + 验收标准/依赖）
 │   ├── spec/                    #   Spec 模式：spec.md + tasks.md + checklist.md
 │   └── decisions.md             #   决策记录（重要取舍、理由、否决项）
