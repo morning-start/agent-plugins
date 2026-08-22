@@ -17,7 +17,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 技能 `skills/` | 6 | 分场景引导（入口路由 + 5 个流程技能） |
 | 命令 `commands/` | 4 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 9 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / …） |
-| 生命周期钩子 `hooks/` | 2 | SessionStart 自动注入入口技能（bash + PowerShell） |
+| 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |
 | 工作区模板 `templates/` | 1 | `.agent-workplace` 私有工作区骨架 |
 
 ### 技能与命令（引导层）
@@ -26,12 +26,14 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 |------|------|-----------|------|---------|
 | `using-flowstate` | — | 入口路由 | 按场景路由到 fst-* | — |
 | `fst-init` | `/fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | Spec 模式 |
-| `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9 | Plan 模式 |
+| `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | Plan 模式 |
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
-| `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8 | Spec / Loop / Graph 方略 |
+| `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8（**唯一执行入口**） | Spec / Loop / Graph 方略 |
 | `fst-workplace` | — | 横切 N1~N9 | 工作区初始化 / 落点判断 / 过程态管理 | — |
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
+
+**规划与执行分离**：`fst-change` 只做规划与约束（记录原文 → 分级 → 影响评估 → 审批排期 → 归档），**不写代码**；所有实现统一由 `fst-iterate` 作为唯一执行入口按方略驱动。唯一例外是线上事故 Hotfix（N9）——先修后补单，24h 内补录变更单。
 
 **fst-iterate 的三种方略（需求驱动选择）**：先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
 
@@ -62,6 +64,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 - **`.agent-workplace/`** — Agent 私有工作区：过程态草稿/脚本/state **全部不提交 git**，定稿才写正式 `docs/`；规范见 `docs/agent-workplace.md`，初始化与落点见 `fst-workplace`
 - **SessionStart 钩子** — 会话开始自动注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），不依赖 node 运行时；bash + PowerShell 双变体
+- **PreCommit 门禁** — 提交前拦截 `.agent-workplace/` 入提交与疑似密钥泄漏，守护"私有区永不提交"铁律；bash + PowerShell 双变体
 
 ## 工作流程（功能如何串成一条线）
 
@@ -139,8 +142,9 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 | Hook | 事件 | 作用 |
 |------|------|------|
 | `session-start.sh` / `.ps1` | SessionStart | 注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
+| `pre-commit.sh` / `.ps1` | PreCommit（git 门禁） | 拦截 `.agent-workplace/` 入提交 + 疑似密钥扫描，守护"私有区永不提交"铁律 |
 
-> 轻量自包含：直接读 SKILL.md 输出，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。
+> 轻量自包含：直接读 SKILL.md 输出 / git diff，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。
 
 ## 文档
 
