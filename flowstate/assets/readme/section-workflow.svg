@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="130" viewBox="0 0 1200 130"
+     role="img" aria-labelledby="s2-title s2-desc">
+  <title id="s2-title">工作流程</title>
+  <desc id="s2-desc">flowstate 的状态图流转：N1 立项、N2 冻结、N3 设计、N4 开发，经 DoD 守卫到 N6 测试、N7 灰度、N8 回顾，HITL 闸门把关，迭代闭环回到 N1。</desc>
+
+  <defs>
+    <marker id="s2-arrow" viewBox="0 0 10 10" refX="8" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L8,5 L0,9 z" fill="#3D4A61"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="130" rx="20" fill="#0B0E14"/>
+  <rect x="48" y="16" width="1104" height="100" rx="14" fill="#0F1520" stroke="#212C3D" stroke-width="1.5"/>
+
+  <!-- index + title -->
+  <text x="76" y="76" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="28" font-weight="700" fill="#4C8DFF">02</text>
+  <line x1="126" y1="52" x2="126" y2="80" stroke="#2A3548" stroke-width="2"/>
+  <text x="146" y="76" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="42" font-weight="700" fill="#F5F7FA">工作流程</text>
+  <text x="146" y="98" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="16" letter-spacing="1" fill="#8B94A7">N1~N9 STATE GRAPH · DOD · HITL</text>
+
+  <!-- row 1: N1 -> N2 -> N3 -> N4 -->
+  <g id="chain-row1">
+    <rect x="560" y="34" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="596" y="51" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N1</text>
+
+    <rect x="656" y="34" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="692" y="51" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N2</text>
+    <polygon points="722,22 728,28 722,34 716,28" fill="#FBBF24"/>
+
+    <rect x="752" y="34" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="788" y="51" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N3</text>
+
+    <rect x="848" y="34" width="72" height="26" rx="8" fill="#152238" stroke="#4C8DFF" stroke-width="2"/>
+    <text x="884" y="51" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#7FB0FF">N4</text>
+  </g>
+
+  <!-- row1 arrows + DoD check on N3->N4 -->
+  <g stroke="#3D4A61" stroke-width="2" fill="none">
+    <line x1="636" y1="47" x2="650" y2="47" marker-end="url(#s2-arrow)"/>
+    <line x1="732" y1="47" x2="746" y2="47" marker-end="url(#s2-arrow)"/>
+    <line x1="828" y1="47" x2="842" y2="47" marker-end="url(#s2-arrow)"/>
+  </g>
+  <g id="dod-check">
+    <circle cx="836" cy="47" r="6" fill="#34D399"/>
+    <path d="M833,47 l2.4,2.4 l4.6,-4.6" stroke="#0B0E14" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- vertical drop N4 -> N6 -->
+  <line x1="884" y1="64" x2="884" y2="74" stroke="#3D4A61" stroke-width="2"/>
+  <polygon points="884,80 878,72 890,72" fill="#3D4A61"/>
+
+  <!-- row 2: N6 -> N7 -> N8 -->
+  <g id="chain-row2">
+    <rect x="848" y="78" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="884" y="95" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N6</text>
+    <polygon points="914,72 920,78 914,84 908,78" fill="#FBBF24"/>
+
+    <rect x="944" y="78" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="980" y="95" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N7</text>
+
+    <rect x="1040" y="78" width="72" height="26" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="1076" y="95" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="18" font-weight="700" fill="#4C8DFF">N8</text>
+  </g>
+
+  <!-- row2 arrows -->
+  <g stroke="#3D4A61" stroke-width="2" fill="none">
+    <line x1="924" y1="91" x2="938" y2="91" marker-end="url(#s2-arrow)"/>
+    <line x1="1020" y1="91" x2="1034" y2="91" marker-end="url(#s2-arrow)"/>
+  </g>
+
+  <!-- 迭代闭环 N8 -> N1（底部弧线，面板加高后留白充足） -->
+  <path d="M1076,104 C 1076,112 640,112 624,106 L 624,70" fill="none"
+        stroke="#34D399" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="624,62 616,70 632,70" fill="#34D399"/>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="130" viewBox="0 0 1200 130"
+     role="img" aria-labelledby="s1-title s1-desc">
+  <title id="s1-title">功能总览</title>
+  <desc id="s1-desc">flowstate 的 5 类交付物：技能、命令、产出模板、生命周期钩子、工作区模板。</desc>
+
+  <defs>
+    <marker id="s1-arrow" viewBox="0 0 10 10" refX="8" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L8,5 L0,9 z" fill="#3D4A61"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="130" rx="20" fill="#0B0E14"/>
+  <rect x="48" y="24" width="1104" height="82" rx="14" fill="#0F1520" stroke="#212C3D" stroke-width="1.5"/>
+
+  <!-- index + title -->
+  <text x="76" y="76" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="28" font-weight="700" fill="#4C8DFF">01</text>
+  <line x1="126" y1="52" x2="126" y2="80" stroke="#2A3548" stroke-width="2"/>
+  <text x="146" y="76" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="42" font-weight="700" fill="#F5F7FA">功能总览</text>
+  <text x="146" y="98" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="16" letter-spacing="1" fill="#8B94A7">SKILLS · COMMANDS · SCHEMAS · HOOKS · WORKSPACE</text>
+
+  <!-- motif: delivery chain -->
+  <g id="delivery-chain" transform="translate(560 52)">
+    <rect x="0" y="0" width="86" height="28" rx="8" fill="#152238" stroke="#4C8DFF" stroke-width="1.5"/>
+    <text x="43" y="19" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+          font-size="16" fill="#E6EBF2">技能 6</text>
+    <line x1="90" y1="14" x2="106" y2="14" stroke="#3D4A61" stroke-width="2" marker-end="url(#s1-arrow)"/>
+    <rect x="110" y="0" width="96" height="28" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="158" y="19" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+          font-size="16" fill="#E6EBF2">命令 4</text>
+    <line x1="210" y1="14" x2="226" y2="14" stroke="#3D4A61" stroke-width="2" marker-end="url(#s1-arrow)"/>
+    <rect x="230" y="0" width="116" height="28" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="288" y="19" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+          font-size="16" fill="#E6EBF2">Schema 9</text>
+    <line x1="350" y1="14" x2="366" y2="14" stroke="#3D4A61" stroke-width="2" marker-end="url(#s1-arrow)"/>
+    <rect x="370" y="0" width="96" height="28" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="418" y="19" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+          font-size="16" fill="#E6EBF2">钩子</text>
+    <line x1="470" y1="14" x2="486" y2="14" stroke="#3D4A61" stroke-width="2" marker-end="url(#s1-arrow)"/>
+    <rect x="490" y="0" width="96" height="28" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <text x="538" y="19" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+          font-size="16" fill="#E6EBF2">工作区</text>
+  </g>
+</svg>

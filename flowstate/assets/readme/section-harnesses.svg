@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="130" viewBox="0 0 1200 130"
+     role="img" aria-labelledby="s3-title s3-desc">
+  <title id="s3-title">多端支持</title>
+  <desc id="s3-desc">flowstate 是跨端插件：Claude Code、pi、oh-my-pi、opencode 原生加载同一套技能。</desc>
+
+  <rect width="1200" height="130" rx="20" fill="#0B0E14"/>
+  <rect x="48" y="24" width="1104" height="82" rx="14" fill="#0F1520" stroke="#212C3D" stroke-width="1.5"/>
+
+  <!-- index + title -->
+  <text x="76" y="76" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="28" font-weight="700" fill="#4C8DFF">03</text>
+  <line x1="126" y1="52" x2="126" y2="80" stroke="#2A3548" stroke-width="2"/>
+  <text x="146" y="76" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="42" font-weight="700" fill="#F5F7FA">多端支持</text>
+  <text x="146" y="98" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="16" letter-spacing="1" fill="#8B94A7">CLAUDE · PI · OMP · OPENCODE</text>
+
+  <!-- motif: harness terminals -->
+  <g id="harness-strip" transform="translate(528 50)">
+    <rect x="0" y="0" width="150" height="30" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <circle cx="14" cy="15" r="3.5" fill="#4C8DFF"/>
+    <text x="28" y="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="17" fill="#E6EBF2">Claude Code</text>
+
+    <rect x="164" y="0" width="130" height="30" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <circle cx="178" cy="15" r="3.5" fill="#34D399"/>
+    <text x="192" y="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="17" fill="#E6EBF2">pi</text>
+
+    <rect x="308" y="0" width="150" height="30" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <circle cx="322" cy="15" r="3.5" fill="#FBBF24"/>
+    <text x="336" y="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="17" fill="#E6EBF2">oh-my-pi</text>
+
+    <rect x="472" y="0" width="140" height="30" rx="8" fill="#141B27" stroke="#2A3548"/>
+    <circle cx="486" cy="15" r="3.5" fill="#8B94A7"/>
+    <text x="500" y="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          font-size="17" fill="#E6EBF2">opencode</text>
+  </g>
+</svg>

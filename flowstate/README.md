@@ -1,12 +1,33 @@
 # flowstate
 
-**项目开发全流程规范插件** — 引导 AI 编程助手在**需求不全、中途变更、持续迭代**的真实项目中，按"先锁核心底线、边做边补、可控变更、持续校准"流程工作。
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%"
+       alt="flowstate：把开发过程建模为可执行状态图（N1~N9），先锁核心底线、边做边补、可控变更、持续校准">
+</p>
 
-> 中文介绍 · English overview 见 `docs/README.md`（文档地图）与 `docs/PRD.md`（完整需求）。
+> **文档地图**：中文介绍见本文件；完整需求见 [`docs/PRD.md`](docs/PRD.md)；文档导航见 [`docs/README.md`](docs/README.md)。
 
 ## 这是什么
 
-flowstate 把整个开发过程建模为一张**可执行的状态图（Agent Graph）**——节点是流程环节（N1~N9），边是 DoD 流转判据，人工闸门（HITL）强制等人确认。**图为逻辑蓝图，采用动态软编排**：由 Claude Code / Codex 等 Agent 框架按 skills/commands 原生驱动执行，不做代码级硬编排。
+flowstate 是一个**项目开发全流程规范插件**：引导 AI 编程助手在**需求不全、中途变更、持续迭代**的真实项目中，按「先锁核心底线、边做边补、可控变更、持续校准」流程工作——而不是拿到一句话需求就直接开写。
+
+它不是代码框架，而是一套**流程契约**：告诉 Agent 每个阶段该做什么、产出什么、哪些必须等人确认、什么情况下必须停下。
+
+## 为什么不一样
+
+| 机制 | 说明 |
+|------|------|
+| **可执行状态图** | 把整个开发过程建模为 N1~N9 状态图，DoD 判据控制沿边流转，**图为逻辑蓝图、动态软编排**——由各端 Agent 框架原生驱动，不做代码级硬编排 |
+| **规划与执行分离** | `fst-change` 只做规划与约束（记录原文 → 分级 → 影响评估 → 审批排期 → 归档），**不写代码**；所有实现统一由 `fst-iterate` 作为唯一执行入口按方略驱动。唯一例外是线上事故 Hotfix（N9）——先修后补单，24h 内补录变更单 |
+| **需求驱动方略** | 方略不是拍脑袋选的，由**本轮迭代的需求**决定（spec / loop / graph），不同 phase 可按各自需求特征选不同方略 |
+| **DoD 守卫 + HITL 闸门** | 未核销不得沿边前进；底线确认、范围签署、PRD 评审、变更分级、DoD 核销、放量决策**强制暂停等人** |
+| **Checkpoint 断点续跑** | 每个节点完成即保存状态，中断可续跑 |
+| **私有工作区 + 提交门禁** | `.agent-workplace/` 过程态永不提交 git，PreCommit 钩子硬性拦截 |
+
+<p align="center">
+  <img src="./assets/readme/section-overview.svg" width="100%"
+       alt="功能总览：技能 6、命令 4、Schema 9、钩子、工作区">
+</p>
 
 ## 功能总览
 
@@ -20,7 +41,17 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |
 | 工作区模板 `templates/` | 1 | `.agent-workplace` 私有工作区骨架 |
 
-### 技能与命令（引导层）
+### 技能族
+
+<p align="center">
+  <img src="./assets/readme/badge-fst-init.svg" width="200" alt="fst-init：N1~N3 立项、冻结、设计，Spec 模式">
+  <img src="./assets/readme/badge-fst-change.svg" width="200" alt="fst-change：N5 变更、N9 紧急通道，Plan 模式，只规划不执行">
+  <img src="./assets/readme/badge-fst-review.svg" width="200" alt="fst-review：N6 测试、N7 灰度，DoD 核销">
+</p>
+<p align="center">
+  <img src="./assets/readme/badge-fst-iterate.svg" width="200" alt="fst-iterate：N4 开发、N8 回顾，Spec/Loop/Graph 方略，唯一执行入口">
+  <img src="./assets/readme/badge-fst-workplace.svg" width="200" alt="fst-workplace：横切 N1~N9 工作区，私有区永不提交">
+</p>
 
 | 技能 | 命令 | 管哪些节点 | 功能 | 最佳实践 |
 |------|------|-----------|------|---------|
@@ -33,9 +64,9 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 
-**规划与执行分离**：`fst-change` 只做规划与约束（记录原文 → 分级 → 影响评估 → 审批排期 → 归档），**不写代码**；所有实现统一由 `fst-iterate` 作为唯一执行入口按方略驱动。唯一例外是线上事故 Hotfix（N9）——先修后补单，24h 内补录变更单。
+### fst-iterate 的三种方略（需求驱动选择）
 
-**fst-iterate 的三种方略（需求驱动选择）**：先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
+先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
 
 | 需求特征 | 方略 | 链条 | 可验证 |
 |------|------|------|--------|
@@ -64,7 +95,12 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 - **`.agent-workplace/`** — Agent 私有工作区：过程态草稿/脚本/state **全部不提交 git**，定稿才写正式 `docs/`；规范见 `docs/agent-workplace.md`，初始化与落点见 `fst-workplace`
 - **SessionStart 钩子** — 会话开始自动注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），不依赖 node 运行时；bash + PowerShell 双变体
-- **PreCommit 门禁** — 提交前拦截 `.agent-workplace/` 入提交与疑似密钥泄漏，守护"私有区永不提交"铁律；bash + PowerShell 双变体
+- **PreCommit 门禁** — 提交前拦截 `.agent-workplace/` 入提交与疑似密钥泄漏，守护「私有区永不提交」铁律；bash + PowerShell 双变体
+
+<p align="center">
+  <img src="./assets/readme/section-workflow.svg" width="100%"
+       alt="工作流程：N1~N9 状态图流转，DoD 守卫与 HITL 闸门控制">
+</p>
 
 ## 工作流程（功能如何串成一条线）
 
@@ -120,9 +156,25 @@ flowchart TD
 
 「工单管理系统」端到端走完全流程的示例见 `docs/PRD.md` §九。
 
-## 多端支持（harnesses）
+<p align="center">
+  <img src="./assets/readme/section-quickstart.svg" width="100%"
+       alt="快速开始：安装 → SessionStart 注入 → using-flowstate 路由">
+</p>
 
-flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原生加载。
+## 快速开始
+
+1. **安装插件** — 用你的端加载本仓库（marketplace 注册于仓库根 `.claude-plugin/marketplace.json`，一个仓库 = 一个市场）：
+
+   ```bash
+   # pi / oh-my-pi
+   /plugin marketplace add morning-start/agent-plugins
+   /plugin install flowstate@agent-plugins
+   ```
+
+   Claude Code 直接以本地插件加载 `flowstate/`（或复制到项目的 `.claude-plugin/`）；opencode 见 `.opencode/INSTALL.md`。
+
+2. **开始会话** — SessionStart 钩子自动注入 `using-flowstate` 入口技能（Claude Code 免手动；pi/omp/opencode 由各自 bootstrap 注入）
+3. **按场景路由** — 说「新项目 / 要改需求 / 迭代开始了 / 准备验收」，入口技能会引导你到对应 `fst-*` 技能
 
 | 端 | manifest | 技能发现 | 入口引导 |
 |----|----------|---------|---------|
@@ -135,6 +187,15 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 
 > **双 manifest 设计**：根 `plugin.json` 是 pi/omp 的最小 manifest（name/version/description）；`.claude-plugin/plugin.json` 是 Claude Code manifest（含 tags、keywords、skills、commands）。两者的 name/version/description 保持同步。
 
+<p align="center">
+  <img src="./assets/readme/section-harnesses.svg" width="100%"
+       alt="多端支持：Claude Code、pi、oh-my-pi、opencode">
+</p>
+
+## 多端支持（harnesses）
+
+flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原生加载。技能清单与安装方式见上表；`docs/PRD.md` §附录含与原流程文档的差异说明。
+
 ## Hooks（质量门禁 / 会话引导）
 
 `hooks/` 提供 Claude Code 生命周期 hooks（bash + PowerShell 双变体）：
@@ -142,10 +203,17 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 | Hook | 事件 | 作用 |
 |------|------|------|
 | `session-start.sh` / `.ps1` | SessionStart | 注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
-| `pre-commit.sh` / `.ps1` | PreCommit（git 门禁） | 拦截 `.agent-workplace/` 入提交 + 疑似密钥扫描，守护"私有区永不提交"铁律 |
+| `pre-commit.sh` / `.ps1` | PreCommit（git 门禁） | 拦截 `.agent-workplace/` 入提交 + 疑似密钥扫描，守护「私有区永不提交」铁律 |
 
 > 轻量自包含：直接读 SKILL.md 输出 / git diff，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。
 
 ## 文档
 
-见 `docs/README.md`（文档地图）：PRD、ADR-0001（命名）、ADR-0002（图编排）、glossary、skill-split（技能拆分）。
+- [`docs/README.md`](docs/README.md) — 文档地图（四象限导航）
+- [`docs/PRD.md`](docs/PRD.md) — 完整需求（功能 F1~F9、产出物模板、执行图、端到端示例）
+- [`docs/ADR-0001-naming.md`](docs/ADR-0001-naming.md) — 命名决策（为什么叫 flowstate / 前缀 fst-）
+- [`docs/ADR-0002-agent-graph.md`](docs/ADR-0002-agent-graph.md) — Agent 图编排决策
+- [`docs/glossary.md`](docs/glossary.md) — 术语表（DoD / 骨架开发 / 需求池）
+- [`docs/skill-split.md`](docs/skill-split.md) — 技能拆分方案
+- [`docs/agent-workplace.md`](docs/agent-workplace.md) — Agent 私有工作区规范
+- [`docs/documentation-structure.md`](docs/documentation-structure.md) — 文档结构约定

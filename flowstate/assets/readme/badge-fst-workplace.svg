@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="320" height="104" viewBox="0 0 320 104"
+     role="img" aria-labelledby="b-wp-title b-wp-desc">
+  <title id="b-wp-title">fst-workplace 工作区</title>
+  <desc id="b-wp-desc">横切 N1~N9，.agent-workplace 初始化、落点判断、提交边界。私有区永不提交。</desc>
+  <rect width="320" height="104" rx="16" fill="#0F1520" stroke="#212C3D" stroke-width="1.5"/>
+  <rect x="0" y="0" width="8" height="104" rx="4" fill="#8B94A7"/>
+  <circle cx="278" cy="30" r="6" fill="#8B94A7"/>
+  <text x="30" y="38" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="24" font-weight="700" fill="#F5F7FA">fst-workplace</text>
+  <text x="30" y="64" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="16" fill="#8B94A7">横切 N1~N9 工作区</text>
+  <text x="296" y="92" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="16" font-weight="600" fill="#C3CAD6">私有区</text>
+</svg>

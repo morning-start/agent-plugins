@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="320" height="104" viewBox="0 0 320 104"
+     role="img" aria-labelledby="b-init-title b-init-desc">
+  <title id="b-init-title">fst-init 立项初始化</title>
+  <desc id="b-init-desc">N1 立项 · N2 冻结 · N3 设计，访谈 3 条底线，签署范围说明书。Spec 模式。</desc>
+  <rect width="320" height="104" rx="16" fill="#0F1520" stroke="#212C3D" stroke-width="1.5"/>
+  <rect x="0" y="0" width="8" height="104" rx="4" fill="#4C8DFF"/>
+  <circle cx="278" cy="30" r="6" fill="#4C8DFF"/>
+  <text x="30" y="38" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="24" font-weight="700" fill="#F5F7FA">fst-init</text>
+  <text x="30" y="64" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="16" fill="#8B94A7">N1~N3 立项 · 冻结 · 设计</text>
+  <text x="296" y="92" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif"
+        font-size="16" font-weight="600" fill="#7FB0FF">Spec 模式</text>
+</svg>
