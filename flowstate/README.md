@@ -181,7 +181,7 @@ flowchart TD
 | Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-flowstate` + **SessionStart hook** 自动注入 |
 | pi | `package.json` → `pi.skills` | `skills/` | `.pi/extensions/fst-bootstrap.ts` 注入 |
 | oh-my-pi (omp) | `package.json` → `omp.skills` | `skills/` | 复用 pi bootstrap（见 `OMP-NOTES.md`） |
-| opencode | `.opencode/opencode.json` | `.opencode/skills/`（预复制） | `.opencode/plugins/fst-bootstrap.ts` 注入（见 `.opencode/INSTALL.md`） |
+| opencode | `.opencode/plugins/fst-bootstrap.ts`（`config` 钩子运行时注册 `skills/`） | `skills/`（单一源） | 同左，bootstrap 注入（见 `.opencode/INSTALL.md`） |
 
 各端安装方式见对应端说明：`OMP-NOTES.md`（omp）、`.opencode/INSTALL.md`（opencode）。
 

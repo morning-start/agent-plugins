@@ -2,19 +2,39 @@
  * flowstate — opencode plugin (bootstrap).
  *
  * opencode has no shell hooks — this TypeScript plugin module is loaded from
- * `.opencode/plugins/` and returns a hooks object over the message/session
- * surface only. The injected body comes from the canonical
- * `skills/using-flowstate/SKILL.md` (frontmatter stripped, single marker),
- * never hand-copied here.
+ * `.opencode/plugins/` and returns a hooks object. Two responsibilities:
+ *
+ * 1. `config` hook — registers the canonical repo-root `skills/` directory as
+ *    an opencode skill source at runtime (superpowers-style self-registration;
+ *    no `.opencode/skills/` copy, no symlink). Handles both config shapes:
+ *    v1 object `{ skills: { paths: [...] } }` and v2 array `{ skills: [...] }`.
+ * 2. `session.created` — injects the entry skill body (from the canonical
+ *    `skills/using-flowstate/SKILL.md`, frontmatter stripped, single marker),
+ *    never hand-copied here.
  */
 
 // @ts-check
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+const ENTRY_REL = join("skills", "using-flowstate", "SKILL.md");
+const SKILLS_DIR_REL = "skills";
 const MARKER_PREFIX = "FLOWSTATE_BOOTSTRAP";
 const PLUGIN_NAME = "flowstate";
-const ENTRY_REL = join("skills", "using-flowstate", "SKILL.md");
+
+/** Register `root/skills` as an opencode skill source (idempotent). */
+function registerSkillsDir(config, root) {
+  const skillsDir = join(root, SKILLS_DIR_REL);
+  if (Array.isArray(config.skills)) {
+    // v2 shape: array of paths / URLs.
+    if (!config.skills.includes(skillsDir)) config.skills.push(skillsDir);
+    return;
+  }
+  // v1 shape: { paths: [...], urls: [...] }.
+  config.skills = config.skills || {};
+  config.skills.paths = config.skills.paths || [];
+  if (!config.skills.paths.includes(skillsDir)) config.skills.paths.push(skillsDir);
+}
 
 /** @type {{ marker: string, text: string } | null} */
 let cached = null;
@@ -51,6 +71,11 @@ export const FstBootstrap = async ({ directory } = {}) => {
       if (output && typeof output === "object") {
         output.prompt = output.prompt ? `${entry.text}\n\n${output.prompt}` : entry.text;
       }
+    },
+    // Lazy discovery: opencode reads skill paths after plugins load, so
+    // mutating the config object here is visible to later skill discovery.
+    config: async (config) => {
+      registerSkillsDir(config, root);
     },
     "message.part.updated": async (input, output) => {
       // No-op adapter stub: idempotent, never duplicates the marker.

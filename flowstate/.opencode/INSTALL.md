@@ -5,15 +5,19 @@ flowstate is loaded as a local opencode plugin from `.opencode/plugins/`.
 ## Install
 
 1. Copy this plugin directory into your project (opencode picks up
-   `.opencode/plugins/` and `.opencode/skills/` automatically).
-2. Restart opencode so it rescans plugin and skill directories.
+   `.opencode/plugins/` automatically).
+2. Restart opencode so it rescans the plugin and skill directories.
 
 ## Skill discovery
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/` —
-NOT the repo-root `skills/` directory. The plugin ships pre-copied skills
-under `.opencode/skills/` (using-flowstate + fst-init/change/review/iterate)
-so no manual copy step is required.
+Skills live canonically in the repo-root `skills/` directory. The bootstrap
+plugin (`.opencode/plugins/fst-bootstrap.ts`) registers that directory as an
+opencode skill source at runtime via its `config` hook — superpowers-style
+self-registration. No `.opencode/skills/` copy, no symlink, no `skills` key
+in `opencode.json`.
+
+Do NOT copy skills under `.opencode/skills/`; a duplicate tree drifts from
+the canonical source.
 
 ## Use
 
