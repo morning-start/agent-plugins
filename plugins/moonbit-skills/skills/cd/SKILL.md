@@ -72,8 +72,9 @@ If you catch yourself doing any of these, you are violating the CD contract:
 
 ```bash
 # CD only accepts a schema-valid evaluate approval.
-if [ ! -f .moonbit-pipeline.json ]; then
-  echo "ERROR: .moonbit-pipeline.json is required before CD"
+CHECKPOINT_FILE=".agent-workplace/state/checkpoint.json"
+if [ ! -f "$CHECKPOINT_FILE" ]; then
+  echo "ERROR: $CHECKPOINT_FILE is required before CD"
   exit 1
 fi
 
@@ -82,7 +83,7 @@ if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   PYTHON_BIN="python3"
 fi
 
-EVAL_STATE=$("$PYTHON_BIN" -c 'import json; d=json.load(open(".moonbit-pipeline.json", encoding="utf-8")); print(d.get("phase", "unknown"), d.get("status", "unknown"))' 2>/dev/null) || {
+EVAL_STATE=$("$PYTHON_BIN" -c "import json; d=json.load(open('$CHECKPOINT_FILE', encoding='utf-8')); print(d.get('phase', 'unknown'), d.get('status', 'unknown'))" 2>/dev/null) || {
   echo "ERROR: invalid pipeline state; run validate-pipeline-state.py"
   exit 1
 }

@@ -41,10 +41,18 @@
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
 - 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate → cd`。
 - 注: `↔` 表示双向依赖（含设计回溯，可从 implement/perform/refactor/evaluate 回到 plan）
-- **流程框架选择（flowstate 优先）**：会话中检测到 flowstate（`fst-*` 技能或 `using-flowstate` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）时，流程框架采用 flowstate 执行图（节点流转/DoD/HITL/Checkpoint 由 flowstate 驱动），moonbit-* 技能降为 MoonBit 专项执行层；无 flowstate 时本插件自包含完整管线。检测规则与分层详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」。
+- **流程框架选择（flowstate 优先）**：
+  - **检测规则**（按优先级判定，详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」）：
+    1. 会话上下文中存在 `FLOWSTATE_BOOTSTRAP:flowstate` 标记 → flowstate 已加载
+    2. 技能列表中 `fst-*` / `using-flowstate` 可用 → flowstate 可加载
+    3. 项目根 `.agent-workplace/state/checkpoint.json` 含 `"framework": "flowstate"` → 项目已使用 flowstate
+    4. 项目根 `.agent-workplace/` 含 `modes/` + `state/` 子目录 → flowstate 结构存在
+    5. 以上均无 → 使用 moonbit-skills 自包含管线
+  - **有 flowstate 时**：flowstate 驱动流程节点流转 + DoD + HITL + Checkpoint；moonbit-* 技能**降级为 MoonBit 专项执行层**（只提供工具链命令、项目类型模式、验证门禁，不重新定义流程）。**流程层 Iron Law 优先于专项层 Iron Law**。
+  - **无 flowstate 时**：本插件自包含完整管线，工作区结构升级为 FST 兼容版（使后续迁移无需重构）。
 - **工作区约定（区分插件自身 vs 用户项目）**：
   - **插件自身开发**（本仓库）：`.agent-workplace/` 使用 **flowstate 完整版**（modes/ 实践库 + state/ checkpoint + docs/spec/），由 flowstate 流程框架驱动——本仓库开发遵循 flowstate 规范。
-  - **用户 MoonBit 项目**（使用本技能的目标项目）：`.agent-workplace/` 使用**简化版**——仅 `docs/plan/`（计划→阶段→批次→任务）、`docs/task/`（任务拆解）、`scripts/`（脚本尝试）三目录；目录结构由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate**（避免用户使用插件时有依赖）。
+  - **用户 MoonBit 项目**（使用本技能的目标项目）：`.agent-workplace/` 使用 **FST 兼容版**——`docs/plan/`、`docs/task/`、`docs/spec/`、`docs/decisions.md`、`state/checkpoint.json`、`state/artifacts.json`、`scripts/`、`scratch/`、`research/`；目录结构由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate 插件本身**（避免用户使用插件时有依赖）。
   - 两者都**不直接放项目原始 `docs/`**，过程态一律进 `.agent-workplace/`（git 忽略）。详见 `references/project-contract.md` §二。
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。

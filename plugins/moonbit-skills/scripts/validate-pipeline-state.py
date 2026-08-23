@@ -27,6 +27,8 @@ VALID_STATUSES = {"pending", "in_progress", "blocked", "approved", "completed",
 VALID_PROJECT_TYPES = {"lib", "cli", "ffi", "wasm", "parser", "async"}
 VALID_TARGETS = {"native", "wasm", "wasm-gc", "js"}
 VALID_PIPELINES = {"development", "bugfix", "spike", "release"}
+VALID_FRAMEWORKS = {"moonbit-skills-standalone", "flowstate"}
+VALID_NODES = {f"N{i}" for i in range(1, 10)}
 
 
 def load_json(path):
@@ -89,6 +91,20 @@ def validate_state(state, schema_data=None):
         import re
         if not re.match(r'^[a-f0-9]{64}$', state["plan_sha256"]):
             errors.append("plan_sha256 must be 64 hex characters")
+
+    # FST-compatible fields (optional but validated when present)
+    if "node" in state and state["node"] is not None:
+        if state["node"] not in VALID_NODES:
+            errors.append(f"node must be one of {VALID_NODES}, got {state['node']!r}")
+    if "framework" in state:
+        if state["framework"] not in VALID_FRAMEWORKS:
+            errors.append(f"framework must be one of {VALID_FRAMEWORKS}, got {state['framework']!r}")
+    if "batch" in state:
+        if not isinstance(state["batch"], int) or state["batch"] < 0:
+            errors.append(f"batch must be integer >= 0, got {state.get('batch')!r}")
+    if "task_index" in state:
+        if not isinstance(state["task_index"], int) or state["task_index"] < 0:
+            errors.append(f"task_index must be integer >= 0, got {state.get('task_index')!r}")
 
     # base_commit format
     if "base_commit" in state and state["base_commit"] is not None:
@@ -169,9 +185,10 @@ def check_consistency(state, plan_path=None):
     return issues
 
 
-def init_state(plan_path, force=False):
+def init_state(plan_path, force=False, state_file=None):
     """Initialize a new pipeline state from a plan file."""
-    state_file = ".moonbit-pipeline.json"
+    if state_file is None:
+        state_file = os.path.join(".agent-workplace", "state", "checkpoint.json")
 
     if os.path.exists(state_file) and not force:
         return None, f"{state_file} already exists. Use --force to overwrite."
@@ -197,8 +214,12 @@ def init_state(plan_path, force=False):
     state = {
         "schema_version": 1,
         "pipeline": "development",
+        "node": "N3",
         "phase": "plan",
         "status": "in_progress",
+        "batch": 0,
+        "task_index": 0,
+        "framework": "moonbit-skills-standalone",
         "project_type": "lib",
         "targets": ["native"],
         "plan_file": os.path.relpath(plan_path),
@@ -248,8 +269,8 @@ def migrate_state(state):
 
 def main():
     parser = argparse.ArgumentParser(description="Validate and manage MoonBit pipeline state")
-    parser.add_argument("--file", default=".moonbit-pipeline.json",
-                        help="Path to pipeline state file (default: .moonbit-pipeline.json)")
+    parser.add_argument("--file", default=os.path.join(".agent-workplace", "state", "checkpoint.json"),
+                        help="Path to pipeline state file (default: .agent-workplace/state/checkpoint.json)")
     parser.add_argument("--init", action="store_true",
                         help="Initialize a new pipeline state file")
     parser.add_argument("--plan", help="Path to plan file (for init or consistency check)")
@@ -265,7 +286,7 @@ def main():
     args = parser.parse_args()
 
     if args.init:
-        state, err = init_state(args.plan, force=args.force)
+        state, err = init_state(args.plan, force=args.force, state_file=args.file)
         if err:
             print(f"ERROR: {err}", file=sys.stderr)
             sys.exit(1)

@@ -247,7 +247,7 @@ python scripts/check-pipeline-consistency.py
 python scripts/validate-evals.py
 python -m compileall -q scripts
 ```
-如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应运行 `python scripts/validate-evals.py`。Verify 产生 JSON 证据后，使用 `python scripts/validate-verification.py --file <artifact.json>`；管线状态使用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json`。
+如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应运行 `python scripts/validate-evals.py`。Verify 产生 JSON 证据后，使用 `python scripts/validate-verification.py --file <artifact.json>`；管线状态使用 `python scripts/validate-pipeline-state.py --file .agent-workplace/state/checkpoint.json`。
 
 ## 许可证
 

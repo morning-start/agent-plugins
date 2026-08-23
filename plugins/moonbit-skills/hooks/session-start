@@ -2,13 +2,48 @@
 # SessionStart hook for moonbit-skills plugin (multi-platform)
 # Injects the using-moonbit-skills bootstrap into agent session
 # Routes to the correct skill based on user intent
+#
+# FST Detection: Checks if flowstate is already loaded or available,
+# and injects FST_DETECTED:true marker when found.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Read the bootstrap skill (using-moonbit-skills) as the session entry point
+# --- FST (flowstate) Detection ---
+# Check multiple signals to determine if flowstate is available.
+# Priority: already-loaded marker > sibling plugin > project structure
+FST_DETECTED="false"
+
+# Signal 1: Check if flowstate bootstrap marker is already in context
+# (flowstate's own session-start hook runs before ours and injects FLOWSTATE_BOOTSTRAP:flowstate)
+# This is checked at runtime by the agent; we can't detect it here, but we document the intent.
+
+# Signal 2: Check if flowstate plugin exists as a sibling directory
+FLOWSTATE_ENTRY=""
+for candidate in \
+    "${PLUGIN_ROOT}/../../flowstate/skills/using-flowstate/SKILL.md" \
+    "${PLUGIN_ROOT}/../flowstate/skills/using-flowstate/SKILL.md"; do
+  if [ -f "$candidate" ]; then
+    FLOWSTATE_ENTRY="$candidate"
+    break
+  fi
+done
+
+# Signal 3: Check if project root has flowstate workspace structure
+# (modes/ + state/ subdirectories in .agent-workplace/)
+PROJECT_ROOT="$(pwd)"
+if [ -d "${PROJECT_ROOT}/.agent-workplace/modes" ] && [ -d "${PROJECT_ROOT}/.agent-workplace/state" ]; then
+  FST_DETECTED="true"
+fi
+
+# Signal 2 overrides: if flowstate plugin exists, mark as detected
+if [ -n "$FLOWSTATE_ENTRY" ]; then
+  FST_DETECTED="true"
+fi
+
+# --- Read the bootstrap skill ---
 skill_content=$(cat "${PLUGIN_ROOT}/skills/using-moonbit-skills/SKILL.md" 2>&1 || echo "Error reading bootstrap skill")
 
 escape_for_json() {
@@ -22,8 +57,12 @@ escape_for_json() {
 }
 
 skill_escaped=$(escape_for_json "$skill_content")
+fst_marker=""
+if [ "$FST_DETECTED" = "true" ]; then
+  fst_marker="FST_DETECTED:true\n\n"
+fi
 
-session_context="<EXTREMELY-IMPORTANT>\nYou have MoonBit Skills loaded.\n\n**Below is the full MoonBit Skills bootstrap — your introduction to using skills:**\n\n${skill_escaped}\n</EXTREMELY-IMPORTANT>"
+session_context="<EXTREMELY-IMPORTANT>\nYou have MoonBit Skills loaded.\n\n${fst_marker}**Below is the full MoonBit Skills bootstrap — your introduction to using skills:**\n\n${skill_escaped}\n</EXTREMELY-IMPORTANT>"
 
 # Multi-platform dispatch
 # Cursor sets CURSOR_PLUGIN_ROOT (may also set CLAUDE_PLUGIN_ROOT)

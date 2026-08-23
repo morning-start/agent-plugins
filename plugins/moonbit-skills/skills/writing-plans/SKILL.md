@@ -21,7 +21,7 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 ### 可机械化自检
 
-- [ ] 已生成计划文件：落 `.agent-workplace/docs/plan/PLAN.md`（无 flowstate 简化版与有 flowstate 完整版均在此；仅目录结构深度不同）
+- [ ] 已生成计划文件：落 `.agent-workplace/docs/plan/PLAN.md`（FST 兼容版，目录结构详见 `references/project-contract.md` §二）
 - [ ] 任务按 **Phase（阶段）** 分组：每个 Phase 对应一个模块，有明确的阶段目标和交付物
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
@@ -167,9 +167,51 @@ src/
 ...
 ```
 
-### 3. 输出计划文档
+### 3. 初始化工作区 + 输出计划文档
 
-保存到 `.agent-workplace/docs/plan/PLAN.md`（过程态，不提交 git；无 flowstate 简化版与有 flowstate 完整版均在此）
+**工作区初始化**（若 `.agent-workplace/` 不存在）：
+
+按 FST 兼容结构创建目录（详见 `references/project-contract.md` §二）：
+
+```
+.agent-workplace/
+├── docs/
+│   ├── plan/           # 计划文档
+│   ├── task/           # 任务拆解
+│   ├── spec/           # 规格草稿
+│   └── decisions.md    # 决策记录（空模板）
+├── state/
+│   ├── checkpoint.json # 断点续跑（初始化为空结构）
+│   └── artifacts.json  # 产物注册（初始化为空结构）
+├── scripts/            # 实验脚本
+├── scratch/            # 一次性探索
+└── research/           # 调研缓存
+```
+
+> `.gitignore` 追加一行 `.agent-workplace/`（若尚未存在）。
+
+**输出计划文档**：保存到 `.agent-workplace/docs/plan/PLAN.md`（过程态，不提交 git）
+
+**初始化状态文件**：
+
+`.agent-workplace/state/checkpoint.json`：
+```json
+{
+  "node": "N3",
+  "phase": "plan",
+  "batch": 0,
+  "task_index": 0,
+  "framework": "moonbit-skills-standalone",
+  "last_updated": "<当前时间>"
+}
+```
+
+`.agent-workplace/state/artifacts.json`：
+```json
+{
+  "artifacts": []
+}
+```
 
 ## 任务结构
 
@@ -255,22 +297,26 @@ src/
 
 ## 持久化状态与输出
 
-计划文档生成后， Agent 必须在项目根目录初始化轻量级持久化状态文件 `.moonbit-pipeline.json`（用于多 Session / Context 压缩后的断点恢复）：
+计划文档生成后， Agent 必须在 `.agent-workplace/state/checkpoint.json` 初始化管线状态（唯一状态源，FST 兼容）：
 
 ### 断点恢复契约 — Phase 切换时更新 plan_file
 
-`.moonbit-pipeline.json` 是断点恢复的关键锚点，其中 **`plan_file` 字段必须始终指向「当前工作对应的拆解文档」**：
+`checkpoint.json` 中的 **`plan_file` 字段必须始终指向「当前工作对应的拆解文档」**：
 
 - **Phase 1 拆解完成** → `plan_file` 指向 Phase 1 拆解文档；Phase 1 收尾（verify 通过）时保持该指针
 - **进入 Phase 2 前（下一轮继续）** → **必须把 `plan_file` 更新为新的 Phase 2 拆解文档路径**，再开始 Phase 2 任务
-- 恢复会话时：读取 `plan_file` → 打开对应拆解文档 → 按 `tasks.current` 继续；若 `plan_file` 过期（指向已完成 Phase），先纠正指针再继续
+- 恢复会话时：读取 `checkpoint.json` → 打开 `plan_file` 对应拆解文档 → 按 `tasks.current` 继续；若 `plan_file` 过期（指向已完成 Phase），先纠正指针再继续
 
 ```json
 {
   "schema_version": 1,
   "pipeline": "development",
-  "phase": "implement",
+  "node": "N3",
+  "phase": "plan",
   "status": "in_progress",
+  "batch": 0,
+  "task_index": 0,
+  "framework": "moonbit-skills-standalone",
   "project_type": "lib",
   "targets": ["native"],
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",
@@ -287,8 +333,8 @@ src/
 
 **Phase 切换检查点（进入新 Phase 前必做）**：
 1. 为 Phase 2 生成/获取新的拆解文档（`.agent-workplace/docs/task/` 或项目约定位置）
-2. 更新 `.moonbit-pipeline.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数
-3. 用 `python scripts/validate-pipeline-state.py --file .moonbit-pipeline.json` 校验状态文件合法
+2. 更新 `checkpoint.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数、`node` 更新为对应 FST 节点
+3. 用 `python scripts/validate-pipeline-state.py --file .agent-workplace/state/checkpoint.json` 校验状态文件合法
 4. 再开始 Phase 2 的第一个任务
 
 > 不做此更新 → 恢复会话时 `plan_file` 仍指向 Phase 1 文档，断点恢复会读到已完成的旧计划，导致进度错位。
@@ -306,7 +352,7 @@ src/
   "total_tasks": 7,
   "total_files": 5,
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",
-  "state_file": ".moonbit-pipeline.json",
+  "state_file": ".agent-workplace/state/checkpoint.json",
   "next": "implement"
 }
 ```
@@ -321,6 +367,6 @@ src/
 |------|------|------|
 | 设计文档不存在 | 缺少 `docs/requirements.md` | 提示先执行 `moonbit-plan` |
 | 任务拆解不完整 | 用户指出遗漏 | 补充缺失任务，重新编号 |
-| 计划文档保存失败 | 目录不存在 | 创建 `.agent-workplace/docs/plan/` 目录 |
+| 计划文档保存失败 | 目录不存在 | 创建 `.agent-workplace/` 完整目录结构（FST 兼容版，见上文 §3） |
 | 任务间依赖不清晰 | 用户无法确定执行顺序 | 标注依赖关系，按拓扑排序 |
 | API 签名不明确 | plan 输出信息不足 | 回到 plan 补充 API 细节 |

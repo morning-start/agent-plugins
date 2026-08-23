@@ -30,23 +30,48 @@
 
 > 本节约定针对**用户 MoonBit 项目**（使用本技能的目标项目）；插件自身开发见仓库根 `.agent-workplace/`（flowstate 完整版）。
 
+### 工作区目录结构（FST 兼容版）
+
+```
+.agent-workplace/
+├── docs/
+│   ├── plan/           # 计划文档（路线图式规划：Phase→Batch→Task）
+│   ├── task/           # 任务拆解文档（分阶段实现计划，含验证命令）
+│   ├── spec/           # 规格草稿（implement 阶段的详细设计）
+│   └── decisions.md    # 决策记录（DEC-xxx 格式，记录重大设计取舍）
+├── state/
+│   ├── checkpoint.json # 断点续跑（当前节点/阶段/批次/进度，FST 对齐）
+│   └── artifacts.json  # 产物注册（跨阶段产出物追踪）
+├── scripts/            # 实验脚本（探索性/验证性代码）
+├── scratch/            # 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`）
+└── research/           # 调研缓存（技术选型/方案对比/根因调查）
+```
+
 | 路径 | 用途 | 规则 |
 |------|------|------|
 | `.agent-workplace/docs/plan/` | **计划文档**（路线图式规划） | 开发前先写计划：计划 → 阶段(Phase) → 批次(Batch) → 任务(Task)；长期方向与任务拆解分层，避免混入 |
 | `.agent-workplace/docs/task/` | **任务拆解文档**（分阶段实现计划） | 任务拆解放这里，与计划分离；含验证命令 |
+| `.agent-workplace/docs/spec/` | **规格草稿**（详细设计） | implement 阶段的详细规格、API 契约、接口签名；从 plan 细化而来 |
+| `.agent-workplace/docs/decisions.md` | **决策记录** | 重大设计取舍用 DEC-xxx 编号记录（日期 + 决策 + 理由 + 影响） |
+| `.agent-workplace/state/checkpoint.json` | **断点续跑** | 对齐 FST checkpoint 语义：当前节点、阶段、批次、任务进度；每批完成即更新 |
+| `.agent-workplace/state/artifacts.json` | **产物注册** | 跨阶段产出物追踪（plan 输出 → task 拆解 → spec → 代码 → 测试） |
 | `.agent-workplace/scripts/` | **脚本尝试** | 探索性/实验性脚本，验证"怎么做才对"，不提交 |
-| `.moonbit-pipeline.json` | 管线状态（当前阶段、计划文件指针、任务进度） | 用作**会话检查点** |
+| `.agent-workplace/scratch/` | **一次性探索** | 命名格式 `{YYYYMMDD}-{type}-{slug}`；体积膨胀时自行清理（保留最近产物） |
+| `.agent-workplace/research/` | **调研缓存** | 技术选型、方案对比、根因调查的中间产物 |
 | `docs/requirements.md` | 需求文档（设计决策的权威来源） | plan 阶段产出 |
 
-> **为什么放 `.agent-workplace/`**：计划/任务/脚本是**过程态**，高频变动、不提交 git；
+> **为什么放 `.agent-workplace/`**：计划/任务/脚本/状态是**过程态**，高频变动、不提交 git；
 > 直接放项目原始 `docs/` 会污染提交历史。`.agent-workplace/` 全目录被 gitignore。
-> **用户项目用简化版**（仅 docs/plan + docs/task + scripts 三目录，由 `moonbit-writing-plans` /
-> `moonbit-implement` 自行创建，无需模板、不依赖 flowstate）；**插件自身开发用 flowstate 完整版**。
+> **用户项目用 FST 兼容版**（上述目录结构，由 `moonbit-writing-plans` /
+> `moonbit-implement` 自行创建，无需模板、不依赖 flowstate 插件本身）；
+> **插件自身开发用 flowstate 完整版**。两者目录结构兼容，迁移时无需重构。
 
 约定要点：
 - **路线图与任务拆解分层**：`.agent-workplace/docs/plan/` 管方向，`.agent-workplace/docs/task/` 管执行
-- 会话开始时按序读取：`.agent-workplace/docs/plan/` → `.agent-workplace/docs/task/` → `.moonbit-pipeline.json`，恢复上下文
-- `.moonbit-pipeline.json` 是跨会话的进度锚点（writing-plans 初始化，implement/verify/evaluate 更新）
+- **规格与计划分离**：`.agent-workplace/docs/spec/` 存放 implement 阶段细化的设计规格，从 plan 输出进一步细化
+- **决策可追溯**：`.agent-workplace/docs/decisions.md` 记录每个 DEC-xxx 决策的日期、内容、理由和影响范围
+- **单一状态文件**：`.agent-workplace/state/checkpoint.json` 是唯一的状态源（FST 兼容），每批完成即更新，支持跨 Session 恢复
+- 会话开始时按序读取：`state/checkpoint.json` → `docs/plan/` → `docs/task/`，恢复上下文
 
 ## 三、进度与提交约定
 
@@ -70,6 +95,7 @@
 约定要点：
 - **收尾步骤**：最后一步运行 `moon info && moon fmt`，检查 `.mbti` diff 是否符合预期
 - `.mbti` 是包的简要正式接口描述；diff 为空的改动对包外部用户无可见变化
+- **探索产物落 scratch/**：实验性代码、一次性验证脚本写入 `.agent-workplace/scratch/`（命名 `{YYYYMMDD}-{type}-{slug}`），不混入正式代码
 
 ## 五、测试断言偏好（经验式）
 
@@ -87,3 +113,35 @@
 - 本文档是**知识参考**，供技能按需读取（`moonbit-scaffold` 生成骨架、`moonbit-writing-plans` 规划文档布局、`moonbit-testing` 断言策略、`moonbit-verify` 包结构检查时参考）
 - **不写死进任何 skill**：用户在项目 `AGENTS.md` 或对话中的明确约定优先于本文档
 - 项目若已有自己的结构约定，以项目为准；本文档只作为无特殊要求时的默认基线
+
+---
+
+## 七、Session 恢复机制
+
+> 本节定义跨 Session / Context 压缩时的恢复优先级。
+
+### 恢复优先级（从高到低）
+
+1. **`.agent-workplace/state/checkpoint.json`**（唯一状态源，FST 兼容）
+   - 包含：node、phase、status、batch、task_index、framework、project_type、plan_file、tasks 进度
+   - 由 `moonbit-writing-plans` 初始化，`moonbit-implement` / `moonbit-verify` / `moonbit-evaluate` / `moonbit-cd` 更新
+2. **`.agent-workplace/docs/plan/PLAN.md`**（计划文档）
+   - 最后的上下文兜底：从计划文档重建任务列表
+
+### 恢复流程
+
+```
+Session 重新初始化
+    │
+    ├── 检测 .agent-workplace/state/checkpoint.json 存在？
+    │   ├── 是 → 读取 checkpoint，恢复到断点位置（node/batch/task_index/phase）
+    │   └── 否 → 继续
+    │
+    ├── 检测 .agent-workplace/docs/plan/PLAN.md 存在？
+    │   ├── 是 → 从计划文档重建上下文
+    │   └── 否 → 全新开始（无历史状态）
+    │
+    └── 有 flowstate？
+        ├── 是 → 按 FST checkpoint 恢复（fst-iterate 的 checkpoint/resume 机制）
+        └── 否 → 按上述 moonbit-skills 自包含恢复
+```

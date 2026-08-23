@@ -68,7 +68,7 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
 ### 5. 交付（DELIVER）
 
 - 向用户报告：任务完成、验收清单逐项结果、关键变更、验证证据
-- 输出 JSON（见下），更新 `.moonbit-pipeline.json` 进度
+- 输出 JSON（见下），更新 `.agent-workplace/state/checkpoint.json` 进度
 - **任务验收后的处理**（Git 操作遵循 `moonbit-git` 技能，见 [`git/SKILL.md`](../git/SKILL.md)，按一次性授权协议执行）：
   - **已有授权记录（目标项目 AGENTS.md）** → 验收通过后**自动执行**「建功能分支 → 提交（Conventional Commits，单次提交只含本 Task 产物）→ 合并回主分支（`--no-ff`）→ 删除分支」，再继续下一个任务；不再询问。
   - **无授权记录（首次）** → **询问一次**：「是否允许本项目自动执行 git 提交与合并？」用户允许 → 写入目标项目 AGENTS.md 授权记录并自动执行；用户拒绝 → 只展示变更（验收清单 + diff），等待用户决定。
@@ -123,7 +123,7 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
   },
   "test_results": {"passed": 6, "failed": 0},
   "files_changed": ["src/task_x.mbt", "src/task_x_test.mbt"],
-  "state_file": ".moonbit-pipeline.json",
+  "state_file": ".agent-workplace/state/checkpoint.json",
   "next": "implement | code-review | verify"
 }
 ```

@@ -244,7 +244,7 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 
 ## 持久化状态与输出
 
-在每完成一个 Task（通过 RED → GREEN → VERIFY 并经 `code-review` 批准）后，Agent 必须更新根目录的 `.moonbit-pipeline.json` 文件：
+在每完成一个 Task（通过 RED → GREEN → VERIFY 并经 `code-review` 批准）后，Agent 必须更新 `.agent-workplace/state/checkpoint.json`（唯一状态源）：
 
 > **断点恢复衔接**：`plan_file` 必须始终指向「当前工作对应的拆解文档」。进入新 Phase（如 Phase 2）前，先把 `plan_file` 更新为新 Phase 拆解文档路径（`tasks.total/completed/current` 重置为该 Phase 计数），再开始该 Phase 任务——这是 Context 压缩/多 Session 后断点恢复的关键一环，详见 `moonbit-writing-plans` 的「断点恢复契约」。恢复会话时若 `plan_file` 过期（指向已完成 Phase），先纠正指针再继续。
 
@@ -252,8 +252,12 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 {
   "schema_version": 1,
   "pipeline": "development",
+  "node": "N4",
   "phase": "implement",
   "status": "in_progress",
+  "batch": 1,
+  "task_index": 4,
+  "framework": "moonbit-skills-standalone",
   "project_type": "lib",
   "targets": ["native"],
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",
@@ -266,6 +270,16 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
   "last_updated": "2026-07-29T10:30:00Z",
   "next": "implement:task-4"
 }
+```
+
+**记录重大设计决策**（可选）：实现过程中遇到重大设计取舍时，记录到 `.agent-workplace/docs/decisions.md`：
+
+```markdown
+## DEC-001: 选择 Parser 组合子模式
+- **日期**: 2026-07-29
+- **决策**: 采用 Parser Combinator 而非手写递归下降
+- **理由**: 组合子可复用、可测试、类型安全
+- **影响**: parser.mbt 的整体架构
 ```
 
 ### 输出 JSON
@@ -283,7 +297,7 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
     "root_cause": "空指针未检查",
     "fixed_file": "src/parser.mbt"
   },
-  "state_file": ".moonbit-pipeline.json",
+  "state_file": ".agent-workplace/state/checkpoint.json",
   "next": "implement | evaluate | learn"
 }
 ```
