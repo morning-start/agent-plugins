@@ -20,10 +20,10 @@
 
    ```bash
    npm test                                                  # 现有测试基线
-   node scripts/verify.mjs structure --root <dir> --coverage=FAIL   # 结构 + 覆盖门禁
-   node scripts/verify.mjs lifecycle --root <dir>            # 编排健康探针
-   node scripts/check-dependencies.mjs --root <dir>          # 危险依赖
-   node scripts/release-check.mjs --root <dir>               # 发布管线是否走得通
+   node tools/verify/verify.mjs structure --root <dir> --coverage=FAIL   # 结构 + 覆盖门禁
+   node tools/verify/verify.mjs lifecycle --root <dir>            # 编排健康探针
+   node tools/design/check-dependencies.mjs --root <dir>          # 危险依赖
+   node tools/release/release-check.mjs --root <dir>               # 发布管线是否走得通
    ```
 
    门禁崩溃本身就是 finding（如 `.version-bump.json` 缺失导致 release-check
@@ -82,7 +82,7 @@
 ## 关联
 
 - `references/skill-boundaries.md`（设计期职责边界纪律——本文是运行期/维护期对偶）
-- `references/lifecycle-matrix.md`（纯结构探针与 v2 运行时信号路线图）
+- `tools/verify/README.md`（纯结构探针与 v2 运行时信号路线图）
 - `skills/pf-lifecycle/SKILL.md`（拆分/合并/重组/退役决策流）
 - `skills/pf-verify/SKILL.md`（审计门禁与 `--coverage` 用法）
 - `skills/pf-version/SKILL.md`（SemVer 与 CHANGELOG）

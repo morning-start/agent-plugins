@@ -18,7 +18,7 @@ import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { deflateRawSync, inflateRawSync } from "node:zlib";
-import { runChecks } from "./verify.mjs";
+import { runChecks } from "../verify/verify.mjs";
 
 const EXCLUDE_DIRS = new Set(["node_modules", ".git", ".agent-workplace", "dist", "build", "out", ".pnp"]);
 

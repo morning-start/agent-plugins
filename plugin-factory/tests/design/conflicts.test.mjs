@@ -12,7 +12,7 @@ import {
   skillsFromRoot,
   skillsFromManifest,
   OVERLAP_THRESHOLD,
-} from "../../scripts/check-conflicts.mjs";
+} from "../../tools/design/check-conflicts.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-conflicts-"));

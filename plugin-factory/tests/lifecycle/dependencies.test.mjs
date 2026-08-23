@@ -10,7 +10,7 @@ import {
   buildDependencyGraph,
   endangeredDependents,
   checkDependencies,
-} from "../../scripts/check-dependencies.mjs";
+} from "../../tools/design/check-dependencies.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-deps-"));

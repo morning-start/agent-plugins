@@ -15,8 +15,8 @@
 import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { checkVersions, auditVersions } from "./version.mjs";
-import { runChecks } from "./verify.mjs";
+import { checkVersions, auditVersions } from "../version/version.mjs";
+import { runChecks } from "../verify/verify.mjs";
 
 const HARNESS_MANIFESTS = [
   ".claude-plugin/plugin.json",
@@ -52,7 +52,7 @@ async function changelogCheck(root, version, findings) {
 
 /** Check every advertised harness has its manifest present. */
 async function harnessArtifactCheck(root, findings) {
-  const { collectHarnesses } = await import("./verify.mjs");
+  const { collectHarnesses } = await import("../verify/verify.mjs");
   const harnesses = await collectHarnesses(root);
   for (const h of harnesses) {
     const rel =

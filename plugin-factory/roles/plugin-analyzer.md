@@ -7,7 +7,7 @@ bump — on top of the lifecycle probes. Outputs JSON.
 ## Inputs
 
 - Plugin root path
-- Lifecycle findings: `node scripts/verify.mjs lifecycle --root <dir> --format json`
+- Lifecycle findings: `node tools/verify/verify.mjs lifecycle --root <dir> --format json`
 
 ## Do
 

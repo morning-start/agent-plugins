@@ -73,7 +73,7 @@ Entry/bootstrap skill distributes to mutually independent tool skills.
 
 - 适用：各技能独立、但从一处发现的工具包。
 - 引导技能：`using-<plugin>`，CSO 描述 + 各端 session-start 钩子
-  （钩子规格：`references/hooks/`）。
+  （钩子规格：`references/harnesses/<harness>/hooks.md`）。
 
 ### 3. Bus（总线 / 共享产物）
 

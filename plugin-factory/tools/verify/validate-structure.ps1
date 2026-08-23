@@ -1,8 +1,8 @@
-# validate-structure.ps1 — structural checks (wrapper around scripts/verify.mjs).
+# validate-structure.ps1 — structural checks (wrapper around tools/verify/verify.mjs).
 # Single cross-platform engine; exit 1 on any FAIL finding.
 $ErrorActionPreference = "SilentlyContinue"
 
-$root = Split-Path -Parent $PSScriptRoot
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 $nodeBin = $env:NODE
 if (-not $nodeBin) {
@@ -13,5 +13,5 @@ if (-not $nodeBin) {
     exit 127
 }
 
-& $nodeBin "$root/scripts/verify.mjs" structure --root "$root"
+& $nodeBin "$root/tools/verify/verify.mjs" structure --root "$root"
 exit $LASTEXITCODE

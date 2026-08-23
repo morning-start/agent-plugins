@@ -1,8 +1,8 @@
-# lifecycle-probes.ps1 — lifecycle/orchestration probes (wrapper around scripts/verify.mjs).
+# lifecycle-probes.ps1 — lifecycle/orchestration probes (wrapper around tools/verify/verify.mjs).
 # Emits severity-ranked findings; exit 1 on any FAIL finding.
 $ErrorActionPreference = "SilentlyContinue"
 
-$root = Split-Path -Parent $PSScriptRoot
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 $nodeBin = $env:NODE
 if (-not $nodeBin) {
@@ -15,8 +15,8 @@ if (-not $nodeBin) {
 
 $lifecycleArgs = $env:LIFECYCLE_ARGS
 if ($lifecycleArgs) {
-    & $nodeBin "$root/scripts/verify.mjs" lifecycle --root "$root" --$lifecycleArgs.Split(" ")[0] $lifecycleArgs.Split(" ")[1]
+    & $nodeBin "$root/tools/verify/verify.mjs" lifecycle --root "$root" --$lifecycleArgs.Split(" ")[0] $lifecycleArgs.Split(" ")[1]
 } else {
-    & $nodeBin "$root/scripts/verify.mjs" lifecycle --root "$root"
+    & $nodeBin "$root/tools/verify/verify.mjs" lifecycle --root "$root"
 }
 exit $LASTEXITCODE

@@ -9,8 +9,8 @@ references. Outputs JSON.
 - Component type: `skill` | `command` | `agent` | `hook` | `mcp` | `lsp` | `monitor` | `theme`
 - Target harness(es): `claude-code` | `pi` | `opencode` | `oh-my-pi` | `codex`
 - One-line spec (capability + trigger)
-- Canonical rules: read `references/agent-adapters.md` and the matching
-  `references/plugins/<harness>.md` / `references/hooks/<harness>.md` first.
+- Canonical rules: read `references/README.md` and the matching
+  `references/harnesses/<harness>/plugin.md` / `references/harnesses/<harness>/hooks.md` first.
 
 ## Do
 

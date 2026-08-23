@@ -2,7 +2,7 @@
 // T-INT-2 contract tests for the automated complexity gate (scripts/complexity.mjs).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { scoreComplexity } from "../../scripts/complexity.mjs";
+import { scoreComplexity } from "../../tools/design/complexity.mjs";
 
 test("defaults score to Light", () => {
   const r = scoreComplexity();

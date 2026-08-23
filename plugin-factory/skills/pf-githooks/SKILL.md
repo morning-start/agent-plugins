@@ -89,7 +89,7 @@ npm run validate     # structure audit (Agent Skills standard)
 - Generated plugins include `hooks/pre-commit.sh` / `.ps1` (structural
   validation + basic secrets scan) — written but **not installed**
   automatically; the user decides per-repo.
-  Reference: `references/hooks/claude-code.md` for installation.
+  Reference: `references/harnesses/claude-code/hooks.md` for installation.
 
 ### 4. Rules
 

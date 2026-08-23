@@ -15,7 +15,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   entries from pf's own `hooks/hooks.json` and the shared + claude-code
   harness templates; deleted the orphaned `pre-completion` scripts; dropped
   `PreCommit`/`PreCompletion` from the `hook-event` whitelist in
-  `scripts/verify.mjs` so the check would have caught this, with a regression
+  `tools/verify/verify.mjs` so the check would have caught this, with a regression
   test in `tests/verify/hook-event.test.mjs`. pre-commit 门禁仍作为真实 git
   钩子由 `pf-githooks` 安装，不再写进 hooks.json。
 

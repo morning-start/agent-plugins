@@ -69,7 +69,7 @@
 > ⚠️ **hook 事件名必须是上表官方事件**：Claude Code 加载 hooks.json 时严格校验
 > 事件名（非法事件会导致**整份** hooks.json 加载失败）。`PreCommit` 这类 git 钩子
 > 与 `PreCompletion` 之类自造事件**不能**写进 hooks.json——pre-commit 门禁应作为
-> 真实 git 钩子安装（见 `pf-githooks`），不要扩展 `scripts/verify.mjs` 的白名单。
+> 真实 git 钩子安装（见 `pf-githooks`），不要扩展 `tools/verify/verify.mjs` 的白名单。
 
 ## 配置字段
 
@@ -111,7 +111,7 @@ hook 应写成 `.sh` + `.ps1` 成对，经 `shell` 字段接线。
 ## 已验证不变量（T3 落地）
 
 - SessionStart 引导 hook（`hooks/session-start.sh` / `.ps1`）调用
-  `scripts/render-bootstrap.mjs` 生成
+  `tools/bootstrap/render-bootstrap.mjs` 生成
   `{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"PLUGIN_FACTORY_BOOTSTRAP:<plugin> …body…"}}`；
   双 shell 解码后 marker 与 body 完全一致（不比较 JSON 空白）。
 - hook 命令路径相对插件根解析（脚本内 `BASH_SOURCE[0]` / `$PSScriptRoot`），

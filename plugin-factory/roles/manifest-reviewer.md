@@ -11,9 +11,9 @@ against plugin-factory's pinned harness specs. Outputs JSON findings.
 
 ## Do
 
-1. Run the executable gate first: `node scripts/verify.mjs structure --root <dir> --format json`.
-2. Read `references/plugins-reference.md` and the per-harness
-   `references/plugins/<harness>.md` for the field contract.
+1. Run the executable gate first: `node tools/verify/verify.mjs structure --root <dir> --format json`.
+2. Read `references/README.md` and the per-harness
+   `references/harnesses/<harness>/plugin.md` for the field contract.
 3. Check per harness:
    - `name` kebab-case, `version` SemVer present, `description` present
    - skills/commands/hooks are **arrays** (Claude Code real-world constraint)

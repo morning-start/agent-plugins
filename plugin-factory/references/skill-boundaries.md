@@ -89,7 +89,7 @@
 ## 纪律 6：骨架复用与裁剪
 
 多技能插件共享一个骨架契约（`references/skill-structure.md` 声明 `##` 标题），
-`scripts/verify.mjs` 的 repeated-guidance 探针据此把重复标题识别为结构而非重复指导：
+`tools/verify/verify.mjs` 的 repeated-guidance 探针据此把重复标题识别为结构而非重复指导：
 
 - 流程技能：完整 10 节骨架（职责 / Iron Law / Red Flags / 停止条件 / 执行流程 /
   用户 vs Agent / 关联最佳实践 / 输出 / 自检 / 下一步）

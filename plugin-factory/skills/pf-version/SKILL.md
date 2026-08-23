@@ -22,7 +22,7 @@ bump every declared manifest → write the CHANGELOG entry → verify and hand
 off to publication.
 
 Version arithmetic and manifest sync are **delegated to the existing engine**
-(`scripts/version.mjs` via `scripts/bump-version.sh` / `.ps1`); never hand-edit
+(`tools/version/version.mjs` via `tools/version/bump-version.sh` / `.ps1`); never hand-edit
 versions or re-parse manifests in shell.
 
 ## When to Use
@@ -67,7 +67,7 @@ Rules:
 
 ### 3. Decide the next SemVer
 
-- `current = node scripts/version.mjs check` (exit 0 → read `version`).
+- `current = node tools/version/version.mjs check` (exit 0 → read `version`).
 - Apply the table above; default proposal = highest effect present
   (breaking > feature > fix).
 - Present the proposal with its commit evidence; **the user confirms** the
@@ -76,9 +76,9 @@ Rules:
 ### 4. Bump every declared manifest
 
 ```text
-node scripts/version.mjs bump <X.Y.Z>      # or:
-bash scripts/bump-version.sh <X.Y.Z>       # or:
-powershell -File scripts/bump-version.ps1 <X.Y.Z>
+node tools/version/version.mjs bump <X.Y.Z>      # or:
+bash tools/version/bump-version.sh <X.Y.Z>       # or:
+powershell -File tools/version/bump-version.ps1 <X.Y.Z>
 ```
 
 - Do **not** hand-edit versions. The engine writes every field declared in
@@ -98,13 +98,13 @@ Add a section under `## [<version>] - <date>` in `CHANGELOG.md`:
 - Record which lifecycle action drove the change (split / merge / reorganize /
   port / retire) when applicable.
 
-The CHANGELOG is the release evidence — `scripts/release-check.mjs` fails when
+The CHANGELOG is the release evidence — `tools/release/release-check.mjs` fails when
 the current version has no entry.
 
 ### 6. Verify and hand off to publication
 
 - Run `npm run verify` (structure + harness + orchestration; exit 0).
-- Run the release gate: `node scripts/release-check.mjs --root . --json`.
+- Run the release gate: `node tools/release/release-check.mjs --root . --json`.
 - **Publication is explicit**: tagging (`git tag v<version>`) and pushing
   happen only when the user asks — this skill never tags or pushes implicitly.
 

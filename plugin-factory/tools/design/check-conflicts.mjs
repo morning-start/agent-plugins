@@ -22,7 +22,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, keywordBag, jaccard } from "./verify.mjs";
+import { collectSkills, keywordBag, jaccard } from "../verify/verify.mjs";
 
 /** Overlap threshold matching verify.mjs's trigger-overlap probe. */
 export const OVERLAP_THRESHOLD = 0.85;

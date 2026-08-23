@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { executeTool } from "../../mcp/verify-server.mjs";
+import { executeTool } from "../../tools/verify/verify-server.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-mcp-"));

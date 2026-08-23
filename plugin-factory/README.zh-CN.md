@@ -71,10 +71,9 @@ plugin-factory/
 ├── .opencode/                    # opencode 配置 + INSTALL.md
 ├── skills/                       # pf-* 工作流子技能（规范位置）
 ├── roles/                        # 子代理提示词（component-author、manifest-reviewer、plugin-analyzer、bundle-advisor）
-├── commands/                     # /pf-* 斜杠命令
 ├── hooks/                        # 会话启动引导（多 shell）
 ├── references/                   # 设计文档（适配器、插件模型、生命周期矩阵）
-├── scripts/                      # 脚手架/验证/生命周期/版本/发布（Node 核心 + shell 封装）
+├── tools/                        # 可执行引擎（按模块：scaffold/verify/routing/version/release/design/bootstrap/shared）
 ├── templates/                    # 共享 + 各平台模板
 ├── docs/                         # ADR、术语表、优化报告
 └── tests/                        # 契约测试 + 冒烟测试（34 项通过）

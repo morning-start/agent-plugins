@@ -59,6 +59,6 @@ assignees: ""
 
 <!-- 维护者使用：
 - 评估是否为全新场景（6-dimension divergence check，见 references/design-principles.md）。
-- 通过后：在 scripts/routing-table.json 增加路由条目（scenario/skill/path/keywords/priority/trigger），
-  运行 node scripts/render-routing.mjs 重新渲染 SKILL.md 路由表，为场景分配 S#，必要时新增 pf-* 子技能。
+- 通过后：在 tools/routing/routing-table.json 增加路由条目（scenario/skill/path/keywords/priority/trigger），
+  运行 node tools/routing/render-routing.mjs 重新渲染 SKILL.md 路由表，为场景分配 S#，必要时新增 pf-* 子技能。
 - 拒绝后：在本 issue 说明原因，并给出替代场景编号。 -->

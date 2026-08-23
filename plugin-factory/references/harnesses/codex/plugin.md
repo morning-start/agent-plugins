@@ -111,6 +111,6 @@ codex plugin install ./my-plugin --force
   skills → `./skills/`）+ 根部 `skills/`（Agent Skills 标准，单一源）。
 - Codex 无 hooks 机制声明文件（不像 Claude 的 `hooks/hooks.json`）——
   检测 codex harness 以 `.codex-plugin/plugin.json` 为准
-  （`scripts/verify.mjs` 已按此检查）。
+  （`tools/verify/verify.mjs` 已按此检查）。
 - 分发建议：同时生成仓库级市场条目
   `$REPO_ROOT/.agents/plugins/marketplace.json` 便于本地测试。

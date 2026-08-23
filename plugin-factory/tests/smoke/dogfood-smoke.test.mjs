@@ -91,7 +91,7 @@ async function scaffoldDogfood(target) {
   const res = run(
     NODE,
     [
-      join(REPO_ROOT, "scripts", "scaffold.mjs"),
+      join(REPO_ROOT, "tools", "scaffold", "scaffold.mjs"),
       "--name",
       "git-release",
       "--prefix",

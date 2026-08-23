@@ -10,7 +10,7 @@ import {
   writeState,
   migrateState,
   validateState,
-} from "../../scripts/pipeline-state.mjs";
+} from "../../tools/bootstrap/pipeline-state.mjs";
 
 const tmpDir = join(fileURLToPath(new URL(".", import.meta.url)), "..", "fixtures", "tmp-pipeline");
 

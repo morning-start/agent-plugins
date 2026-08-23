@@ -37,10 +37,10 @@ directory/repo. Skill authoring and evaluation are **delegated to skill-creator*
   build loop — never by hand:
 
   ```bash
-  node scripts/check-creator.mjs [--root <plugin-dir>] [--format table|json]
+  node tools/design/check-creator.mjs [--root <plugin-dir>] [--format table|json]
   ```
 
-  `checkCreator()` (exported from `scripts/check-creator.mjs`) probes the two
+  `checkCreator()` (exported from `tools/design/check-creator.mjs`) probes the two
   accepted install forms below and returns `{ available, found, hint }`; exit 1
   when missing.
 - **Accepted install forms** (either satisfies the gate):
@@ -58,12 +58,12 @@ directory/repo. Skill authoring and evaluation are **delegated to skill-creator*
 
 ### 0. Availability gate
 
-Run `node scripts/check-creator.mjs` (see "skill-creator availability" above).
+Run `node tools/design/check-creator.mjs` (see "skill-creator availability" above).
 Do not proceed to skill authoring until the user confirms skill-creator is installed.
 
 ### 1. Create the standalone project layout
 
-Per `references/plugin-model.md`:
+Per `tools/scaffold/README.md`:
 
 ```
 <plugin-name>/
@@ -79,10 +79,10 @@ Per `references/plugin-model.md`:
 └── install.sh  install.ps1
 ```
 
-Use `scripts/scaffold.sh` / `scaffold.ps1` / `scripts/scaffold.mjs` — the single
+Use `tools/scaffold/scaffold.sh` / `scaffold.ps1` / `tools/scaffold/scaffold.mjs` — the single
 cross-platform renderer. Record the requested harness list (`--harnesses`).
 A harness is advertised **only** when all of its required artifacts are rendered
-(see `references/plugin-model.md` § 生成插件布局).
+(see `tools/scaffold/README.md` § 生成插件布局).
 
 After scaffolding, run the generated project's own structure verifier automatically
 with `--auto-verify` (scaffold exit 1 when the generated project has FAIL findings;
@@ -104,11 +104,11 @@ For every skill in `components.skills`:
    eval summary per skill **automatically** — never leave it in conversation only:
 
    ```bash
-   node scripts/evals.mjs record --skill <skill-name> --name <eval-name> --passed <true|false> [--notes <summary>]
+   node tools/design/evals.mjs record --skill <skill-name> --name <eval-name> --passed <true|false> [--notes <summary>]
    ```
 
-   `recordEval()` (exported from `scripts/evals.mjs`) appends the result to
-   `evals/evals.json` (`results.<skill>.<eval-name>`), preserving the declared
+   `recordEval()` (exported from `tools/design/evals.mjs`) appends the result to
+   `tools/design/evals.json` (`results.<skill>.<eval-name>`), preserving the declared
    eval cases; latest result wins per name. Every accepted skill must have a
    recorded eval result before the build hands off.
 
@@ -118,7 +118,7 @@ skill-creator fills them during its TDD loop.
 
 ### 3. Render per-harness manifests
 
-Per `references/plugins/` and `references/agent-adapters.md`:
+Per `references/harnesses/<harness>/plugin.md` and `references/README.md`:
 
 - Claude Code: `.claude-plugin/plugin.json` (name/description/version) + root
   `skills/`/`commands/`/`agents/` + `hooks/hooks.json`.
@@ -140,7 +140,7 @@ Per `references/plugins/` and `references/agent-adapters.md`:
 
 - Hooks: canonical {event, action} from the manifest → bash + PowerShell pairs
   (Claude Code, wired via `shell` field), TS plugin (opencode), TS extension
-  (pi/oh-my-pi) — per `references/hooks/`.
+  (pi/oh-my-pi) — per `references/harnesses/<harness>/hooks.md`.
 - Commands: `commands/*.md` (Claude Code), `.opencode/command/*.md`, `registerCommand`
   handlers (pi/omp).
 
@@ -180,7 +180,7 @@ Policy values: `tiered` (default) / `english` (all English) / `native` (all `use
 Before handing off, run the structural verifier on the generated project:
 
 ```bash
-node scripts/verify.mjs structure --root <generated-plugin-dir>
+node tools/verify/verify.mjs structure --root <generated-plugin-dir>
 ```
 
 If any FAIL findings exist, fix them before proceeding. Common issues:
@@ -197,7 +197,7 @@ Once the standalone project is generated and verified, apply git discipline per
 `pf-git`: create a feature branch (or worktree) for the plugin work and follow
 Conventional Commits; manage version bumps / CHANGELOG from git history via
 `pf-version` (or `/pf-version`). The generated project's own
-`scripts/verify.mjs` + `version.mjs` engine is used by the release gate.
+`tools/verify/verify.mjs` + `version.mjs` engine is used by the release gate.
 
 ## Outputs
 
@@ -210,23 +210,23 @@ Conventional Commits; manage version bumps / CHANGELOG from git history via
 
 - Every manifest skill exists as `skills/<name>/SKILL.md` and passed skill-creator eval.
 - The requested harness list is recorded; every requested harness has all required
-  artifacts (see `references/plugin-model.md` § 生成插件布局).
+  artifacts (see `tools/scaffold/README.md` § 生成插件布局).
 - No unrequested harness file is generated (Claude-only request → no `.pi/`,
   `.opencode/`, or `OMP-NOTES.md`).
    - The generated project passes its own verifier: `npm run validate` and
-   `npm run validate:ps`. For Node.js plugins this invokes `scripts/verify.mjs`
+   `npm run validate:ps`. For Node.js plugins this invokes `tools/verify/verify.mjs`
    (same engine as plugin-factory); for plugins with custom domain validators
    (e.g. Python scripts), the command is declared in `package.json.scripts` and
    documented in `AGENTS.md` Validation section.
-   - Validator declaration: if a plugin uses a custom validator (not `scripts/verify.mjs`),
+   - Validator declaration: if a plugin uses a custom validator (not `tools/verify/verify.mjs`),
    the Validation section in `AGENTS.md` must record the commands, and
    `package.json.scripts` must declare them. See
-   `references/plugin-model.md` § 9.
+   `tools/scaffold/README.md` § 9.
 - opencode skill discovery follows the single root `skills/` source — the
   bootstrap plugin's `config` hook registers the plugin-root `skills/` at
   runtime (superpowers-style self-registration); see
-  `references/plugins/opencode.md`.
-- Per-harness manifests match `references/plugins/`.
+  `references/harnesses/opencode/plugin.md`.
+- Per-harness manifests match `references/harnesses/<harness>/plugin.md`.
 - Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
 - Tool mapping files (`references/<harness>-tools.md`) generated per advertised harness.
 - Bilingual README + AGENTS/CLAUDE + install scripts present.

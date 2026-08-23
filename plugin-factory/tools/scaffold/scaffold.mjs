@@ -16,10 +16,10 @@ import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { writeState as writePipelineState } from "./pipeline-state.mjs";
+import { writeState as writePipelineState } from "../bootstrap/pipeline-state.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(__dirname, "..");
+const REPO_ROOT = resolve(__dirname, "..", "..");
 const TEMPLATES_ROOT = join(REPO_ROOT, "templates");
 
 export const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;

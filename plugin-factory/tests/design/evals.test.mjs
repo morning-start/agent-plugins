@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { evalsPath, readEvals, recordEval, evalCoverage } from "../../scripts/evals.mjs";
+import { evalsPath, readEvals, recordEval, evalCoverage } from "../../tools/design/evals.mjs";
 
 async function seedEvals(dir, doc) {
   await mkdir(dirname(evalsPath(dir)), { recursive: true });
@@ -86,5 +86,5 @@ test("evalCoverage handles an empty doc", () => {
 });
 
 test("evalsPath resolves under the project root", () => {
-  assert.equal(evalsPath("/tmp/x"), join("/tmp/x", "evals", "evals.json"));
+  assert.equal(evalsPath("/tmp/x"), join("/tmp/x", "tools", "design", "evals.json"));
 });

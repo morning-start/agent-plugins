@@ -3,7 +3,7 @@
 // (scripts/lifecycle-report.mjs).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { renderLifecycleReport } from "../../scripts/lifecycle-report.mjs";
+import { renderLifecycleReport } from "../../tools/verify/lifecycle-report.mjs";
 
 const finding = (signal, severity, action = "Fix it.", impact = "Impacts.") => ({
   signal,

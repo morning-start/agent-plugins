@@ -7,7 +7,7 @@
 The user only provides *what the plugin should do*; the agent drives everything else
 through a software-development workflow (intent → design → build → verify → release → lifecycle).
 
-Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**, **oh-my-pi**, **Codex/ChatGPT**. A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract, enforced by `scripts/scaffold.mjs`).
+Supported target harnesses for generated plugins: **Claude Code**, **pi**, **opencode**, **oh-my-pi**, **Codex/ChatGPT**. A harness is only advertised when its manifest, bootstrap adapter, skill discovery path, and smoke check are present (T1 contract, enforced by `tools/scaffold/scaffold.mjs`).
 
 ## How it works
 
@@ -49,7 +49,7 @@ Detailed rationale lives in `references/design-principles.md`.
    anti-pattern: cross-scenario intents are split into separate plugins. New
    skills must pass the 6-dimension divergence check (D1–D6).
 6. **Quality is mechanically enforced.** Every advertised harness, skill,
-   command, hook, and JSON manifest must pass `scripts/verify.mjs` (structure +
+   command, hook, and JSON manifest must pass `tools/verify/verify.mjs` (structure +
    harness + orchestration layers). A `FAIL` finding blocks progress; exit 1.
 7. **Language tiering.** Human-maintained layers (references/, docs/,
    CHANGELOG prose, user README) use the user's language; agent-executed layers
@@ -81,9 +81,9 @@ When sources conflict, follow this order — higher wins:
 
 Each file keeps a single authority. Do not copy long workflows, command
 tables, or directory trees into this file — read the authoritative source.
-The routing data lives only in `scripts/routing-table.json`; the Skill
+The routing data lives only in `tools/routing/routing-table.json`; the Skill
 Priority + Trigger Matrix tables in `skills/using-pf/SKILL.md` are rendered
-from it by `scripts/render-routing.mjs` (verify fails on drift). Other files
+from it by `tools/routing/render-routing.mjs` (verify fails on drift). Other files
 reference it, never duplicate it (avoids drift).
 
 ## This repo is a target instance
@@ -106,9 +106,9 @@ and acceptance conventions apply to this repository as well.
   implementation, plus `hooks.json` metadata where the harness requires it.
 - **Skill creation is delegated**: plugin-factory never re-implements skill authoring or
   evaluation — it orchestrates **skill-creator** (Anthropic) for create/test/iterate.
-- **Routing single source**: pf-* intent routing data lives only in `scripts/routing-table.json`
+- **Routing single source**: pf-* intent routing data lives only in `tools/routing/routing-table.json`
   (scenario/skill/path/keywords/priority/trigger). To change routing, edit the JSON, then run
-  `node scripts/render-routing.mjs` to re-render the tables in `skills/using-pf/SKILL.md`.
+  `node tools/routing/render-routing.mjs` to re-render the tables in `skills/using-pf/SKILL.md`.
   Never hand-edit those tables — `npm run verify` fails on drift (`routing-table-drift`).
 - **Roles (subagents)**: parallelizable subagent prompts live in `roles/*.md`
   (`component-author`, `manifest-reviewer`, `plugin-analyzer`, `bundle-advisor`). Spawn them
@@ -119,8 +119,12 @@ and acceptance conventions apply to this repository as well.
   are private research — put them in `.agent-workplace/research/` (gitignored), not in `docs/`.
   Delivery-task records (T1–T6) live in `.agent-workplace/docs/task/`. `docs/` holds only
   durable product docs (ADRs, glossary, templates).
+- **Structural maintenance (归纳原则)**: before adding, moving, or removing any file, read
+  `references/induction-principles.md` — organize by scenario (`tools/<module>/`,
+  `references/harnesses/<h>/`), keep one authoritative source per fact, and re-wire
+  references after every move (search_replace → residual grep → full `node --test`).
 
-## Quality bars (enforced by `scripts/verify.mjs` / `npm run verify`)
+## Quality bars (enforced by `tools/verify/verify.mjs` / `npm run verify`)
 
 - Every `SKILL.md` has YAML frontmatter with `name` and `description`.
 - `name` matches its parent directory; lowercase letters/digits/hyphens only.
@@ -131,7 +135,7 @@ and acceptance conventions apply to this repository as well.
 - Every advertised harness has its complete artifact set.
 
 `npm run validate` and `npm run validate:ps` invoke the same Node engine
-(`scripts/verify.mjs structure`) — Bash and PowerShell are thin wrappers.
+(`tools/verify/verify.mjs structure`) — Bash and PowerShell are thin wrappers.
 
 ## Repository structure
 
@@ -143,10 +147,9 @@ plugin-factory/
 ├── .opencode/                    # opencode config, plugin + INSTALL.md
 ├── skills/                       # pf-* workflow sub-skills (canonical location)
 ├── roles/                        # subagent prompts (component-author, manifest-reviewer, plugin-analyzer, bundle-advisor)
-├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
 ├── references/                   # shared design docs (adapters, model, lifecycle matrix, hooks)
-├── scripts/                      # scaffold/verify/lifecycle/version/release/routing (Node core + shell wrappers)
+├── tools/                        # executable engines by module (scaffold/verify/routing/version/release/design/bootstrap/shared)
 ├── templates/                    # shared/ + harnesses/ scaffold templates
 ├── docs/                         # ADRs, glossary, templates (no reports/tasks — see .agent-workplace/)
 └── tests/                        # contract + smoke tests (scaffold/verify/bootstrap/release/smoke)
@@ -155,7 +158,7 @@ plugin-factory/
 ## Working here
 
 - Before editing a skill, read the matching `references/*.md` doc so conventions stay in sync.
-- To change routing, edit `scripts/routing-table.json` and run `node scripts/render-routing.mjs`;
+- To change routing, edit `tools/routing/routing-table.json` and run `node tools/routing/render-routing.mjs`;
   do not edit the SKILL.md tables by hand (verify fails on drift).
 - When you change a convention, update the affected `references/` docs and the CHANGELOG.
 - Keep every deliverable verifiable: run `npm test` and `npm run validate` after changes
@@ -163,6 +166,6 @@ plugin-factory/
 - **Batch limit**: run at most 5 consecutive tasks per batch, then stop, report, and
   reach a commit checkpoint (verify + commit) before continuing.
 - **Honest evaluation claims**: when routing/skill changes are validated against
-  `evals/evals.json`, run the evaluation tooling if the environment has it;
+  `tools/design/evals.json`, run the evaluation tooling if the environment has it;
   if no eval runner is available, **state explicitly that evals were not run** —
   never imply they passed.

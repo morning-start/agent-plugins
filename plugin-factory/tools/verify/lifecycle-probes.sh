@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# lifecycle-probes.sh — lifecycle/orchestration probes (wrapper around scripts/verify.mjs).
+# lifecycle-probes.sh — lifecycle/orchestration probes (wrapper around tools/verify/verify.mjs).
 # Emits severity-ranked findings; exit 1 on any FAIL finding.
 # Runs node from the repo root with a relative script path so the engine's
 # process.cwd() and module resolution stay correct on MSYS/WSL mixed mounts.
 set -eu
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 node_bin="${NODE:-}"
 if [ -z "$node_bin" ]; then
@@ -16,4 +16,4 @@ if [ -z "$node_bin" ]; then
 fi
 
 cd "$root"
-exec "$node_bin" scripts/verify.mjs lifecycle --root .
+exec "$node_bin" tools/verify/verify.mjs lifecycle --root .

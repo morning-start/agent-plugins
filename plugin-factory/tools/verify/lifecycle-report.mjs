@@ -89,8 +89,8 @@ export function renderLifecycleReport(root, findings) {
   }
   lines.push("");
   lines.push("---");
-  lines.push("_Signal severity policy: see `references/lifecycle-matrix.md`._");
-  lines.push("_Trends require v2 signals (trigger frequency, eval pass rate, feedback themes, install counts) — see the v2 roadmap in `references/lifecycle-matrix.md`._");
+  lines.push("_Signal severity policy: see `tools/verify/README.md`._");
+  lines.push("_Trends require v2 signals (trigger frequency, eval pass rate, feedback themes, install counts) — see the v2 roadmap in `tools/verify/README.md`._");
   return lines.join("\n") + "\n";
 }
 

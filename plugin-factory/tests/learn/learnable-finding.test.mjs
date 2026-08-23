@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { makeFinding } from "../../scripts/verify.mjs";
+import { makeFinding } from "../../tools/verify/verify.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 

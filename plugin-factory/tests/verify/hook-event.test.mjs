@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { runChecks } from "../../scripts/verify.mjs";
+import { runChecks } from "../../tools/verify/verify.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-hookev-"));

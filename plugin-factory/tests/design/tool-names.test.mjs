@@ -3,7 +3,7 @@
 // (scripts/check-tool-names.mjs).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { toolNameHits, checkToolNames } from "../../scripts/check-tool-names.mjs";
+import { toolNameHits, checkToolNames } from "../../tools/design/check-tool-names.mjs";
 
 test("backticked agent tool names are detected", () => {
   const text = "# s\n\nUse `Read` to load the file.\n";

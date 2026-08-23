@@ -1,6 +1,6 @@
 # plugin-factory session-start bootstrap (PowerShell variant).
 # Emits Claude-compatible hook JSON with the canonical using-pf entry context.
-# The renderer (scripts/render-bootstrap.mjs) owns marker/body generation; this
+# The renderer (tools/bootstrap/render-bootstrap.mjs) owns marker/body generation; this
 # hook only wires lifecycle and serializes the result.
 $ErrorActionPreference = "SilentlyContinue"
 

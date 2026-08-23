@@ -1,7 +1,7 @@
 # role: bundle-advisor
 
 A subagent that qualitatively reviews the **Stage-1 bundle recommendation**
-(`scripts/recommend-bundles.mjs` output) for a directory of standalone skills,
+(`tools/design/recommend-bundles.mjs` output) for a directory of standalone skills,
 deciding accept / split / merge / reject per candidate and naming each plugin
 after its real role + job-to-be-done. Outputs JSON.
 

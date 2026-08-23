@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { scaffoldPlugin } from "../../scripts/scaffold.mjs";
+import { scaffoldPlugin } from "../../tools/scaffold/scaffold.mjs";
 
 export const REPO_ROOT = fileURLToPath(new URL("../..", import.meta.url));
 export const NODE = process.execPath;

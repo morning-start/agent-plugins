@@ -10,22 +10,22 @@
  * output — the LLM does only the qualitative Stage-2 review
  * (agents/bundle-advisor.md), never the grouping math.
  *
- * Threshold calibration (from references/bundling_heuristics.md):
+ * Threshold calibration (owned by this module — see tools/design/README.md):
  *   >= 0.40  high confidence, safe to bundle
  *   0.20-0.40  probably related, review suggested
  *   0.12-0.20  needs human/LLM review
  *   < 0.08  probably unrelated
  *
  * CLI:
- *   node scripts/recommend-bundles.mjs --root <dir> [--threshold 0.18] [--min-bundle 2] [--format table|json]
- *   node scripts/recommend-bundles.mjs --root <dir> --output-md report.md --output-json report.json
+ *   node tools/design/recommend-bundles.mjs --root <dir> [--threshold 0.18] [--min-bundle 2] [--format table|json]
+ *   node tools/design/recommend-bundles.mjs --root <dir> --output-md report.md --output-json report.json
  *
  * Exit code: 0 always (informational; a no-bundle result is not an error).
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, keywordBag } from "./verify.mjs";
+import { collectSkills, keywordBag } from "../verify/verify.mjs";
 
 export const DEFAULT_THRESHOLD = 0.18;
 export const DEFAULT_MIN_BUNDLE = 2;

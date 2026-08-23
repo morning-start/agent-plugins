@@ -22,7 +22,7 @@ import { pathToFileURL } from "node:url";
 
 /** Location of the eval file under `root`. */
 export function evalsPath(root) {
-  return join(root, "evals", "evals.json");
+  return join(root, "tools", "design", "evals.json");
 }
 
 /** Read the eval file; returns an empty doc when absent or unparsable. */

@@ -1,5 +1,5 @@
 # scaffold.ps1 — generate a standalone multi-harness plugin project.
-# Thin wrapper around scripts/scaffold.mjs (single cross-platform renderer).
+# Thin wrapper around tools/scaffold/scaffold.mjs (single cross-platform renderer).
 # Usage: .\scaffold.ps1 -Name my-plugin -Prefix mp -Target C:\path\to\out [-Description "..."] [-UserLang zh-CN] [-Harnesses claude-code,pi,opencode,oh-my-pi]
 param(
     [Parameter(Position = 0)][string]$Name,
@@ -10,7 +10,7 @@ param(
     [string]$Harnesses
 )
 
-$root = Split-Path -Parent $PSScriptRoot
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $argsList = @()
 if ($Name) { $argsList += @("--name", $Name) }
 if ($Prefix) { $argsList += @("--prefix", $Prefix) }
@@ -19,5 +19,5 @@ if ($Description) { $argsList += @("--description", $Description) }
 if ($UserLang) { $argsList += @("--user-lang", $UserLang) }
 if ($Harnesses) { $argsList += @("--harnesses", $Harnesses) }
 
-& node "$root/scripts/scaffold.mjs" @argsList
+& node "$root/tools/scaffold/scaffold.mjs" @argsList
 exit $LASTEXITCODE

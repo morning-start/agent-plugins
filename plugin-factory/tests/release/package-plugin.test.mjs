@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { buildZip, parseZipEntries, crc32, packagePlugin, collectPackageFiles } from "../../scripts/package-plugin.mjs";
+import { buildZip, parseZipEntries, crc32, packagePlugin, collectPackageFiles } from "../../tools/release/package-plugin.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-pkg-"));

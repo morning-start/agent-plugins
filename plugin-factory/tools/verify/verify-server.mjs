@@ -24,8 +24,8 @@
  *   { "mcpServers": { "plugin-factory-verify": { "command": "node", "args": ["mcp/verify-server.mjs"] } } }
  */
 import { pathToFileURL } from "node:url";
-import { runChecks } from "../scripts/verify.mjs";
-import { renderLifecycleReport } from "../scripts/lifecycle-report.mjs";
+import { runChecks } from "./verify.mjs";
+import { renderLifecycleReport } from "./lifecycle-report.mjs";
 
 const PROTOCOL_VERSION = "2024-11-05";
 const ALLOWED_LAYERS = ["structure", "harness", "orchestration"];

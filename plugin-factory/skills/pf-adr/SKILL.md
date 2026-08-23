@@ -119,7 +119,7 @@ opens the log. Better than empty process talk.
 - Status is one of `Proposed | Accepted | Superseded | Deprecated`.
 - Number is monotonically increasing and unique.
 - `Superseded` ADRs link the replacing ADR; the chain is intact.
-- `scripts/verify.mjs` `adr-status` probe passes (no new FAIL/WARN findings).
+- `tools/verify/verify.mjs` `adr-status` probe passes (no new FAIL/WARN findings).
 
 ## Status
 
@@ -144,4 +144,4 @@ Accepted ADRs are never edited. Decision changes → new ADR + Superseded link.
 - [ ] Status is one of the four valid values
 - [ ] Number unique and continuous with existing ADRs
 - [ ] Alternatives and rejections documented in 理由
-- [ ] `scripts/verify.mjs` adr-status probe green
+- [ ] `tools/verify/verify.mjs` adr-status probe green

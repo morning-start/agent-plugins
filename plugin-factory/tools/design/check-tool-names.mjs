@@ -15,7 +15,7 @@
  */
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills } from "./verify.mjs";
+import { collectSkills } from "../verify/verify.mjs";
 
 /** Agent-harness tool names that must not be referenced from skill bodies. */
 const AGENT_TOOLS = new Set([

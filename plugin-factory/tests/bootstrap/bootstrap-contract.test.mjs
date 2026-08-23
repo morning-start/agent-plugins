@@ -6,7 +6,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderBootstrap, stripFrontmatter, MARKER_PREFIX } from "../../scripts/render-bootstrap.mjs";
+import { renderBootstrap, stripFrontmatter, MARKER_PREFIX } from "../../tools/bootstrap/render-bootstrap.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const REPO_ROOT = join(here, "..", "..");

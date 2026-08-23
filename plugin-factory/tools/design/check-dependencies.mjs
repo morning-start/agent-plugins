@@ -19,7 +19,7 @@
  */
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { collectSkills, collectSkillRefs, LIFECYCLE_STATUS_RE } from "./verify.mjs";
+import { collectSkills, collectSkillRefs, LIFECYCLE_STATUS_RE } from "../verify/verify.mjs";
 
 /**
  * Build the dependency graph: for every skill, the set of skills it references.

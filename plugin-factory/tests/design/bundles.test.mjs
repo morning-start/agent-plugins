@@ -13,7 +13,7 @@ import {
   DEFAULT_THRESHOLD,
   DEFAULT_MIN_BUNDLE,
   renderBundleMarkdown,
-} from "../../scripts/recommend-bundles.mjs";
+} from "../../tools/design/recommend-bundles.mjs";
 
 async function withTemp(fn) {
   const dir = await mkdtemp(join(tmpdir(), "pf-bundles-"));

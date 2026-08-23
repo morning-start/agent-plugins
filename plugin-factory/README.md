@@ -71,10 +71,9 @@ plugin-factory/
 ├── .opencode/                    # opencode config + INSTALL.md
 ├── skills/                       # pf-* workflow sub-skills (canonical location)
 ├── roles/                        # subagent prompts (component-author, manifest-reviewer, plugin-analyzer, bundle-advisor)
-├── commands/                     # /pf-* slash commands
 ├── hooks/                        # session-start bootstrap (multi-shell)
 ├── references/                   # shared design docs (adapters, plugin model, lifecycle matrix)
-├── scripts/                      # scaffold / verify / lifecycle / version / release (Node core + shell wrappers)
+├── tools/                        # executable engines by module (scaffold/verify/routing/version/release/design/bootstrap/shared)
 ├── templates/                    # shared + harnesses scaffold templates
 ├── docs/                         # ADRs, glossary, optimization reports
 └── tests/                        # contract + smoke tests (34 passing)

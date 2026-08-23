@@ -6,14 +6,14 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..", "..");
 
-const PRD_SCHEMA = join(root, "schemas", "prd.schema.json");
-const MANIFEST_SCHEMA = join(root, "schemas", "component-manifest.schema.json");
+const PRD_SCHEMA = join(root, "tools", "shared", "schemas", "prd.schema.json");
+const MANIFEST_SCHEMA = join(root, "tools", "shared", "schemas", "component-manifest.schema.json");
 const VALID_PRD = join(root, "tests", "fixtures", "contract-valid", "prd.json");
 const VALID_MANIFEST = join(root, "tests", "fixtures", "contract-valid", "component-manifest.json");
 const INVALID_PRD = join(root, "tests", "fixtures", "contract-invalid", "prd.json");
 
 // Import the validator (use file:// URL for Windows compatibility)
-const validatorUrl = pathToFileURL(join(root, "scripts", "validate-schema.mjs")).href;
+const validatorUrl = pathToFileURL(join(root, "tools", "verify", "validate-schema.mjs")).href;
 const { validate, validateSchema } = await import(validatorUrl);
 
 describe("validate()", () => {

@@ -6,7 +6,7 @@
 
 ## 为什么存在
 
-生命周期管理（`lifecycle-matrix.md`）处理**单个**技能（拆分/合并/重组/移植/退役）。
+生命周期管理（`tools/verify/README.md`）处理**单个**技能（拆分/合并/重组/移植/退役）。
 编排处理**一组技能如何协作**：发现、触发顺序、交接产物、冲突避免。
 superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → review），
 而非单个技能。
@@ -32,7 +32,7 @@ superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → 
 
 - 适用：各技能独立、但从一处发现的工具包。
 - 引导技能：`using-<plugin>`，CSO 描述 + 各端 session-start 钩子
-  （钩子规格：`references/hooks/`）。
+  （钩子规格：`references/harnesses/<harness>/hooks.md`）。
 
 ### 3. 总线 / 共享产物（Bus）
 
@@ -76,10 +76,10 @@ superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → 
 ### 场景目录
 
 > **单一权威**：S1–S10 场景定义、触发关键词、路由路径全部集中在
-> `scripts/routing-table.json`（引擎 `scripts/route-intent.mjs` 读取，
-> `skills/using-pf/SKILL.md` 表格由 `scripts/render-routing.mjs` 渲染，
+> `tools/routing/routing-table.json`（引擎 `tools/routing/route-intent.mjs` 读取，
+> `skills/using-pf/SKILL.md` 表格由 `tools/routing/render-routing.mjs` 渲染，
 > `verify.mjs` 防漂移）。**不要在本文件重复维护场景表**——新增/修改场景时
-> 只编辑 JSON，然后 `node scripts/render-routing.mjs`。
+> 只编辑 JSON，然后 `node tools/routing/render-routing.mjs`。
 
 场景全景（详情以 routing-table.json 为准）：
 
@@ -108,4 +108,4 @@ superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → 
 ## 复核节奏
 
 - 固化于 **2026-08-01**，2026-08-09 精简（编排功能规则移入 `skills/pf-compose/`）。
-- 仅当模式变更或某端引导规格变更时更新（交叉引用 `references/hooks/`）。
+- 仅当模式变更或某端引导规格变更时更新（交叉引用 `references/harnesses/<harness>/hooks.md`）。

@@ -2,7 +2,7 @@
 // T-ENT-1 contract tests for the automated intent router (scripts/route-intent.mjs).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { routeIntent } from "../../scripts/route-intent.mjs";
+import { routeIntent } from "../../tools/routing/route-intent.mjs";
 
 test("new plugin intents route to S1 pf-intent Full", () => {
   for (const t of ["I want to create a plugin", "创建一个插件", "我有个插件想法"]) {

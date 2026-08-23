@@ -39,7 +39,7 @@ adapter rules, multi-shell hooks, orchestration health, and packaging.
 
 ### 1. Structural checks (executable gate)
 
-`scripts/verify.mjs structure` (wrapped by `scripts/validate-structure.sh` /
+`tools/verify/verify.mjs structure` (wrapped by `tools/verify/validate-structure.sh` /
 `.ps1` — both invoke the same Node engine, never duplicate parsing logic):
 
 - every `skills/*/SKILL.md` has YAML frontmatter with `name` and `description`;
@@ -52,21 +52,21 @@ adapter rules, multi-shell hooks, orchestration health, and packaging.
 Run:
 
 ```text
-node scripts/verify.mjs structure --root <dir>            # table
-node scripts/verify.mjs structure --root <dir> --format json
+node tools/verify/verify.mjs structure --root <dir>            # table
+node tools/verify/verify.mjs structure --root <dir> --format json
 ```
 
 ### 2. Skill compliance (Agent Skills standard)
 
 - name == directory (enforced by Claude Code / opencode; pi is lenient —
-  `references/agent-adapters.md`).
+  `references/README.md`).
 - description: ≤ 1024 chars, third person, **triggers only** (never the workflow);
   searchable keywords present.
 - name uniqueness across all sources (shared dirs like `.agents/skills/`).
 
 ### 3. Multi-shell hooks & wiring
 
-- Canonical {event, action} rendered per harness (`references/hooks/`):
+- Canonical {event, action} rendered per harness (`references/harnesses/<harness>/hooks.md`):
   - Claude Code: `.sh` + `.ps1` pairs wired via `shell` field;
   - opencode: `.opencode/plugins/*.ts` present;
   - pi / oh-my-pi: `.pi/extensions/<prefix>-bootstrap.ts` present.
@@ -106,17 +106,17 @@ Before releasing, verify that every skill has a corresponding test file:
 - Skills with `lifecycle.status: deprecated` are exempt from coverage
   requirements.
 - **Configurable severity** — run the coverage probe with an explicit severity:
-  - `node scripts/verify.mjs structure --root . --coverage=WARN` (advisory),
-  - `node scripts/verify.mjs structure --root . --coverage=FAIL` (blocking:
+  - `node tools/verify/verify.mjs structure --root . --coverage=WARN` (advisory),
+  - `node tools/verify/verify.mjs structure --root . --coverage=FAIL` (blocking:
     uncovered active skills become FAIL and exit 1).
   - Without `--coverage` the probe is skipped entirely — coverage is opt-in.
 
 Run: `npm test` (all tests must pass) and `npm run verify` (coverage warnings
 are informational).
 
-**Eval coverage** (advisory): when `evals/evals.json` declares eval cases, every
+**Eval coverage** (advisory): when `tools/design/evals.json` declares eval cases, every
 declared eval should have a recorded result (`evals.mjs` records them during
-pf-build). Check with `node scripts/evals.mjs check`; uncovered evals exit 1 —
+pf-build). Check with `node tools/design/evals.mjs check`; uncovered evals exit 1 —
 report them as WARN findings and re-run the missing evals via pf-build, never
 imply evals passed without a recorded result (honest evaluation claims).
 
@@ -181,7 +181,7 @@ is unavailable — live checks never modify global configuration.
 ## Status
 
 T2 complete — structural, harness, and lifecycle checks share one Node engine
-(`scripts/verify.mjs`); Bash and PowerShell wrappers only forward arguments.
+(`tools/verify/verify.mjs`); Bash and PowerShell wrappers only forward arguments.
 T5 complete — dogfood smoke evidence above.
 
 

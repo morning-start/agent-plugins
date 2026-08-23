@@ -16,7 +16,7 @@ if [ -z "$node_bin" ]; then
 fi
 
 cd "$plugin_root"
-out="$("$node_bin" scripts/verify.mjs structure --format table 2>/dev/null || true)"
+out="$("$node_bin" tools/verify/verify.mjs structure --format table 2>/dev/null || true)"
 if printf '%s' "$out" | grep -q "FAIL"; then
   echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[plugin-factory] structure gate FAILED:\\n$out\"}}"
   exit 1

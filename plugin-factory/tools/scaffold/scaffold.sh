@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # scaffold.sh — generate a standalone multi-harness plugin project.
-# Thin wrapper around scripts/scaffold.mjs (single cross-platform renderer).
+# Thin wrapper around tools/scaffold/scaffold.mjs (single cross-platform renderer).
 # Usage: scaffold.sh <plugin-name> <prefix> <target-dir> [description] [user-lang] [--harnesses a,b,c]
 set -eu
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 node_bin="${NODE:-}"
 if [ -z "$node_bin" ]; then
@@ -14,5 +14,5 @@ if [ -z "$node_bin" ]; then
   exit 127
 fi
 
-"$node_bin" "$root/scripts/scaffold.mjs" "$@"
+"$node_bin" "$root/tools/scaffold/scaffold.mjs" "$@"
 exit $?

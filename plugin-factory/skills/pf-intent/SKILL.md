@@ -81,7 +81,7 @@ Adaptive rules (skip when answer is already known):
 After writing the PRD, save it as JSON (or structured markdown) and validate against the schema:
 
 ```bash
-node scripts/validate-schema.mjs --schema schemas/prd.schema.json --input <prd.json>
+node tools/verify/validate-schema.mjs --schema tools/shared/schemas/prd.schema.json --input <prd.json>
 ```
 
 If validation fails, fix the PRD before proceeding to the complexity gate. Common issues:
@@ -94,10 +94,10 @@ If validation fails, fix the PRD before proceeding to the complexity gate. Commo
 Score with the executable gate — never by hand:
 
 ```
-node scripts/complexity.mjs --skills <N> [--hooks] [--harnesses <N>] [--rules] [--cross-scenario]
+node tools/design/complexity.mjs --skills <N> [--hooks] [--harnesses <N>] [--rules] [--cross-scenario]
 ```
 
-`scoreComplexity()` (exported from `scripts/complexity.mjs`) applies the table below
+`scoreComplexity()` (exported from `tools/design/complexity.mjs`) applies the table below
 and prints `{ score, verdict, path, signals }`; the interview records only the raw
 signals, the function computes the verdict:
 

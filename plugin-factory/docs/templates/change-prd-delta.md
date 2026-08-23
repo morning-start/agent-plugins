@@ -26,10 +26,10 @@
 ## 3. Complexity (of the change, not the plugin)
 
 <!-- 对"变更"应用 Light/Medium/Heavy 门禁，不是对整个插件重新计分。
-     使用 scripts/complexity.mjs 自动计算。 -->
+     使用 tools/design/complexity.mjs 自动计算。 -->
 
 ```bash
-node scripts/complexity.mjs --skills <N> [--hooks] [--harnesses <N>] [--rules] [--cross-scenario]
+node tools/design/complexity.mjs --skills <N> [--hooks] [--harnesses <N>] [--rules] [--cross-scenario]
 ```
 
 - 变更涉及的技能数：`<N>`

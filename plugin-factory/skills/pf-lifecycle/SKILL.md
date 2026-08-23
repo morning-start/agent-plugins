@@ -30,9 +30,9 @@ single-skill loop does not.
 
 ## Responsibilities (engine complete in T2)
 
-- Run the executable lifecycle probes (`scripts/verify.mjs lifecycle`, wrapped by
-  `scripts/lifecycle-probes.sh` / `.ps1`) — pure-structural analysis from the
-  decision matrix (`references/lifecycle-matrix.md`): size/depth, trigger
+- Run the executable lifecycle probes (`tools/verify/verify.mjs lifecycle`, wrapped by
+  `tools/verify/lifecycle-probes.sh` / `.ps1`) — pure-structural analysis from the
+  decision matrix (`tools/verify/README.md`): size/depth, trigger
   overlap, duplicated guidance, hierarchy depth, multi-harness gaps, zombie
   detection, name collisions, version drift, broken handoffs, orphan skills,
   and missing entry skills.
@@ -49,18 +49,18 @@ single-skill loop does not.
 ## Executable probes
 
 ```text
-node scripts/verify.mjs lifecycle --root <dir>            # severity-ranked table
-node scripts/verify.mjs lifecycle --root <dir> --format json
+node tools/verify/verify.mjs lifecycle --root <dir>            # severity-ranked table
+node tools/verify/verify.mjs lifecycle --root <dir> --format json
 npm run lifecycle:report [-- --root <dir>] [-- --out <file>]   # markdown report
 ```
 
-`lifecycle:report` (via `scripts/lifecycle-report.mjs`) renders the probe output as
+`lifecycle:report` (via `tools/verify/lifecycle-report.mjs`) renders the probe output as
 a human-readable markdown report — run header, signal distribution, severity-ranked
 findings, recommendations — so you never read the raw table by hand. It reuses the
 same `runChecks` engine; `--out` writes the report to a file, otherwise it prints
 to stdout.
 
-Every matrix signal maps to a probe name in `references/lifecycle-matrix.md`:
+Every matrix signal maps to a probe name in `tools/verify/README.md`:
 
 | Signal | Severity policy |
 |--------|-----------------|
@@ -82,13 +82,13 @@ install counts) remain out of scope for v1 and are documented as future signals.
 The concrete v2 roadmap — probes (`trigger-frequency`, `eval-pass-rate`,
 `feedback-themes`, `install-count`), data sources, and how each upgrades a
 "structural suspicion" into evidence — lives in
-`references/lifecycle-matrix.md` § 未来信号 → v2 roadmap. v1 must never fake
+`tools/verify/README.md` § 未来信号 → v2 roadmap. v1 must never fake
 these probes: without their data sources wired, mark them "not enabled" (INFO).
 
-## Cross-skill dependency analysis (executable: `scripts/check-dependencies.mjs`)
+## Cross-skill dependency analysis (executable: `tools/design/check-dependencies.mjs`)
 
 ```text
-node scripts/check-dependencies.mjs [--root <dir>] [--format table|json]
+node tools/design/check-dependencies.mjs [--root <dir>] [--format table|json]
 ```
 
 Builds the handoff/chain dependency graph (A references B when A's body routes
@@ -103,10 +103,10 @@ cleaned up. A skill's retirement therefore never silently breaks its dependents.
 For **a directory of standalone skills** ("how should these become plugins?"),
 recommend groupings with two stages — heuristics first, LLM review second:
 
-**Stage 1 — deterministic clustering (`scripts/recommend-bundles.mjs`):**
+**Stage 1 — deterministic clustering (`tools/design/recommend-bundles.mjs`):**
 
 ```text
-node scripts/recommend-bundles.mjs --root <dir> [--threshold 0.18] [--min-bundle 2]
+node tools/design/recommend-bundles.mjs --root <dir> [--threshold 0.18] [--min-bundle 2]
   [--output-md bundle-report.md] [--output-json bundle-report.json]
 ```
 
@@ -156,7 +156,7 @@ systematic (not one-off):
 
 Do **not** mark one-off findings as learnable — log them to `scratch/` instead.
 Systematic gaps that need a rule → learnable.
-T2 complete — decision matrix probes are executable via `scripts/verify.mjs
+T2 complete — decision matrix probes are executable via `tools/verify/verify.mjs
 lifecycle`; Bash and PowerShell wrappers only forward arguments.
 
 ## Iron Law

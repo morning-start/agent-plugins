@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { scaffoldPlugin } from "../../scripts/scaffold.mjs";
+import { scaffoldPlugin } from "../../tools/scaffold/scaffold.mjs";
 
 /** Create a temp dir and clean it up after the test. */
 async function withTemp(fn) {
