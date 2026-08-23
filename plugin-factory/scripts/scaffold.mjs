@@ -143,7 +143,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     installSections.push(
-      "### opencode\n\nCopy the plugin directory into your project — opencode picks up\n`.opencode/plugins/` and reads skills from `skills/` via `opencode.json`\n(see `.opencode/INSTALL.md`).",
+      "### opencode\n\nCopy the plugin directory into your project — opencode picks up\n`.opencode/plugins/`; the bootstrap plugin registers `skills/` as an opencode\nskill source at runtime via its `config` hook (see `.opencode/INSTALL.md`).",
     );
   }
   if (harnesses.includes("codex")) {
@@ -173,7 +173,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     quickStartSections.push(
-      `### opencode\n\nPlugins load at startup from \`.opencode/plugins/\`; skills come from the\nsingle \`skills/\` source declared in \`opencode.json\`. Restart opencode after\nadding the plugin.`,
+      `### opencode\n\nPlugins load at startup from \`.opencode/plugins/\`; skills come from the single\n\`skills/\` source, self-registered by the bootstrap plugin's \`config\` hook.\nRestart opencode after adding the plugin.`,
     );
   }
   if (harnesses.includes("codex")) {
@@ -202,7 +202,7 @@ function buildValues({ name, prefix, description, userLang, harnesses, validatio
   }
   if (harnesses.includes("opencode")) {
     uninstallSections.push(
-      `### opencode\n\nRemove the plugin's files from \`.opencode/plugins/\` and the \`skills/\`\ndeclaration from \`opencode.json\`, then restart opencode.`,
+      `### opencode\n\nRemove the plugin's files from \`.opencode/plugins/\`, then restart opencode.`,
     );
   }
   if (harnesses.includes("codex")) {

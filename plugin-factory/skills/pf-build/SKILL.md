@@ -69,7 +69,7 @@ Per `references/plugin-model.md`:
 <plugin-name>/
 ├── .claude-plugin/plugin.json              # claude-code harness
 ├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness (shared path)
-├── .opencode/opencode.json + plugins/      # opencode harness (skills via opencode.json → ./skills/)
+├── .opencode/opencode.json + plugins/      # opencode harness (skills via bootstrap config hook self-registration)
 ├── package.json                            # pi/omp fields only when requested
 ├── skills/                                 # filled in step 2
 ├── commands/  hooks/  rules/ or references/
@@ -123,7 +123,7 @@ Per `references/plugins/` and `references/agent-adapters.md`:
 - Claude Code: `.claude-plugin/plugin.json` (name/description/version) + root
   `skills/`/`commands/`/`agents/` + `hooks/hooks.json`.
 - opencode: `.opencode/opencode.json` + `.opencode/plugins/*.ts` (skills via the
-  `skills` field pointing at `./skills/` — single source, no copy).
+  bootstrap `config` hook — single root `skills/` source).
 - pi: `package.json` → `pi.skills` + `pi.extensions`.
 - oh-my-pi: **also** write the `omp` field (`pkg.omp` preferred, `pkg.pi` fallback).
 - **Tool mapping** (superpowers pattern): generate `references/<harness>-tools.md`
@@ -222,9 +222,10 @@ Conventional Commits; manage version bumps / CHANGELOG from git history via
    the Validation section in `AGENTS.md` must record the commands, and
    `package.json.scripts` must declare them. See
    `references/plugin-model.md` § 9.
-- opencode skill discovery needs no manual `cp -r skills …` step and no
-  `.opencode/skills/` copy — `opencode.json` declares `skills: ["./skills/"]`
-  so opencode reads the single root source directly.
+- opencode skill discovery follows the single root `skills/` source — the
+  bootstrap plugin's `config` hook registers the plugin-root `skills/` at
+  runtime (superpowers-style self-registration); see
+  `references/plugins/opencode.md`.
 - Per-harness manifests match `references/plugins/`.
 - Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
 - Tool mapping files (`references/<harness>-tools.md`) generated per advertised harness.

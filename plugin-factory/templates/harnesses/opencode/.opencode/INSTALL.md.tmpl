@@ -6,14 +6,15 @@
 
 1. Copy this plugin directory into your project (opencode picks up
    `.opencode/plugins/` automatically).
-2. Restart opencode so it rescans plugin directories.
+2. Restart opencode so it rescans the plugin and skill directories.
 
 ## Skill discovery
 
-Skills live in **one source**: the plugin-root `skills/` directory. `opencode.json`
-declares `"skills": ["./skills/"]`, so opencode reads them straight from that
-single source — no per-harness copies are needed. If you install the plugin
-globally, copy `skills/` into `~/.config/opencode/skills/<plugin>/` instead.
+Skills live in **one source**: the plugin-root `skills/` directory. The
+bootstrap plugin (`.opencode/plugins/{{PLUGIN_PREFIX}}-bootstrap.ts`) registers that
+directory as an opencode skill source at runtime via its `config` hook —
+superpowers-style self-registration. Skill discovery is lazy, so paths
+registered during plugin load are visible to the skill tool.
 
 ## Use
 

@@ -433,13 +433,13 @@ async function harnessChecks(root, findings) {
             );
           }
         }
-        // Skills come from the single root `skills/` source, declared in
-        // opencode.json (moonbit-style: one source, no per-harness copies).
+        // Skills come from the single root `skills/` source, self-registered
+        // at runtime by the bootstrap plugin's `config` hook (superpowers-style).
         try {
           await stat(join(root, "skills"));
         } catch {
           findings.push(
-            makeFinding("missing-harness-artifact", "skills", "FAIL", "Create skills/ (the single skill source declared by opencode.json).", "opencode cannot discover any skill."),
+            makeFinding("missing-harness-artifact", "skills", "FAIL", "Create skills/ (the single skill source registered by the bootstrap plugin's config hook).", "opencode cannot discover any skill."),
           );
         }
         break;
@@ -658,7 +658,7 @@ async function harnessGapCheck(root, harnesses, findings) {
       await stat(join(root, "skills"));
     } catch {
       findings.push(
-        makeFinding("harness-gap", "skills", "WARN", "Create skills/ (declared as the single skill source in opencode.json).", "opencode is advertised but no skill source exists."),
+        makeFinding("harness-gap", "skills", "WARN", "Create skills/ (self-registered by the bootstrap plugin's config hook).", "opencode is advertised but no skill source exists."),
       );
     }
   }

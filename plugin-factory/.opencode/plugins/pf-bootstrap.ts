@@ -17,6 +17,21 @@ import { join } from "node:path";
 const MARKER_PREFIX = "PLUGIN_FACTORY_BOOTSTRAP";
 const PLUGIN_NAME = "plugin-factory";
 const ENTRY_REL = join("skills", "using-pf", "SKILL.md");
+const SKILLS_DIR_REL = "skills";
+
+/** Register `root/skills` as an opencode skill source (idempotent). */
+function registerSkillsDir(config, root) {
+  const skillsDir = join(root, SKILLS_DIR_REL);
+  if (Array.isArray(config.skills)) {
+    // v2 shape: array of paths / URLs.
+    if (!config.skills.includes(skillsDir)) config.skills.push(skillsDir);
+    return;
+  }
+  // v1 shape: { paths: [...], urls: [...] }.
+  config.skills = config.skills || {};
+  config.skills.paths = config.skills.paths || [];
+  if (!config.skills.paths.includes(skillsDir)) config.skills.paths.push(skillsDir);
+}
 
 /** @type {{ marker: string, text: string } | null} */
 let cached = null;
@@ -65,6 +80,11 @@ export const PfBootstrap = async ({ directory } = {}) => {
       // keeps the plugin idempotent without duplicating the marker.
       void input;
       void output;
+    },
+    // Lazy discovery: opencode reads skill paths after plugins load, so
+    // mutating the config object here is visible to later skill discovery.
+    config: async (config) => {
+      registerSkillsDir(config, root);
     },
   };
 };

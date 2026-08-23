@@ -108,7 +108,7 @@ codex plugin install ./my-plugin --force
 ## 对 plugin-factory 的含义
 
 - 生成的 Codex 插件 = `.codex-plugin/plugin.json`（name/version/description/
-  skills → `./skills/`）+ 根部 `skills/`（Agent Skills 标准，无需副本目录）。
+  skills → `./skills/`）+ 根部 `skills/`（Agent Skills 标准，单一源）。
 - Codex 无 hooks 机制声明文件（不像 Claude 的 `hooks/hooks.json`）——
   检测 codex harness 以 `.codex-plugin/plugin.json` 为准
   （`scripts/verify.mjs` 已按此检查）。

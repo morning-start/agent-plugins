@@ -86,11 +86,14 @@ test("all five harnesses produce their required artifacts", async () => {
     ]) {
       assert.ok(await exists(join(target, rel)), `missing shared artifact: ${rel}`);
     }
-    // opencode reads skills from the single root skills/ source, declared
-    // in opencode.json (moonbit-style — no .opencode/skills copy).
+    // opencode reads skills from the single root skills/ source, self-registered
+    // at runtime by the generated bootstrap's `config` hook (superpowers-style).
     assert.ok(await exists(join(target, "skills", "gr-hello", "SKILL.md")));
     const ocJson = JSON.parse(await readFile(join(target, ".opencode", "opencode.json"), "utf8"));
-    assert.ok(Array.isArray(ocJson.skills) && ocJson.skills.includes("./skills/"), "opencode.json must declare ./skills/ as the skill source");
+    assert.equal(ocJson.skills, undefined, "opencode.json must NOT declare a skills key (bootstrap registers it)");
+    const ocBootstrap = await readFile(join(target, ".opencode", "plugins", "gr-bootstrap.ts"), "utf8");
+    assert.match(ocBootstrap, /config: async \(config\)/, "generated bootstrap must expose a config hook");
+    assert.match(ocBootstrap, /registerSkillsDir/, "generated bootstrap must register the skills dir");
     // package.json references only files that exist in the tree
     const pkg = JSON.parse(await readFile(join(target, "package.json"), "utf8"));
     for (const target2 of pkg.pi?.extensions ?? []) {

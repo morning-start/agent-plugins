@@ -6,19 +6,24 @@ goals, and scenarios.
 
 ## Install
 
-1. Make the `pf-*` skills discoverable by opencode. opencode scans
-   `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/` — but NOT the
-   repo-root `skills/` directory. Copy the skills into place:
+1. Copy this plugin directory into your project (opencode picks up
+   `.opencode/plugins/` automatically).
+2. Restart opencode so it rescans the plugin and skill directories.
 
-   ```sh
-   mkdir -p .opencode/skills
-   cp -r skills/pf-intent skills/pf-design skills/pf-build skills/pf-verify skills/pf-lifecycle .opencode/skills/
-   ```
+`skills/` is the single source: `.opencode/plugins/pf-bootstrap.ts`
+registers the repo-root `skills/` directory as an opencode skill source at
+runtime via its `config` hook — superpowers-style self-registration.
 
-   > A dedicated installer script (`.opencode/skills` sync) is planned for M2;
-   > until then the copy step above is the supported path.
+## Skill discovery
 
-2. Restart opencode so it rescans skill directories.
+Skills live canonically in the repo-root `skills/` directory. The bootstrap
+plugin's `config` hook pushes that directory into `config.skills` (handling
+both v1 `{ skills: { paths: [...] } }` and v2 `{ skills: [...] }` shapes).
+Skill discovery is lazy — opencode reads those paths after plugins load, so
+the runtime registration is visible to the skill tool.
+
+The single root `skills/` source serves every harness (see
+`references/plugins/opencode.md`).
 
 ## Use
 
@@ -28,7 +33,8 @@ verify → release using the `pf-*` skills and skill-creator.
 
 ## Notes
 
-- Skills live canonically in the repo-root `skills/` directory; opencode needs the
-  copy under `.opencode/skills/` because its discovery paths do not include repo root.
+- Bootstrap: `.opencode/plugins/pf-bootstrap.ts` also injects the entry skill
+  (`skills/using-pf/SKILL.md`) at session start (single marker
+  `PLUGIN_FACTORY_BOOTSTRAP:plugin-factory`).
 - Documentation is English; the user-facing README has a Chinese edition
   (`README.zh-CN.md`).

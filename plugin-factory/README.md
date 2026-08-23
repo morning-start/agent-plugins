@@ -57,7 +57,7 @@ All five harnesses are verified by the dogfood smoke test (`npm run smoke`). A h
 | **Claude Code** | `skills/` | `.sh` + `.ps1` pairs via `hooks.json` | `commands/*.md` |
 | **pi** | `package.json` → `pi.skills` | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
 | **oh-my-pi (omp)** | `package.json` → `omp` / `pi` fields | `.pi/extensions/<prefix>-bootstrap.ts` | `registerCommand` |
-| **opencode** | `skills/` via `opencode.json` (`./skills/`) | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
+| **opencode** | `skills/` (self-registered by bootstrap's `config` hook) | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
 | **Codex / ChatGPT** | `skills/` (`plugin.json` → `./skills/`) | — (no hooks mechanism) | — |
 
 ---

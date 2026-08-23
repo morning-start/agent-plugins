@@ -57,7 +57,7 @@
 | **Claude Code** | `skills/` | `.sh` + `.ps1` 配对，通过 `hooks.json` 绑定 | `commands/*.md` |
 | **pi** | `package.json` → `pi.skills` | `.pi/extensions/<前缀>-bootstrap.ts` | `registerCommand` |
 | **oh-my-pi (omp)** | `package.json` → `omp` / `pi` 字段 | `.pi/extensions/<前缀>-bootstrap.ts` | `registerCommand` |
-| **opencode** | `skills/`（经 `opencode.json` 声明 `./skills/`） | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
+| **opencode** | `skills/`（bootstrap 的 `config` 钩子自注册） | `.opencode/plugins/*.ts` | `.opencode/command/*.md` |
 | **Codex / ChatGPT** | `skills/`（`plugin.json` 指向 `./skills/`） | —（无 hooks 机制） | — |
 
 ---

@@ -10,7 +10,7 @@
 
 | 组件 | 是什么 | 规范形式 | 各端说明 |
 |-----------|------------|----------------|---------------|
-| **skills** | 能力包：`SKILL.md` + 附属文件 | 每技能一目录，根部 `skills/`（单一源） | Claude Code 插件 `skills/`、pi 包 `skills/`、opencode `skills/`（`opencode.json` 指向 `./skills/`）、codex `skills/`（`plugin.json` 指向 `./skills/`） |
+| **skills** | 能力包：`SKILL.md` + 附属文件 | 每技能一目录，根部 `skills/`（单一源） | Claude Code 插件 `skills/`、pi 包 `skills/`、opencode 根 `skills/`（bootstrap 的 `config` 钩子自注册）、codex `skills/`（`plugin.json` 指向 `./skills/`） |
 | **hooks** | 生命周期脚本（会话启动、工具调用、完成…） | `hooks/*.sh` + `hooks/*.ps1` + `hooks/hooks.json` | 各端事件模型不同（按端核实） |
 | **commands** | 斜杠命令 / 快捷方式 | `commands/*.md`（frontmatter description） | Claude Code `commands/`、opencode `.opencode/command/`、pi `/skill:` 强制调用 |
 | **agents / subagents** | 专用系统提示词的子代理 | `agents/*.md` | Claude Code `agents/`；他端可选 |
@@ -41,7 +41,7 @@
 <plugin-name>/
 ├── .claude-plugin/plugin.json              # claude-code harness
 ├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness（同一路径）
-├── .opencode/opencode.json + plugins/      # opencode harness（skills 经 opencode.json 声明指向根 skills/）
+├── .opencode/opencode.json + plugins/      # opencode harness（bootstrap 的 config 钩子自注册根 skills/）
 ├── .codex-plugin/plugin.json               # codex harness（skills 指向 ./skills/）
 ├── package.json                            # pi/omp 字段仅在请求对应 harness 时写入
 ├── skills/<skill-name>/SKILL.md            # 经 skill-creator 创建
@@ -64,7 +64,7 @@
      `hooks/session-start.sh` + `.ps1`
    - pi：`.pi/extensions/<prefix>-bootstrap.ts`
    - opencode：`.opencode/opencode.json`、`.opencode/plugins/<prefix>-bootstrap.ts`；
-     `opencode.json` 声明 `skills: ["./skills/"]`（单一源，无需副本）
+    bootstrap 的 `config` 钩子运行时注册根 `skills/`（superpowers 式自注册，单一源）
    - oh-my-pi：`.pi/extensions/<prefix>-bootstrap.ts` + `OMP-NOTES.md`
    - codex：`.codex-plugin/plugin.json`
 2. 未请求的 harness 不生成任何文件（Claude-only → 无 `.pi/`、`.opencode/`）。

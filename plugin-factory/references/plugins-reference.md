@@ -23,8 +23,8 @@
 
 1. 每个对外宣称的端都有对应 manifest（见上表各文件）。
 2. 技能规范位置为根部 `skills/`（Agent Skills 标准，单一源）；
-   Codex 用 `skills` 字段指向 `./skills/`，opencode 用 `opencode.json` 的
-   `skills` 字段指向 `./skills/` — 均为单一源，无需副本。
+   Codex 用 `skills` 字段指向 `./skills/`，opencode 用 bootstrap `config`
+   钩子运行时注册根 `skills/` — 均为单一源。
 3. 双语 README（`README.md` + `README.zh-CN.md`）、`AGENTS.md`/`CLAUDE.md`、
    安装脚本（`install.sh` / `install.ps1`）。
 4. **产物契约（T1 生效，`scripts/scaffold.mjs` 强制）**：一个 harness 只有在
