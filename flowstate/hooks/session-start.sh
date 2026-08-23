@@ -25,6 +25,9 @@ body="$(
     !infront { print }
   ' "$entry"
 )"
+# Escape for a JSON string literal: backslash, double quote, then convert
+# newlines to \n via awk (control chars are illegal raw inside JSON strings).
+body="$(printf '%s' "$body" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk '{ printf "%s\\n", $0 }' | sed -e 's/\r//g')"
 
-printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"FLOWSTATE_BOOTSTRAP:flowstate\n\n'"$body"'"}}'
+printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"FLOWSTATE_BOOTSTRAP:flowstate\\n\\n%s"}}\n' "$body"
 exit 0

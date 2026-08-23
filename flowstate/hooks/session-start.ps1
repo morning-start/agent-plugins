@@ -17,12 +17,14 @@ if (-not (Test-Path $entry)) {
 # Keep regex in sync with .pi/extensions/fst-bootstrap.ts, .opencode/plugins/fst-bootstrap.ts,
 # and hooks/session-start.sh (awk variant).
 $raw = Get-Content -Raw -LiteralPath $entry
-$body = [regex]::Replace($raw, '^\s*---\r?\n[\s\S]*?\r?\n---\r?\n?', '')
+$body = [regex]::Replace($raw, '(?s)\A\s*---\r?\n[\s\S]*?\r?\n---\r?\n?', '') -replace '\r\n', "`n"
 $body = $body -replace '^\s*\r?\n', ''
 
 $marker = "FLOWSTATE_BOOTSTRAP:flowstate"
-$ctx = "$marker`n`n$body"
-$ctx = $ctx -replace '"', '\"'
+# Full JSON string escaping: backslash first, then double quote, then control
+# chars (CR, LF, TAB) — raw control characters are illegal inside JSON strings.
+$ctx = $body -replace '\\', '\\\\' -replace '"', '\"' -replace "`r", '\r' -replace "`n", '\n' -replace "`t", '\t'
+$ctx = $marker + '\n\n' + $ctx
 
-Write-Output ("{`"hookSpecificOutput`":{`"hookEventName`":`"SessionStart`",`"additionalContext`":`"" + $ctx + "`"}}")
+Write-Output ('{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"' + $ctx + '"}}')
 exit 0
