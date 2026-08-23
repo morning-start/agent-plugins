@@ -22,6 +22,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `references/design-principles.md` § 契约 — explicit spec-anchored
   declaration and the contract-fixture convention; `docs/glossary.md` gains
   ADR / Spec-anchored / Contract fixture terms.
+- `references/plugin-optimization.md` — plugin optimization playbook
+  distilled from the flowstate optimization pass: audit-first triage
+  (all executable gates before touching anything), P0/P1/P2 severity classes,
+  five high-value optimization targets (hook output validity, harness-artifact
+  parity, skill contract tests, routing-surface drift, docs/version lag),
+  and red-green regression-test hardening for every fix. Wired into
+  `docs/README.md` navigation, `pf-lifecycle`, and `docs/glossary.md`.
 
 ### Changed
 

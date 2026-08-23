@@ -40,6 +40,11 @@ single-skill loop does not.
   severity-ranked; `--format json` for machine-readable output.
 - Wait for user confirmation before any action executes.
 - Route approved actions through `pf-design` / `pf-build` / `pf-verify` — no bypass.
+- **Optimizing an existing plugin** (post-release maintenance): follow
+  `references/plugin-optimization.md` — audit-first triage, P0/P1/P2 severity,
+  and regression-test hardening. Lifecycle probes are its step 1, not the whole
+  story: infrastructure output validity, harness-artifact parity claims, and
+  routing-surface drift need executable checks beyond structural probes.
 
 ## Executable probes
 

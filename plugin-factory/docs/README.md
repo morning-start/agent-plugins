@@ -27,6 +27,8 @@
 | 查生命周期探针 | `references/lifecycle-matrix.md`（11 个探针） |
 | 查编排模式 | `references/orchestration-patterns.md` |
 | 查某端（Claude Code/pi/opencode）适配 | `references/plugins/<端>.md` · `references/agent-adapters.md` |
+| 优化一个现有插件 | `references/plugin-optimization.md`（审计先行 + P0/P1/P2 分级 + 防回归测试固化） |
+| 查职责边界纪律 | `references/skill-boundaries.md`（设计期）· `references/plugin-optimization.md`（维护期对偶） |
 | 跑验证/测试 | `package.json` scripts（`npm test` / `npm run validate` / `npm run verify`） |
 
 ## 维护规则

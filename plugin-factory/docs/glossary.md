@@ -26,3 +26,4 @@
 | **ADR（架构决策记录）** | 一页纸的决策记录；状态机 `Proposed → Accepted → Superseded → Deprecated`，**不可变**——改决策即写新 ADR 并标记 Superseded（见 `skills/pf-adr/SKILL.md`）。 |
 | **Spec-anchored（规格锚定）** | 规格与产物同步演进的开发级别：交接产物 Schema 即契约，门禁处校验强制对齐（`schemas/`，见 `references/design-principles.md` § 契约）。 |
 | **Contract fixture（契约正反例）** | 每个交接产物 schema 配套的合法/非法样例（`tests/fixtures/verify-valid`、`verify-invalid`），校验器用它们证明契约行为。 |
+| **Plugin optimization playbook（插件优化方法论）** | 维护期优化现有插件的固定流程：审计先行（findings 驱动）→ P0/P1/P2 分级 → 每个修复固化为先红后绿的防回归测试 → 收尾三连（测试 + 门禁 + diff 审查）。见 `references/plugin-optimization.md`。 |
