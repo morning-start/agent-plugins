@@ -21,7 +21,7 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 
 ### 可机械化自检
 
-- [ ] 已生成计划文件：落 `.agent-workplace/docs/plan/PLAN.md`（FST 兼容版，目录结构详见 `references/project-contract.md` §二）
+- [ ] 已生成计划文件：落 `.agent-workplace/docs/plan/PLAN.md`（工作区从 `templates/agent-workplace/` 初始化）
 - [ ] 任务按 **Phase（阶段）** 分组：每个 Phase 对应一个模块，有明确的阶段目标和交付物
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
@@ -171,30 +171,12 @@ src/
 
 **工作区初始化**（若 `.agent-workplace/` 不存在）：
 
-按 FST 兼容结构创建目录（详见 `references/project-contract.md` §二）：
-
-```
-.agent-workplace/
-├── docs/
-│   ├── plan/           # 计划文档
-│   ├── task/           # 任务拆解
-│   ├── spec/           # 规格草稿
-│   └── decisions.md    # 决策记录（空模板）
-├── state/
-│   ├── checkpoint.json # 断点续跑（初始化为空结构）
-│   └── artifacts.json  # 产物注册（初始化为空结构）
-├── scripts/            # 实验脚本
-├── scratch/            # 一次性探索
-└── research/           # 调研缓存
-```
-
-> `.gitignore` 追加一行 `.agent-workplace/`（若尚未存在）。
+复制模板 `templates/agent-workplace/` → 项目根 `.agent-workplace/`，`.gitignore` 追加一行 `.agent-workplace/`。目录结构和各路径用途详见模板 `README.md`。
 
 **输出计划文档**：保存到 `.agent-workplace/docs/plan/PLAN.md`（过程态，不提交 git）
 
-**初始化状态文件**：
+**初始化状态文件**：更新 `state/checkpoint.json`（模板已含初始结构，按实际项目填写）：
 
-`.agent-workplace/state/checkpoint.json`：
 ```json
 {
   "node": "N3",
@@ -202,14 +184,10 @@ src/
   "batch": 0,
   "task_index": 0,
   "framework": "moonbit-skills-standalone",
+  "project_type": "<从 plan 输出获取>",
+  "targets": ["<从 plan 输出获取>"],
+  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
   "last_updated": "<当前时间>"
-}
-```
-
-`.agent-workplace/state/artifacts.json`：
-```json
-{
-  "artifacts": []
 }
 ```
 
@@ -367,6 +345,6 @@ src/
 |------|------|------|
 | 设计文档不存在 | 缺少 `docs/requirements.md` | 提示先执行 `moonbit-plan` |
 | 任务拆解不完整 | 用户指出遗漏 | 补充缺失任务，重新编号 |
-| 计划文档保存失败 | 目录不存在 | 创建 `.agent-workplace/` 完整目录结构（FST 兼容版，见上文 §3） |
+| 计划文档保存失败 | 目录不存在 | 从 `templates/agent-workplace/` 复制初始化 |
 | 任务间依赖不清晰 | 用户无法确定执行顺序 | 标注依赖关系，按拓扑排序 |
 | API 签名不明确 | plan 输出信息不足 | 回到 plan 补充 API 细节 |

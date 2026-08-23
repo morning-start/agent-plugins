@@ -30,48 +30,22 @@
 
 > 本节约定针对**用户 MoonBit 项目**（使用本技能的目标项目）；插件自身开发见仓库根 `.agent-workplace/`（flowstate 完整版）。
 
-### 工作区目录结构（FST 兼容版）
+### 工作区目录结构
 
-```
-.agent-workplace/
-├── docs/
-│   ├── plan/           # 计划文档（路线图式规划：Phase→Batch→Task）
-│   ├── task/           # 任务拆解文档（分阶段实现计划，含验证命令）
-│   ├── spec/           # 规格草稿（implement 阶段的详细设计）
-│   └── decisions.md    # 决策记录（DEC-xxx 格式，记录重大设计取舍）
-├── state/
-│   ├── checkpoint.json # 断点续跑（当前节点/阶段/批次/进度，FST 对齐）
-│   └── artifacts.json  # 产物注册（跨阶段产出物追踪）
-├── scripts/            # 实验脚本（探索性/验证性代码）
-├── scratch/            # 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`）
-└── research/           # 调研缓存（技术选型/方案对比/根因调查）
-```
+**模板源**：`templates/agent-workplace/`（目录骨架 + README.md 目录地图）
 
-| 路径 | 用途 | 规则 |
-|------|------|------|
-| `.agent-workplace/docs/plan/` | **计划文档**（路线图式规划） | 开发前先写计划：计划 → 阶段(Phase) → 批次(Batch) → 任务(Task)；长期方向与任务拆解分层，避免混入 |
-| `.agent-workplace/docs/task/` | **任务拆解文档**（分阶段实现计划） | 任务拆解放这里，与计划分离；含验证命令 |
-| `.agent-workplace/docs/spec/` | **规格草稿**（详细设计） | implement 阶段的详细规格、API 契约、接口签名；从 plan 细化而来 |
-| `.agent-workplace/docs/decisions.md` | **决策记录** | 重大设计取舍用 DEC-xxx 编号记录（日期 + 决策 + 理由 + 影响） |
-| `.agent-workplace/state/checkpoint.json` | **断点续跑** | 对齐 FST checkpoint 语义：当前节点、阶段、批次、任务进度；每批完成即更新 |
-| `.agent-workplace/state/artifacts.json` | **产物注册** | 跨阶段产出物追踪（plan 输出 → task 拆解 → spec → 代码 → 测试） |
-| `.agent-workplace/scripts/` | **脚本尝试** | 探索性/实验性脚本，验证"怎么做才对"，不提交 |
-| `.agent-workplace/scratch/` | **一次性探索** | 命名格式 `{YYYYMMDD}-{type}-{slug}`；体积膨胀时自行清理（保留最近产物） |
-| `.agent-workplace/research/` | **调研缓存** | 技术选型、方案对比、根因调查的中间产物 |
-| `docs/requirements.md` | 需求文档（设计决策的权威来源） | plan 阶段产出 |
+**初始化方式**：复制 `templates/agent-workplace/` → 项目根 `.agent-workplace/`，`.gitignore` 追加一行 `.agent-workplace/`
 
-> **为什么放 `.agent-workplace/`**：计划/任务/脚本/状态是**过程态**，高频变动、不提交 git；
-> 直接放项目原始 `docs/` 会污染提交历史。`.agent-workplace/` 全目录被 gitignore。
-> **用户项目用 FST 兼容版**（上述目录结构，由 `moonbit-writing-plans` /
-> `moonbit-implement` 自行创建，无需模板、不依赖 flowstate 插件本身）；
-> **插件自身开发用 flowstate 完整版**。两者目录结构兼容，迁移时无需重构。
+目录结构和各路径用途详见模板的 `templates/agent-workplace/README.md`「目录地图」章节，此处不重复维护。
 
 约定要点：
-- **路线图与任务拆解分层**：`.agent-workplace/docs/plan/` 管方向，`.agent-workplace/docs/task/` 管执行
-- **规格与计划分离**：`.agent-workplace/docs/spec/` 存放 implement 阶段细化的设计规格，从 plan 输出进一步细化
-- **决策可追溯**：`.agent-workplace/docs/decisions.md` 记录每个 DEC-xxx 决策的日期、内容、理由和影响范围
-- **单一状态文件**：`.agent-workplace/state/checkpoint.json` 是唯一的状态源（FST 兼容），每批完成即更新，支持跨 Session 恢复
+- **路线图与任务拆解分层**：`docs/plan/` 管方向，`docs/task/` 管执行
+- **规格与计划分离**：`docs/spec/` 存放 implement 阶段细化的设计规格
+- **决策可追溯**：`docs/decisions.md` 记录每个 DEC-xxx 决策
+- **单一状态文件**：`state/checkpoint.json` 是唯一的状态源（FST 兼容），每批完成即更新
 - 会话开始时按序读取：`state/checkpoint.json` → `docs/plan/` → `docs/task/`，恢复上下文
+- **过程态不提交**：`.agent-workplace/` 全目录被 gitignore，定稿发布到正式 `docs/`
+- **FST 兼容**：目录结构与 flowstate 的 `templates/agent-workplace/` 兼容，迁移时无需重构
 
 ## 三、进度与提交约定
 

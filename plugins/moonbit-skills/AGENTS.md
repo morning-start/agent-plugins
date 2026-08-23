@@ -52,7 +52,7 @@
   - **无 flowstate 时**：本插件自包含完整管线，工作区结构升级为 FST 兼容版（使后续迁移无需重构）。
 - **工作区约定（区分插件自身 vs 用户项目）**：
   - **插件自身开发**（本仓库）：`.agent-workplace/` 使用 **flowstate 完整版**（modes/ 实践库 + state/ checkpoint + docs/spec/），由 flowstate 流程框架驱动——本仓库开发遵循 flowstate 规范。
-  - **用户 MoonBit 项目**（使用本技能的目标项目）：`.agent-workplace/` 使用 **FST 兼容版**——`docs/plan/`、`docs/task/`、`docs/spec/`、`docs/decisions.md`、`state/checkpoint.json`、`state/artifacts.json`、`scripts/`、`scratch/`、`research/`；目录结构由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate 插件本身**（避免用户使用插件时有依赖）。
+  - **用户 MoonBit 项目**（使用本技能的目标项目）：`.agent-workplace/` 从 `templates/agent-workplace/` 复制初始化（FST 兼容版，目录结构详见模板 `README.md`）；由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖 flowstate 插件本身**。
   - 两者都**不直接放项目原始 `docs/`**，过程态一律进 `.agent-workplace/`（git 忽略）。详见 `references/project-contract.md` §二。
 - 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。

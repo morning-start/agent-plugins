@@ -191,7 +191,7 @@ These thoughts mean STOP — you are rationalizing:
 
 **插件自身 vs 用户项目**：
 - **插件自身开发**（本仓库）：`.agent-workplace/` 为 flowstate **完整版**（modes/ + state/ + docs/spec/），按 flowstate 规范执行——本仓库开发即采用 flowstate 框架。
-- **用户 MoonBit 项目**（目标项目）：无 flowstate 时用 **FST 兼容版**——`docs/plan/`、`docs/task/`、`docs/spec/`、`docs/decisions.md`、`state/`、`scripts/`、`scratch/`、`research/`，由 `moonbit-writing-plans` / `moonbit-implement` 自行创建，**无需模板、不依赖 flowstate 插件本身**（避免用户使用插件时有依赖）；有 flowstate 时按上述流程层执行。
+- **用户 MoonBit 项目**（目标项目）：无 flowstate 时用 **FST 兼容版**——从 `templates/agent-workplace/` 复制初始化（目录结构详见模板 `README.md`），由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖 flowstate 插件本身**；有 flowstate 时按上述流程层执行。
 
 ## Pipeline (recommended flow)
 

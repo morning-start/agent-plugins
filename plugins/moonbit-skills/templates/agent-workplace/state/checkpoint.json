@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "pipeline": "development",
+  "node": "N1",
+  "phase": "plan",
+  "status": "pending",
+  "batch": 0,
+  "task_index": 0,
+  "framework": "moonbit-skills-standalone",
+  "project_type": "lib",
+  "targets": ["native"],
+  "plan_file": null,
+  "tasks": {"total": 0, "completed": 0, "current": 0},
+  "last_verification": null,
+  "last_updated": null,
+  "next": null
+}
