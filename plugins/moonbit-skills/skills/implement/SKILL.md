@@ -71,7 +71,7 @@ If you catch yourself thinking any of these, you are violating TDD:
 ┌─ RED:    写一个会失败的测试 → moon test -f "test_name" (预期: 失败)
 │          （测试组织遵循 moonbit-testing 决策；测试时机遵循 testing 的先行/后补决策）
 ├─ GREEN:  写最小实现 → moon test -f "test_name" (预期: 通过)
-├─ VERIFY: 全量验证 → moon fmt --check + moon check --warn-list +73 + moon test
+├─ VERIFY: 全量验证（引用 verification-commands.md「full-verify」）
 └─ 失败 → 自动诊断 (debug 内置, 3 次上限 → 问用户)
 
 设计回溯触发条件: API 不可测、架构假设错误、依赖不兼容 → 回到 plan（详见 [plan 设计回溯](../plan/SKILL.md#设计回溯)）
@@ -177,33 +177,21 @@ NO BUG FIX WITHOUT REGRESSION TEST FIRST
 
 ## 各类型 TDD 策略
 
-> 测试文件组织和命名约定详见 `references/testing.md`，此处仅列出验证重点。
-
-| 类型 | 项目分类 | 验证目标 | 额外验证 | 文档要求 |
-|------|---------|---------|---------|---------|
-| lib | library | `moon test --target native` | `moon check --target all` 跨平台 | pub fn 有 docstring |
-| cli | main | `moon test --target native` | `moon run .` 验证可执行 + stdout 输出 | README 用法示例与实际输出一致 |
-| ffi | library | `moon check --target native` | — | FFI 函数有使用说明 |
-| wasm | library | `moon test --target wasm` | `moon check --target wasm-gc` | WASM 导出函数有文档 |
-| parser | library | `moon test --target native` | valid/invalid/edge 分类测试 | 输入格式有说明 |
-| async | library | `moon test --target native` | 并发测试、超时测试 | 并发模型有说明 |
+> 测试文件组织和命名约定详见 `references/testing.md`。
+> 各类型的验证目标、额外验证和文档要求详见 `references/project-type-matrix.md`「TDD 策略」章节。
 
 ## 调试内置（debug 集成）
 
-```bash
-# 收集失败信息
-moon test --target native 2>&1 | tail -50
-moon check --target native --warn-list +73 2>&1
-moon explain --diagnostic E#### 2>&1
+调试命令链详见 `references/verification-commands.md`「debug-chain」序列。
 
-# 分类失败
-# 类型错误 → moon explain 修复 | 断言失败 → 修正逻辑 | 运行时 panic → 检查空值/边界
-# ffi: 检查 C 编译 | wasm: 检查 extern "wasm" 声明
+分类失败：
+- 类型错误 → `moon explain` 修复
+- 断言失败 → 修正逻辑
+- 运行时 panic → 检查空值/边界
+- ffi: 检查 C 编译
+- wasm: 检查 `extern "wasm"` 声明
 
-# 修复并验证
-moon test --target native -f "failing_test"
-moon fmt --check && moon check --warn-list +73 && moon test
-```
+修复后用「full-verify」序列验证（见 `references/verification-commands.md`）。
 
 ## 常见类型错误速查
 
@@ -313,17 +301,12 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 
 ## 错误恢复
 
+> 共享错误恢复行（fmt/check/test 失败、3 次修复失败、API 变更、设计缺陷）详见
+> `references/common-error-recovery.md`。以下仅列出 implement 独有的行。
+
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| `moon test -f "test_name"` 失败 | 断言不匹配或实现逻辑错误 | 检查 inspect! 期望内容，修正实现；3 次失败后停止问用户 |
-| `moon check` 类型错误 | 类型签名不匹配、未推断、不可达分支 | `moon explain --diagnostic E####` 定位，按错误码查 `references/error-codes.json` |
-| `moon fmt --check` 失败 | 格式不规范 | `moon fmt` 自动修复，重新检查 |
-| `moon run .` 失败（main 项目） | main 包声明缺失或运行时 panic | 检查 `moon.pkg` 的 `pkgtype(kind: "executable")`，排查边界/空值 |
-| 临时 consumer 编译失败（lib 项目） | 对外 API 不完整或导出符号不可达 | 检查 `pub` 可见性、跨包构造器是否用 `pub(all) enum` |
-| 3 次自动修复全部失败 | 理解偏差或设计缺陷 | 停止，向用户展示失败历史，请求方向或回到 `moonbit-plan` 重新设计 |
-| 变更涉及 public API/ABI/WASM 导出/C 所有权 | 影响发布契约 | 停止自动修复，请求用户确认后再继续 |
 | 工具链报错且 `moon explain` 无法解决 | 编译器内部错误或工具链 bug | 报告错误码和上下文，请求用户介入 |
-| 测试无法编写（设计缺陷） | 不可测试的 API 设计 | **触发设计回溯**，回到 `moonbit-plan` 重新设计 API |
 
 ## 下一步
 

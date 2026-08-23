@@ -235,23 +235,18 @@ bash .githooks/pre-commit
 ## 各项目类型差异
 
 > **注意**：当前 hooks 模板（`pre-commit.sh`、`pre-push.sh`）统一使用 `--target native`。wasm 项目需手动将 hooks 中的目标改为 `--target wasm`。
-
-| 类型 | pre-commit | pre-push |
-|------|-----------|----------|
-| lib | `moon check --target native` | `moon test --target native` |
-| cli | `moon check --target native` | `moon test --target native` |
-| ffi | `moon check --target native` | `moon test --target native`（如有） |
-| wasm | `moon check --target wasm` + `moon check --target wasm-gc` | `moon test --target wasm` |
+>
+> 各类型的 Git Hooks 配置详见 `references/project-type-matrix.md`「Git Hooks 配置」章节。
 
 ## 错误恢复
 
+> 共享错误恢复行（非 MoonBit 项目、moon 不可用、audit 未安装）详见
+> `references/common-error-recovery.md`。以下仅列出 init 独有的行。
+
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| 不是 MoonBit 项目 | 缺少 `moon.mod`（含旧格式 `moon.mod.json`） | 提示用户先 `moon new` 或进入正确目录 |
 | 旧格式 `moon.mod.json` | 发现旧格式元数据文件 | 提示运行 `moon fmt` 自动迁移，继续配置 hooks |
 | 不是 git 仓库 | `git rev-parse` 失败 | 提示用户先 `git init` |
-| `moon` 命令不可用 | command not found | 提示安装 MoonBit 工具链 |
-| `moon-audit` 不可用 | command not found | 提示 `moon add minie135/moon-audit`，非阻断 |
 | 钩子权限不足 | Permission denied | 自动 `chmod +x` |
 
 ## 用户 vs Agent 分工

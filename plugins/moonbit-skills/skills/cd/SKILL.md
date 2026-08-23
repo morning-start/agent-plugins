@@ -58,13 +58,7 @@ If you catch yourself doing any of these, you are violating the CD contract:
 
 ## 项目类型与部署策略
 
-| 项目类型 | 制品类型 | 推荐部署策略 | 分发渠道 |
-|---------|---------|-------------|---------|
-| **lib** | mooncake 包 | 直接发布（单一版本） | mooncakes.io |
-| **cli** | native binary | 金丝雀 / 滚动更新 | GitHub Releases + 包管理器 |
-| **wasm** | wasm 模块 | 蓝绿部署 | CDN + 版本化管理 |
-| **ffi** | 动态库/静态库 | 滚动更新 | 包管理器 + 版本化 |
-| **parser/async** | mooncake 包 | 直接发布（单一版本） | mooncakes.io |
+> 各类型的部署策略详见 `references/project-type-matrix.md`「部署策略」章节。
 
 ## 执行流程
 

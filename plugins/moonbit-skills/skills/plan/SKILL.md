@@ -29,14 +29,7 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 
 ## 各类型追问清单
 
-| 类型 | 追问 |
-|------|------|
-| cli | 命令/子命令？参数格式？标准 I/O？目标 native-only |
-| ffi | 链接哪个 C 库？API 数量？alloc/free 对？目标 native-only |
-| wasm | WASI 版本？需要哪些 WASI 调用？目标 wasm/wasm-gc |
-| parser | 解析什么格式？版本？需要序列化？有官方测试套件？ |
-| async | 需要哪些高层服务(HTTP/WebSocket/fs)？需要 TLS？目标 native-only |
-| lib | 核心功能？API 最小表面？目标 native,wasm,js |
+> 各类型的需求追问清单详见 `references/project-type-matrix.md`「需求追问清单」章节。
 
 项目可以同时具备多个能力，不要强行压缩成单一类型。记录：
 

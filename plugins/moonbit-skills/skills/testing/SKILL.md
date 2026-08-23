@@ -133,15 +133,7 @@ NO TEST CODE WITHOUT TEST STRATEGY
 
 ## 各项目类型测试策略
 
-| 类型 | 测试文件 | 分类 | 特殊关注 |
-|---|---|---|---|
-| lib | `lib_test.mbt` | valid/invalid/edge | 公共 API 覆盖 |
-| cli | `lib_test.mbt` | 单元+集成 | 命令解析、stdout |
-| ffi | `lib_test.mbt` | 内存安全 | alloc/free 对 |
-| wasm | `lib_test.mbt` | 内存操作 | WASI 调用边界 |
-| parser | `lib_valid_test.mbt` + `lib_invalid_test.mbt` | valid/invalid/edge | 官方测试套件 |
-| async | `lib_test.mbt` | 并发/超时 | 协程取消 |
-| performance | `bench_test.mbt` | 性能基线 | bench_ 前缀过滤 |
+> 各类型的测试策略详见 `references/project-type-matrix.md`「测试策略」章节。
 
 ## 测试文件组织决策树
 

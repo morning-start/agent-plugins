@@ -175,23 +175,9 @@ jobs:
 
 ### 4. 生成 CHANGELOG 条目（预览模式，用户批准后写入）
 
-```markdown
-## [Unreleased] → [{version}] - {YYYY-MM-DD}
+> CHANGELOG 格式详见 `templates/changelog.md.tmpl`，遵循 Keep a Changelog 规范。
 
-### Added
-- {新增功能}
-
-### Changed
-- {变更项}
-
-### Fixed
-- {修复项}
-
-### Removed
-- {移除项}
-```
-
-**注意:** 遵循 Keep a Changelog 规范。如果 `CHANGELOG.md` 已存在，追加到 Unreleased 段落下；不存在则创建。展示 diff 给用户，用户批准后写入。
+如果 `CHANGELOG.md` 已存在，追加到 Unreleased 段落下；不存在则创建。展示 diff 给用户，用户批准后写入。
 
 ### 5. 生成文档预览（lib 项目专属）
 
@@ -284,14 +270,7 @@ ROLLBACK
 
 ## 各类型发布策略
 
-| 类型 | 项目分类 | 发布方式 | 专属验证 |
-|------|---------|---------|---------|
-| lib | library | mooncake 包 | 临时 consumer 编译 + `moon check --target all` |
-| cli | main | 可执行文件 + mooncake | `moon run .` + 输出验证 |
-| ffi | library | mooncake 包 | 临时 consumer 编译 + ASan（可选） |
-| wasm | library | WASM 模块 + mooncake | `moon check --target wasm-gc` |
-| parser | library | mooncake 包 | `moon test -f "valid/invalid/edge"` |
-| async | library | mooncake 包 | 并发测试、超时测试 |
+> 各类型的发布策略详见 `references/project-type-matrix.md`「发布策略」章节。
 
 ## 用户 vs Agent 分工
 
@@ -359,12 +338,12 @@ ROLLBACK
 
 ## 错误恢复
 
+> 共享错误恢复行（run 失败、consumer 编译失败、audit 未安装）详见
+> `references/common-error-recovery.md`。以下仅列出 evaluate 独有的行。
+
 | 问题 | 诊断 | 修复 |
 |------|------|------|
 | verify 未通过 | 基础测试或 Custom 测试失败 | 返回 `moonbit-implement` 修复 |
-| `moon run` 失败 | main 包声明或代码错误 | 检查 `moon.pkg` 的 `pkgtype(kind: "executable")`，修复后重试 |
-| 临时 consumer 编译失败 | 库依赖不可解析 | 检查 `moon.mod` 和模块结构，修复后重试 |
 | `moon check --target all` 失败 | 跨平台兼容问题 | 报告失败的目标平台，用户决定是否继续 |
 | CI 配置已存在 | 用户拒绝覆盖 | 展示 diff，用户批准后合并 |
-| `moon-audit` 不可用 | 命令未找到 | `moon add minie135/moon-audit`，非阻断 |
 | 发布后发现问题 | 生产环境 bug | 创建 hotfix 分支 → `moonbit-implement` 修复 → `moonbit-verify` → 重新发布 → 回溯到主分支 |

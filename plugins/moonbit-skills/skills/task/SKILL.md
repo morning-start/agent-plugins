@@ -99,11 +99,11 @@ NO TASK DELIVERY WITHOUT ALL ACCEPTANCE ITEMS VERIFIED
 
 ## 错误恢复
 
+> 共享错误恢复行（fmt/check/test 失败、3 次修复失败）详见 `references/common-error-recovery.md`。
+> 以下仅列出 task 独有的行。
+
 | 问题 | 诊断 | 修复 |
 |------|------|------|
-| `moon test -f` 失败 | 断言不匹配或实现逻辑错误 | 检查 inspect! 期望，修正实现；3 次失败后停止问用户 |
-| `moon check` 类型错误 | 类型签名不匹配 | `moon explain --diagnostic E####` 定位，查 `references/error-codes.json` |
-| `moon fmt --check` 失败 | 格式不规范 | `moon fmt` 自动修复，重新检查 |
 | 验收项对应测试缺失 | 验收标准未转成测试 | 补写测试，回到 RED |
 | 上游任务产物不可用 | 依赖未实现 | 报告依赖缺失，请求先完成上游任务 |
 

@@ -181,11 +181,11 @@ Round 3: ... → approved → verify
 
 ## 错误恢复
 
+> 共享错误恢复行（fmt/check/test 失败）详见 `references/common-error-recovery.md`。
+> 以下仅列出 code-review 独有的行。
+
 | 问题 | 诊断 | 修复 |
 |------|------|------|
 | `git diff` 为空 | 无变更可审查 | 确认任务已完成，跳过审查 |
-| `moon fmt --check` 失败 | 格式问题 | `moon fmt` 自动修复，重新检查 |
-| `moon check` 失败 | 类型错误 | `moon explain --diagnostic E####` 定位 |
-| `moon test` 失败 | 测试回归 | 对比上一次通过的测试结果，回滚或修复 |
 | 审查范围过大 | diff 超过 500 行 | 建议拆分为多个小任务分别审查 |
 | 自动修复引入新问题 | 修复后验证失败 | 回滚修复，仅报告问题，由用户手动处理 |

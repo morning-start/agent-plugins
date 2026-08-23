@@ -59,14 +59,7 @@ If you catch yourself doing any of these, you are violating the docs contract:
 
 ## 项目类型差异
 
-| 类型 | 文档要求 |
-|------|---------|
-| **lib** | pub fn docstring + README + CHANGELOG + ADR（按需） |
-| **cli** | README + CLI --help + CHANGELOG + ADR（按需） |
-| **ffi** | FFI 绑定说明 + 编译依赖 + 平台兼容性 |
-| **wasm** | WASM 接口文档 + 运行时要求 |
-| **parser** | 语言/格式规范文档 + 示例 |
-| **async** | 并发模型说明 + 超时/错误行为 |
+> 各类型的文档需求详见 `references/project-type-matrix.md`「文档需求」章节。
 
 ## 执行流程
 
@@ -164,33 +157,8 @@ MIT
 
 ### 4. 维护 CHANGELOG
 
-遵循 Keep a Changelog 规范，仅在 evaluate 触发或文档更新时写入：
-
-```markdown
-# Changelog
-
-## [Unreleased]
-
-### Added
-- 新增功能（对应 feat commit）
-
-### Changed
-- 行为变更（非破坏性，对应 refactor/perf commit）
-
-### Fixed
-- Bug 修复（对应 fix commit）
-
-### Removed
-- 移除功能（对应 breaking change）
-
-## [0.2.0] - 2026-07-15
-
-### Added
-- 新增 TOML 解析器
-
-### Fixed
-- 修复负数解析错误
-```
+> CHANGELOG 格式详见 `templates/changelog.md.tmpl`，遵循 Keep a Changelog 规范。
+> 仅在 evaluate 触发或文档更新时写入。
 
 **CHANGELOG 维护规则**：
 - Unreleased 条目从 Conventional Commits 自动归集

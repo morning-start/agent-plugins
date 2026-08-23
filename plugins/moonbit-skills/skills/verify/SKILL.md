@@ -273,27 +273,18 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 
 ## 各类型验证全景
 
-| 类型 | 基础测试（B） | Custom 测试（C） | 增强测试（E） |
-|------|--------------|-----------------|--------------|
-| **lib** | B1-B4 | C1 + C3 | E1-E6 |
-| **cli (main)** | B1-B4 | C1 + C2 | E1-E6 |
-| **ffi** | B1-B4 | C3 | E2-E6 |
-| **wasm** | B1-B4 | C3 | E1-E6 |
-| **async** | B1-B4 | C1 + C3 | E1-E6 |
-| **parser** | B1-B4 | C1 + C3 | E1-E6 |
+> 各类型的验证需求详见 `references/project-type-matrix.md`「验证需求」章节。
 
 ---
 
 ## 错误恢复
 
+> 共享错误恢复行（fmt/check/test/audit 失败、run 失败、consumer 编译失败）详见
+> `references/common-error-recovery.md`。以下仅列出 verify 独有的行。
+
 | 命令 | 诊断 | 修复 |
 |------|------|------|
-| `moon fmt --check` | 格式问题 | `moon fmt` 自动修复，重新检查 |
-| `moon check` 失败 | `moon explain --diagnostic E####` | 检查类型签名 |
-| `moon test` 失败 | `-f "failing_test"` | 修正断言 |
 | `moon info` 失败 | 先 `moon check` | 类型正确后重试 |
-| `moon run` 失败 | 检查 main 包声明 | `moon.pkg` 加 `pkgtype(kind: "executable")` |
-| `moon-audit` 未安装 | 命令未找到 | `moon add minie135/moon-audit` |
 | 临时目录编译失败 | workspace 路径错误 | 检查 `moon.work` 路径 |
 | 性能退化 | E3 检测到耗时显著增加 | 建议调用 `moonbit-perform` 优化 |
 | 重构回归 | refactor 后测试失败 | 回滚重构步骤，回到 `moonbit-refactor` |
