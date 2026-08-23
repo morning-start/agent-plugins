@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/session-start.sh",
+            "shell": "bash",
+            "description": "Inject using-{{PLUGIN_NAME}} entry skill into session context"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/session-start.ps1",
+            "shell": "powershell",
+            "description": "Inject using-{{PLUGIN_NAME}} entry skill into session context"
+          }
+        ]
+      }
+    ]
+  }
+}

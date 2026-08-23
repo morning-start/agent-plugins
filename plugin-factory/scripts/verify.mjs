@@ -53,7 +53,6 @@ const CLAUDE_HOOK_EVENTS = new Set([
   "StopFailure", "TeammateIdle", "InstructionsLoaded", "ConfigChange",
   "CwdChanged", "DirectoryAdded", "FileChanged", "WorktreeCreate",
   "WorktreeRemove", "PreCompact", "PostCompact", "Elicitation", "ElicitationResult",
-  "PreCommit", "PreCompletion",
 ]);
 
 /** Harness manifest detection — data-driven replacement for repeated try/stat. */

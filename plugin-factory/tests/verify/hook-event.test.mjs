@@ -93,3 +93,23 @@ test("the 29-event whitelist covers the new v2.0 events", async () => {
     );
   });
 });
+
+test("PreCommit / PreCompletion are NOT valid Claude Code events", async () => {
+  // Regression guard: Claude Code strictly validates hook event names and
+  // rejects the ENTIRE hooks.json on an unknown event. These two names were
+  // once whitelisted for pf's own gates, which broke hooks loading.
+  await withTemp(async (dir) => {
+    await makeRepo(dir, {
+      hooks: {
+        PreCommit: [{ hooks: [{ type: "command", command: "git-hook" }] }],
+        PreCompletion: [{ hooks: [{ type: "command", command: "gate" }] }],
+      },
+    });
+    const { findings } = await runChecks(dir, { layers: ["structure"] });
+    const hookEv = findings.filter((f) => f.signal === "hook-event");
+    assert.equal(hookEv.length, 2, `expected 2 hook-event findings: ${JSON.stringify(findings)}`);
+    const names = hookEv.map((f) => f.action).join(" ");
+    assert.match(names, /PreCommit/);
+    assert.match(names, /PreCompletion/);
+  });
+});

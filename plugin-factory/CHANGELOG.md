@@ -6,6 +6,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **hooks.json no longer uses non-existent hook events** — `PreCommit` and
+  `PreCompletion` are not Claude Code hook events; Claude Code strictly
+  validates event names and rejected the **entire** hooks.json (valid
+  `SessionStart`/`PostToolUse` hooks included) at load time. Removed both
+  entries from pf's own `hooks/hooks.json` and the shared + claude-code
+  harness templates; deleted the orphaned `pre-completion` scripts; dropped
+  `PreCommit`/`PreCompletion` from the `hook-event` whitelist in
+  `scripts/verify.mjs` so the check would have caught this, with a regression
+  test in `tests/verify/hook-event.test.mjs`. pre-commit 门禁仍作为真实 git
+  钩子由 `pf-githooks` 安装，不再写进 hooks.json。
+
 ## [0.2.0] - 2026-08-23
 
 **Optimization pass: single-source skills, runtime self-registration, codex harness, packaging, and subagent roles — all grounded in the 0.1.0 → 0.2.0 commit range.**

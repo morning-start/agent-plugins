@@ -3,10 +3,14 @@
 // bootstrap, and audit one real example plugin (git-release) from a clean
 // temporary target — no manual file copying, no undocumented repair.
 //
-// Stages: create temporary target → scaffold with all advertised harnesses →
-// assert deterministic file inventory → inject fixture entry skills → run the
-// generated project's own verifier → check the bootstrap marker per adapter →
+// Stages: create temporary target → scaffold with the default claude-code
+// harness → assert deterministic file inventory → inject fixture entry skills
+// → run the generated project's own verifier → check the bootstrap marker →
 // run lifecycle probes → remove the temporary target (finally).
+//
+// Per-harness structure + quick-install verification lives in
+// tests/harnesses/<harness>.test.mjs — one script per harness, invoked
+// separately (see package.json `test:harness:*`).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { cp, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
@@ -63,18 +67,13 @@ async function withTemp(fn) {
   }
 }
 
-const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi", "codex"];
+const SMOKE_HARNESSES = ["claude-code"];
 
 const REQUIRED_MANIFESTS = [
   ".claude-plugin/plugin.json",
   "hooks/hooks.json",
   "hooks/session-start.sh",
   "hooks/session-start.ps1",
-  ".pi/extensions/gr-bootstrap.ts",
-  ".opencode/opencode.json",
-  ".opencode/plugins/gr-bootstrap.ts",
-  ".codex-plugin/plugin.json",
-  "OMP-NOTES.md",
   "package.json",
   "scripts/verify.mjs",
   "scripts/validate-structure.sh",
@@ -104,7 +103,7 @@ async function scaffoldDogfood(target) {
       "--user-lang",
       "zh-CN",
       "--harnesses",
-      ALL_HARNESSES.join(","),
+      SMOKE_HARNESSES.join(","),
     ],
     REPO_ROOT,
     { SCAFFOLD_LIST_FILES: "1" },
@@ -150,16 +149,10 @@ test("dogfood: scaffold produces a deterministic, valid plugin", async () => {
       stage("generated-verification", target, false, `${verify.stdout}\n${verify.stderr}`),
     );
 
-    // Stage 4 — bootstrap marker exists exactly once per adapter.
+    // Stage 4 — bootstrap marker exists exactly once (claude adapter).
+    // (pi / opencode adapter markers are covered by tests/harnesses/pi.test.mjs
+    // and tests/harnesses/opencode.test.mjs.)
     const marker = "PLUGIN_FACTORY_BOOTSTRAP";
-    // TS adapters carry the marker constant in source (idempotence guard).
-    for (const rel of [".pi/extensions/gr-bootstrap.ts", ".opencode/plugins/gr-bootstrap.ts"]) {
-      const text = await readFile(join(target, rel), "utf8");
-      assert.ok(
-        text.includes(marker),
-        stage("bootstrap-marker", target, false, `${rel}: marker constant missing`),
-      );
-    }
     // The renderer emits exactly one marker for the plugin.
     const rendered = run(
       NODE,

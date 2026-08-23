@@ -26,20 +26,6 @@ const BASE = {
 
 const ALL_HARNESSES = ["claude-code", "pi", "opencode", "oh-my-pi", "codex"];
 
-/** Required artifacts per harness (T1 file map). */
-const HARNESS_ARTIFACTS = {
-  "claude-code": [
-    ".claude-plugin/plugin.json",
-    "hooks/hooks.json",
-    "hooks/session-start.sh",
-    "hooks/session-start.ps1",
-  ],
-  pi: [".pi/extensions/gr-bootstrap.ts"],
-  opencode: [".opencode/opencode.json", ".opencode/plugins/gr-bootstrap.ts"],
-  "oh-my-pi": [".pi/extensions/gr-bootstrap.ts", "OMP-NOTES.md"],
-  codex: [".codex-plugin/plugin.json"],
-};
-
 async function exists(p) {
   try {
     await stat(p);
@@ -48,62 +34,6 @@ async function exists(p) {
     return false;
   }
 }
-
-test("all five harnesses produce their required artifacts", async () => {
-  await withTemp(async (tmp) => {
-    const target = join(tmp, "git-release");
-    const result = await scaffoldPlugin({ ...BASE, target, harnesses: ALL_HARNESSES });
-
-    assert.equal(result.target, target);
-    assert.deepEqual(result.harnesses, ALL_HARNESSES);
-    assert.ok(Array.isArray(result.files) && result.files.length > 0);
-    // files are sorted and relative
-    const sorted = [...result.files].sort();
-    assert.deepEqual(result.files, sorted);
-    assert.ok(result.files.every((f) => !f.startsWith("/") && !f.startsWith("..")));
-
-    for (const h of ALL_HARNESSES) {
-      for (const rel of HARNESS_ARTIFACTS[h]) {
-        assert.ok(await exists(join(target, rel)), `${h} missing required artifact: ${rel}`);
-      }
-    }
-    // shared artifacts are always present
-    for (const rel of [
-      "package.json",
-      "README.md",
-      "README.zh-CN.md",
-      "AGENTS.md",
-      "CLAUDE.md",
-      "install.sh",
-      "install.ps1",
-      "commands/README.md",
-      "skills/gr-hello/SKILL.md",
-      "scripts/verify.mjs",
-      "scripts/validate-structure.sh",
-      "scripts/validate-structure.ps1",
-      "mcp-servers/README.md",
-      "mcp-servers/gr-server.mjs",
-    ]) {
-      assert.ok(await exists(join(target, rel)), `missing shared artifact: ${rel}`);
-    }
-    // opencode reads skills from the single root skills/ source, self-registered
-    // at runtime by the generated bootstrap's `config` hook (superpowers-style).
-    assert.ok(await exists(join(target, "skills", "gr-hello", "SKILL.md")));
-    const ocJson = JSON.parse(await readFile(join(target, ".opencode", "opencode.json"), "utf8"));
-    assert.equal(ocJson.skills, undefined, "opencode.json must NOT declare a skills key (bootstrap registers it)");
-    const ocBootstrap = await readFile(join(target, ".opencode", "plugins", "gr-bootstrap.ts"), "utf8");
-    assert.match(ocBootstrap, /config: async \(config\)/, "generated bootstrap must expose a config hook");
-    assert.match(ocBootstrap, /registerSkillsDir/, "generated bootstrap must register the skills dir");
-    // package.json references only files that exist in the tree
-    const pkg = JSON.parse(await readFile(join(target, "package.json"), "utf8"));
-    for (const target2 of pkg.pi?.extensions ?? []) {
-      assert.ok(await exists(join(target, target2)), `pi.extensions dangling: ${target2}`);
-    }
-    for (const target2 of pkg.omp?.extensions ?? []) {
-      assert.ok(await exists(join(target, target2)), `omp.extensions dangling: ${target2}`);
-    }
-  });
-});
 
 test("a Claude-only request does not produce pi, omp, or opencode files", async () => {
   await withTemp(async (tmp) => {

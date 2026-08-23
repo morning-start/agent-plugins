@@ -66,9 +66,10 @@
 > 匹配器写 `mcp__plugin_<plugin-name>_<server-name>__<tool>`、server 字段写
 > `plugin:<plugin-name>:<server-name>`；裸服务器键的匹配器**永远不会触发**。
 
-> **事件白名单扩展（pf 自身模板使用）**：除上述官方 29 事件外，
-> `PreCommit`（社区文档确认；pf 的 pre-commit 门禁）与 `PreCompletion`
-> （pf 的完成前门禁）也在 `scripts/verify.mjs` 的 hook-event 白名单内。
+> ⚠️ **hook 事件名必须是上表官方事件**：Claude Code 加载 hooks.json 时严格校验
+> 事件名（非法事件会导致**整份** hooks.json 加载失败）。`PreCommit` 这类 git 钩子
+> 与 `PreCompletion` 之类自造事件**不能**写进 hooks.json——pre-commit 门禁应作为
+> 真实 git 钩子安装（见 `pf-githooks`），不要扩展 `scripts/verify.mjs` 的白名单。
 
 ## 配置字段
 

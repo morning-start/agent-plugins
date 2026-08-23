@@ -32,6 +32,12 @@
   },
   "scripts": {
     "test": "node --test \"tests/**/*.test.mjs\"",
+    "test:harness": "node --test \"tests/harnesses/*.test.mjs\"",
+    "test:harness:claude-code": "node --test tests/harnesses/claude-code.test.mjs",
+    "test:harness:pi": "node --test tests/harnesses/pi.test.mjs",
+    "test:harness:opencode": "node --test tests/harnesses/opencode.test.mjs",
+    "test:harness:oh-my-pi": "node --test tests/harnesses/oh-my-pi.test.mjs",
+    "test:harness:codex": "node --test tests/harnesses/codex.test.mjs",
     "validate": "bash scripts/validate-structure.sh",
     "validate:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-structure.ps1",
     "validate:node": "node scripts/verify.mjs structure --root .",

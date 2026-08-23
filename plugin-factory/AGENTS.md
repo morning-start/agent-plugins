@@ -67,7 +67,7 @@ not plugin-factory's own operator. Every design, optimization, and quality
 decision is made from that end user's point of view: the goal is to optimize
 the **generated plugin's target project**, never plugin-factory itself.
 This keyword is baked into every generated plugin's AGENTS.md (see
-`templates/shared/AGENTS.md.tmpl`), so downstream plugins inherit the same
+`templates/agent/AGENTS.md.tmpl`), so downstream plugins inherit the same
 perspective: they serve their own end user, not the plugin-factory workflow.
 
 ## Instruction priority (conflict resolution)

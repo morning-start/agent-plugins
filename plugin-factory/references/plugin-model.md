@@ -70,7 +70,7 @@
 2. 未请求的 harness 不生成任何文件（Claude-only → 无 `.pi/`、`.opencode/`）。
 3. `package.json` 的 `pi`/`omp` 字段只在对应 harness 产物实际渲染时写入
    （不声明悬空的 `pi.extensions` / `omp.extensions` 路径）。
-4. 共享文件（README/AGENTS/CLAUDE/install/scripts）只存于 `templates/shared/`，
+4. 共享文件（README/AGENTS/CLAUDE/install/scripts）只存于 `templates/`，
    仅 manifest、bootstrap 适配器与安装说明按 harness 分目录。
 5. 模板替换为函数式替换（非 shell 语法）：用户输入中的 `/`、`&`、`$`、反斜杠、
    Unicode 与换行按字节原样进入生成文本；输出为 UTF-8 + LF。

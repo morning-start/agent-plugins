@@ -23,30 +23,6 @@
           }
         ]
       }
-    ],
-    "PreCompletion": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/pre-completion.sh",
-            "shell": "bash",
-            "description": "Pre-completion gate (verify + tests)"
-          }
-        ]
-      }
-    ],
-    "PreCommit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/pre-commit.sh",
-            "shell": "bash",
-            "description": "Pre-commit structural gate + secrets scan"
-          }
-        ]
-      }
     ]
   }
 }

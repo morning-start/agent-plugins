@@ -2,7 +2,7 @@
 /**
  * scaffold.mjs — cross-platform multi-harness plugin scaffold renderer.
  *
- * Single source of truth for plugin generation: renders `templates/shared/`
+ * Single source of truth for plugin generation: renders `templates/`
  * plus each requested harness template under `templates/harnesses/<h>/` into a
  * new target directory. `scaffold.sh` and `scaffold.ps1` are thin
  * argument-normalizing wrappers around this file.
@@ -68,9 +68,20 @@ export function renderTemplate(template, values) {
   );
 }
 
+/** Shared-template category containers: organization-only, stripped from the
+ *  output path so their files land at the plugin root (not under the folder). */
+const SHARED_CATEGORY_LAYERS = ["agent", "docs", "install", "meta"];
+
 /** Normalize a template-relative path to a target-relative output path (forward slashes). */
 function renderOutputPath(rel, values) {
-  const normalized = rel.replace(/\\/g, "/");
+  let normalized = rel.replace(/\\/g, "/");
+  for (const layer of SHARED_CATEGORY_LAYERS) {
+    const prefix = `${layer}/`;
+    if (normalized.startsWith(prefix)) {
+      normalized = normalized.slice(prefix.length);
+      break;
+    }
+  }
   const noExt = normalized.endsWith(".tmpl") ? normalized.slice(0, -5) : normalized;
   return renderTemplate(noExt, values);
 }
@@ -315,7 +326,7 @@ export async function scaffoldPlugin({
 
   // Plan every file first (atomic: no partial writes on a harness failure).
   const seen = new Set();
-  const plan = await planTemplates(join(TEMPLATES_ROOT, "shared"), values, seen);
+  const plan = await planTemplates(TEMPLATES_ROOT, values, seen);
   for (const dir of harnessDirs) {
     plan.push(...(await planTemplates(dir, values, seen)));
   }

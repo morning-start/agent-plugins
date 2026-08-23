@@ -64,7 +64,7 @@ Only learn from findings with `learnable: true`. One-off bugs go to `scratch/`. 
 | `broken-handoff` (recurring) | Update `references/handoff-conventions.md` |
 | `trigger-overlap` (systematic) | Add exclusion rule to `references/skill-dedup.md` |
 | `skill-too-large` (common) | Extract to `references/skill-size-guidance.md` |
-| `lifecycle-status` missing | Add to `templates/shared/SKILL.md.tmpl` |
+| `lifecycle-status` missing | Add to `templates/skills/{{PLUGIN_PREFIX}}-hello/SKILL.md.tmpl` |
 | `name-collision` (cross-plugin) | Document naming conflict resolution in `references/naming-convention.md` |
 | `harness-gap` (missing adapter) | Route to `pf-design` for new harness support |
 | `test-coverage` (systematic gap) | Add to `references/testing-patterns.md` |
