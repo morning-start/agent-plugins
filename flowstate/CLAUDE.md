@@ -8,7 +8,7 @@
 - Hooks ship bash + PowerShell variants (`hooks/session-start.*`, `hooks/pre-commit.*`).
 - `.agent-workplace/` is the agent's private workspace — never commit it (pre-commit gate blocks it).
 - Schemas live in `schemas/` (9 files, draft-07, PRD §五).
-- Dual manifest: root `plugin.json` = pi/omp, `.claude-plugin/plugin.json` = Claude Code.
+- Single manifest: `.claude-plugin/plugin.json` = Claude Code; pi/omp carried by `package.json` (`pi.skills`/`omp.skills`); opencode self-registers via `.opencode/plugins/fst-bootstrap.ts`. Skills live in the single root `skills/` source.
 - **Test**: `npm test` (schema validation, 9 schemas × valid/invalid fixtures).
   - Iron Law: `NO TEST, NO MERGE` — every batch must pass before proceeding.
 

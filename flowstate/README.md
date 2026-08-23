@@ -185,7 +185,7 @@ flowchart TD
 
 各端安装方式见对应端说明：`OMP-NOTES.md`（omp）、`.opencode/INSTALL.md`（opencode）。
 
-> **双 manifest 设计**：根 `plugin.json` 是 pi/omp 的最小 manifest（name/version/description）；`.claude-plugin/plugin.json` 是 Claude Code manifest（含 tags、keywords、skills、commands）。两者的 name/version/description 保持同步。
+> **单 manifest 设计**：技能唯一源 `skills/` 服务所有端——Claude Code 用 `.claude-plugin/plugin.json`（含 tags、keywords、skills、commands）；pi/omp 由 `package.json` 的 `pi.skills`/`omp.skills` 承载；opencode 由 `.opencode/plugins/fst-bootstrap.ts` 运行时注册。无重复 manifest、无需跨文件同步。
 
 <p align="center">
   <img src="./assets/readme/section-harnesses.svg" width="100%"
