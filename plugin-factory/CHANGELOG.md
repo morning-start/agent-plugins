@@ -6,6 +6,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-23
+
+**Optimization pass: single-source skills, runtime self-registration, codex harness, packaging, and subagent roles — all grounded in the 0.1.0 → 0.2.0 commit range.**
+
 ### Added
 
 - ADR conventions (`skills/pf-adr/SKILL.md`, extracted from the former
