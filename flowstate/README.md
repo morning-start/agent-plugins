@@ -44,7 +44,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 ### 技能族
 
 <p align="center">
-  <img src="./assets/readme/badge-fst-init.svg" width="200" alt="fst-init：N1~N3 立项、冻结、设计，Spec 模式">
+  <img src="./assets/readme/badge-fst-init.svg" width="200" alt="fst-init：N1~N3 立项、冻结、设计，访谈澄清 + 需求分层">
   <img src="./assets/readme/badge-fst-change.svg" width="200" alt="fst-change：N5 变更、N9 紧急通道，先探索后计划，只规划不执行">
   <img src="./assets/readme/badge-fst-review.svg" width="200" alt="fst-review：N6 测试、N7 灰度，DoD 核销">
 </p>
@@ -56,7 +56,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 技能 | 命令 | 管哪些节点 | 功能 | 最佳实践 |
 |------|------|-----------|------|---------|
 | `using-flowstate` | — | 入口路由 | 按场景路由到 fst-* | — |
-| `fst-init` | `/fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | Spec 模式 |
+| `fst-init` | `/fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | 访谈澄清 + 需求分层 |
 | `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | 先探索后计划 |
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
 | `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8（**唯一执行入口**） | Spec / Loop / Graph 方略 |
@@ -64,7 +64,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 
-### fst-iterate 的四种方略（需求驱动选择）
+### fst-iterate 的执行路径（需求驱动的方略 + lightweight todo）
 
 先盘点本轮需求（范围说明书 REQ + 变更单 CR + 需求池条目）→ 按需求特征选方略 → 设计 → 执行。每 phase 在 `docs/plan` 声明 `strategy`：
 

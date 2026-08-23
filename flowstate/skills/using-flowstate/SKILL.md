@@ -27,6 +27,22 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 
 `fst-iterate` 内含“方略选择”章节，不是独立入口：它只在需求已进入迭代执行后判断 lightweight todo 或 formal strategy（spec/loop/graph）。
 
+## 编排总览（技能间如何交接）
+
+生命周期技能通过**定稿产物**在节点间交接，形成闭环：
+
+| 从 → 到 | 交接产物 | 交接信号（触发条件） |
+|---------|---------|---------------------|
+| `fst-init` → `fst-iterate` | 柔性 PRD · 范围说明书 · 需求分层清单 · 风险清单 | 3 底线确认 + 范围签署 + PRD 评审通过 |
+| `fst-change` → `fst-iterate` | 变更申请单（CR-xxx，已归档） | 变更单归档 + 排期确认 |
+| `fst-iterate` → `fst-review` | 可测功能 · docs/task 状态 · 技术债清单 | 批次 Gate 通过 + 功能完成 |
+| `fst-review` → `fst-iterate` | DoD 核销记录 · 灰度决策 | DoD 全 ✅ + 灰度指标达标（→ N8 回顾/下轮） |
+| `fst-change`(N9) → `fst-review` | 紧急 checkpoint · 补录变更单 | 阻断事故已修复（先修后补，24h 内） |
+| `fst-iterate`(N8) → `fst-iterate`(N4) | 迭代回顾报告 · 下轮范围 | 用户确认下轮范围（迭代闭环） |
+
+**闭环结构**：`fst-init → fst-iterate ⇄ fst-change / fst-review`；`fst-iterate` 内部 N8→N4 自闭环。
+`fst-workplace` 横切全流程：只提供工作区落点，不占用生命周期节点，也不产生交接产物。
+
 ## 路由规则
 
 - 新项目/需求模糊 → `fst-init`
@@ -87,3 +103,8 @@ NO ROUTING, NO WORK; NO ENTRY, NO SKILL
 - [ ] 已按场景路由到唯一的 fst-* 技能
 - [ ] 拿不准时已回退到 `fst-init` 锁底线
 - [ ] 入口提及的落点/初始化规则已指向 `fst-workplace`（未在本技能重复定义）
+
+## 下一步
+
+路由完成后，本入口职责即结束——把控制交给路由到的 fst-* 技能，不在入口重复执行细节。
+交接产物与信号见上「编排总览」；入口只负责「选对技能」，不负责「做对步骤」。

@@ -104,7 +104,7 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 - **流程框架**（`references/flow-graph.md`）：N1~N3 立项/冻结/设计节点在该框架内的执行
 - **工作区管理**（`fst-workplace`）：初始化 + 落点规则 + 目录结构（单点维护）
-- **Spec 模式**（`references/agent-modes/spec.md`）：访谈澄清 + 需求→计划→任务三链，验收标准可验证
+- **执行衔接**（`fst-iterate` + `references/agent-modes/`）：立项产物在下一阶段由 spec / loop / graph 方略承接实现——本阶段（立项）不使用这些模式，只做访谈澄清与需求分层
 - 产出物 schema：5.1 需求分层清单、5.2 迭代范围说明书、5.5 风险清单
 
 ## 输出
@@ -134,4 +134,5 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ## 下一步
 
-立项完成（3 底线确认 + 范围签署 + 柔性 PRD 通过）→ 进入 `fst-iterate`（迭代开发）或 `fst-change`（迭代中变更）。
+立项完成 → 交接：**柔性 PRD · 范围说明书 · 需求分层清单 · 风险清单**（定稿 `docs/`）→ `fst-iterate`（迭代开发）。
+迭代中冒出新需求 → `fst-change`（变更管控），不插当前迭代。

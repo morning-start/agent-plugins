@@ -58,5 +58,5 @@ fst-workplace 只决定落点并维护目录，不拥有业务产物内容。
 
 1. 修改生命周期职责时，先更新本文件矩阵，再同步技能和命令。
 2. 新增执行方法只添加 references/agent-modes/，不得创建新的生命周期入口。
-3. 术语统一：正式策略为 spec / loop / graph；简单路径称 lightweight todo；goal.md 是 loop 的状态记录，不是第四种策略。
+3. 术语统一：正式策略为 spec / loop / graph；简单路径称 lightweight todo。loop 的模式定义在 `references/agent-modes/goal.md`（文件名历史遗留），运行时状态记录在 `state/goal.md`——两者勿混淆，loop 不是第四种独立策略。
 4. 每个 batch 完成后更新 checkpoint，并通过 schema、构建、冒烟和任务验收 Gate。

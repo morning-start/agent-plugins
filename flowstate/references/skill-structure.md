@@ -1,7 +1,13 @@
 # 技能骨架契约（Skill Skeleton Contract）
 
-flowstate 的 4 个 fst-* 技能（`fst-init` / `fst-change` / `fst-iterate` / `fst-review`）
-共享同一章节骨架：每个技能只填充自己独有的内容，章节结构与约定在此单点维护。
+flowstate 的 4 个生命周期技能（`fst-init` / `fst-change` / `fst-iterate` / `fst-review`）
+共享本章节骨架：每个技能只填充自己独有的内容，章节结构与约定在此单点维护。
+
+另有 2 个特殊技能，骨架在此基础上精简调整：
+- `fst-workplace`（横切基础设施）：沿用本骨架，但「职责」强调「.agent-workplace 的
+  单点维护者」，「下一步」永远回到调用方。
+- `using-flowstate`（入口路由）：用精简骨架——重点是「路由规则」与「编排总览」
+ （技能间交接链），不展开单个技能的执行细节。
 
 > 本文件的 `##` 章节标题即骨架声明：plugin-factory 生命周期探针据此把重复标题识别为
 > **结构**（而非重复指导），与内置英文骨架标题（overview / workflow / outputs…）同机制。
@@ -48,4 +54,11 @@ flowstate 的 4 个 fst-* 技能（`fst-init` / `fst-change` / `fst-iterate` / `
 
 ## 下一步
 
-流程流转：完成后进入哪个技能 / 哪个闭环（如 N8→N4），保证编排可追踪。
+流程流转（Handoff）：完成后进入哪个技能 / 哪个闭环（如 N8→N4），保证编排可追踪。
+必须写清**交接三要素**，缺一不可：
+
+- **交接产物**：本技能产出的定稿（如变更申请单 CR-xxx、柔性 PRD、DoD 核销记录）
+- **交接信号**：触发交接的条件（如「范围说明书已签署」「变更单已归档」「批次 Gate 通过」）
+- **目标技能**：下一个入口（`fst-init` / `fst-change` / `fst-iterate` / `fst-review` / `fst-workplace`）
+
+> 完整交接链见入口技能 `using-flowstate` 的「编排总览」；各技能只需对齐这一处权威。

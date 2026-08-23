@@ -110,7 +110,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 关联最佳实践
 
-- **先探索后计划**（变更影响评估）：探索现状 → 影响评估 → 计划待用户确认才执行（Plan 思路；影响点清单供 `fst-review` 做变更针对性测试）
+- **先探索后计划**（变更影响评估）：探索现状 → 影响评估 → 计划待用户确认才执行（这是 fst-change 的内部方法、非独立模式；影响点清单供 `fst-review` 做变更针对性测试）
 - 产出物 schema：5.3 变更申请单
 
 ## 输出
@@ -142,4 +142,5 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 下一步
 
-变更单归档 + 排期确认 → **fst-iterate**（盘点本轮需求时纳入本变更单 CR-xxx，按方略设计与实现）→ fst-review（变更针对性测试）。紧急通道补单完成后直接进入 `fst-review`；若需要后续非紧急扩展，再由 `fst-change` 建立常规 CR 并进入 `fst-iterate`。
+- 常规变更：交接产物 **变更申请单 CR-xxx（已归档）**，信号「归档 + 排期确认」→ `fst-iterate`（按方略实现）→ `fst-review`（变更针对性测试）。
+- 紧急通道（N9）：补单完成后直接交 `fst-review`，不绕过验收；后续非紧急扩展再由 `fst-change` 建常规 CR → `fst-iterate`。

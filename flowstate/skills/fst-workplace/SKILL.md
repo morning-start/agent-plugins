@@ -77,7 +77,7 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 | `scripts/` | 可执行实验脚本 / 测试桩 |
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
 | `research/` `report/` | 调研缓存 / 调研报告 |
-| `state/goal.md` `state/checkpoint.json` `state/artifacts.json` | 运行时状态（Goal / 断点 / 产物注册） |
+| `state/goal.md` `state/checkpoint.json` `state/artifacts.json` | 运行时状态（Loop 目标 / 断点 / 产物注册） |
 
 > 模式与框架**不在工作区内**：操作模式权威源在 `references/agent-modes/*.md`，
 > 流程框架权威源在 `references/flow-graph.md`（插件绑定，随插件分发）。

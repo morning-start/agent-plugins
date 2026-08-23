@@ -37,7 +37,7 @@
 | 层 | 是什么 | 变化频率 | 位置 |
 |----|--------|---------|------|
 | **流程框架（Graph）** | 整套开发流程的结构：F1~F9 的节点、边、循环、人工闸门、检查点 | 慢——符合现代开发哲学与现实条件，不随单一问题变化 | `references/flow-graph.md` + `state/` |
-| **操作模式（skills/）** | 解决**单一问题**的方法：Plan / Spec（方略）/ Loop / Graph（方略）等 | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
+| **操作模式（agent-modes/）** | 解决**单一问题**的方法：Lightweight todo / Spec（方略）/ Loop（方略）/ Graph（方略） | 快——随经验不断更新、可插拔 | `references/agent-modes/*.md`（插件绑定） |
 
 **关系**：流程的每个步骤，都可以**选用合适的最佳实践**去执行——
 N4 迭代开发可用 Spec/Loop/Graph 方略；换实践不改变流程框架，
