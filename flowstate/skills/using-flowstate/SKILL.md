@@ -23,6 +23,7 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 | 迭代完成、变更落地后、准备上线 | `fst-review` | N6 测试 / N7 灰度 |
 | 迭代开始、迭代回顾、下轮排期 | `fst-iterate` | N4 开发 / N8 持续迭代 |
 | 工作区初始化 / 落点判断 / 过程态管理 | `fst-workplace` | 基础能力（横切 N1~N9） |
+| 调研 / 分析 / 技术选型 / 方案对比 / 根因调查 | `fst-research` | 分析调查（横切 N1~N9） |
 | 已批准范围内、能一句话说清 diff 的简单任务 | `fst-iterate` 的 lightweight todo | `fst-iterate` 最小执行路径 |
 
 `fst-iterate` 内含“方略选择”章节，不是独立入口：它只在需求已进入迭代执行后判断 lightweight todo 或 formal strategy（spec/loop/graph）。
@@ -53,6 +54,8 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 - 拿不准 → 先 `fst-init` 锁底线，再按流转判据路由
 - 需要工作区初始化 / 落点判断 / 过程态管理 → `fst-workplace`
   （其他技能只引用它，不重复定义工作区规则）
+- 需要调研 / 分析 / 技术选型 / 方案对比 / 根因调查 → `fst-research`
+  （调查缓存落 `.agent-workplace/research/`，分析报告落 `.agent-workplace/report/`）
 - 迭代内方略选择 → 由 `fst-iterate` 自己完成（用户只确认 formal strategy，不单独触发路由段落）
 
 ## 核心原则（贯穿所有技能）

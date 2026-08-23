@@ -26,7 +26,7 @@ flowstate 是一个**项目开发全流程规范插件**：引导 AI 编程助�
 
 <p align="center">
   <img src="./assets/readme/section-overview.svg" width="100%"
-       alt="功能总览：技能 6、命令 4、Schema 9、钩子、工作区">
+       alt="功能总览：技能 7、命令 4、Schema 9、钩子、工作区">
 </p>
 
 ## 功能总览
@@ -35,7 +35,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 | 交付物 | 数量 | 作用 |
 |--------|------|------|
-| 技能 `skills/` | 6 | 分场景引导（入口路由 + 5 个流程技能；方略选择内联于 fst-iterate） |
+| 技能 `skills/` | 7 | 分场景引导（入口路由 + 5 个流程技能 + 2 个横切能力；方略选择内联于 fst-iterate） |
 | 命令 `commands/` | 4 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 9 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / …） |
 | 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |

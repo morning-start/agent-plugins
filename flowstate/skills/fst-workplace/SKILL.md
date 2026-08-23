@@ -76,7 +76,7 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 | `docs/decisions.md` | 决策记录（DEC-xxx） |
 | `scripts/` | 可执行实验脚本 / 测试桩 |
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
-| `research/` `report/` | 调研缓存 / 调研报告 |
+| `research/` `report/` | 调研缓存 / 调研报告（调查与写作由 `fst-research` 负责，本技能只定落点） |
 | `state/goal.md` `state/checkpoint.json` `state/artifacts.json` | 运行时状态（Loop 目标 / 断点 / 产物注册） |
 
 > 模式与框架**不在工作区内**：操作模式权威源在 `references/agent-modes/*.md`，
@@ -106,7 +106,8 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 - **模板**（`templates/agent-workplace/`）：干净骨架，复制初始化新项目
 - **骨架契约**（`references/skill-structure.md`）：技能章节结构约定
 - 调用方：`fst-init`（初始化）、`fst-change`（变更单草稿）、`fst-iterate`
-  （plan/task/state）、`fst-review`（DoD/测试报告过程态）
+  （plan/task/state）、`fst-review`（DoD/测试报告过程态）、`fst-research`
+  （research/report 落点）
 
 ## 输出
 

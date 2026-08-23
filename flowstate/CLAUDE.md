@@ -1,6 +1,6 @@
 # CLAUDE.md — flowstate
 
-**Quick reference**: Project development workflow plugin — 6-skill pipeline (using-flowstate router → fst-init / fst-change / fst-review / fst-iterate / fst-workplace; strategy selection is internal to fst-iterate). Harnesses: Claude Code, pi, oh-my-pi, opencode.
+**Quick reference**: Project development workflow plugin — 7-skill pipeline (using-flowstate router → fst-init / fst-change / fst-review / fst-iterate / fst-workplace + fst-research; strategy selection is internal to fst-iterate). Harnesses: Claude Code, pi, oh-my-pi, opencode.
 
 - Skills use the `fst-` prefix. Entry skill: `skills/using-flowstate/SKILL.md`.
 - **Planning/execution split**: `fst-change` plans & constrains only (record → grade → assess → approve → archive), never writes code; `fst-iterate` is the single execution entry (strategy-driven). Hotfix (N9) is the only exception — fix first, backfill ≤24h.
