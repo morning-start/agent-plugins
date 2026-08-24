@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /**
  * verify.mjs — cross-platform structural, harness, and lifecycle audit engine.
  *
@@ -22,6 +22,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { getValidator } from "../harnesses/index.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SEVERITY_RANK = { FAIL: 3, WARN: 2, INFO: 1 };
@@ -283,7 +284,7 @@ async function hookEventCheck(root, findings) {
     for (const eventName of Object.keys(hooksJson.hooks ?? {})) {
       if (!CLAUDE_HOOK_EVENTS.has(eventName)) {
         findings.push(
-          makeFinding("hook-event", "hooks/hooks.json", "WARN", `Use a valid Claude Code hook event (found "${eventName}").`, "An unknown hook event never fires — check the 29-event list in references/harnesses/claude-code/hooks.md."),
+          makeFinding("hook-event", "hooks/hooks.json", "WARN", `Use a valid Claude Code hook event (found "${eventName}").`, "An unknown hook event never fires — check the 29-event list in tools/harnesses/claude-code/hooks.md."),
         );
       }
     }
@@ -350,113 +351,10 @@ async function harnessChecks(root, findings) {
   if (harnesses.length === 0) return;
 
   for (const h of harnesses) {
-    switch (h) {
-      case "claude-code": {
-        for (const rel of [".claude-plugin/plugin.json", "skills"]) {
-          try {
-            await stat(join(root, rel));
-          } catch {
-            findings.push(
-              makeFinding("missing-harness-artifact", rel, "FAIL", `Create ${rel}.`, `Claude Code advertisement is missing ${rel}.`),
-            );
-          }
-        }
-        const manifest = join(root, ".claude-plugin", "plugin.json");
-        try {
-          const json = await readJson(manifest);
-          if (Array.isArray(json.commands) && json.commands.length > 0) {
-            try {
-              await stat(join(root, "commands"));
-            } catch {
-              findings.push(
-                makeFinding("missing-harness-artifact", "commands", "FAIL", "Create commands/ declared by plugin.json.", "Declared commands cannot load."),
-              );
-            }
-          }
-          if (Array.isArray(json.hooks) && json.hooks.length > 0) {
-            try {
-              await stat(join(root, "hooks", "hooks.json"));
-            } catch {
-              findings.push(
-                makeFinding("missing-harness-artifact", "hooks/hooks.json", "FAIL", "Create hooks/hooks.json declared by plugin.json.", "Declared hooks cannot load."),
-              );
-            }
-          }
-        } catch {
-          /* invalid manifest already reported by structure layer */
-        }
-        break;
-      }
-      case "pi":
-      case "oh-my-pi": {
-        const key = h === "pi" ? "pi" : "omp";
-        let pkg = null;
-        try {
-          pkg = await readJson(join(root, "package.json"));
-        } catch {
-          findings.push(
-            makeFinding("missing-harness-artifact", "package.json", "FAIL", "Create package.json.", `${h} advertisement requires package.json.`),
-          );
-          break;
-        }
-        const section = pkg[key];
-        if (!section) {
-          findings.push(
-            makeFinding("missing-harness-artifact", `package.json.${key}`, "FAIL", `Add the "${key}" field to package.json.`, `${h} cannot discover this plugin without ${key} metadata.`),
-          );
-          break;
-        }
-        const targets = [
-          ...(Array.isArray(section.skills) ? section.skills.map((s) => `skills:${s}`) : []),
-          ...(Array.isArray(section.extensions) ? section.extensions.map((e) => `extensions:${e}`) : []),
-        ];
-        for (const t of targets) {
-          const [kind, path] = t.split(":");
-          try {
-            await stat(join(root, path));
-          } catch {
-            findings.push(
-              makeFinding("missing-harness-artifact", `package.json.${key}.${kind} -> ${path}`, "FAIL", `Create ${path}.`, `${h} declares ${path} but it is missing.`),
-            );
-          }
-        }
-        break;
-      }
-      case "opencode": {
-        for (const rel of [".opencode/opencode.json", ".opencode/plugins"]) {
-          try {
-            await stat(join(root, rel));
-          } catch {
-            findings.push(
-              makeFinding("missing-harness-artifact", rel, "FAIL", `Create ${rel}.`, `opencode advertisement is missing ${rel}.`),
-            );
-          }
-        }
-        // Skills come from the single root `skills/` source, self-registered
-        // at runtime by the bootstrap plugin's `config` hook (superpowers-style).
-        try {
-          await stat(join(root, "skills"));
-        } catch {
-          findings.push(
-            makeFinding("missing-harness-artifact", "skills", "FAIL", "Create skills/ (the single skill source registered by the bootstrap plugin's config hook).", "opencode cannot discover any skill."),
-          );
-        }
-        break;
-      }
-      case "codex": {
-        for (const rel of [".codex-plugin/plugin.json"]) {
-          try {
-            await stat(join(root, rel));
-          } catch {
-            findings.push(
-              makeFinding("missing-harness-artifact", rel, "FAIL", `Create ${rel}.`, `Codex advertisement is missing ${rel}.`),
-            );
-          }
-        }
-        break;
-      }
-      default:
-        break;
+    const validator = getValidator(h);
+    if (validator) {
+      const hFindings = await validator.validate(root, h);
+      findings.push(...hFindings);
     }
   }
 }

@@ -1,4 +1,4 @@
-# 归纳原则（Induction Principles）— 结构维护方法论
+﻿# 归纳原则（Induction Principles）— 结构维护方法论
 
 > 本文是 plugin-factory 的**结构维护方法论**：记录"如何把相同场景的内容归纳到
 > 一起"，作为一切新增/重构/整理的判据。它来自 2026-08 的两次大规模整理
@@ -21,7 +21,7 @@
 - 反例（旧结构）：`references/plugins/`（打包功能）、`references/hooks/`
   （钩子功能）、`agent-adapters.md`（适配功能）——同一 harness 的知识被
   按功能拆到三个地方。
-- 正例（新结构）：`references/harnesses/<h>/` 一个目录收编该端**全部**规格
+- 正例（新结构）：`tools/harnesses/<h>/` 一个目录收编该端**全部**规格
   （plugin.md + hooks.md + adapters.md）——同场景同家。
 
 ### 2. 单一容器收敛
@@ -104,8 +104,8 @@
 
 | 特点 | 说明 |
 |------|------|
-| **结构性** | 一切内容有明确的家：可执行逻辑 → tools/<模块>/；harness 规格 → references/harnesses/<h>/；跨端死知识 → references/ 根；流程 → 技能内；背景研究 → .agent-workplace/research/ |
-| **可读性** | 每模块/目录有 README 入口与索引表；路径可预期（`references/harnesses/<h>/plugin.md` 一看就懂）；新 agent 靠边界规则即可归位 |
+| **结构性** | 一切内容有明确的家：可执行逻辑 → tools/<模块>/；harness 规格 → tools/harnesses/<h>/；跨端死知识 → references/ 根；流程 → 技能内；背景研究 → .agent-workplace/research/ |
+| **可读性** | 每模块/目录有 README 入口与索引表；路径可预期（`tools/harnesses/<h>/plugin.md` 一看就懂）；新 agent 靠边界规则即可归位 |
 | **唯一源** | 不复制内容；渲染产物不手编；漂移检查兜底（routing-table-drift 等） |
 | **可验证** | 每次移动 = git mv + search_replace + 残留扫描 + 全量测试；结构问题在 CI/verify 阶段暴露，不在使用期爆发 |
 | **最小动作** | 只搬位置、不重写内容；`git mv` 保留历史；改动集中在一个容器内完成 |
@@ -117,7 +117,7 @@
 
 1. **先定场景，再定家**：新文件属于哪个场景（哪个 harness / 哪个模块）？
    - 可执行逻辑 → `tools/<模块>/`（同模块脚本放一起，附 README）
-   - harness 规格 → `references/harnesses/<h>/`（plugin/hooks/adapters 三件套）
+   - harness 规格 → `tools/harnesses/<h>/`（plugin/hooks/adapters 三件套）
    - 跨端死知识 → `references/` 根（design-principles / orchestration-patterns 等）
    - 流程编排与判据 → 技能内（技能只引用不内联长规格）
    - 背景研究 → `.agent-workplace/research/`（gitignored，不提交）
@@ -126,7 +126,7 @@
    `render-routing.mjs`；改 schema 只改 `tools/shared/schemas/`；版本提升
    由 `.version-bump.json` 驱动。手编派生物 = 制造漂移。
 4. **移动必接线**：`git mv` → 全局 `search_replace` → 残留扫描 → 全量测试。
-5. **保持 1:1 对齐**：tests/ 目录与 tools/ 模块一一对应；references/harnesses/
+5. **保持 1:1 对齐**：tests/ 目录与 tools/ 模块一一对应；tools/harnesses/
    与模板 harnesses/ 一一对应。
 6. **顺手修不顺手加**：整理中发现断引用/失效引用当场修；不借机加新功能。
 

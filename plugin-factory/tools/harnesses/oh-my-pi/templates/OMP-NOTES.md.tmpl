@@ -1,0 +1,13 @@
+﻿# {{PLUGIN_NAME}} — oh-my-pi (omp) notes
+
+oh-my-pi (omp) is a fork of pi. This plugin is installed via:
+
+```sh
+omp plugin install git:github.com/<owner>/{{PLUGIN_NAME}}
+```
+
+- The `package.json` carries both `pi` and `omp` fields (`pkg.omp` preferred,
+  `pkg.pi` fallback — see plugin-factory tools/harnesses/oh-my-pi/plugin.md).
+- The bootstrap extension (`.pi/extensions/{{PLUGIN_PREFIX}}-bootstrap.ts`)
+  follows the pi extension API, which omp keeps compatible.
+- Reload plugins with `/reload-plugins`.

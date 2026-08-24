@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Install {{PLUGIN_NAME}}.
-set -eu
-src="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-echo "{{PLUGIN_NAME}} — install options:"
-{{HARNESS_INSTALL_SH}}
-echo
-echo "Full instructions: $src/README.md"

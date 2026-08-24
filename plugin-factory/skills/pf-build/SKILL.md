@@ -1,257 +1,140 @@
 ---
 name: pf-build
-description: Use when a component manifest is signed off, when creating a standalone plugin project, when scaffolding skills, hooks, or commands for multiple harnesses, when a skill must be authored via skill-creator, when generating a bootstrap/entry skill from orchestration metadata, or when routed from /pf-build.
-tags: [pf, pf-build, plugin, scaffold, build, skill-creator, render]
+description: Use when a component manifest is signed off, when creating a standalone plugin project, when scaffolding skills, hooks, or commands for multiple harnesses, when a skill must be authored via skill-creator, when generating a bootstrap/entry skill from orchestration metadata, when deciding the next SemVer version from git history, when bumping declared manifest versions across all files, when writing the CHANGELOG entry for a release, or when routed from /pf-build.
+tags: [pf, pf-build, plugin, scaffold, build, skill-creator, render, version, semver, changelog]
 metadata:
   prefix: pf
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-01
-    updated: 2026-08-02
-  keywords_zh: "插件构建, 脚手架, 生成插件, 渲染, skill-creator"
+    updated: 2026-08-24
+  keywords_zh: "插件构建, 脚手架, 生成插件, 渲染, skill-creator, 版本管理, 语义化版本"
 ---
 
-# pf-build — Plugin Build
+# pf-build — 插件构建与版本管理
 
-## Overview
+## 概述
 
-Renders a signed-off component manifest into a **standalone plugin project** in a new
-directory/repo. Skill authoring and evaluation are **delegated to skill-creator**
-(Iron Law 2) — plugin-factory never re-implements them.
+将构件清单转化为**标准化插件项目**，并管理版本：
+1. **构建** — 生成符合标准的插件结构
+2. **适配** — 为每个 harness 生成对应文件
+3. **版本** — 管理 SemVer 版本和 CHANGELOG
 
 ## When to Use
 
-- The complexity gate routed a Light project straight here (skip design).
-- A component manifest is signed off and the project must be generated.
-- A new skill within an existing plugin must be authored and evaluated.
+- 复杂度判断为 Light，直接构建
+- 构件清单已签署，需要生成项目
+- 需要为现有插件添加新技能
+- 需要适配新 harness
+- 需要管理版本号
 
-## Prerequisites
+## 构建流程
 
-- Signed-off component manifest (from `pf-design`), or a Light verdict from `pf-intent`.
-- skill-creator availability (see below).
-
-## skill-creator availability (rule)
-
-- Check that skill-creator is available **automatically** before entering the
-  build loop — never by hand:
-
-  ```bash
-  node tools/design/check-creator.mjs [--root <plugin-dir>] [--format table|json]
-  ```
-
-  `checkCreator()` (exported from `tools/design/check-creator.mjs`) probes the two
-  accepted install forms below and returns `{ available, found, hint }`; exit 1
-  when missing.
-- **Accepted install forms** (either satisfies the gate):
-  - global (e.g. `~/.pi/agent/skills/skill-creator`), or
-  - project-local via the skills CLI (`npx skills add …` → `.agents/skills/skill-creator`
-    + tracked `skills-lock.json` at the repo root; the vendor dir itself is gitignored).
-- **If missing**: remind the user to install it themselves —
-  `npx skills add https://github.com/anthropics/skills --skill skill-creator`
-  (`anthropics/skills@skill-creator`). **Do NOT auto-install**, and do not run the
-  install command without the user's explicit permission.
-- Pause the build until the user confirms installation; never hand-write skills
-  outside skill-creator's loop as a workaround (Iron Law 2).
-
-## Workflow
-
-### 0. Availability gate
-
-Run `node tools/design/check-creator.mjs` (see "skill-creator availability" above).
-Do not proceed to skill authoring until the user confirms skill-creator is installed.
-
-### 1. Create the standalone project layout
-
-Per `tools/scaffold/README.md`:
+### 1. 标准化目录结构
 
 ```
-<plugin-name>/
-├── .claude-plugin/plugin.json              # claude-code harness
-├── .pi/extensions/<prefix>-bootstrap.ts    # pi / oh-my-pi harness (shared path)
-├── .opencode/opencode.json + plugins/      # opencode harness (skills via bootstrap config hook self-registration)
-├── package.json                            # pi/omp fields only when requested
-├── skills/                                 # filled in step 2
-├── commands/  hooks/  rules/ or references/
-├── scripts/  tests/  docs/
-├── AGENTS.md  CLAUDE.md
-├── README.md  README.zh-CN.md
-└── install.sh  install.ps1
+<plugin>/
+├── skills/                    # 技能目录
+│   ├── using-<plugin>/        # 入口技能
+│   │   └── SKILL.md
+│   └── <skill-name>/
+│       └── SKILL.md
+├── hooks/                     # hooks 目录（仅 .sh）
+│   ├── hooks.json
+│   ├── session-start.sh
+│   └── post-tool-verify.sh
+├── commands/                  # 命令目录
+│   └── <prefix>-<cmd>.md
+├── .claude-plugin/            # Claude Code manifest
+│   └── plugin.json
+├── .opencode/                 # opencode manifest
+│   └── opencode.json
+├── .pi/                       # pi/oh-my-pi 扩展
+│   └── extensions/
+├── .codex-plugin/             # Codex manifest
+│   └── plugin.json
+├── package.json               # pi/oh-my-pi 配置
+├── README.md                  # 英文说明
+├── README.zh-CN.md            # 中文说明
+└── CHANGELOG.md               # 版本历史
 ```
 
-Use `tools/scaffold/scaffold.sh` / `scaffold.ps1` / `tools/scaffold/scaffold.mjs` — the single
-cross-platform renderer. Record the requested harness list (`--harnesses`).
-A harness is advertised **only** when all of its required artifacts are rendered
-(see `tools/scaffold/README.md` § 生成插件布局).
+### 2. harness 适配
 
-After scaffolding, run the generated project's own structure verifier automatically
-with `--auto-verify` (scaffold exit 1 when the generated project has FAIL findings;
-without the flag, verify manually via `npm run validate` in the target).
-
-### 2. Author each skill via skill-creator (TDD loop)
-
-For every skill in `components.skills`:
-
-1. **Write test cases first** (TDD red phase) — before any skill implementation,
-   define acceptance criteria as executable test cases: trigger scenarios,
-   expected outputs, error conditions, edge cases. The test cases become the
-   skill's contract.
-2. Feed skill-creator the PRD-derived spec (capability, triggers, consumes/produces)
-   plus the test cases from step 1.
-3. Run its loop: intent → draft → test cases → parallel A/B eval (with/without the
-   skill) → iterate based on feedback (description optimization up to its rounds).
-4. **Accept only after its evaluation passes and all test cases pass.** Record the
-   eval summary per skill **automatically** — never leave it in conversation only:
-
-   ```bash
-   node tools/design/evals.mjs record --skill <skill-name> --name <eval-name> --passed <true|false> [--notes <summary>]
-   ```
-
-   `recordEval()` (exported from `tools/design/evals.mjs`) appends the result to
-   `tools/design/evals.json` (`results.<skill>.<eval-name>`), preserving the declared
-   eval cases; latest result wins per name. Every accepted skill must have a
-   recorded eval result before the build hands off.
-
-Test-first principle: a skill is not complete until its test cases exist and pass.
-The scaffold generates a `tests/` directory with per-skill test stubs;
-skill-creator fills them during its TDD loop.
-
-### 3. Render per-harness manifests
-
-Per `references/harnesses/<harness>/plugin.md` and `references/README.md`:
-
-- Claude Code: `.claude-plugin/plugin.json` (name/description/version) + root
-  `skills/`/`commands/`/`agents/` + `hooks/hooks.json`.
-- opencode: `.opencode/opencode.json` + `.opencode/plugins/*.ts` (skills via the
-  bootstrap `config` hook — single root `skills/` source).
-- pi: `package.json` → `pi.skills` + `pi.extensions`.
-- oh-my-pi: **also** write the `omp` field (`pkg.omp` preferred, `pkg.pi` fallback).
-- **Tool mapping** (superpowers pattern): generate `references/<harness>-tools.md`
-  translating the skills' action vocabulary into each harness's native tools; keep
-  skill bodies tool-agnostic (see pf-design).
-- **MCP stub**: plugins that need an external API get a scaffolded
-  `mcp-servers/` directory — `README.md` (when to keep/delete, wiring) plus a
-  dependency-free stdio server stub with one example tool
-  (`mcp-servers/<prefix>-server.mjs`). Keep it only when the plugin calls an
-  external API; implement real tools via the TDD loop and delete the directory
-  otherwise.
-
-### 4. Render hooks (multi-shell) and commands
-
-- Hooks: canonical {event, action} from the manifest → bash + PowerShell pairs
-  (Claude Code, wired via `shell` field), TS plugin (opencode), TS extension
-  (pi/oh-my-pi) — per `references/harnesses/<harness>/hooks.md`.
-- Commands: `commands/*.md` (Claude Code), `.opencode/command/*.md`, `registerCommand`
-  handlers (pi/omp).
-
-### 5. Render orchestration
-
-Per `references/orchestration-patterns.md`:
-
-- Generate the bootstrap entry skill `using-<plugin>` (CSO description + per-harness
-  session-start hooks) when the manifest declares an entry point.
-- Inject "After this, route to X" into each chained skill's SKILL.md from `chains`.
-- Verify `handoffs` artifacts are produced by the upstream skill.
-
-### 6. Generate project docs
-
-- `AGENTS.md` / `CLAUDE.md` (project instructions incl. activation rules).
-- `README.md` + `README.zh-CN.md` (bilingual; English docs, user-language user README).
-- `install.sh` / `install.ps1` (per-harness install instructions).
-
-### 7. Apply the language policy
-
-Per the manifest `language` section (default **tiered** —
-`references/design-principles.md`):
-
-- **Human-review layer** (references/, docs/, CHANGELOG prose, README user edition) →
-  rendered in `user_lang` (the user's language).
-- **Agent-executed layer** (skills body, commands, AGENTS/CLAUDE, hooks/scripts) →
-  rendered in `agent_lang` (English).
-- Skill descriptions: `agent_lang` CSO style + `user_lang` trigger keywords in
-  `metadata`.
-- Write the policy into the generated `AGENTS.md` (Language policy section) so the
-  plugin maintains the tiering itself.
-
-Policy values: `tiered` (default) / `english` (all English) / `native` (all `user_lang`).
-
-### 8. Auto-verify the generated project (mandatory)
-
-Before handing off, run the structural verifier on the generated project:
+为每个目标 harness 生成对应文件：
 
 ```bash
-node tools/verify/verify.mjs structure --root <generated-plugin-dir>
+# 使用 harness 模块
+node -e "
+  import('./tools/harnesses/index.mjs').then(async m => {
+    const h = m.getHarness('claude-code');
+    await h.init.init(target, values);
+  });
+"
 ```
 
-If any FAIL findings exist, fix them before proceeding. Common issues:
-- Missing frontmatter in SKILL.md files
-- Skill name doesn't match parent directory
-- Missing hook shell variants (.sh / .ps1)
-- Missing harness artifacts
+### 3. 版本管理
 
-This catches structural errors at build time rather than release time.
+#### 决定版本号
 
-### 9. Hand off to git engineering
+```bash
+node tools/version/version.mjs check    # 检查一致性
+node tools/version/version.mjs audit    # 审计版本引用
+```
 
-Once the standalone project is generated and verified, apply git discipline per
-`pf-git`: create a feature branch (or worktree) for the plugin work and follow
-Conventional Commits; manage version bumps / CHANGELOG from git history via
-`pf-version` (or `/pf-version`). The generated project's own
-`tools/verify/verify.mjs` + `version.mjs` engine is used by the release gate.
+#### 递增版本
 
-## Outputs
+```bash
+node tools/version/version.mjs bump <X.Y.Z>
+```
 
-- Standalone plugin project (new directory/repo) ready for `pf-verify`.
-- Per-skill eval summaries (evidence for the release gate).
-- Git engineering handoff (branch/worktree/commit from pf-git; version from
-  pf-version).
+#### CHANGELOG
 
-## Acceptance
+使用 Conventional Commits 格式：
+- `feat:` → minor 版本
+- `fix:` → patch 版本
+- `BREAKING CHANGE:` → major 版本
 
-- Every manifest skill exists as `skills/<name>/SKILL.md` and passed skill-creator eval.
-- The requested harness list is recorded; every requested harness has all required
-  artifacts (see `tools/scaffold/README.md` § 生成插件布局).
-- No unrequested harness file is generated (Claude-only request → no `.pi/`,
-  `.opencode/`, or `OMP-NOTES.md`).
-   - The generated project passes its own verifier: `npm run validate` and
-   `npm run validate:ps`. For Node.js plugins this invokes `tools/verify/verify.mjs`
-   (same engine as plugin-factory); for plugins with custom domain validators
-   (e.g. Python scripts), the command is declared in `package.json.scripts` and
-   documented in `AGENTS.md` Validation section.
-   - Validator declaration: if a plugin uses a custom validator (not `tools/verify/verify.mjs`),
-   the Validation section in `AGENTS.md` must record the commands, and
-   `package.json.scripts` must declare them. See
-   `tools/scaffold/README.md` § 9.
-- opencode skill discovery follows the single root `skills/` source — the
-  bootstrap plugin's `config` hook registers the plugin-root `skills/` at
-  runtime (superpowers-style self-registration); see
-  `references/harnesses/opencode/plugin.md`.
-- Per-harness manifests match `references/harnesses/<harness>/plugin.md`.
-- Hooks have bash + PowerShell variants; orchestration rendered (bootstrap + routing).
-- Tool mapping files (`references/<harness>-tools.md`) generated per advertised harness.
-- Bilingual README + AGENTS/CLAUDE + install scripts present.
-- Language policy applied per layer and recorded in the generated AGENTS.md.
+## 标准化要求
 
-## Status
+### 技能文件
 
-M1 complete — full build workflow above.
+每个 `SKILL.md` 必须有：
+- frontmatter（name、description）
+- Iron Law 章节
+- Red Flags 章节
+- 自检清单章节
+
+### hooks 文件
+
+- 只支持 `.sh`（bash）
+- hooks.json 使用 `${CLAUDE_PLUGIN_ROOT}`
+- 事件名在官方白名单内
+
+### manifest 文件
+
+- 版本号一致
+- 路径引用正确
+- 声明的文件存在
 
 ## Iron Law
 
 ```
-No manifest → no scaffold. No skill-creator → no skill body.
+没有构件清单，就不能构建。
 ```
 
-## Red Flags — STOP and Rethink
+## Red Flags
 
-- Writing skills by hand instead of routing to skill-creator
-- Skipping the build/verify/release flow
-- Ignoring the language policy layering
+- 生成不符合标准的结构
+- 不校验就认为构建完成
+- 版本号不一致
+- hooks 使用相对路径
 
-## 自检清单 (Post-routing Self-Check)
+## 自检清单
 
-- [ ] Manifest is signed off (from pf-design)
-- [ ] Skill-creator is available and confirmed
-- [ ] All skills pass eval via skill-creator
-- [ ] Auto-verify passes (no FAIL findings)
-- [ ] Generated plugin passes `npm run validate`
+- [ ] 目录结构符合标准
+- [ ] 所有 harness 文件已生成
+- [ ] 版本号一致
+- [ ] CHANGELOG 已更新
+- [ ] 运行 pf-verify 通过

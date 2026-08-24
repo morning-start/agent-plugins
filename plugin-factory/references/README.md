@@ -1,4 +1,4 @@
-# references/ — 死知识仓库
+﻿# references/ — 死知识仓库
 
 **放置规则（本项目约定）**：
 
@@ -52,7 +52,7 @@
 3. 双语 README（`README.md` + `README.zh-CN.md`）、`AGENTS.md`/`CLAUDE.md`、
    安装脚本（`install.sh` / `install.ps1`）。
 4. **产物契约（T1 生效，`tools/scaffold/scaffold.mjs` 强制）**：一个 harness 只有在
-   其全部必需产物渲染后才被声明支持——`templates/harnesses/<h>/` 只放该端的
+   其全部必需产物渲染后才被声明支持——`tools/harnesses/<h>/` 只放该端的
    manifest、bootstrap 适配器与安装说明；共享文件在 `templates/` 只存一份。
    未请求的 harness 不生成文件；`package.json` 的 `pi`/`omp` 字段只在对应产物
    实际存在时写入（不声明悬空路径）。生成项目自带 `scripts/verify.mjs` +

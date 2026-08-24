@@ -27,3 +27,6 @@ workspace/
 
 # Agent private workspace
 .agent-workplace/
+
+# Serena config
+.serena/

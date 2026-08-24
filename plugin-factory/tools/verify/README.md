@@ -1,16 +1,12 @@
 # tools/verify — 校验引擎 + 生命周期报告
 
 plugin-factory 的单一校验引擎与生命周期分析。所有校验入口都走 `verify.mjs` 的
-`runChecks()`（结构层 / harness 层 / 编排层），包装脚本只做跨平台接线。
+`runChecks()`（结构层 / harness 层 / 编排层）。
 
 ```
 verify.mjs              引擎（runChecks + 各层探针）
-validate-structure.sh   结构层包装（bash）
-validate-structure.ps1  结构层包装（PowerShell）
 validate-schema.mjs     JSON Schema 校验器（零依赖，draft 2020-12 子集）
 lifecycle-report.mjs    生命周期 markdown 报告渲染
-lifecycle-probes.sh     生命周期层包装（bash）
-lifecycle-probes.ps1    生命周期层包装（PowerShell）
 verify-server.mjs       verify 引擎的 MCP server 暴露
 ```
 
@@ -19,14 +15,14 @@ verify-server.mjs       verify 引擎的 MCP server 暴露
 - **structure**：frontmatter、名称==目录、hook 事件白名单、JSON 有效性、
   skill 三节结构（Iron Law / Red Flags / 自检清单）、hook 双 shell 配对等。
 - **harness**：按检测到的 harness manifest 校验产物齐整（claude-code / pi /
-  omp / opencode / codex）。
+  omp / opencode / codex）。已集成 `tools/harnesses/` 中的 harness 特定校验器，
+  包括 hooks.json 命令路径（`${CLAUDE_PLUGIN_ROOT}`）、事件白名单、shell 类型等。
 - **orchestration**（别名 `lifecycle`）：生命周期探针——链路断裂、孤儿技能、
   入口缺失、技能过大、触发重叠、重复指导、嵌套技能树、多 harness 缺口、
   zombie 技能、命名冲突、版本漂移、断链交接等。
 
 用法：`node tools/verify/verify.mjs [structure|harness|lifecycle] --root <dir>`
-（`--format table|json`，`--coverage WARN|FAIL`）；包装脚本 `validate-structure.*`
-退出码 1 = 存在 FAIL。
+（`--format table|json`，`--coverage WARN|FAIL`）。退出码 1 = 存在 FAIL。
 
 ## 生命周期决策矩阵（本模块维护）
 

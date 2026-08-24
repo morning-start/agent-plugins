@@ -1,4 +1,4 @@
-# 编排模式库（Orchestration Patterns）
+﻿# 编排模式库（Orchestration Patterns）
 
 > **固化于：2026-08-01** · **2026-08-09 精简** · references 固化集的一部分。
 > **规则**：生成插件的编排设计遵循本文与 `skills/pf-compose/SKILL.md`——不要重复搜网。
@@ -32,7 +32,7 @@ superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → 
 
 - 适用：各技能独立、但从一处发现的工具包。
 - 引导技能：`using-<plugin>`，CSO 描述 + 各端 session-start 钩子
-  （钩子规格：`references/harnesses/<harness>/hooks.md`）。
+  （钩子规格：`tools/harnesses/<harness>/hooks.md`）。
 
 ### 3. 总线 / 共享产物（Bus）
 
@@ -108,4 +108,4 @@ superpowers 级插件的价值主要在编排（brainstorm → plan → TDD → 
 ## 复核节奏
 
 - 固化于 **2026-08-01**，2026-08-09 精简（编排功能规则移入 `skills/pf-compose/`）。
-- 仅当模式变更或某端引导规格变更时更新（交叉引用 `references/harnesses/<harness>/hooks.md`）。
+- 仅当模式变更或某端引导规格变更时更新（交叉引用 `tools/harnesses/<harness>/hooks.md`）。

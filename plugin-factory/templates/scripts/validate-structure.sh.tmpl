@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# validate-structure.sh — structural checks for generated plugin projects.
-# Thin wrapper around scripts/verify.mjs (single cross-platform engine).
-set -u
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-exec node "$root/scripts/verify.mjs" structure --root "$root"

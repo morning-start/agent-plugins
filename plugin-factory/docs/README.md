@@ -1,4 +1,4 @@
-# 文档地图（Documentation Map）
+﻿# 文档地图（Documentation Map）
 
 > **固化于：2026-08-02** · 按 **Diátaxis** 四象限归位（tutorials / how-to /
 > reference / explanation）。目标：任何问题 60 秒内找到答案，且每个文件只有
@@ -26,7 +26,7 @@
 | 查开发进度 | `temp-docs/plan/`、`temp-docs/task/` |
 | 查生命周期探针 | `tools/verify/README.md`（11 个探针） |
 | 查编排模式 | `references/orchestration-patterns.md` |
-| 查某端（Claude Code/pi/opencode）适配 | `references/harnesses/<端>/plugin.md` · `references/README.md` |
+| 查某端（Claude Code/pi/opencode）适配 | `tools/harnesses/<端>/plugin.md` · `references/README.md` |
 | 优化一个现有插件 | `references/plugin-optimization.md`（审计先行 + P0/P1/P2 分级 + 防回归测试固化） |
 | 查职责边界纪律 | `references/skill-boundaries.md`（设计期）· `references/plugin-optimization.md`（维护期对偶） |
 | 整理仓库结构 / 归纳原则 | `references/induction-principles.md`（按场景归位、唯一源、移动必接线） |

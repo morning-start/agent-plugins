@@ -1,4 +1,4 @@
-# AGENTS.md — plugin-factory
+﻿# AGENTS.md — plugin-factory
 
 ## What this project is
 
@@ -121,7 +121,7 @@ and acceptance conventions apply to this repository as well.
   durable product docs (ADRs, glossary, templates).
 - **Structural maintenance (归纳原则)**: before adding, moving, or removing any file, read
   `references/induction-principles.md` — organize by scenario (`tools/<module>/`,
-  `references/harnesses/<h>/`), keep one authoritative source per fact, and re-wire
+  `tools/harnesses/<h>/`), keep one authoritative source per fact, and re-wire
   references after every move (search_replace → residual grep → full `node --test`).
 
 ## Quality bars (enforced by `tools/verify/verify.mjs` / `npm run verify`)
