@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "hooks/session-start.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
             "shell": "bash"
           }
         ]
@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "hooks/session-start.ps1",
+            "command": "& '${CLAUDE_PLUGIN_ROOT}/hooks/session-start.ps1'",
             "shell": "powershell"
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "hooks/post-tool-verify.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-verify.sh\"",
             "shell": "bash",
             "description": "Post-edit structural gate (verify.mjs structure layer)"
           }
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "hooks/post-tool-verify.ps1",
+            "command": "& '${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-verify.ps1'",
             "shell": "powershell",
             "description": "Post-edit structural gate (verify.mjs structure layer)"
           }

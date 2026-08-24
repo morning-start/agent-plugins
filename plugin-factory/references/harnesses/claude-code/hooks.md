@@ -114,8 +114,12 @@ hook 应写成 `.sh` + `.ps1` 成对，经 `shell` 字段接线。
   `tools/bootstrap/render-bootstrap.mjs` 生成
   `{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"PLUGIN_FACTORY_BOOTSTRAP:<plugin> …body…"}}`；
   双 shell 解码后 marker 与 body 完全一致（不比较 JSON 空白）。
-- hook 命令路径相对插件根解析（脚本内 `BASH_SOURCE[0]` / `$PSScriptRoot`），
-  与调用者 cwd 无关。
+- **hooks.json 中的 `command` 必须使用 `${CLAUDE_PLUGIN_ROOT}` 引用插件内脚本**：
+  Claude Code 运行 hook 时 cwd 是项目根目录而非插件目录，相对路径 `hooks/xxx.sh` 会找不到文件。
+  正确写法：`"command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\""`。
+  （`${CLAUDE_PLUGIN_ROOT}` 是 Claude Code 插件系统注入的环境变量，指向当前插件根目录。）
+- 脚本内部使用 `BASH_SOURCE[0]` / `$PSScriptRoot` 解析插件根目录，
+  但这只在脚本被正确找到后才生效；hooks.json 的 command 是第一道关。
 
 ## 钩子来源
 
