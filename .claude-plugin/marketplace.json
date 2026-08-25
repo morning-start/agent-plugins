@@ -41,6 +41,22 @@
         "name": "morning-start",
         "url": "https://github.com/morning-start"
       }
+    },
+    {
+      "name": "data-flow",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/morning-start/data-flow",
+        "path": "data-flow-plugin"
+      },
+      "description": "让 AI Agent 学会使用 data-flow 框架的插件：节点/流程编写、DAG 模式、调试排查、CLI 命令参考。",
+      "version": "0.2.0",
+      "category": "workflow",
+      "tags": ["df", "data-flow", "framework", "skills"],
+      "author": {
+        "name": "df contributors",
+        "url": "https://github.com/morning-start"
+      }
     }
   ]
 }
