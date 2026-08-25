@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "& '${CLAUDE_PLUGIN_ROOT}/hooks/session-start.ps1'",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/session-start.ps1\"",
             "shell": "powershell"
           }
         ]
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "& '${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-verify.ps1'",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/post-tool-verify.ps1\"",
             "shell": "powershell",
             "description": "Post-edit structural gate (verify.mjs structure layer)"
           }

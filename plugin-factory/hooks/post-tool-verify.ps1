@@ -4,6 +4,11 @@
 # on findings so the harness can surface them.
 $ErrorActionPreference = "SilentlyContinue"
 
+# Force UTF-8 stdout so the emitted JSON stays valid regardless of the console
+# codepage (GBK on zh-CN Windows would otherwise corrupt non-ASCII content).
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $OutputEncoding
+
 $pluginRoot = Split-Path -Parent $PSScriptRoot
 $nodeBin = $env:NODE
 if (-not $nodeBin) {

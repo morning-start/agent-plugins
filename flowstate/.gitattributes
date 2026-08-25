@@ -1,0 +1,9 @@
+# flowstate hooks/scripts must stay LF so bash can execute them on Windows
+# (core.autocrlf=true would otherwise check them out as CRLF and break the
+# SessionStart / PreCommit hooks under Git Bash).
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.tmpl text eol=lf

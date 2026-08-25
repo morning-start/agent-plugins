@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "& '${CLAUDE_PLUGIN_ROOT}/hooks/session-start.ps1'",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/session-start.ps1\"",
             "shell": "powershell",
             "description": "Inject using-flowstate entry skill into session context"
           }

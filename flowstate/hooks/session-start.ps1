@@ -4,6 +4,12 @@
 # Lightweight and dependency-free: reads the SKILL.md directly, no node needed.
 $ErrorActionPreference = "SilentlyContinue"
 
+# Force UTF-8 for both file reading and stdout so the emitted JSON stays valid
+# regardless of the console codepage (GBK on zh-CN Windows would otherwise
+# corrupt non-ASCII content and break Claude Code's UTF-8 JSON parser).
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $OutputEncoding
+
 # Resolve the plugin root from this script's own location (not $PWD).
 $pluginRoot = Split-Path -Parent $PSScriptRoot
 $entry = Join-Path $pluginRoot "skills\using-flowstate\SKILL.md"
@@ -16,7 +22,7 @@ if (-not (Test-Path $entry)) {
 # Read file, strip YAML frontmatter (--- ... ---) and leading blank lines.
 # Keep regex in sync with .pi/extensions/fst-bootstrap.ts, .opencode/plugins/fst-bootstrap.ts,
 # and hooks/session-start.sh (awk variant).
-$raw = Get-Content -Raw -LiteralPath $entry
+$raw = Get-Content -Raw -LiteralPath $entry -Encoding UTF8
 $body = [regex]::Replace($raw, '(?s)\A\s*---\r?\n[\s\S]*?\r?\n---\r?\n?', '') -replace '\r\n', "`n"
 $body = $body -replace '^\s*\r?\n', ''
 

@@ -4,6 +4,11 @@
 # hook only wires lifecycle and serializes the result.
 $ErrorActionPreference = "SilentlyContinue"
 
+# Force UTF-8 stdout so the emitted JSON stays valid regardless of the console
+# codepage (GBK on zh-CN Windows would otherwise corrupt non-ASCII content).
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $OutputEncoding
+
 # Resolve the plugin root from this script's own location (not $PWD).
 $pluginRoot = Split-Path -Parent $PSScriptRoot
 
@@ -17,7 +22,7 @@ if (-not $nodeBin) {
 }
 
 Set-Location $pluginRoot
-$json = & $nodeBin "$pluginRoot\scripts\render-bootstrap.mjs" --root $pluginRoot --plugin-name plugin-factory --harness claude 2>$null
+$json = & $nodeBin "$pluginRoot\tools\bootstrap\render-bootstrap.mjs" --root $pluginRoot --plugin-name plugin-factory --harness claude 2>$null
 if ($LASTEXITCODE -ne 0 -or -not $json) {
     Write-Output '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[plugin-factory] entry skill not found - check skills/using-pf/SKILL.md."}}'
 } else {
