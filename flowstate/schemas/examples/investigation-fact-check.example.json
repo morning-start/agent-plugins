@@ -1,0 +1,10 @@
+{
+  "claim": "MySQL 在读取性能上优于 PostgreSQL",
+  "evidence": "https://www.percona.com/blog/2020/07/01/mysql-vs-postgresql-performance-comparison/",
+  "reasoning": "根据 Percona 的基准测试，MySQL 在简单读取操作上性能更高，但在复杂查询上 PostgreSQL 更优",
+  "status": "VERIFIED",
+  "confidence": 0.85,
+  "expires": "2026-09-01",
+  "related_docs": ["research/20260826-database-comparison.md"],
+  "notes": "仅适用于简单读取场景，复杂查询需进一步测试"
+}

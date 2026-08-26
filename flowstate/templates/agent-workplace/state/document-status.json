@@ -1,0 +1,9 @@
+{
+  "documents": [],
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": "2026-08-26T00:00:00Z",
+    "updated_at": "2026-08-26T00:00:00Z",
+    "description": "文档状态索引，用于追踪文档的生命周期"
+  }
+}

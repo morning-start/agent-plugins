@@ -1,13 +1,8 @@
 {
-  "version": 1,
-  "current": {
-    "mode": "spec",
-    "node": null,
-    "phase": null,
-    "batch": null,
-    "updated_at": null
-  },
-  "done": [],
-  "pending": [],
-  "notes": "断点续跑状态：每阶段/批次完成时更新。mode: spec|loop|graph"
+  "current_node": null,
+  "current_phase": null,
+  "current_batch": null,
+  "current_iteration": "iteration-001",
+  "completed": [],
+  "last_updated": null
 }

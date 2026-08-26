@@ -35,11 +35,11 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 | 交付物 | 数量 | 作用 |
 |--------|------|------|
-| 技能 `skills/` | 7 | 分场景引导（入口路由 + 5 个流程技能 + 2 个横切能力；方略选择内联于 fst-iterate） |
-| 命令 `commands/` | 4 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
-| 产出模板 `schemas/` | 9 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / …） |
-| 生命周期钩子 `hooks/` | 2 类 | SessionStart 注入入口技能 + PreCommit 提交门禁（各含 bash + PowerShell 双变体） |
-| 工作区模板 `templates/` | 1 | `.agent-workplace` 私有工作区骨架 |
+| 技能 `skills/` | 8 | 分场景引导（入口路由 + 6 个流程技能 + 2 个横切能力；方略选择内联于 fst-iterate） |
+| 命令 `commands/` | 5 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
+| 产出模板 `schemas/` | 12 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / 文档状态 / 事实核查 / 提升请求） |
+| 生命周期钩子 `hooks/` | 4 类 | SessionStart + PreCommit + PostCheckpoint + DocumentStatusCheck |
+| 工作区模板 `templates/` | 2 | 迭代模板 + 工作区模板 |
 
 ### 技能族
 
@@ -60,7 +60,8 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | 先探索后计划 |
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
 | `fst-iterate` | `/fst-iterate` | N4 迭代、N8 闭环 | F4/F8（**唯一执行入口**） | Spec / Loop / Graph 方略 |
-| `fst-workplace` | — | 横切 N1~N9 | 工作区初始化 / 落点判断 / 过程态管理 | — |
+| `fst-promote` | `/fst-promote` | 横切 N1~N9 | **定稿闸门**（过程文档 → 定稿文档） | HITL 确认 + 溯源注入 |
+| `fst-workplace` | — | 横切 N1~N9 | 工作区初始化 / 落点判断 / 过程态管理 | 双文档系统支持 |
 
 命令是技能的快捷入口：加载并遵循对应 `SKILL.md`。工作区规则只在 `fst-workplace` 单点维护，其他技能只引用不重复。
 

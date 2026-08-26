@@ -1,0 +1,12 @@
+{
+  "iterations": [
+    {
+      "id": "iteration-001",
+      "started_at": "2026-08-26T10:00:00Z",
+      "ended_at": null,
+      "status": "in_progress",
+      "documents_promoted": 0,
+      "changes_made": 0
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Promotion Request",
+  "description": "文档提升请求，用于记录从过程文档到定稿文档的提升操作",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "源文档路径（必须在 .agent-workplace/ 中）"
+    },
+    "target": {
+      "type": "string",
+      "description": "目标文档路径（必须在 docs/ 中）"
+    },
+    "promotion_type": {
+      "type": "string",
+      "enum": ["render", "append", "replace"],
+      "description": "提升类型：render-渲染转换, append-追加内容, replace-替换内容"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending_approval", "approved", "rejected", "blocked"],
+      "description": "请求状态"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "source_version": {
+          "type": "string",
+          "format": "date-time",
+          "description": "源文档版本时间"
+        },
+        "source_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "源文档置信度"
+        },
+        "iteration": {
+          "type": "string",
+          "description": "所属迭代编号"
+        },
+        "approver": {
+          "type": "string",
+          "description": "审批人"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "审批时间"
+        },
+        "rejected_reason": {
+          "type": "string",
+          "description": "拒绝原因"
+        }
+      },
+      "required": ["source_version", "source_confidence", "iteration"]
+    },
+    "rendered_content": {
+      "type": "string",
+      "description": "渲染后的内容预览"
+    },
+    "diff": {
+      "type": "string",
+      "description": "与现有定稿文档的差异"
+    },
+    "notes": {
+      "type": "string",
+      "description": "备注信息"
+    }
+  },
+  "required": ["source", "target", "promotion_type", "status", "metadata"],
+  "additionalProperties": false
+}

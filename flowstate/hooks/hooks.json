@@ -21,6 +21,50 @@
           }
         ]
       }
+    ],
+    "PostCheckpoint": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/post-checkpoint.sh\"",
+            "shell": "bash",
+            "description": "Generate ready-for-promotion document list after checkpoint"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/post-checkpoint.ps1\"",
+            "shell": "powershell",
+            "description": "Generate ready-for-promotion document list after checkpoint"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/document-status-check.sh\"",
+            "shell": "bash",
+            "description": "Check document status consistency before session end"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/document-status-check.ps1\"",
+            "shell": "powershell",
+            "description": "Check document status consistency before session end"
+          }
+        ]
+      }
     ]
   }
 }

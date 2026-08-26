@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Investigation Fact Check",
+  "description": "调研阶段的事实核查记录，用于追踪断言的证据和状态",
+  "type": "object",
+  "properties": {
+    "claim": {
+      "type": "string",
+      "description": "待核查的断言或声明"
+    },
+    "evidence": {
+      "type": "string",
+      "format": "uri",
+      "description": "证据来源（URL、PDF 页码、文档路径等）"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "推理过程说明"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "VERIFIED", "DISPUTED", "OBSOLETE"],
+      "description": "核查状态：PENDING-待核查, VERIFIED-已验证, DISPUTED-存疑, OBSOLETE-已过时"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "置信度评分（0-1），0.8 以上可提升"
+    },
+    "expires": {
+      "type": "string",
+      "format": "date",
+      "description": "过期日期，超过此日期需重新核查"
+    },
+    "related_docs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "相关文档列表"
+    },
+    "notes": {
+      "type": "string",
+      "description": "备注信息"
+    }
+  },
+  "required": ["claim", "evidence", "status"],
+  "additionalProperties": false
+}

@@ -60,25 +60,38 @@ NO RESEARCH, NO ANALYSIS; NO EVIDENCE, NO CONCLUSION
 把「调研 X」澄清为**可回答的问题**：要支持什么决策、需要什么类型的证据、
 交付时限。产出调查目标清单（如：「对比 A/B 方案在性能与维护成本上的差异」）。
 
-### 2. 调查（收集证据，落 research/）
+### 2. 选择调研模板（可选）
+
+根据调研类型选择合适的模板：
+
+| 调研类型 | 模板 | 适用场景 |
+|---------|------|---------|
+| 技术选型 | `tech-selection` | 对比多个技术方案 |
+| 竞品分析 | `competitor-analysis` | 分析竞争对手产品 |
+| 需求调研 | `requirement-research` | 收集和分析用户需求 |
+| 影响评估 | `impact-assessment` | 评估变更的影响 |
+| 根因分析 | `root-cause-analysis` | 分析问题根本原因 |
+
+### 3. 调查（收集证据，落 research/）
 
 - 收集外部资料（文档、规范、替代实现、社区经验）、代码现状、历史决策
-- 条目化存 `.agent-workplace/research/`（如 `{YYYYMMDD}-{type}-{slug}.md`）：
+- 条目化存 `.agent-workplace/iterations/current/investigation/`（如 `{YYYYMMDD}-{type}-{slug}.md`）：
   原始资料、来源、结论要点
 - 有冲突的证据 → 并列记录，不隐藏
+- **验证证据有效性**：检查 URL 可访问性、PDF 完整性等
 
-### 3. 分析（加工结论，落 report/）
+### 4. 分析（加工结论，落 report/）
 
 对照调查问题逐项分析：对比表、权衡、风险、建议。产出分析报告写
-`.agent-workplace/report/`（如 `{YYYYMMDD}-{topic}-report.md`），每个结论
+`.agent-workplace/iterations/current/investigation/`（如 `{YYYYMMDD}-{topic}-report.md`），每个结论
 标注所引用的 research 条目。
 
-### 4. 交接（证据 + 结论给调用方）
+### 5. 交接（证据 + 结论给调用方）
 
 - 报告结论摘要 + 证据索引交给调用方技能（fst-init / fst-change /
   fst-iterate / fst-review）
-- 若用户决定将分析结果提升为正式交付物 → 由调用方按落点规则写入正式
-  `docs/`（本技能不直接提交，落点规则见 `fst-workplace`）
+- 若用户决定将分析结果提升为正式交付物 → 由调用方通过 `/fst-promote` 提升
+  （本技能不直接提交，落点规则见 `fst-workplace`）
 
 ## 用户 vs Agent 分工
 

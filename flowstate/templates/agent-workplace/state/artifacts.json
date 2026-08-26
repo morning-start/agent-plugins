@@ -1,5 +1,9 @@
 {
-  "version": 1,
   "artifacts": [],
-  "notes": "产物注册表：跨阶段追踪产出物。每条含 { id, type, path, status, created_at }。type: requirements|plan|task|spec|checklist|decision|script|scratch"
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": null,
+    "updated_at": null,
+    "description": "产物注册表，用于跨阶段追踪产出物与状态"
+  }
 }

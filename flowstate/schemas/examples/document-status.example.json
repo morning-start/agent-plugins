@@ -1,0 +1,18 @@
+{
+  "path": "iterations/iteration-001/requirements/elicited/user-stories.md",
+  "type": "REVIEW_NEEDED",
+  "confidence": 0.9,
+  "stage": "requirements",
+  "iteration": "iteration-001",
+  "related_docs": ["shared/glossary.md"],
+  "human_feedback": "需求文档已审核，可以提升",
+  "expires": "2026-09-01",
+  "created_at": "2026-08-26T10:00:00Z",
+  "updated_at": "2026-08-26T11:00:00Z",
+  "promoted_to": null,
+  "promoted_at": null,
+  "inherited_from": null,
+  "approver": "user@example.com",
+  "approved_at": "2026-08-26T11:05:00Z",
+  "notes": "用户故事文档已完善，可以提升为正式需求文档"
+}
