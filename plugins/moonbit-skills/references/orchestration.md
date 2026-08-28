@@ -166,7 +166,7 @@ moonbit-skills 管线按 **flowstate 执行图** 的语义建模（有 flowstate
 | **检查点（Checkpoint）** | 批次边界（每批最多 5 任务）→ 提交 + 会话压缩，断点续跑 |
 | **短路（Shortcut）** | hotfix → implement（Bug Fix Mode）直通车 |
 
-**流程框架选择**：会话中检测到 flowstate（`fst-*` 技能或 `using-flowstate` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）→ 由 flowstate 执行图驱动节点流转与 DoD 判据，moonbit-skills 提供 MoonBit 专项执行层；无 flowstate → 本管线自包含全部流程语义。检测规则与降级映射详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择（flowstate 优先）」。
+**流程框架选择**：会话中检测到 flowstate（`fst-*` 技能或 `using-fst` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）→ 由 flowstate 执行图驱动节点流转与 DoD 判据，moonbit-skills 提供 MoonBit 专项执行层；无 flowstate → 本管线自包含全部流程语义。检测规则与降级映射详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择（flowstate 优先）」。
 
 ### 独立技能（单次调用）
 

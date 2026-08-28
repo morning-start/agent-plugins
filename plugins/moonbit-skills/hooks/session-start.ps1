@@ -30,8 +30,8 @@ $FstDetected = $false
 
 # Signal 1: Check if flowstate plugin exists as a sibling directory
 $FlowstateCandidates = @(
-    (Join-Path $PluginRoot "..\..\flowstate\skills\using-flowstate\SKILL.md"),
-    (Join-Path $PluginRoot "..\flowstate\skills\using-flowstate\SKILL.md")
+    (Join-Path $PluginRoot "..\..\flowstate\skills\using-fst\SKILL.md"),
+    (Join-Path $PluginRoot "..\flowstate\skills\using-fst\SKILL.md")
 )
 foreach ($candidate in $FlowstateCandidates) {
     if (Test-Path $candidate) {

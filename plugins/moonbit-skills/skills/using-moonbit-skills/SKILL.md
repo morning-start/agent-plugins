@@ -126,7 +126,7 @@ These thoughts mean STOP — you are rationalizing:
 1. 会话上下文中存在 FLOWSTATE_BOOTSTRAP:flowstate 标记
    → flowstate 已加载，直接进入降级模式
 
-2. 技能列表中 fst-init / fst-change / fst-review / fst-iterate / using-flowstate 可用
+2. 技能列表中 fst-init / fst-change / fst-review / fst-iterate / using-fst 可用
    → flowstate 可加载，进入降级模式
 
 3. 项目根存在 .agent-workplace/state/checkpoint.json 且含 "framework": "flowstate"

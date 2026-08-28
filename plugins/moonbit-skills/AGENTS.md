@@ -44,7 +44,7 @@
 - **流程框架选择（flowstate 优先）**：
   - **检测规则**（按优先级判定，详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择」）：
     1. 会话上下文中存在 `FLOWSTATE_BOOTSTRAP:flowstate` 标记 → flowstate 已加载
-    2. 技能列表中 `fst-*` / `using-flowstate` 可用 → flowstate 可加载
+    2. 技能列表中 `fst-*` / `using-fst` 可用 → flowstate 可加载
     3. 项目根 `.agent-workplace/state/checkpoint.json` 含 `"framework": "flowstate"` → 项目已使用 flowstate
     4. 项目根 `.agent-workplace/` 含 `modes/` + `state/` 子目录 → flowstate 结构存在
     5. 以上均无 → 使用 moonbit-skills 自包含管线

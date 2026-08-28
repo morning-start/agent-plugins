@@ -20,8 +20,8 @@ mut fst_detected = false
 
 # Signal 1: Check if flowstate plugin exists as a sibling directory
 let flowstate_candidates = [
-    ($plugin_root | path join ".." "flowstate" "skills" "using-flowstate" "SKILL.md"),
-    ($plugin_root | path join "flowstate" "skills" "using-flowstate" "SKILL.md")
+    ($plugin_root | path join ".." "flowstate" "skills" "using-fst" "SKILL.md"),
+    ($plugin_root | path join "flowstate" "skills" "using-fst" "SKILL.md")
 ]
 for candidate in $flowstate_candidates {
     if ($candidate | path exists) {

@@ -23,8 +23,8 @@ FST_DETECTED="false"
 # Signal 2: Check if flowstate plugin exists as a sibling directory
 FLOWSTATE_ENTRY=""
 for candidate in \
-    "${PLUGIN_ROOT}/../../flowstate/skills/using-flowstate/SKILL.md" \
-    "${PLUGIN_ROOT}/../flowstate/skills/using-flowstate/SKILL.md"; do
+    "${PLUGIN_ROOT}/../../flowstate/skills/using-fst/SKILL.md" \
+    "${PLUGIN_ROOT}/../flowstate/skills/using-fst/SKILL.md"; do
   if [ -f "$candidate" ]; then
     FLOWSTATE_ENTRY="$candidate"
     break
