@@ -16,6 +16,7 @@
 // @ts-check
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Plugin } from "@opencode-ai/plugin";
 
 const ENTRY_REL = join("skills", "using-fst", "SKILL.md");
 const SKILLS_DIR_REL = "skills";
@@ -59,7 +60,7 @@ function loadEntry(root) {
 }
 
 /** @returns {Promise<Record<string, unknown>>} */
-export const FstBootstrap = async ({ directory } = {}) => {
+export const FstBootstrap: Plugin = async ({ directory } = {}) => {
   const root = directory || process.cwd();
   const entry = loadEntry(root);
 
