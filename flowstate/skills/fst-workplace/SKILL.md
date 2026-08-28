@@ -67,9 +67,18 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 ### 1. 初始化（若项目根无 `.agent-workplace/`）
 
+**通用步骤**（新项目和已有项目都执行）：
+
 - 复制插件模板：`flowstate/templates/agent-workplace/` → 项目根 `.agent-workplace/`
+- 复制迭代模板：`flowstate/templates/iteration/` → `.agent-workplace/iterations/iteration-001/`
+- 创建符号链接：`ln -sfn iteration-001 .agent-workplace/current`
 - 项目 `.gitignore` 追加一行 `.agent-workplace/`
 - 校验模板完整性：`iterations/`、`shared/`、`state/`、`scratch/`、`README.md` 均存在
+
+**已有项目额外步骤**：
+
+- 不得覆盖项目现有的 `docs/` 目录内容
+- 初始化后需调用 `fst-init`（已有项目路径）进行现状评估和文档迁移
 
 ### 2. 落点判断（写任何内容前，硬性）
 

@@ -148,7 +148,7 @@ flowstate/templates/agent-workplace/     # 工作区模板（干净骨架）
 flowstate/templates/iteration/           # 迭代目录模板
 ```
 
-**初始化方式**：
+### 新项目初始化
 
 ```bash
 # 复制工作区模板
@@ -163,6 +163,22 @@ ln -sfn iteration-001 <目标项目>/.agent-workplace/current
 # 在目标项目 .gitignore 追加
 echo ".agent-workplace/" >> <目标项目>/.gitignore
 ```
+
+初始化后走 `fst-init` 新项目路径：访谈底线 → 需求分层 → 冻结 → 设计。
+
+### 已有项目初始化
+
+```bash
+# 同上：复制工作区模板 + 迭代 + 符号链接 + .gitignore
+# 但不得覆盖项目现有的 docs/ 目录内容
+```
+
+初始化后走 `fst-init` 已有项目路径：
+1. **探索现状**（调用 `fst-research`）：代码/文档/历史/需求线索/技术债
+2. **评估阶段**：早期 / 中期 / 成熟
+3. **迁移文档**：现有 `docs/` 分类（定稿/过程态/历史/待提升）
+4. **提取底线**：从现有信息中提取，而非重新访谈
+5. **补充设计**：如果缺失
 
 **模板 vs 实例**：
 
