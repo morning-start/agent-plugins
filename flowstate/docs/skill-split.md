@@ -3,7 +3,7 @@
 - **状态**: Accepted（已接受）
 - **日期**: 2026-08-08
 - **来源**: 基于 PRD §四（功能 F1~F9）、§七（执行图 N1~N9）、§五（产出物 5.1~5.9）、操作模式（`references/agent-modes/`：lightweight todo / spec / loop / graph，插件绑定）设计。草稿见 `.agent-workplace/docs/spec/skill-split-draft.md`（过程态，不提交）。
-- **用途**: 为 4 个生命周期 `SKILL.md` 提供权威拆分依据；`fst-workplace` 是横切基础设施，`using-flowstate` 是入口路由（PRD §十一-2 落地）。
+- **用途**: 为 4 个生命周期 `SKILL.md` 提供权威拆分依据；`fst-workplace` 是横切基础设施，`using-fst` 是入口路由（PRD §十一-2 落地）。
 
 ## 技能与图节点映射（N1~N9）
 
@@ -16,7 +16,7 @@
 
 **覆盖检查**：N1~N9 全部覆盖，无遗漏、无重叠（fst-init 3 节点 + fst-change 2 + fst-review 2 + fst-iterate 2 = 9）。
 
-> **入口技能**：另有 `using-flowstate`（入口路由，非流程节点技能）——按场景路由到上述 4 个 fst-* 技能；pi / oh-my-pi / opencode 的 bootstrap 注入它以完成入口引导。
+> **入口技能**：另有 `using-fst`（入口路由，非流程节点技能）——按场景路由到上述 4 个 fst-* 技能；pi / oh-my-pi / opencode 的 bootstrap 注入它以完成入口引导。
 > **策略选择**已内联在 `fst-iterate`，不再作为独立技能或生命周期节点。正式策略为 spec / loop / graph；lightweight todo 只是 `fst-iterate` 的轻量执行路径（非正式策略）。
 
 ## 产出物（schema）归属

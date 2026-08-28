@@ -3,7 +3,7 @@
  *
  * Implements the pi extension API (pi / oh-my-pi compatible). Auto-discovered
  * from package.json `pi.extensions` (and `omp.extensions` for oh-my-pi).
- * Injects the canonical entry skill `skills/using-flowstate/SKILL.md` into
+ * Injects the canonical entry skill `skills/using-fst/SKILL.md` into
  * session context so the agent knows which fst-* skill to route to.
  * Kept dependency-free and node-checkable: types live in JSDoc only.
  */
@@ -14,7 +14,7 @@ import { join } from "node:path";
 
 const MARKER_PREFIX = "FLOWSTATE_BOOTSTRAP";
 const PLUGIN_NAME = "flowstate";
-const ENTRY_REL = join("skills", "using-flowstate", "SKILL.md");
+const ENTRY_REL = join("skills", "using-fst", "SKILL.md");
 
 /** @type {{ marker: string, text: string } | null} */
 let cached = null;
@@ -43,7 +43,7 @@ function loadEntry(root) {
 export default function (pi) {
   pi.on("session_start", async (_event, ctx) => {
     ctx.ui.notify(
-      "flowstate loaded — route via using-flowstate: fst-init / fst-change / fst-review / fst-iterate.",
+      "flowstate loaded — route via using-fst: fst-init / fst-change / fst-review / fst-iterate.",
       "info",
     );
   });

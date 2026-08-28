@@ -6,7 +6,7 @@
 
 | 层 | 组件 | 职责 | 不负责 |
 |---|---|---|---|
-| 入口层 | using-flowstate | 识别用户意图并路由到生命周期技能 | 不执行流程、不创建业务产物 |
+| 入口层 | using-fst | 识别用户意图并路由到生命周期技能 | 不执行流程、不创建业务产物 |
 | 生命周期层 | fst-init / fst-change / fst-iterate / fst-review | 分别负责立项、变更、执行迭代、验收发布 | 不重复维护其他技能规则 |
 | 横切基础设施 | fst-workplace / fst-research | 工作区：初始化、落点、运行时状态；分析调查：调查→分析→报告（research/ + report/） | 不选择策略、不驱动生命周期节点 |
 | 执行方法层 | references/agent-modes/ | 提供 todo、spec、loop、graph 的具体方法 | 不作为用户入口、不改变 N1~N9 |

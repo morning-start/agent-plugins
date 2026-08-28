@@ -6,7 +6,7 @@ flowstate 的 4 个生命周期技能（`fst-init` / `fst-change` / `fst-iterate
 另有 2 个特殊技能，骨架在此基础上精简调整：
 - `fst-workplace`（横切基础设施）：沿用本骨架，但「职责」强调「.agent-workplace 的
   单点维护者」，「下一步」永远回到调用方。
-- `using-flowstate`（入口路由）：用精简骨架——重点是「路由规则」与「编排总览」
+- `using-fst`（入口路由）：用精简骨架——重点是「路由规则」与「编排总览」
  （技能间交接链），不展开单个技能的执行细节。
 
 > 本文件的 `##` 章节标题即骨架声明：plugin-factory 生命周期探针据此把重复标题识别为
@@ -61,4 +61,4 @@ flowstate 的 4 个生命周期技能（`fst-init` / `fst-change` / `fst-iterate
 - **交接信号**：触发交接的条件（如「范围说明书已签署」「变更单已归档」「批次 Gate 通过」）
 - **目标技能**：下一个入口（`fst-init` / `fst-change` / `fst-iterate` / `fst-review` / `fst-workplace`）
 
-> 完整交接链见入口技能 `using-flowstate` 的「编排总览」；各技能只需对齐这一处权威。
+> 完整交接链见入口技能 `using-fst` 的「编排总览」；各技能只需对齐这一处权威。

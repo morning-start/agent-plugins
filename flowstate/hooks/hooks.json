@@ -7,7 +7,7 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
             "shell": "bash",
-            "description": "Inject using-flowstate entry skill into session context"
+            "description": "Inject using-fst entry skill into session context"
           }
         ]
       },
@@ -17,7 +17,7 @@
             "type": "command",
             "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/session-start.ps1\"",
             "shell": "powershell",
-            "description": "Inject using-flowstate entry skill into session context"
+            "description": "Inject using-fst entry skill into session context"
           }
         ]
       }

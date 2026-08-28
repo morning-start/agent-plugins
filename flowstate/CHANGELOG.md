@@ -37,7 +37,7 @@ analysis/research skill, and single-manifest design — grounded in the
   `fst-mode-router` skill is removed; `fst-iterate` now distinguishes
   lightweight todo (trivial diff) from formal strategies (`spec` / `loop` /
   `graph`) and confirms formal strategy with the user. `plan.schema.json` /
-  `task.schema.json` / commands / using-flowstate routing / README / CLAUDE
+  `task.schema.json` / commands / using-fst routing / README / CLAUDE
   aligned (formal plan allows `spec`/`loop`/`graph` only).
 - **Single manifest design** — root `plugin.json` removed; Claude Code reads
   `.claude-plugin/plugin.json`, pi/omp read `package.json`

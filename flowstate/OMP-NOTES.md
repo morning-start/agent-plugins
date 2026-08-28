@@ -10,7 +10,7 @@ omp plugin install git:github.com/morning-start/agent-plugins
   `pkg.pi` fallback — `omp.extensions` points to the same
   `.pi/extensions/fst-bootstrap.ts`).
 - The bootstrap extension follows the pi extension API, which omp keeps
-  compatible; it injects the entry skill `skills/using-flowstate/SKILL.md`
+  compatible; it injects the entry skill `skills/using-fst/SKILL.md`
   (marker `FLOWSTATE_BOOTSTRAP:flowstate`).
 - Reload plugins with `/reload-plugins`.
 - Skills are discovered from `skills/` via `pkg.omp.skills`.

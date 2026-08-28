@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # flowstate session-start bootstrap (bash variant).
-# Emits Claude-compatible hook JSON with the canonical using-flowstate entry
+# Emits Claude-compatible hook JSON with the canonical using-fst entry
 # context (frontmatter stripped, single FLOWSTATE_BOOTSTRAP marker).
 # Lightweight and dependency-free: reads the SKILL.md directly, no node needed.
 set -eu
 
 # Resolve the plugin root from this script's own location (not $PWD).
 plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-entry="$plugin_root/skills/using-flowstate/SKILL.md"
+entry="$plugin_root/skills/using-fst/SKILL.md"
 
 if [ ! -f "$entry" ]; then
-  echo '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[flowstate] entry skill not found — check skills/using-flowstate/SKILL.md."}}'
+  echo '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[flowstate] entry skill not found — check skills/using-fst/SKILL.md."}}'
   exit 0
 fi
 

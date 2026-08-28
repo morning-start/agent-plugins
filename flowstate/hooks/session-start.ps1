@@ -1,5 +1,5 @@
 # flowstate session-start bootstrap (PowerShell variant).
-# Emits Claude-compatible hook JSON with the canonical using-flowstate entry
+# Emits Claude-compatible hook JSON with the canonical using-fst entry
 # context (frontmatter stripped, single FLOWSTATE_BOOTSTRAP marker).
 # Lightweight and dependency-free: reads the SKILL.md directly, no node needed.
 $ErrorActionPreference = "SilentlyContinue"
@@ -12,10 +12,10 @@ $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 
 # Resolve the plugin root from this script's own location (not $PWD).
 $pluginRoot = Split-Path -Parent $PSScriptRoot
-$entry = Join-Path $pluginRoot "skills\using-flowstate\SKILL.md"
+$entry = Join-Path $pluginRoot "skills\using-fst\SKILL.md"
 
 if (-not (Test-Path $entry)) {
-    Write-Output '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[flowstate] entry skill not found - check skills/using-flowstate/SKILL.md."}}'
+    Write-Output '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[flowstate] entry skill not found - check skills/using-fst/SKILL.md."}}'
     exit 0
 }
 

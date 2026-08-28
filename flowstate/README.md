@@ -55,7 +55,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 
 | 技能 | 命令 | 管哪些节点 | 功能 | 最佳实践 |
 |------|------|-----------|------|---------|
-| `using-flowstate` | — | 入口路由 | 按场景路由到 fst-* | — |
+| `using-fst` | — | 入口路由 | 按场景路由到 fst-* | — |
 | `fst-init` | `/fst-init` | N1 立项、N2 冻结、N3 设计 | F1~F3 | 访谈澄清 + 需求分层 |
 | `fst-change` | `/fst-change` | N5 变更、N9 紧急 | F5/F9（**只规划约束**） | 先探索后计划 |
 | `fst-review` | `/fst-review` | N6 测试、N7 灰度 | F6/F7 | DoD 核销清单 |
@@ -95,7 +95,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 ### 工作区与钩子（基础设施层）
 
 - **`.agent-workplace/`** — Agent 私有工作区：过程态草稿/脚本/state **全部不提交 git**，定稿才写正式 `docs/`；规范见 `docs/agent-workplace.md`，初始化与落点见 `fst-workplace`
-- **SessionStart 钩子** — 会话开始自动注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），不依赖 node 运行时；bash + PowerShell 双变体
+- **SessionStart 钩子** — 会话开始自动注入 `using-fst` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），不依赖 node 运行时；bash + PowerShell 双变体
 - **PreCommit 门禁** — 提交前拦截 `.agent-workplace/` 入提交与疑似密钥泄漏，守护「私有区永不提交」铁律；bash + PowerShell 双变体
 
 <p align="center">
@@ -109,7 +109,7 @@ flowstate 的核心不是单个技能，而是一条**由技能/命令驱动、�
 
 ```mermaid
 flowchart TD
-    Start([会话开始<br/>SessionStart 注入 using-flowstate]) --> R{场景路由}
+    Start([会话开始<br/>SessionStart 注入 using-fst]) --> R{场景路由}
     R -->|新项目 / 需求模糊| I[<b>fst-init</b><br/>N1 立项 → N2 冻结 → N3 设计]
     R -->|迭代开始 / 回顾| IT[<b>fst-iterate</b><br/>N4 开发 → N8 回顾]
     R -->|新需求 / 改动 / 事故| C[<b>fst-change</b><br/>N5 变更 / N9 紧急]
@@ -159,7 +159,7 @@ flowchart TD
 
 <p align="center">
   <img src="./assets/readme/section-quickstart.svg" width="100%"
-       alt="快速开始：安装 → SessionStart 注入 → using-flowstate 路由">
+       alt="快速开始：安装 → SessionStart 注入 → using-fst 路由">
 </p>
 
 ## 快速开始
@@ -174,12 +174,12 @@ flowchart TD
 
    Claude Code 直接以本地插件加载 `flowstate/`（或复制到项目的 `.claude-plugin/`）；opencode 见 `.opencode/INSTALL.md`。
 
-2. **开始会话** — SessionStart 钩子自动注入 `using-flowstate` 入口技能（Claude Code 免手动；pi/omp/opencode 由各自 bootstrap 注入）
+2. **开始会话** — SessionStart 钩子自动注入 `using-fst` 入口技能（Claude Code 免手动；pi/omp/opencode 由各自 bootstrap 注入）
 3. **按场景路由** — 说「新项目 / 要改需求 / 迭代开始了 / 准备验收」，入口技能会引导你到对应 `fst-*` 技能
 
 | 端 | manifest | 技能发现 | 入口引导 |
 |----|----------|---------|---------|
-| Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-flowstate` + **SessionStart hook** 自动注入 |
+| Claude Code | `.claude-plugin/plugin.json` | `skills/` | `using-fst` + **SessionStart hook** 自动注入 |
 | pi | `package.json` → `pi.skills` | `skills/` | `.pi/extensions/fst-bootstrap.ts` 注入 |
 | oh-my-pi (omp) | `package.json` → `omp.skills` | `skills/` | 复用 pi bootstrap（见 `OMP-NOTES.md`） |
 | opencode | `.opencode/plugins/fst-bootstrap.ts`（`config` 钩子运行时注册 `skills/`） | `skills/`（单一源） | 同左，bootstrap 注入（见 `.opencode/INSTALL.md`） |
@@ -203,7 +203,7 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 
 | Hook | 事件 | 作用 |
 |------|------|------|
-| `session-start.sh` / `.ps1` | SessionStart | 注入 `using-flowstate` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
+| `session-start.sh` / `.ps1` | SessionStart | 注入 `using-fst` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
 | `pre-commit.sh` / `.ps1` | PreCommit（git 门禁） | 拦截 `.agent-workplace/` 入提交 + 疑似密钥扫描，守护「私有区永不提交」铁律 |
 
 > 轻量自包含：直接读 SKILL.md 输出 / git diff，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。

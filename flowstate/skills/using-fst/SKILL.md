@@ -1,5 +1,5 @@
 ---
-name: using-flowstate
+name: using-fst
 description: Use when a project needs flowstate's development workflow — starting a new project, planning an iteration, handling requirement changes, or accepting/releasing work. Routes to the right fst-* skill based on the situation (entry point for pi/oh-my-pi/opencode bootstraps).
 metadata:
   prefix: fst
@@ -12,7 +12,7 @@ metadata:
   tests: [tests/skill-contracts.test.mjs]
 ---
 
-# using-flowstate — 入口路由
+# using-fst — 入口路由
 
 flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按当前场景选择技能：
 
@@ -93,7 +93,7 @@ NO ROUTING, NO WORK; NO ENTRY, NO SKILL
 
 ## Red Flags — STOP and Re-evaluate
 
-如果发现自己正在做这些事，说明违反了 using-flowstate 契约：
+如果发现自己正在做这些事，说明违反了 using-fst 契约：
 
 - 跳过路由，直接凭"经验"调用某个 fst-* 技能
 - 场景已明确（如线上事故）却不走 `fst-change` 紧急通道

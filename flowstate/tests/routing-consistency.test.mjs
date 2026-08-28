@@ -1,6 +1,6 @@
 // tests/routing-consistency.test.mjs
 // Guards the routing table (场景 → 技能 → 节点) as a single source of truth.
-// The canonical table lives in skills/using-flowstate/SKILL.md; README.md and
+// The canonical table lives in skills/using-fst/SKILL.md; README.md and
 // the bootstrap notify line must not drift from it.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -19,7 +19,7 @@ const ROUTE_TABLE = [
 ];
 
 test("entry skill routing table lists every skill with its nodes", async () => {
-  const entry = await readFile(join(ROOT, "skills", "using-flowstate", "SKILL.md"), "utf8");
+  const entry = await readFile(join(ROOT, "skills", "using-fst", "SKILL.md"), "utf8");
   for (const { scenario, skill, nodes } of ROUTE_TABLE) {
     assert.ok(entry.includes(skill), `entry table missing ${skill}`);
     assert.ok(entry.includes(nodes), `entry table missing node mapping for ${skill}: ${nodes}`);

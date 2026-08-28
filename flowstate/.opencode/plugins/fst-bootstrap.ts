@@ -9,7 +9,7 @@
  *    no `.opencode/skills/` copy, no symlink). Handles both config shapes:
  *    v1 object `{ skills: { paths: [...] } }` and v2 array `{ skills: [...] }`.
  * 2. `session.created` — injects the entry skill body (from the canonical
- *    `skills/using-flowstate/SKILL.md`, frontmatter stripped, single marker),
+ *    `skills/using-fst/SKILL.md`, frontmatter stripped, single marker),
  *    never hand-copied here.
  */
 
@@ -17,7 +17,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const ENTRY_REL = join("skills", "using-flowstate", "SKILL.md");
+const ENTRY_REL = join("skills", "using-fst", "SKILL.md");
 const SKILLS_DIR_REL = "skills";
 const MARKER_PREFIX = "FLOWSTATE_BOOTSTRAP";
 const PLUGIN_NAME = "flowstate";

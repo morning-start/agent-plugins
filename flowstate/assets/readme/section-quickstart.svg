@@ -2,7 +2,7 @@
      width="1200" height="130" viewBox="0 0 1200 130"
      role="img" aria-labelledby="s4-title s4-desc">
   <title id="s4-title">快速开始</title>
-  <desc id="s4-desc">安装 flowstate 后，会话开始时自动注入 using-flowstate 入口技能，按场景路由到对应流程技能。</desc>
+  <desc id="s4-desc">安装 flowstate 后，会话开始时自动注入 using-fst 入口技能，按场景路由到对应流程技能。</desc>
 
   <defs>
     <marker id="s4-arrow" viewBox="0 0 10 10" refX="8" refY="5"
@@ -35,6 +35,6 @@
     <line x1="288" y1="15" x2="304" y2="15" stroke="#3D4A61" stroke-width="2" marker-end="url(#s4-arrow)"/>
     <rect x="308" y="0" width="190" height="30" rx="8" fill="#141B27" stroke="#2A3548"/>
     <text x="403" y="20" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
-          font-size="16" fill="#E6EBF2">using-flowstate</text>
+          font-size="16" fill="#E6EBF2">using-fst</text>
   </g>
 </svg>

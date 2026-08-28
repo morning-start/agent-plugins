@@ -29,12 +29,12 @@ async function assertHookJson(label, cmd, args) {
 
 test("session-start.sh emits valid JSON with routing table", { skip: IS_POSIX ? false : "bash resolves to WSL on Windows; POSIX-only" }, async () => {
   const ctx = await assertHookJson("bash", "bash", [join(ROOT, "hooks", "session-start.sh")]);
-  assert.ok(ctx.includes("using-flowstate"), "bash: entry skill named");
+  assert.ok(ctx.includes("using-fst"), "bash: entry skill named");
 });
 
 test("session-start.ps1 emits valid JSON with routing table", async () => {
   const ctx = await assertHookJson("powershell", "powershell", [
     "-NoProfile", "-ExecutionPolicy", "Bypass", join(ROOT, "hooks", "session-start.ps1"),
   ]);
-  assert.ok(ctx.includes("using-flowstate"), "powershell: entry skill named");
+  assert.ok(ctx.includes("using-fst"), "powershell: entry skill named");
 });

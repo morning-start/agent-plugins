@@ -8,7 +8,7 @@ const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 
 const contracts = [
   {
-    name: "using-flowstate",
+    name: "using-fst",
     required: [
       "fst-init",
       "fst-change",

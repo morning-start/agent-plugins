@@ -21,7 +21,7 @@ the canonical source.
 
 ## Use
 
-- Entry: `using-flowstate` skill routes to the right `fst-*` skill
+- Entry: `using-fst` skill routes to the right `fst-*` skill
   (fst-init / fst-change / fst-review / fst-iterate) based on the situation.
 - Bootstrap: `.opencode/plugins/fst-bootstrap.ts` injects the entry skill
   into session context (single marker `FLOWSTATE_BOOTSTRAP:flowstate`).
