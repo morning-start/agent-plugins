@@ -5,10 +5,19 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-23
     updated: 2026-08-28
   keywords_zh: "调研, 调查, 分析, 研究报告, 技术选型, 方案对比, research, report, 证据"
+
+  tests: [tests/skill-contracts.test.mjs]
+  role: capability
+  layer: cross-cutting
+  invokes: [fst-workplace]
+  handoffs_to: [caller]
+
+  handoffs_from: [fst-init, fst-change, fst-iterate, fst-review]
+  owns: [evidence, analysis]
 ---
 
 # fst-research — 分析调查（横切能力：调查 → 分析 → 报告）

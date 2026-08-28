@@ -5,10 +5,16 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-08
     updated: 2026-08-28
   keywords_zh: "迭代, 分批开发, Git分支, 技术债, 回顾, plan, task"
+  role: lifecycle
+  layer: lifecycle
+  invokes: [fst-workplace, fst-review, fst-research, fst-promote]
+  handoffs_to: [fst-review]
+  handoffs_from: [fst-init, fst-change, fst-review]
+  owns: [N4, N8, execution]
   tests: [tests/skill-contracts.test.mjs]
 ---
 

@@ -1,3 +1,25 @@
+---
+name: loop
+strategy: loop
+role: execution-mode
+layer: agent-modes
+default: false
+select_when: [goal-clear, boundary-uncertain, feedback-signal]
+escalates_to: [spec, graph, todo]
+escalation: [spec, graph, todo]
+composes_with: [spec, todo]
+state: state/goal.md
+input: fst-iterate
+boundary: bounded-single-goal
+acceptance: verifiable-completion-condition
+verification: per-round-fresh-signal
+evidence: round-signal
+exit: stop-on-target
+tests: [tests/agent-modes.test.mjs]
+---
+
+> 模式注册、选择协议与统一契约见 [README.md](README.md)。
+
 # Loop 模式（目标循环）
 
 > **文件名说明**：本文件 `goal.md` 是历史遗留名；模式的**策略名与 `strategy` 字段均为 `loop`**

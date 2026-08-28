@@ -1,3 +1,25 @@
+---
+name: graph
+strategy: graph
+role: execution-mode
+layer: agent-modes
+default: false
+select_when: [dependency-complex, parallel-work, cross-module]
+escalates_to: [spec, loop, todo]
+escalation: [spec, loop, todo]
+composes_with: [spec, loop, todo]
+state: state/checkpoint.json
+input: fst-iterate
+boundary: dependency-dag
+acceptance: node-dod
+verification: per-node-verification
+evidence: node-output
+exit: stop-on-dag-complete
+tests: [tests/agent-modes.test.mjs]
+---
+
+> 模式注册、选择协议与统一契约见 [README.md](README.md)。
+
 # Graph 模式（依赖图编排）
 
 > **一句话**：把工作建模为**带依赖关系的节点图**，按拓扑顺序推进，无依赖的节点并行执行。

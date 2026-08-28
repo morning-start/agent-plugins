@@ -5,10 +5,19 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-26
     updated: 2026-08-28
   keywords_zh: "定稿, 提升, 闸门, 发布, 确认, 溯源, promote, gate"
+
+  tests: [tests/skill-contracts.test.mjs]
+  role: capability
+  layer: cross-cutting
+  invokes: [fst-workplace]
+  handoffs_to: [docs]
+
+  handoffs_from: [fst-init, fst-change, fst-iterate, fst-review, fst-research]
+  owns: [promotion-gate, HITL]
 ---
 
 # fst-promote — 定稿闸门（过程文档 → 定稿文档）

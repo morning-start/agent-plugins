@@ -6,6 +6,8 @@
 
 当 `.agent-workplace/` 中的过程文档已经审核完成，需要提升为正式 `docs/` 中的定稿文档时使用。
 
+执行本命令前，加载并遵循 `skills/fst-promote/SKILL.md`。
+
 ## 用法
 
 ```bash

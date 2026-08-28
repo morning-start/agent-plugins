@@ -1,3 +1,25 @@
+---
+name: todo
+strategy: todo
+role: execution-mode
+layer: agent-modes
+default: false
+select_when: [single-file, trivial-diff, low-risk]
+escalates_to: [spec, loop, graph]
+escalation: [fst-change, spec, loop, graph]
+composes_with: []
+state: state/checkpoint.json
+input: fst-iterate
+boundary: single-low-risk-diff
+acceptance: minimal-verification-passes
+verification: build-or-smoke
+evidence: verification-output
+exit: stop-after-diff
+tests: [tests/agent-modes.test.mjs]
+---
+
+> 模式注册、选择协议与统一契约见 [README.md](README.md)。
+
 # Todo 模式（简单任务直接做）
 
 > **一句话**：能用一个 diff 说清的单点改动，直接做，不套流程。

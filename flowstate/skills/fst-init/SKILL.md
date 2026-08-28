@@ -9,6 +9,12 @@ metadata:
     created: 2026-08-08
     updated: 2026-08-28
   keywords_zh: "立项, 初始化, 新项目, 已有项目, 迁移, 接入, 需求分层, 范围冻结, 柔性设计"
+  role: lifecycle
+  layer: lifecycle
+  invokes: [fst-workplace, fst-research, fst-promote]
+  handoffs_to: [fst-iterate]
+  handoffs_from: [using-fst]
+  owns: [N1, N2, N3]
   tests: [tests/skill-contracts.test.mjs]
 ---
 

@@ -5,10 +5,17 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-09
     updated: 2026-08-28
   keywords_zh: "工作区, .agent-workplace, 落点, 提交边界, 初始化, 过程态, 定稿, 迭代"
+  role: capability
+  layer: cross-cutting
+  invokes: []
+  handoffs_to: [all]
+
+  handoffs_from: [using-fst, fst-init, fst-change, fst-iterate, fst-review, fst-research, fst-promote]
+  owns: [workspace, placement, checkpoint]
   tests: [tests/skill-contracts.test.mjs]
 ---
 

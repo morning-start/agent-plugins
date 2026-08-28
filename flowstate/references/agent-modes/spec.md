@@ -1,3 +1,25 @@
+---
+name: spec
+strategy: spec
+role: execution-mode
+layer: agent-modes
+default: true
+select_when: [acceptance-clear, dependency-simple]
+escalates_to: [loop, graph]
+escalation: [loop, graph]
+composes_with: [todo]
+state: state/checkpoint.json
+input: fst-iterate
+boundary: task-list-with-acceptance
+acceptance: all-criteria-checked
+verification: task-verification-steps
+evidence: current-run-output
+exit: stop-on-all-checked
+tests: [tests/agent-modes.test.mjs]
+---
+
+> 模式注册、选择协议与统一契约见 [README.md](README.md)。
+
 # Spec 模式（验收驱动）
 
 > **一句话**：把工作拆成带**可验证验收标准**的任务，完成 = 验收标准逐项核销。

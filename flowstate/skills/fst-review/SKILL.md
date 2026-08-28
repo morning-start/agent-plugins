@@ -5,10 +5,16 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-08
     updated: 2026-08-28
   keywords_zh: "验收, DoD, 回归测试, 冒烟测试, 灰度发布"
+  role: lifecycle
+  layer: lifecycle
+  invokes: [fst-workplace, fst-promote]
+  handoffs_to: [fst-iterate, fst-promote]
+  handoffs_from: [fst-iterate, fst-change]
+  owns: [N6, N7]
   tests: [tests/skill-contracts.test.mjs]
 ---
 

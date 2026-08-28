@@ -5,14 +5,22 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-08
     updated: 2026-08-28
   keywords_zh: "flowstate入口, 路由, 流程编排, 状态图, 引导"
+  role: router
+  layer: entry
+  invokes: [fst-init, fst-change, fst-iterate, fst-review, fst-workplace, fst-research, fst-promote]
+  handoffs_to: [fst-init, fst-change, fst-iterate, fst-review]
+  handoffs_from: []
+  owns: [routing]
   tests: [tests/skill-contracts.test.mjs]
 ---
 
 # using-fst — 入口路由
+
+> 技能关系与边契约的唯一权威说明：[`references/skill-graph.md`](../../references/skill-graph.md)。本技能只负责选首个技能；横切能力由生命周期技能按需调用。
 
 flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按当前场景选择技能：
 

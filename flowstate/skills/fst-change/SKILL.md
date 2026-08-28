@@ -5,10 +5,16 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.2.0
+    version: 0.3.0
     created: 2026-08-08
     updated: 2026-08-28
   keywords_zh: "变更管控, 变更分级, 影响评估, 紧急通道, Hotfix, 需求变更"
+  role: lifecycle
+  layer: lifecycle
+  invokes: [fst-workplace, fst-research, fst-promote]
+  handoffs_to: [fst-iterate, fst-review]
+  handoffs_from: [using-fst]
+  owns: [N5, N9]
   tests: [tests/skill-contracts.test.mjs]
 ---
 

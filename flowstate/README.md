@@ -216,5 +216,7 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 - [`docs/ADR-0002-agent-graph.md`](docs/ADR-0002-agent-graph.md) — Agent 图编排决策
 - [`docs/glossary.md`](docs/glossary.md) — 术语表（DoD / 骨架开发 / 需求池）
 - [`docs/skill-split.md`](docs/skill-split.md) — 技能拆分方案
+ - [`references/skill-graph.md`](references/skill-graph.md) — 技能关系、交接边契约与越权边界
+- [`references/agent-modes/README.md`](references/agent-modes/README.md) — 操作模式注册、选择协议与统一契约
 - [`docs/agent-workplace.md`](docs/agent-workplace.md) — Agent 私有工作区规范
 - [`docs/documentation-structure.md`](docs/documentation-structure.md) — 文档结构约定

@@ -25,11 +25,12 @@
 | 我想… | 去这里 |
 |-------|--------|
 | 了解项目是做什么的 | `docs/PRD.md` §一（项目定位） |
-| 查技能分层、节点归属和产物所有权 | `docs/architecture.md` |
+| 查技能分层、节点归属和产物所有权 | `docs/architecture.md` · `../references/skill-graph.md` |
+| 查操作模式选择、切换和统一契约 | `../references/agent-modes/README.md` |
 | 看完整需求（功能 F1~F9） | `docs/PRD.md` §四 |
 | 查产出物模板字段（变更单/验收 Checklist） | `docs/PRD.md` §五 |
 | 看流程怎么流转、灰度门槛 | `docs/PRD.md` §六 |
-| 看 Agent 执行图（状态机/循环/HITL） | `docs/PRD.md` §七 |
+| 看 Agent 执行图（状态机/循环/HITL） | `docs/PRD.md` §七 · `../references/flow-graph.md` |
 | 查一个术语（DoD / 骨架开发 / 需求池） | `docs/glossary.md` |
 | 查为什么叫 flowstate / 前缀 fst- | `docs/ADR-0001-naming.md` |
 | 查为什么用图编排而不是线性流程 | `docs/ADR-0002-agent-graph.md` |
