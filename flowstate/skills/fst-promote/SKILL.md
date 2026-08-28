@@ -5,16 +5,16 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-26
-    updated: 2026-08-26
+    updated: 2026-08-28
   keywords_zh: "定稿, 提升, 闸门, 发布, 确认, 溯源, promote, gate"
 ---
 
 # fst-promote — 定稿闸门（过程文档 → 定稿文档）
 
 > 章节骨架与约定见 `references/skill-structure.md`；本技能是**双文档系统的核心闸门**——
-> 过程文档流向定稿目录的**唯一受控通道**。
+> 过程文档流向定稿目录的**唯一受控通道**。**落点规则见 `fst-workplace`**。
 
 ## 职责
 
@@ -102,11 +102,11 @@ approved_at: 2026-08-26T11:05:00Z
 
 1. 将渲染后的内容写入 `docs/` 目标路径
 2. 更新过程文档状态为 `APPROVED`
-3. 记录提升日志到 `.agent-workplace/iterations/current/meta/change-log.md`
+3. 记录提升日志到 `iterations/current/meta/change-log.md`
 
 ### 5. 更新文档状态索引
 
-更新 `.agent-workplace/state/document-status.json`：
+更新 `state/document-status.json`：
 
 ```json
 {
@@ -128,8 +128,8 @@ approved_at: 2026-08-26T11:05:00Z
 ## 关联最佳实践
 
 - **工作区管理**（`fst-workplace`）：落点规则——过程态 `.agent-workplace/`、定稿 `docs/`
-- **文档状态追踪**（`.agent-workplace/state/document-status.json`）：文档状态索引
-- **变更日志**（`.agent-workplace/iterations/current/meta/change-log.md`）：提升记录
+- **文档状态追踪**（`state/document-status.json`）：文档状态索引
+- **变更日志**（`iterations/current/meta/change-log.md`）：提升记录
 - **调研能力**（`fst-research`）：调研阶段的过程文档来源
 - **立项能力**（`fst-init`）：立项阶段的过程文档来源
 - **迭代能力**（`fst-iterate`）：开发阶段的过程文档来源
@@ -146,7 +146,7 @@ approved_at: 2026-08-26T11:05:00Z
     "source_version": "2026-08-26T10:30:00Z",
     "source_confidence": 0.85,
     "approver": "user@example.com",
-    "approved_at": "2026-08-26T11:00:00Z"
+    "approved_at": "2026-08-26T11:05:00Z"
   },
   "next": "caller skill (fst-init | fst-change | fst-iterate | fst-review)"
 }
@@ -161,8 +161,8 @@ approved_at: 2026-08-26T11:05:00Z
 - [ ] 已获得 HITL 确认
 - [ ] 已写入 `docs/` 目标路径
 - [ ] 已更新过程文档状态为 `APPROVED`
-- [ ] 已更新 `.agent-workplace/state/document-status.json`
-- [ ] 已记录提升日志到 `.agent-workplace/iterations/current/meta/change-log.md`
+- [ ] 已更新 `state/document-status.json`
+- [ ] 已记录提升日志到 `iterations/current/meta/change-log.md`
 
 ## 下一步
 

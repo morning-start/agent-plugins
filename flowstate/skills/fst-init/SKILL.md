@@ -5,9 +5,9 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-08
-    updated: 2026-08-09
+    updated: 2026-08-28
   keywords_zh: "立项, 需求分层, 范围冻结, 柔性设计, 核心底线"
   tests: [tests/skill-contracts.test.mjs]
 ---
@@ -15,10 +15,22 @@ metadata:
 # fst-init — 立项初始化（N1 立项 / N2 冻结 / N3 设计）
 
 > 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-init 独有内容。
+> **落点规则见 `fst-workplace`**，本技能只定义立项方法，不重复工作区规范。
 
 ## 职责
 
 项目启动的流程引导：**访谈 3 条核心底线 → 需求分层 → 冻结范围 → 柔性设计**。不追求一次调研完整——锁定底线、显式标记未知项、为后续变更预留拓展，是立项阶段的核心。
+
+## 落点（引用 fst-workplace）
+
+| 产物 | 落点 | 提交? |
+|------|------|-------|
+| 需求草稿、用例草稿 | `iterations/current/requirements/` | ❌ |
+| 设计草稿、取舍记录 | `iterations/current/design/` | ❌ |
+| 需求分层清单定稿 | 正式 `docs/requirements.md` 或 `docs/requirements/` | ✅ |
+| 范围说明书定稿 | 正式 `docs/scope.md` 或 `docs/scope/` | ✅ |
+| 柔性 PRD 定稿 | 正式 `docs/PRD.md` 或 `docs/prd/` | ✅ |
+| 风险清单定稿 | 正式 `docs/risks.md` 或 `docs/risks/` | ✅ |
 
 ## Iron Law
 
@@ -54,8 +66,8 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 项目根目录若无 `.agent-workplace/`，调用 `fst-workplace` 完成初始化
 （复制 `templates/agent-workplace/` → 项目根 + `.gitignore` 追加一行
-`.agent-workplace/`）。正式定稿写 `docs/`，过程态草稿/脚本写
-`.agent-workplace/`（不提交 git）。
+`.agent-workplace/`）。正式定稿写 `docs/`，过程态草稿写
+`.agent-workplace/iterations/current/`（不提交 git）。
 
 ### 2. 访谈 3 条核心底线（一次一问）
 
@@ -91,7 +103,7 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ### 6. 交接
 
-产出物写入正式 `docs/`（requirements.md、范围说明书、柔性 PRD）；过程态草稿放 `.agent-workplace/`（不提交 git）。
+产出物写入正式 `docs/`（requirements.md、范围说明书、柔性 PRD）；过程态草稿放 `iterations/current/requirements/` 和 `iterations/current/design/`（不提交 git）。
 
 ## 用户 vs Agent 分工
 
@@ -102,8 +114,8 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ## 关联最佳实践
 
+- **工作区落点**（`fst-workplace`）：requirements/ 和 design/ 属过程态（不提交 git）；定稿写正式 `docs/`
 - **流程框架**（`references/flow-graph.md`）：N1~N3 立项/冻结/设计节点在该框架内的执行
-- **工作区管理**（`fst-workplace`）：初始化 + 落点规则 + 目录结构（单点维护）
 - **执行衔接**（`fst-iterate` + `references/agent-modes/`）：立项产物在下一阶段由 spec / loop / graph 方略承接实现——本阶段（立项）不使用这些模式，只做访谈澄清与需求分层
 - 产出物 schema：5.1 需求分层清单、5.2 迭代范围说明书、5.5 风险清单
 
@@ -131,6 +143,7 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 - [ ] 未知/模糊需求已显式标记「待确认」，未脑补
 - [ ] 迭代范围说明书已签署（F2 冻结）
 - [ ] 柔性 PRD 已评审通过（F3 留拓展）
+- [ ] 过程态草稿落 `iterations/current/` 对应子目录，定稿写正式 `docs/`
 
 ## 下一步
 

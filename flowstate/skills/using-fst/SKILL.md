@@ -5,9 +5,9 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-08
-    updated: 2026-08-09
+    updated: 2026-08-28
   keywords_zh: "flowstate入口, 路由, 流程编排, 状态图, 引导"
   tests: [tests/skill-contracts.test.mjs]
 ---
@@ -24,9 +24,10 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 | 迭代开始、迭代回顾、下轮排期 | `fst-iterate` | N4 开发 / N8 持续迭代 |
 | 工作区初始化 / 落点判断 / 过程态管理 | `fst-workplace` | 基础能力（横切 N1~N9） |
 | 调研 / 分析 / 技术选型 / 方案对比 / 根因调查 | `fst-research` | 分析调查（横切 N1~N9） |
+| 过程文档定稿 / 发布到正式 docs/ | `fst-promote` | 定稿闸门（横切 N1~N9） |
 | 已批准范围内、能一句话说清 diff 的简单任务 | `fst-iterate` 的 lightweight todo | `fst-iterate` 最小执行路径 |
 
-`fst-iterate` 内含“方略选择”章节，不是独立入口：它只在需求已进入迭代执行后判断 lightweight todo 或 formal strategy（spec/loop/graph）。
+`fst-iterate` 内含"方略选择"章节，不是独立入口：它只在需求已进入迭代执行后判断 lightweight todo 或 formal strategy（spec/loop/graph）。
 
 ## 编排总览（技能间如何交接）
 
@@ -36,13 +37,15 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 |---------|---------|---------------------|
 | `fst-init` → `fst-iterate` | 柔性 PRD · 范围说明书 · 需求分层清单 · 风险清单 | 3 底线确认 + 范围签署 + PRD 评审通过 |
 | `fst-change` → `fst-iterate` | 变更申请单（CR-xxx，已归档） | 变更单归档 + 排期确认 |
-| `fst-iterate` → `fst-review` | 可测功能 · docs/task 状态 · 技术债清单 | 批次 Gate 通过 + 功能完成 |
+| `fst-iterate` → `fst-review` | 可测功能 · tasks 状态 · 技术债清单 | 批次 Gate 通过 + 功能完成 |
 | `fst-review` → `fst-iterate` | DoD 核销记录 · 灰度决策 | DoD 全 ✅ + 灰度指标达标（→ N8 回顾/下轮） |
 | `fst-change`(N9) → `fst-review` | 紧急 checkpoint · 补录变更单 | 阻断事故已修复（先修后补，24h 内） |
 | `fst-iterate`(N8) → `fst-iterate`(N4) | 迭代回顾报告 · 下轮范围 | 用户确认下轮范围（迭代闭环） |
+| 任意技能 → `fst-promote` | 过程文档（待提升） | 文档状态 `REVIEW_NEEDED` + 置信度 >= 0.8 |
 
 **闭环结构**：`fst-init → fst-iterate ⇄ fst-change / fst-review`；`fst-iterate` 内部 N8→N4 自闭环。
 `fst-workplace` 横切全流程：只提供工作区落点，不占用生命周期节点，也不产生交接产物。
+`fst-promote` 横切全流程：是过程文档流向定稿的唯一受控通道。
 
 ## 路由规则
 
@@ -55,7 +58,9 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 - 需要工作区初始化 / 落点判断 / 过程态管理 → `fst-workplace`
   （其他技能只引用它，不重复定义工作区规则）
 - 需要调研 / 分析 / 技术选型 / 方案对比 / 根因调查 → `fst-research`
-  （调查缓存落 `.agent-workplace/research/`，分析报告落 `.agent-workplace/report/`）
+  （调查产物落 `iterations/current/investigation/`）
+- 需要将过程文档发布为定稿 → `fst-promote`
+  （必须经 HITL 确认，不得绕过）
 - 迭代内方略选择 → 由 `fst-iterate` 自己完成（用户只确认 formal strategy，不单独触发路由段落）
 
 ## 核心原则（贯穿所有技能）
@@ -66,6 +71,7 @@ flowstate 把项目开发全流程建模为可执行状态图（N1~N9）。按�
 - **工作区先行**：新项目首次使用由 `fst-init` 初始化（调用 `fst-workplace`）；
   过程态私有区不提交 git，落点规则见 `fst-workplace`
 - **规划与执行分离**：`fst-change` 只做规划与约束（记录、分级、评估、审批、归档），不做代码实现；所有执行统一由 `fst-iterate` 按方略驱动
+- **双文档系统**：过程文档在 `.agent-workplace/` 中孵化，经 `fst-promote` 闸门审批后移入 `docs/` 归档
 
 ## 基础概念（30 秒版，单点维护）
 
@@ -73,10 +79,11 @@ flowstate 的核心概念各有**单一权威位置**，其他技能只引用、
 
 | 概念 | 一句话 | 权威位置 |
 |------|--------|---------|
-| **.agent-workplace** | Agent 私有工作区：过程态草稿/脚本/state 全部不提交 git | `fst-workplace`（初始化与落点的唯一权威） |
+| **.agent-workplace** | Agent 私有工作区：迭代感知的双文档系统，过程态全部不提交 git | `fst-workplace`（初始化与落点的唯一权威） |
 | **Agent Graph（执行图）** | N1~N9 状态图：节点=环节、边=DoD、闸门=HITL、检查点=Checkpoint | `docs/PRD.md` §七 · `references/flow-graph.md`（流程框架） · `references/agent-modes/graph.md`（图模式） |
 | **产出物 schema** | 5.1~5.9 产出物的 JSON 契约，可脚本校验 | `schemas/`（9 个 schema） |
 | **DoD（完成定义）** | 验收逐项核销，全部 ✅ 才放行 | `fst-review` · schema 5.4 |
+| **定稿闸门** | 过程文档 → 定稿文档的唯一受控通道，必须 HITL 确认 | `fst-promote` |
 
 > 规则：**概念只在入口概述，细节在权威位置单点维护**——需要初始化/落点/字段/核销
 > 细节时去对应权威位置；不要在多个技能里重复写同一规范。
@@ -98,6 +105,7 @@ NO ROUTING, NO WORK; NO ENTRY, NO SKILL
 - 跳过路由，直接凭"经验"调用某个 fst-* 技能
 - 场景已明确（如线上事故）却不走 `fst-change` 紧急通道
 - 项目无 `.agent-workplace/` 却开始写过程态产物（应先初始化）
+- 绕过 `fst-promote` 直接修改 `docs/` 中的定稿文档
 
 **All of these mean: Stop. Route first, then execute.**
 
@@ -106,6 +114,7 @@ NO ROUTING, NO WORK; NO ENTRY, NO SKILL
 - [ ] 已按场景路由到唯一的 fst-* 技能
 - [ ] 拿不准时已回退到 `fst-init` 锁底线
 - [ ] 入口提及的落点/初始化规则已指向 `fst-workplace`（未在本技能重复定义）
+- [ ] 定稿发布已指向 `fst-promote`（未绕过闸门）
 
 ## 下一步
 

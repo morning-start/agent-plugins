@@ -1,24 +1,39 @@
 ---
 name: fst-iterate
-description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: docs/plan (phases), docs/task (batches), Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph). Chooses the lightweight todo path for trivial diffs or a formal execution strategy (spec/loop/graph) for larger work, then drives planning, execution, and verification.
+description: Use when an iteration starts, when planning or tasking out development work, or for iteration retrospectives. Handles the iteration loop: development plans, task batches, Git-branch feature development, tech-debt tracking, and the continuous-iteration loop (N4+N8 in the flowstate execution graph). Chooses the lightweight todo path for trivial diffs or a formal execution strategy (spec/loop/graph) for larger work, then drives planning, execution, and verification.
 metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-08
-    updated: 2026-08-09
-  keywords_zh: "迭代, 分批开发, Git分支, 技术债, 回顾, docs/plan, docs/task"
+    updated: 2026-08-28
+  keywords_zh: "迭代, 分批开发, Git分支, 技术债, 回顾, plan, task"
   tests: [tests/skill-contracts.test.mjs]
 ---
 
 # fst-iterate — 迭代循环（N4 开发 / N8 持续迭代）
 
 > 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-iterate 独有内容。
+> **落点规则见 `fst-workplace`**，本技能只定义迭代方法，不重复工作区规范。
 
 ## 职责
 
-迭代开发与持续迭代闭环的执行引导：**盘点本轮需求（含变更）→ 按需求特征选方略（spec/loop/graph）→ 方略设计（docs/plan + docs/task）→ 按方略实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
+迭代开发与持续迭代闭环的执行引导：**盘点本轮需求（含变更）→ 按需求特征选方略（spec/loop/graph）→ 方略设计（plan + task）→ 按方略实现（Git 分支）→ 技术债 → 回顾 → 下轮排期**。小步快跑、动态补全，接受"需求永远做不全"。
+
+## 落点（引用 fst-workplace）
+
+| 产物 | 落点 | 提交? |
+|------|------|-------|
+| plan 草稿（分 phase） | `iterations/current/development/plan.md` | ❌ |
+| task 草稿（分批 + 验收标准） | `iterations/current/development/tasks.md` | ❌ |
+| 测试失败记录 | `iterations/current/development/test-failures/` | ❌ |
+| 重构建议 | `iterations/current/development/refactor-proposals/` | ❌ |
+| Agent 沙箱产物 | `iterations/current/development/agent-sandbox/` | ❌ |
+| 技术债清单 | `iterations/current/development/tech-debt.md` | ❌ |
+| 迭代回顾报告 | `iterations/current/meta/retrospective.md` | ❌ |
+| 变更日志 | `iterations/current/meta/change-log.md` | ❌ |
+| 可测功能代码 | 正式代码目录 | ✅ |
 
 ## 方略（strategy）选择
 
@@ -29,7 +44,7 @@ metadata:
 
 策略是执行维度而非互斥任务类型：Graph 节点可以使用 Spec 验收，Loop 轮次也可以包含 Graph 子任务。选择规则：**单点、低风险、无需探索 → lightweight todo；验收标准清晰 → spec；目标明确但需要多轮逼近 → loop；依赖复杂且需要并行 → graph。** 拿不准时优先 `spec`；只有 formal 任务的策略选择需要用户确认。
 
-`fst-iterate` 负责把 formal phase 落成 `docs/plan`（声明 strategy）+ `docs/task`（分批 + 验收标准），把 trivial diff 落成轻量 task，然后按策略执行。
+`fst-iterate` 负责把 formal phase 落成 `iterations/current/development/plan.md`（声明 strategy）+ `iterations/current/development/tasks.md`（分批 + 验收标准），把 trivial diff 落成轻量 task，然后按策略执行。
 
 > 方略不是拍脑袋选的，而是由本轮迭代的需求决定的——**先盘点需求，再判断 trivial/formal，formal 再确认策略，后设计，最后执行**；不盘点需求直接开写 plan 属于跳过决策。
 > 各模式执行方法见 `references/agent-modes/`（todo / spec / loop / graph；goal.md 仅为兼容文件名）。
@@ -41,11 +56,11 @@ NO PLAN, NO CODE; NO BATCH, NO WORK; NO TEST, NO MERGE
 ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 ```
 
-- 开发前必须先写 `docs/plan`（分 phase：要做什么/为什么做）与 `docs/task`（分批：内聚 + 顺序）
+- 开发前必须先写 `iterations/current/development/plan.md`（分 phase：要做什么/为什么做）与 `iterations/current/development/tasks.md`（分批：内聚 + 顺序）
 - 未写 plan/task 不得动代码；分批后一批一验（构建/冒烟）
 - **每批完成后必须通过基础测试（Schema 验证 + 构建 + 冒烟）才能进下一批**
 - 一个功能/变更单 = 一个 Git 分支，分支干净合并，不污染主干
-- 每批结束更新 docs/task 状态（Checkpoint），中断可续跑
+- 每批结束更新 tasks.md 状态（Checkpoint），中断可续跑
 - **所有代码实现必须经过本技能**：fst-init / fst-change / fst-review 只做各自的规划与约束，不做执行；实现统一由本技能按方略驱动
 
 ## Red Flags — STOP and Re-evaluate
@@ -78,7 +93,7 @@ ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 
 > 铁律：**先盘点需求，再判断 trivial/formal，formal 再确认策略，后设计，最后执行。**
 
-### 1. 方略设计：写 docs/plan（分 phase + 声明方略）
+### 1. 方略设计：写 plan（分 phase + 声明方略）
 
 根据本轮需求清单，按**大阶段**拆分多个 phase（如：基础层 → 核心流程 → 交互/外围 → 打磨/上线准备）。每个 phase 写清：
 
@@ -88,10 +103,10 @@ ALL EXECUTION FLOWS THROUGH HERE — CHANGE SKILLS PLAN, THIS SKILL EXECUTES
 
 phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
-> 落点：docs/plan 为**过程态**，默认落 `.agent-workplace/docs/plan/`（不提交 git），
+> 落点：plan 为**过程态**，落 `iterations/current/development/plan.md`（不提交 git），
 > 见 `fst-workplace`。
 
-### 2. 方略设计：细化 docs/task（分批 + 验收标准）
+### 2. 方略设计：细化 task（分批 + 验收标准）
 
 每个 phase 下的任务**分批次（batch）**，分批依据：
 
@@ -106,7 +121,7 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 - `loop` → 该 phase/task 走目标循环（`state/goal.md` 完成条件 + 每轮自评）
 - `graph` → 任务用 `deps` 标依赖边，按拓扑推进、可并行
 
-> 落点：docs/task 为**过程态**，默认落 `.agent-workplace/docs/task/`（不提交 git），
+> 落点：task 为**过程态**，落 `iterations/current/development/tasks.md`（不提交 git），
 > 见 `fst-workplace`。
 
 ### 3. 按方略实现（Git 分支开发，F4.2）
@@ -150,9 +165,11 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 骨架开发、配置化妥协必然产生技术债——登记（schema 5.6）：妥协说明、为何妥协、计划偿还迭代。不登记就会越积越多。
 
+> 落点：`iterations/current/development/tech-debt.md`
+
 ### 5. 迭代末回顾（N8，持续迭代闭环）
 
-生成**迭代回顾报告**（schema 5.7）：
+生成**迭代回顾报告**：
 
 - 交付统计：计划 vs 完成、DoD 核销率
 - 变更统计：变更次数、分级分布、紧急次数
@@ -160,11 +177,13 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 - 风险与技术债：当前清单快照
 - 下轮建议：需求池排序、范围建议
 
+> 落点：`iterations/current/meta/retrospective.md`
+
 用户确认下轮迭代范围后，回到第 1 步——**持续迭代闭环（N8→N4）**。
 
 ### 6. 交接
 
-- **交接产物**：可测功能代码 + docs/task 状态（每批已更新）+ 技术债清单
+- **交接产物**：可测功能代码 + tasks.md 状态（每批已更新）+ 技术债清单
 - **交接信号**：本轮功能完成 + 批次验收 Gate 全部通过
 - **目标技能**：→ `fst-review`（变更针对性测试 + 核心回归 + DoD 核销 + 灰度）
 - 例外：迭代中冒出新需求/缺陷 → `fst-change`（不做实现，先变更管控）
@@ -173,16 +192,17 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 | 谁 | 做什么 |
 |---|--------|
-| **Agent** | 盘点需求、判断 trivial/formal、为 formal 任务选择并取得确认，写 docs/plan（phase + strategy）、细化 docs/task（分批 + 验收标准）、按策略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
+| **Agent** | 盘点需求、判断 trivial/formal、为 formal 任务选择并取得确认，写 plan（phase + strategy）、细化 task（分批 + 验收标准）、按策略实现（Git 分支）、维护技术债、生成回顾报告、需求池排序建议。**所有代码实现的唯一执行入口** |
 | **用户** | **确认方略选型**、确认 phase/批次划分、确认下轮迭代范围、迭代末验收 |
 
 ## 关联最佳实践
 
+- **工作区落点**（`fst-workplace`）：development/ 与 meta/ 属过程态（不提交 git）
 - **Spec 方略**（`references/agent-modes/spec.md`）：默认方略，任务带验收标准逐项核销（可验证）
 - **Loop 方略**（`references/agent-modes/goal.md`）：目标循环（N8→N4 loop），完成条件 + 每轮自评
 - **Graph 方略**（`references/agent-modes/graph.md`）：任务依赖图，deps 拓扑推进、可并行
 - **Lightweight todo**（`references/agent-modes/todo.md`）：trivial diff 的轻量清单与最小验证
-- 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 docs/plan（含 strategy 字段）、5.9 docs/task（含 acceptance 字段）
+- 产出物 schema：5.6 技术债清单、5.7 迭代回顾报告、5.8 plan（含 strategy 字段）、5.9 task（含 acceptance 字段）
 
 ## 输出
 
@@ -207,7 +227,7 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 - [ ] 已盘点本轮需求清单（REQ-xxx + CR-xxx + 需求池条目，按新功能/改动/缺陷/技术债分类）
 - [ ] 已盘点需求，并判断为 lightweight todo 或 formal strategy
-- [ ] docs/plan 与 docs/task 已写（过程态落 `.agent-workplace/docs/`）
+- [ ] plan 与 task 已写（过程态落 `iterations/current/development/`）
 - [ ] 每个 formal phase 已声明方略（`strategy`：spec / loop / graph）；trivial phase 未写 strategy
 - [ ] 任务已分批（内聚 + 顺序），每批可独立验证
 - [ ] spec 方略：任务带验收标准（acceptance），完成 = 逐项核销
@@ -215,8 +235,8 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 - [ ] graph 方略：任务已用 `deps` 标依赖，按拓扑推进
 - [ ] **每批完成后已通过批次验收 Gate（`npm test` + 构建 + 冒烟 + 自检）**
 - [ ] 变更单已归档才开分支（一个变更单 = 一个功能分支）；变更的实现由本技能驱动，非 fst-change
-- [ ] 技术债已登记（schema 5.6）
-- [ ] 迭代回顾报告已生成（schema 5.7）
+- [ ] 技术债已登记（`iterations/current/development/tech-debt.md`）
+- [ ] 迭代回顾报告已生成（`iterations/current/meta/retrospective.md`）
 
 ## 下一步
 

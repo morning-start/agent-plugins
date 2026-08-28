@@ -5,9 +5,9 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-08
-    updated: 2026-08-09
+    updated: 2026-08-28
   keywords_zh: "验收, DoD, 回归测试, 冒烟测试, 灰度发布"
   tests: [tests/skill-contracts.test.mjs]
 ---
@@ -15,10 +15,21 @@ metadata:
 # fst-review — 验收审查（N6 测试 / N7 灰度）
 
 > 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-review 独有内容。
+> **落点规则见 `fst-workplace`**，本技能只定义验收方法，不重复工作区规范。
 
 ## 职责
 
 迭代/变更的验收环节：**变更针对性测试 → 核心回归 → 骨架冒烟 → 灰度方案 → DoD 核销 → 放量决策**。边开发边改需求的场景下，旧功能易被新改动破坏，测试不能只测新功能。
+
+## 落点（引用 fst-workplace）
+
+| 产物 | 落点 | 提交? |
+|------|------|-------|
+| 测试报告草稿 | `iterations/current/release/risk-checklists/` | ❌ |
+| 回滚预案草稿 | `iterations/current/release/rollback-plans/` | ❌ |
+| DoD 核销草稿 | `iterations/current/release/dod-checklist.md` | ❌ |
+| 灰度方案草稿 | `iterations/current/release/gray-release.md` | ❌ |
+| 测试报告/DoD 定稿 | 正式 `docs/` | ✅ |
 
 ## Iron Law
 
@@ -88,8 +99,8 @@ NO DOD, NO SHIP
 
 ### 6. 交接
 
-- 测试报告、回归结果、缺陷清单：**定稿**写正式 `docs/`（提交），过程态草稿落 `.agent-workplace/`（不提交 git）；落点规则见 `fst-workplace`
-- DoD 核销清单：定稿随验收记录写正式 `docs/`，草稿落 `.agent-workplace/`
+- 测试报告、回归结果、缺陷清单：**定稿**写正式 `docs/`（提交），过程态草稿落 `iterations/current/release/`（不提交 git）；落点规则见 `fst-workplace`
+- DoD 核销清单：定稿随验收记录写正式 `docs/`，草稿落 `iterations/current/release/`
 - 反馈汇总标记遗漏需求 → 需求池
 
 ## 用户 vs Agent 分工
@@ -101,6 +112,7 @@ NO DOD, NO SHIP
 
 ## 关联最佳实践
 
+- **工作区落点**（`fst-workplace`）：release/ 属过程态（不提交 git）；定稿写正式 `docs/`
 - **DoD 核销清单**（schema 5.4 `dod-checklist`）：逐项勾选核销，全部 ✅ 才可放行
 - 产出物 schema：5.4 迭代验收 Checklist
 
@@ -131,7 +143,7 @@ NO DOD, NO SHIP
 - [ ] 核心主干回归通过
 - [ ] 骨架冒烟通过（未确认需求不深测）
 - [ ] DoD 逐项核销，全部 ✅ 才进灰度
-- [ ] 测试报告/DoD 定稿写 `docs/`，过程态草稿落 `.agent-workplace/`
+- [ ] 测试报告/DoD 定稿写 `docs/`，过程态草稿落 `iterations/current/release/`
 
 ## 下一步
 

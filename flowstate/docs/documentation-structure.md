@@ -2,15 +2,17 @@
 
 - **状态**: Accepted（已接受）
 - **日期**: 2026-08-08
-- **用途**: 规范 flowstate 项目文档系统的结构——**必选 PRD**、双模式组织（小项目单文件 / 大项目文件夹，用户可选）、ADR 文件夹化、过程态与定稿分离。
-- **范围**: 项目正式 `docs/` 目录的组织；过程态（`.agent-workplace/`）见 `docs/agent-workplace.md`。
+- **迭代**: v0.5 — 移除 `.agent-workplace/` 结构定义（由 `fst-workplace` 和 `docs/agent-workplace.md` 管理）
+- **用途**: 规范 flowstate 项目正式 `docs/` 目录的结构——**必选 PRD**、双模式组织（小项目单文件 / 大项目文件夹，用户可选）、ADR 文件夹化。
+- **范围**: 项目正式 `docs/` 目录的组织；过程态（`.agent-workplace/`）见 `fst-workplace`（技能层权威）或 `docs/agent-workplace.md`（项目层规范）。
 
 ## 核心规则（铁律）
 
 1. **PRD 必选**：任何项目文档系统以 PRD 为根——**没有 PRD 不立项**，PRD 缺失时先用 `fst-init` 产出
-2. **过程态与定稿分离**：文档分为**定稿**（提交 git，放正式 `docs/`）与**过程态**（不提交，放 `.agent-workplace/`）——计划/任务/脚本尝试/草稿一律过程态
+2. **过程态与定稿分离**：文档分为**定稿**（提交 git，放正式 `docs/`）与**过程态**（不提交，放 `.agent-workplace/`）——计划/任务/脚本尝试/草稿一律过程态。落点规则见 `fst-workplace`
 3. **双模式可选**：项目按规模选择文档组织模式，声明在 `AGENTS.md` 或 `.flowstate.json` 的 `docs_mode` 字段
 4. **ADR 文件夹化**（大项目）：`docs/adr/ADR-0001-*.md` 按编号前缀排列，目录列表即可按序浏览决策史
+5. **定稿通过闸门**：所有定稿修改必须通过 `fst-promote` 闸门，不得绕过
 
 ## 双模式组织
 
@@ -25,17 +27,19 @@
 
 | 文档 | 轻量（单文件） | 文件夹（目录） | 对应流程 | 必选 |
 |------|---------------|---------------|---------|------|
-| **PRD** | `docs/PRD.md` | `docs/prd/` | F1~F3 立项/冻结/设计 | ✅ 必选 |
-| **ADR**（决策记录） | `docs/ADR.md` | `docs/adr/ADR-0001-*.md`（按编号） | F3 设计决策 | ✅ 必选 |
-| requirements（需求分层） | `docs/requirements.md` | `docs/requirements/` | F1/F2 | ✅ 必选 |
-| scope（迭代范围说明书） | `docs/scope.md` | `docs/scope/` | F2 冻结 | ✅ 必选 |
-| risk（风险清单） | `docs/risks.md` | `docs/risks/` | F1/F8 | 推荐 |
+| **PRD** | `docs/PRD.md` | `docs/prd/` | N1~N3 立项/冻结/设计 | ✅ 必选 |
+| **ADR**（决策记录） | `docs/ADR.md` | `docs/adr/ADR-0001-*.md`（按编号） | N3 设计决策 | ✅ 必选 |
+| requirements（需求分层） | `docs/requirements.md` | `docs/requirements/` | N1/N2 | ✅ 必选 |
+| scope（迭代范围说明书） | `docs/scope.md` | `docs/scope/` | N2 冻结 | ✅ 必选 |
+| risk（风险清单） | `docs/risks.md` | `docs/risks/` | N1/N8 | 推荐 |
 | glossary（术语表） | `docs/glossary.md` | `docs/glossary/` | 全程 | 推荐 |
-| change-request 定稿 | `docs/CR.md`（归档） | `docs/cr/` | F5 变更 | 定稿才落 |
+| change-request 定稿 | `docs/CR.md`（归档） | `docs/cr/` | N5 变更 | 定稿才落 |
+| DoD 核销记录 | `docs/dod.md` | `docs/dod/` | N6 验收 | 定稿才落 |
+| 测试报告 | `docs/test-report.md` | `docs/test-report/` | N6 验收 | 定稿才落 |
 
-> **report（调研报告）不在此列**：Agent 调研信息（调研结论、对比分析、研究报告）属于
-> **过程态**，放 `.agent-workplace/report/`（不提交 git）；只有需要留档、可追溯的
-> **调研定稿**才提升到正式 `docs/report.md` 或 `docs/report/`。
+> **调研报告不在此列**：Agent 调研信息（调研结论、对比分析、研究报告）属于
+> **过程态**，放 `.agent-workplace/iterations/current/investigation/`（不提交 git）；
+> 只有需要留档、可追溯的**调研定稿**才通过 `fst-promote` 提升到正式 `docs/`。
 
 ## ADR 文件夹化（大项目示例）
 
@@ -55,9 +59,11 @@ docs/adr/
 | 内容 | 位置 | 提交? |
 |------|------|-------|
 | PRD / ADR / requirements / scope / risk / glossary 定稿 | 正式 `docs/` | ✅ |
-| plan / task / scripts / 草稿 / 变更单草稿 / checklist 草稿 | `.agent-workplace/` | ❌ |
-| **report（Agent 调研信息）** | `.agent-workplace/report/` | ❌（调研定稿才提升到正式 docs/） |
-| change-request 归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅ |
+| plan / task / 草稿 / 变更单草稿 / checklist 草稿 | `.agent-workplace/iterations/current/` | ❌ |
+| **调研信息（Agent 调研）** | `.agent-workplace/iterations/current/investigation/` | ❌（调研定稿才通过 `fst-promote` 提升） |
+| change-request 归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅（须经 `fst-promote` 确认） |
+
+> 落点规则的完整定义见 `fst-workplace`（技能层权威）或 `docs/agent-workplace.md`（项目层规范）。
 
 ## 升级 / 降级规则
 
@@ -68,5 +74,5 @@ docs/adr/
 ## 与 flowstate 其他规范的关系
 
 - 产出物 schema（5.1~5.9）：定义文档内容的字段契约，见 `docs/PRD.md` §五
-- 工作区规范：过程态存放与 `.agent-workplace/` 结构，见 `docs/agent-workplace.md`
-- 技能拆分：各文档由哪个 `fst-*` 技能产出，见 `docs/skill-split.md`
+- 工作区规范：过程态存放与 `.agent-workplace/` 结构，见 `fst-workplace`（技能层）或 `docs/agent-workplace.md`（项目层）
+- 定稿闸门：过程文档 → 定稿的唯一受控通道，见 `fst-promote`

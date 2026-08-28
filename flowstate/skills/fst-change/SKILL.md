@@ -5,9 +5,9 @@ metadata:
   prefix: fst
   lifecycle:
     status: active
-    version: 0.1.0
+    version: 0.2.0
     created: 2026-08-08
-    updated: 2026-08-09
+    updated: 2026-08-28
   keywords_zh: "变更管控, 变更分级, 影响评估, 紧急通道, Hotfix, 需求变更"
   tests: [tests/skill-contracts.test.mjs]
 ---
@@ -15,12 +15,22 @@ metadata:
 # fst-change — 变更管控（N5 变更 / N9 紧急通道）
 
 > 章节骨架与约定见 `references/skill-structure.md`；下文仅保留 fst-change 独有内容。
+> **落点规则见 `fst-workplace`**，本技能只定义变更方法，不重复工作区规范。
 
 ## 职责
 
 需求变更与线上事故的**规划与约束**入口：**记录原文 → 变更分级 → 影响评估 → 审批排期 → 归档**。杜绝口头需求无痕消失，防止范围蔓延与烂尾。
 
 > **常规变更只规划约束，不做执行**。本技能产出变更申请单、影响评估、排期；具体实现全部交给 `fst-iterate`。唯一例外是 N9 线上 Hotfix：允许先修复阻断事故，之后必须补录并回到 `fst-review`。
+
+## 落点（引用 fst-workplace）
+
+| 产物 | 落点 | 提交? |
+|------|------|-------|
+| 变更单草稿 | `iterations/current/meta/change-log.md`（追加记录） | ❌ |
+| 影响评估草稿 | `iterations/current/meta/impact-{CR-id}.md` | ❌ |
+| 紧急 checkpoint | `state/checkpoint.json`（标记紧急状态） | ❌ |
+| 变更单归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅ |
 
 ## Iron Law
 
@@ -78,7 +88,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 - 用户确认分级；重大变更人工审批
 - 确认排期（本轮收尾 / 下轮 / 需求池）
-- 生成**变更申请单**（schema 5.3）：草稿落 `.agent-workplace/`（过程态），
+- 生成**变更申请单**（schema 5.3）：草稿落 `iterations/current/meta/`（过程态），
   归档定稿写正式 `docs/cr/` 或 `docs/CR.md`（提交）；落点规则见 `fst-workplace`
 
 ### 5. 紧急通道（Hotfix，N9）
@@ -110,6 +120,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 关联最佳实践
 
+- **工作区落点**（`fst-workplace`）：meta/ 属过程态（不提交 git）；归档定稿写正式 `docs/cr/`
 - **先探索后计划**（变更影响评估）：探索现状 → 影响评估 → 计划待用户确认才执行（这是 fst-change 的内部方法、非独立模式；影响点清单供 `fst-review` 做变更针对性测试）
 - 产出物 schema：5.3 变更申请单
 
@@ -135,7 +146,7 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 - [ ] 需求原文已逐字记录（未脑补、未转述美化）
 - [ ] 变更分级已由用户确认；重大变更已人工审批
-- [ ] 变更申请单已生成：草稿落 `.agent-workplace/`，归档定稿落 `docs/cr/` 或 `docs/CR.md`
+- [ ] 变更申请单已生成：草稿落 `iterations/current/meta/`，归档定稿落 `docs/cr/` 或 `docs/CR.md`
 - [ ] Hotfix 已走直通车并在 24h 内补单
 - [ ] 变更记录已归档，原因可追溯
 - [ ] 未做任何代码实现（实现交给 fst-iterate）
