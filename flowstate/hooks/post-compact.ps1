@@ -1,7 +1,7 @@
-# flowstate Post-Checkpoint Hook (PowerShell)
-# Checkpoint 保存后自动生成待提升文档清单
+# flowstate Post-Compact Hook (PowerShell)
+# 会话压缩（checkpoint 边界）后自动生成待提升文档清单
 
-Write-Host "flowstate Post-Checkpoint: 生成待提升文档清单..."
+Write-Host "flowstate Post-Compact: 生成待提升文档清单..."
 
 # 检查 document-status.json 是否存在
 if (-not (Test-Path ".agent-workplace/state/document-status.json")) {
@@ -123,4 +123,4 @@ $readyForPromotion += @"
 # 写入文件
 $readyForPromotion | Out-File -FilePath ".agent-workplace/state/ready-for-promotion.md" -Encoding UTF8
 
-Write-Host "flowstate Post-Checkpoint: 待提升文档清单已生成"
+Write-Host "flowstate Post-Compact: 待提升文档清单已生成"

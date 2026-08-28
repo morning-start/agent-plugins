@@ -1,10 +1,10 @@
 #!/bin/bash
-# flowstate Post-Checkpoint Hook
-# Checkpoint 保存后自动生成待提升文档清单
+# flowstate Post-Compact Hook (Claude Code PostCompact event)
+# 会话压缩（checkpoint 边界）后自动生成待提升文档清单
 
 set -e
 
-echo "flowstate Post-Checkpoint: 生成待提升文档清单..."
+echo "flowstate Post-Compact: 生成待提升文档清单..."
 
 # 检查 document-status.json 是否存在
 if [ ! -f ".agent-workplace/state/document-status.json" ]; then
@@ -53,5 +53,5 @@ $(jq -r '.documents[] | select(.stage == "release" and .type == "REVIEW_NEEDED")
 - 必须经过 HITL 确认
 EOF
 
-echo "flowstate Post-Checkpoint: 待提升文档清单已生成"
+echo "flowstate Post-Compact: 待提升文档清单已生成"
 exit 0

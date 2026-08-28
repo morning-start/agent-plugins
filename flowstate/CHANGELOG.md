@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Claude Code `hooks.json` load failure**: `PostCheckpoint` is not a
+  supported Claude Code hook event — remapped to `PostCompact` (checkpoint =
+  batch boundary = commit + session compaction); scripts renamed
+  `post-checkpoint.*` → `post-compact.*`.
+
 ## [0.2.0] - 2026-08-23
 
 **Single-source refactor: 7-skill pipeline, inlined strategy selection,

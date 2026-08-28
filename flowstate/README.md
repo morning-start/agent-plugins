@@ -38,7 +38,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 技能 `skills/` | 8 | 分场景引导（入口路由 + 6 个流程技能 + 2 个横切能力；方略选择内联于 fst-iterate） |
 | 命令 `commands/` | 5 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 12 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / 文档状态 / 事实核查 / 提升请求） |
-| 生命周期钩子 `hooks/` | 4 类 | SessionStart + PreCommit + PostCheckpoint + DocumentStatusCheck |
+| 生命周期钩子 `hooks/` | 4 类 | SessionStart + PreCommit + PostCompact + DocumentStatusCheck |
 | 工作区模板 `templates/` | 2 | 迭代模板 + 工作区模板 |
 
 ### 技能族

@@ -22,14 +22,14 @@
         ]
       }
     ],
-    "PostCheckpoint": [
+    "PostCompact": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/post-checkpoint.sh\"",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/post-compact.sh\"",
             "shell": "bash",
-            "description": "Generate ready-for-promotion document list after checkpoint"
+            "description": "Generate ready-for-promotion document list after context compaction (checkpoint boundary)"
           }
         ]
       },
@@ -37,9 +37,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/post-checkpoint.ps1\"",
+            "command": "& \"$env:CLAUDE_PLUGIN_ROOT/hooks/post-compact.ps1\"",
             "shell": "powershell",
-            "description": "Generate ready-for-promotion document list after checkpoint"
+            "description": "Generate ready-for-promotion document list after context compaction (checkpoint boundary)"
           }
         ]
       }
