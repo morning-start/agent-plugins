@@ -1,0 +1,11 @@
+{
+  "documents": [
+    {
+      "path": "docs/architecture.md",
+      "type": "APPROVED",
+      "confidence": 0.95,
+      "stage": "design"
+    }
+  ],
+  "not_a_real_field": true
+}

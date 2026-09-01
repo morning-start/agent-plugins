@@ -115,17 +115,28 @@ approved_at: 2026-08-26T11:05:00Z
 
 ### 5. 更新文档状态索引
 
-更新 `state/document-status.json`：
+更新 `state/document-status.json`（追加/更新 `documents` 数组中的对应条目）：
 
 ```json
 {
-  "path": "docs/architecture.md",
-  "type": "APPROVED",
-  "stage": "design",
-  "source": ".agent-workplace/iterations/iteration-XXX/design/tradeoffs/storage-choice.md",
-  "promoted_at": "2026-08-26T11:00:00Z"
+  "documents": [
+    {
+      "path": "docs/architecture.md",
+      "type": "APPROVED",
+      "stage": "design",
+      "iteration": "iteration-001",
+      "source": ".agent-workplace/iterations/iteration-XXX/design/tradeoffs/storage-choice.md",
+      "promoted_to": "docs/architecture.md",
+      "promoted_at": "2026-08-26T11:00:00Z",
+      "approver": "user@example.com",
+      "approved_at": "2026-08-26T11:05:00Z"
+    }
+  ],
+  "metadata": { "version": "1.0.0" }
 }
 ```
+
+> 结构与必填字段以 [`schemas/document-status.schema.json`](../schemas/document-status.schema.json) 为准。
 
 ## 用户 vs Agent 分工
 
@@ -164,17 +175,15 @@ approved_at: 2026-08-26T11:05:00Z
 }
 ```
 
-## 自检清单
+## 一致性机检
 
-- [ ] 过程文档状态为 `REVIEW_NEEDED` 且置信度 >= 0.8
-- [ ] 目标路径在 `docs/` 中有效
-- [ ] 已渲染转换为定稿格式
-- [ ] 已注入溯源元数据（来源、版本、确认记录）
-- [ ] 已获得 HITL 确认
-- [ ] 已写入 `docs/` 目标路径
-- [ ] 已更新过程文档状态为 `APPROVED`
-- [ ] 已更新 `state/document-status.json`
-- [ ] 已记录提升日志到 `iterations/current/meta/change-log.md`
+> 本技能的约束（`REVIEW_NEEDED` + `confidence >= 0.8`、`APPROVED` 溯源、`docs/` 授权）
+> **由机器强制保证**，不再靠手写清单：
+> - **不变量测试**：`tests/dual-document-consistency.test.mjs`（`npm test`，P1–P5）
+> - **会话结束门禁**：`hooks/document-status-check.{ps1,sh}`（SessionEnd，非法即阻断收尾）
+> - **提交门禁**：`hooks/pre-commit.{ps1,sh}`（P3——`docs/` 未授权即阻断提交）
+>
+> 修改以上任一约束：先改 [`schemas/document-status.schema.json`](../schemas/document-status.schema.json) + 对应测试，再同步 hooks，保持一致。
 
 ## 下一步
 

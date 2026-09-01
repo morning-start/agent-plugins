@@ -144,6 +144,41 @@ bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根>
 | 变更单归档定稿 | 正式 `docs/cr/` 或 `docs/CR.md` | ✅ |
 | DoD 核销记录、测试报告定稿 | 正式 `docs/` | ✅ |
 
+### 2.1 设计沉淀：迭代取舍 → 全局架构决策
+
+`design/` 里做的取舍分两种，**按性质分流**，切勿混层：
+
+| 设计产物 | 性质 | 落点 | 提交? |
+|---------|------|------|-------|
+| 当前迭代的方案取舍 / 原型 | 局部、短命、一次性 | `iterations/current/design/` | ❌ |
+| 跨迭代的架构决策（ADR） | 全局、慢变、需回溯 | `.agent-workplace/shared/adr/` → 定稿 `docs/adr/` | ❌→✅ |
+| 全局架构文档 | 系统长期结构 | `.agent-workplace/shared/architecture.md` → 定稿 `docs/architecture.md` | ❌→✅ |
+
+**何时把迭代内取舍上升为全局 ADR**（三条提问，命中即上升）：
+
+1. 未来迭代也要引用/遵守这个决策吗？
+2. 它描述的是系统长期结构，而不是本轮功能实现吗？
+3. 若不沉淀，下一个迭代是否会重复该取舍 / 违背该决策？
+
+**上升路径**（保留完整溯源链）：
+
+```
+iterations/current/design/tradeoffs/xxx.md   # 迭代内取舍（局部）
+   ⇣ fst-promote / 登记
+.agent-workplace/shared/adr/xxx.md           # 跨迭代共享 ADR（过程态共享层）
+   ⇣ fst-promote（HITL 确认）
+docs/adr/xxx.md                              # ADR 定稿（提交）
+```
+
+**登记要求**：上升时同步更新 `state/document-status.json`——
+- 取舍源记录 `type: REVIEW_NEEDED`、`promoted_to: .agent-workplace/shared/adr/xxx.md`
+- 共享 ADR 记录 `source` 指向该迭代 `design/` 的取舍文件、`promoted_to: docs/adr/xxx.md`
+- 定稿后 `type: APPROVED`（含 `source` / `promoted_to` / `approver`）
+
+> **一致性由机检保证**：`tests/dual-document-consistency.test.mjs` 的 P6 不变量校验——
+> `shared/adr/`、`docs/adr/` 下的 ADR 必须受管且 `APPROVED` 的 `source` 能追溯到迭
+> 代 `design/`（含 `shared/adr/` 链），防止架构决策凭空产生或游离未登记。
+
 ### 3. 目录结构（迭代感知，按图索骥）
 
 ```

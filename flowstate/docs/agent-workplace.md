@@ -26,6 +26,22 @@ docs/                    ← 成果层：只放人类审批过的定稿（提交
 3. **正式发布必须显式确认**：`.agent-workplace/` 中的过程稿通过 `fst-promote`
    闸门发布到正式目录；发布时保留来源、版本和确认记录，禁止静默覆盖正式文档。
 
+### 一致性由机检保证（SSOT + 测试 + 门禁）
+
+双文档的铁律不止写在文档里靠人遵守——它和 skill-graph / flow-graph 一样，走
+「单一权威 + 机检 + 硬门禁」：
+
+- **单一权威**：`state/document-status.json` 是文档生命周期的唯一状态索引，
+  结构与必填以 `schemas/document-status.schema.json` 为准；
+- **机检**：`tests/dual-document-consistency.test.mjs`（`npm test`）校验 P1–P6 不变量
+  （清单自洽、提升门槛、授权、状态机、溯源、设计沉淀）；
+- **硬门禁**：`hooks/document-status-check.*`（SessionEnd 阻断带病收尾）、
+  `hooks/pre-commit.*`（P3 阻断绕过 `fst-promote` 的 `docs/` 写入）。
+
+> 设计沉淀见 `fst-workplace` §2.1：迭代内取舍 → `shared/adr/`（共享）→ `docs/adr/`（定稿），
+> 保留完整溯源链，由 P6 机检保证「架构决策必须来自迭代设计」。
+> 修改约束时：先改 schema → 同步测试与 hooks，保持四处一致，勿只改文档。
+
 ## 为什么叫 .agent-workplace（而不是 .agent）
 
 - `.agent` 与常见的 `.agents`（多 agent 配置目录）易混淆；

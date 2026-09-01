@@ -1,86 +1,128 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Document Status",
-  "description": "文档状态追踪，用于管理文档的生命周期",
+  "title": "Document Status Index",
+  "description": "文档状态索引容器，用于追踪文档生命周期（.agent-workplace/state/document-status.json）",
   "type": "object",
   "properties": {
-    "path": {
-      "type": "string",
-      "description": "文档路径（相对于项目根目录）"
-    },
-    "type": {
-      "type": "string",
-      "enum": ["DRAFT", "REVIEW_NEEDED", "APPROVED", "ARCHIVED", "OBSOLETE"],
-      "description": "文档状态：DRAFT-草稿, REVIEW_NEEDED-待审核, APPROVED-已批准, ARCHIVED-已归档, OBSOLETE-已废弃"
-    },
-    "confidence": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1,
-      "description": "置信度评分（0-1），0.8 以上可提升"
-    },
-    "stage": {
-      "type": "string",
-      "enum": ["investigation", "requirements", "design", "development", "testing", "release"],
-      "description": "所属阶段"
-    },
-    "iteration": {
-      "type": "string",
-      "description": "所属迭代编号"
-    },
-    "related_docs": {
+    "documents": {
       "type": "array",
       "items": {
-        "type": "string"
+        "$ref": "#/definitions/document"
       },
-      "description": "关联文档列表"
+      "description": "全部文档状态条目"
     },
-    "human_feedback": {
-      "type": "string",
-      "description": "人类反馈记录"
-    },
-    "expires": {
-      "type": "string",
-      "format": "date",
-      "description": "过期日期"
-    },
-    "created_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "创建时间"
-    },
-    "updated_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "更新时间"
-    },
-    "promoted_to": {
-      "type": "string",
-      "description": "提升目标路径（如果已提升）"
-    },
-    "promoted_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "提升时间"
-    },
-    "inherited_from": {
-      "type": "string",
-      "description": "继承来源路径（如果从上一轮迭代继承）"
-    },
-    "approver": {
-      "type": "string",
-      "description": "审批人"
-    },
-    "approved_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "审批时间"
-    },
-    "notes": {
-      "type": "string",
-      "description": "备注信息"
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "索引格式版本"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": ["version"],
+      "additionalProperties": false
     }
   },
-  "required": ["path", "type", "stage", "iteration"],
-  "additionalProperties": false
+  "required": ["documents"],
+  "additionalProperties": false,
+  "definitions": {
+    "document": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "文档路径（相对于项目根目录）"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["DRAFT", "REVIEW_NEEDED", "APPROVED", "ARCHIVED", "OBSOLETE"],
+          "description": "文档状态：DRAFT-草稿, REVIEW_NEEDED-待审核, APPROVED-已批准, ARCHIVED-已归档, OBSOLETE-已废弃"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "置信度评分（0-1），0.8 以上可提升"
+        },
+        "stage": {
+          "type": "string",
+          "enum": ["investigation", "requirements", "design", "development", "testing", "release"],
+          "description": "所属阶段"
+        },
+        "iteration": {
+          "type": "string",
+          "description": "所属迭代编号"
+        },
+        "related_docs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "关联文档列表"
+        },
+        "human_feedback": {
+          "type": "string",
+          "description": "人类反馈记录"
+        },
+        "expires": {
+          "type": "string",
+          "format": "date",
+          "description": "过期日期"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "创建时间"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "更新时间"
+        },
+        "promoted_to": {
+          "type": "string",
+          "description": "提升目标路径（如果已提升）"
+        },
+        "promoted_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "提升时间"
+        },
+        "inherited_from": {
+          "type": "string",
+          "description": "继承来源路径（如果从上一轮迭代继承）"
+        },
+        "approver": {
+          "type": "string",
+          "description": "审批人"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "审批时间"
+        },
+        "source": {
+          "type": "string",
+          "description": "源文档路径（过程文档，升 APPROVED 时必填）"
+        },
+        "notes": {
+          "type": "string",
+          "description": "备注信息"
+        }
+      },
+      "required": ["path", "type", "stage", "iteration"],
+      "additionalProperties": false
+    }
+  }
 }

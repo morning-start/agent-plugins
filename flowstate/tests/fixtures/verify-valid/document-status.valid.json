@@ -1,0 +1,28 @@
+{
+  "documents": [
+    {
+      "path": "docs/architecture.md",
+      "type": "APPROVED",
+      "confidence": 0.95,
+      "stage": "design",
+      "iteration": "iteration-001",
+      "source": ".agent-workplace/iterations/current/design/tradeoffs/storage.md",
+      "promoted_to": "docs/architecture.md",
+      "approver": "user@example.com",
+      "approved_at": "2026-08-26T11:05:00Z"
+    },
+    {
+      "path": ".agent-workplace/iterations/current/investigation/fact-checks.md",
+      "type": "REVIEW_NEEDED",
+      "confidence": 0.85,
+      "stage": "investigation",
+      "iteration": "iteration-001"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": "2026-08-26T00:00:00Z",
+    "updated_at": "2026-08-26T00:00:00Z",
+    "description": "文档状态索引，用于追踪文档的生命周期"
+  }
+}
