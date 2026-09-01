@@ -27,8 +27,6 @@ VALID_STATUSES = {"pending", "in_progress", "blocked", "approved", "completed",
 VALID_PROJECT_TYPES = {"lib", "cli", "ffi", "wasm", "parser", "async"}
 VALID_TARGETS = {"native", "wasm", "wasm-gc", "js"}
 VALID_PIPELINES = {"development", "bugfix", "spike", "release"}
-VALID_FRAMEWORKS = {"moonbit-skills-standalone", "flowstate"}
-VALID_NODES = {f"N{i}" for i in range(1, 10)}
 
 
 def load_json(path):
@@ -92,13 +90,7 @@ def validate_state(state, schema_data=None):
         if not re.match(r'^[a-f0-9]{64}$', state["plan_sha256"]):
             errors.append("plan_sha256 must be 64 hex characters")
 
-    # FST-compatible fields (optional but validated when present)
-    if "node" in state and state["node"] is not None:
-        if state["node"] not in VALID_NODES:
-            errors.append(f"node must be one of {VALID_NODES}, got {state['node']!r}")
-    if "framework" in state:
-        if state["framework"] not in VALID_FRAMEWORKS:
-            errors.append(f"framework must be one of {VALID_FRAMEWORKS}, got {state['framework']!r}")
+    # Optional fields validated when present
     if "batch" in state:
         if not isinstance(state["batch"], int) or state["batch"] < 0:
             errors.append(f"batch must be integer >= 0, got {state.get('batch')!r}")
@@ -214,12 +206,10 @@ def init_state(plan_path, force=False, state_file=None):
     state = {
         "schema_version": 1,
         "pipeline": "development",
-        "node": "N3",
         "phase": "plan",
         "status": "in_progress",
         "batch": 0,
         "task_index": 0,
-        "framework": "moonbit-skills-standalone",
         "project_type": "lib",
         "targets": ["native"],
         "plan_file": os.path.relpath(plan_path),
@@ -247,6 +237,13 @@ def migrate_state(state):
     if "skills" in migrated:
         del migrated["skills"]
         changes.append("Removed deprecated 'skills' field")
+
+    # Old field migration: 'node' / 'framework' → removed (legacy execution-graph
+    # concept retired; phase now uniquely expresses the pipeline stage)
+    for field in ("node", "framework"):
+        if field in migrated:
+            del migrated[field]
+            changes.append(f"Removed deprecated '{field}' field")
 
     # Ensure required fields
     for field, default in [

@@ -9,7 +9,7 @@ workspace/
 **/.moonagent/
 docs/plans
 
-# Agent 私有工作区（flowstate 规范，不提交）
+# Agent 私有工作区（过程态，不提交）
 .agent-workplace/
 
 # Local Serena project memories are developer-machine state.

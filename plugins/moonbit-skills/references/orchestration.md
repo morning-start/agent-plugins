@@ -152,21 +152,19 @@
                     └──────────────────┘
 ```
 
-### 执行图语义（flowstate 对齐）
+### 管线语义
 
-moonbit-skills 管线按 **flowstate 执行图** 的语义建模（有 flowstate 时由 flowstate 驱动；无 flowstate 时本管线自包含同样语义）：
+moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门、检查点均由本插件的 `moonbit-*` 技能承担：
 
-| 图元素 | moonbit-skills 对应 |
+| 语义 | moonbit-skills 对应 |
 |--------|--------------------|
-| **节点（Node）** | 管线各阶段（plan / writing-plans / implement / verify / evaluate…） |
-| **边 + 守卫（Guard）** | 阶段间流转条件 = 门禁（如 verify 的 B1-B4+C1-C3 全绿才到 evaluate） |
-| **条件边** | 项目类型路由（lib→consumer 编译验证、main→moon run）、变更类型路由（Feature/Bug Fix） |
-| **循环（Loop）** | 设计回溯（implement/perform/refactor→plan）、testing↔implement 双向 |
+| **阶段** | 管线各阶段（plan / writing-plans / implement / verify / evaluate…） |
+| **守卫（Guard）** | 阶段间流转条件 = 门禁（如 verify 的 B1-B4+C1-C3 全绿才到 evaluate） |
+| **条件路由** | 项目类型路由（lib→consumer 编译验证、main→moon run）、变更类型路由（Feature/Bug Fix） |
+| **循环** | 设计回溯（implement/perform/refactor→plan）、testing↔implement 双向 |
 | **人工闸门（HITL）** | 用户决策点：plan 设计批准、evaluate"好了/再改"、deploy 策略批准 |
 | **检查点（Checkpoint）** | 批次边界（每批最多 5 任务）→ 提交 + 会话压缩，断点续跑 |
-| **短路（Shortcut）** | hotfix → implement（Bug Fix Mode）直通车 |
-
-**流程框架选择**：会话中检测到 flowstate（`fst-*` 技能或 `using-fst` 可用，或项目根有 flowstate 结构 `.agent-workplace/`）→ 由 flowstate 执行图驱动节点流转与 DoD 判据，moonbit-skills 提供 MoonBit 专项执行层；无 flowstate → 本管线自包含全部流程语义。检测规则与降级映射详见 `skills/using-moonbit-skills/SKILL.md`「流程框架选择（flowstate 优先）」。
+| **短路** | hotfix → implement（Bug Fix Mode）直通车 |
 
 ### 独立技能（单次调用）
 
@@ -307,7 +305,7 @@ using-moonbit-skills (alwaysApply, 路由入口)
 
 ## 管线持久化状态（单一状态文件）
 
-moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.json` 实现跨 Session 持久化，同时对齐 FST 的 checkpoint 语义。
+moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.json` 实现跨 Session 持久化与断点续跑，是本插件的唯一状态源。
 
 ### 状态文件结构
 
@@ -315,12 +313,10 @@ moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.j
 {
   "schema_version": 1,
   "pipeline": "development",
-  "node": "N4",
   "phase": "implement",
   "status": "in_progress",
   "batch": 1,
   "task_index": 5,
-  "framework": "moonbit-skills-standalone",
   "project_type": "cli",
   "primary_type": "parser",
   "capabilities": ["lexer", "tokenizer"],
@@ -334,27 +330,14 @@ moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.j
 ```
 
 字段说明：
-- `node`：对齐 FST 执行图节点（N1~N9）；无 flowstate 时按语义映射
 - `phase`：当前管线阶段
 - `batch`：当前批次编号（每批最多 5 任务）
 - `task_index`：当前批次内的任务索引
-- `framework`：标识当前使用的流程框架（`"moonbit-skills-standalone"` | `"flowstate"`）
 - `project_type` / `primary_type` / `capabilities` / `targets`：项目元数据
 - `plan_file`：计划文档路径（断点恢复关键锚点）
 - `tasks`：任务进度（total / completed / current）
 
 状态必须通过 `scripts/validate-pipeline-state.py --file .agent-workplace/state/checkpoint.json` 校验。
-
-**FST 节点映射**（无 flowstate 时的语义对齐）：
-
-| 管线阶段 | FST 节点 | 说明 |
-|---------|---------|------|
-| plan | N1 | 立项/需求澄清 |
-| writing-plans | N2-N3 | 范围冻结/设计 |
-| implement / task | N4 | 开发迭代 |
-| verify | N6 | 测试验收 |
-| evaluate | N7 | 灰度/发布准备 |
-| cd | N8 | 持续迭代/部署 |
 
 验证命令输出应另存为 `moonbit-verification.schema.json` 定义的验证产物，不要把检查详情混入管线状态文件。
 
@@ -366,14 +349,10 @@ moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.j
 Session 重新初始化
     │
     ├── 1. 检测 .agent-workplace/state/checkpoint.json
-    │   └── 存在 → 读取全部状态（node/phase/batch/task_index/tasks/plan_file），恢复到断点
+    │   └── 存在 → 读取全部状态（phase/batch/task_index/tasks/plan_file），恢复到断点
     │
-    ├── 2. 检测 .agent-workplace/docs/plan/PLAN.md
-    │   └── 存在 → 从计划文档重建任务列表上下文
-    │
-    └── 3. 有 flowstate？
-        ├── 是 → 按 FST checkpoint/resume 机制恢复（fst-iterate 驱动）
-        └── 否 → 按上述 moonbit-skills 自包含恢复
+    └── 2. 检测 .agent-workplace/docs/plan/PLAN.md
+        └── 存在 → 从计划文档重建任务列表上下文
 ```
 
 恢复时跳过重复的计划与探索逻辑，直接从断点继续执行。

@@ -240,12 +240,10 @@ moon add <pkg> → moon check（类型兼容性）→ moon test（行为不变�
 {
   "schema_version": 1,
   "pipeline": "development",
-  "node": "N4",
   "phase": "implement",
   "status": "in_progress",
   "batch": 1,
   "task_index": 4,
-  "framework": "moonbit-skills-standalone",
   "project_type": "lib",
   "targets": ["native"],
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",

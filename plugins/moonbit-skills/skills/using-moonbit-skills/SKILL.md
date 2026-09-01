@@ -118,80 +118,17 @@ These thoughts mean STOP — you are rationalizing:
 | 技能加载后执行失败 | 技能内部错误 | 报告失败技能和原因，尝试降级方案 |
 | 意图识别错误 | 用户说"不是这个意思" | 重新分类，使用修正后的技能 |
 
-## 流程框架选择（flowstate 优先）
+## 流程框架
 
-### 检测规则（按优先级从高到低，可执行判定）
+moonbit-skills 是**自包含的完整流程框架**，不依赖任何外部流程插件（如 flowstate）：
 
-```
-1. 会话上下文中存在 FLOWSTATE_BOOTSTRAP:flowstate 标记
-   → flowstate 已加载，直接进入降级模式
-
-2. 技能列表中 fst-init / fst-change / fst-review / fst-iterate / using-fst 可用
-   → flowstate 可加载，进入降级模式
-
-3. 项目根存在 .agent-workplace/state/checkpoint.json 且含 "framework": "flowstate"
-   → 项目已使用 flowstate，进入降级模式
-
-4. 项目根存在 .agent-workplace/ 且含 modes/ + state/ 子目录（flowstate 完整版结构）
-   → flowstate 结构存在，进入降级模式
-
-5. 以上均不满足
-   → 使用 moonbit-skills 自包含管线
-```
-
-> **注意**：SessionStart hook 会在注入 context 时自动检测并标记 `FST_DETECTED:true`（详见 `hooks/session-start`）。
-> Agent 读取 context 时优先检查该标记，避免重复检测。
-
-### 框架选择结果
-
-| 情形 | 流程框架 | moonbit-skills 角色 |
-|------|---------|-------------------|
-| **有 flowstate** | flowstate 执行图（N1~N9）驱动 | **MoonBit 专项执行层**：只提供 MoonBit 领域能力，不重新定义流程 |
-| **无 flowstate** | moonbit-skills 自包含管线 | 完整管线：流程 + MoonBit 专项都由本插件承担 |
-
-### 降级行为（有 flowstate 时）
-
-有 flowstate 时，moonbit-* 技能**降级为执行层**，在 flowstate 节点内提供 MoonBit 专属能力：
-
-| moonbit-* 技能 | FST 节点映射 | 降级后职责 |
-|---------------|-------------|-----------|
-| `moonbit-plan` | `fst-init` N3 设计 | MoonBit 架构/API 设计（在 fst-init 的设计阶段内执行） |
-| `moonbit-writing-plans` | `fst-iterate` N4 开发 | MoonBit 任务拆解（在 fst-iterate 的规划阶段内执行） |
-| `moonbit-scaffold` | `fst-iterate` N4 开发 | MoonBit 项目骨架生成（在 fst-iterate 内执行） |
-| `moonbit-implement` / `moonbit-task` | `fst-iterate` N4 开发 | MoonBit TDD 实现（在 fst-iterate 的开发节点内执行） |
-| `moonbit-testing` | `fst-iterate` N4 开发 | MoonBit 测试设计（与 implement 并行） |
-| `moonbit-code-review` | `fst-iterate` N4 开发 | MoonBit 任务间审查（fst-iterate 的任务间门禁） |
-| `moonbit-git` | `fst-iterate` N4 开发 | MoonBit 提交契约（在 fst-iterate 内执行） |
-| `moonbit-verify` | `fst-review` N6 测试 | MoonBit 验证门禁（在 fst-review 的测试节点内执行） |
-| `moonbit-evaluate` | `fst-review` N7 灰度 | MoonBit 发布验收（在 fst-review 的灰度节点内执行） |
-| `moonbit-cd` | `fst-iterate` N8 持续迭代 | MoonBit 部署执行（在 fst-iterate 的持续迭代节点内执行） |
-| `moonbit-perform` / `moonbit-refactor` | `fst-iterate` N4 开发 | MoonBit 优化/重构（在 fst-iterate 内执行） |
-| `moonbit-learn` | `fst-iterate` N8 回顾 | MoonBit 知识沉淀（在迭代回顾阶段执行） |
-| `moonbit-init` | `fst-workplace` 横切 | MoonBit 项目接入 + hooks 配置（在 fst-workplace 初始化后执行） |
-| `moonbit-ci` / `moonbit-docs` / `moonbit-security` | 横切 | 随时可调用的独立能力 |
-
-**降级约束**：
-- **流程层优先**：flowstate 的 Iron Law（`NO ROUTING, NO WORK` / `NO PLAN, NO CODE` / `NO DOD, NO SHIP`）优先于 moonbit-skills 的 Iron Law
-- **不重新定义流程**：moonbit-* 技能只提供"怎么做"（MoonBit 工具链 + 验证命令），不定义"做什么"和"何时做"
-- **DoD 由 flowstate 管**：moonbit-verify 的 B/C/E 门禁作为 fst-review DoD 的子集执行，不独立判定"完成"
-- **HITL 由 flowstate 管**：moonbit-implement 不自行决定"继续/停止"，由 flowstate 的 HITL 闸门控制
-- **Checkpoint 由 flowstate 管**：moonbit-git 的批次检查点对齐 flowstate 的 checkpoint 机制
-
-### 自包含行为（无 flowstate 时）
-
-无 flowstate 时，moonbit-skills 自包含全部流程语义：
-- 管线流转、DoD、HITL、Checkpoint 全部由本插件承担
-- 工作区结构升级为 FST 兼容版（详见 `references/project-contract.md` §二），使后续迁移到 flowstate 时无需重构
-- `state/checkpoint.json` 的 `framework` 字段为 `"moonbit-skills-standalone"`
-
-**分层原则（有 flowstate 时）**：
-- **流程层**（flowstate 负责）：节点流转、DoD 判据、HITL 闸门、Checkpoint、变更分级、工作区（`.agent-workplace/`）
-- **专项层**（moonbit-skills 负责）：MoonBit 工具链命令、项目类型模式、测试策略、安全审计、发布验收——**只提供能力，不重新定义流程**
-- 冲突时按 AGENTS.md「指令优先级」：用户要求 > 仓库约束 > 技能 > 参考
+- 管线流转、DoD、HITL 闸门、Checkpoint、断点续跑**全部由本插件承担**。
+- 项目工作区、状态文件、恢复机制由 `moonbit-*` 技能维护（详见 `references/project-contract.md` §二、`references/orchestration.md`「管线持久化状态」）。
+- 冲突时按 AGENTS.md「指令优先级」：用户要求 > 仓库约束 > 技能 > 参考。
 
 **插件自身 vs 用户项目**：
-- **插件自身开发**（本仓库）：`.agent-workplace/` 为 flowstate **完整版**（modes/ + state/ + docs/spec/），按 flowstate 规范执行——本仓库开发即采用 flowstate 框架。
-- **用户 MoonBit 项目**（目标项目）：无 flowstate 时用 **FST 兼容版**——从 `templates/agent-workplace/` 复制初始化（目录结构详见模板 `README.md`），由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖 flowstate 插件本身**；有 flowstate 时按上述流程层执行。
+- **插件自身开发**（本仓库）：遵循本插件的自包含管线与仓库工作规则（见 AGENTS.md）。
+- **用户 MoonBit 项目**（使用本技能的目标项目）：从 `templates/agent-workplace/` 复制初始化 `.agent-workplace/`，由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖任何外部流程框架**。
 
 ## Pipeline (recommended flow)
 
@@ -208,26 +145,26 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 
 ## Available Skills
 
-| Skill | When to Use | FST 节点（有 flowstate 时） |
+| Skill | When to Use | 管线阶段 |
 |-------|-------------|---------------------------|
-| `moonbit-init` | Project onboarding (existing or new), assess state, setup .agent-workplace/, git hooks, quality gates | `fst-workplace` 横切 |
-| `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement | 横切（随时可调用） |
-| `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs | 横切（随时可调用） |
-| `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning | 横切（随时可调用） |
-| `moonbit-plan` | Clarify requirements (goal/scenario/customer/boundary/maintenance), design architecture and API; macro design + module breakdown + rule carrying + maintainability | `fst-init` N3 设计 |
-| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular, maintenance phase) | `fst-iterate` N4 开发 |
-| `moonbit-scaffold` | Generate project skeleton from templates | `fst-iterate` N4 开发 |
-| `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) | `fst-iterate` N4 开发 |
-| `moonbit-perform` | Optimize performance with measurement-driven cycle | `fst-iterate` N4 开发 |
-| `moonbit-refactor` | Refactor code with test protection, eliminate code smells | `fst-iterate` N4 开发 |
-| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation; batch limit (≤5 tasks per batch); git commit contract (one-time authorization: if the target project's AGENTS.md already records auto-commit approval → auto branch → commit → merge after acceptance; otherwise ask once and record it) | `fst-iterate` N4 开发 |
-| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance, auto commit & merge on delivery per one-time authorization, batch checkpoint on completion | `fst-iterate` N4 开发 |
-| `moonbit-git` | Branch-per-task workflow, one-time authorization commit contract (ask once → record in target project AGENTS.md → auto commit & merge afterwards), worktree (user consent required), batch checkpoints | `fst-iterate` N4 开发 |
-| `moonbit-code-review` | Review code diff and design between tasks | `fst-iterate` N4 开发 |
-| `moonbit-verify` | Full quality gate: fmt, check, test, audit | `fst-review` N6 测试 |
-| `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment | `fst-review` N7 灰度 |
-| `moonbit-cd` | Deployment execution, artifact management, rollback planning | `fst-iterate` N8 持续迭代 |
-| `moonbit-learn` | Extract lessons from bugs, update skills | `fst-iterate` N8 回顾 |
+| `moonbit-init` | Project onboarding (existing or new), assess state, setup .agent-workplace/, git hooks, quality gates | 接入 |
+| `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement | 随时可调用 |
+| `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs | 随时可调用 |
+| `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning | 随时可调用 |
+| `moonbit-plan` | Clarify requirements (goal/scenario/customer/boundary/maintenance), design architecture and API; macro design + module breakdown + rule carrying + maintainability | plan |
+| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular, maintenance phase) | writing-plans |
+| `moonbit-scaffold` | Generate project skeleton from templates | scaffold |
+| `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) | 开发（与 implement 并行） |
+| `moonbit-perform` | Optimize performance with measurement-driven cycle | 优化 |
+| `moonbit-refactor` | Refactor code with test protection, eliminate code smells | 重构 |
+| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation; batch limit (≤5 tasks per batch); git commit contract (one-time authorization: if the target project's AGENTS.md already records auto-commit approval → auto branch → commit → merge after acceptance; otherwise ask once and record it) | implement |
+| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance, auto commit & merge on delivery per one-time authorization, batch checkpoint on completion | implement |
+| `moonbit-git` | Branch-per-task workflow, one-time authorization commit contract (ask once → record in target project AGENTS.md → auto commit & merge afterwards), worktree (user consent required), batch checkpoints | 开发（任务验收后） |
+| `moonbit-code-review` | Review code diff and design between tasks | 开发（任务间） |
+| `moonbit-verify` | Full quality gate: fmt, check, test, audit | verify |
+| `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment | evaluate |
+| `moonbit-cd` | Deployment execution, artifact management, rollback planning | cd |
+| `moonbit-learn` | Extract lessons from bugs, update skills | 回顾 |
 
 ## 路由后自检清单
 

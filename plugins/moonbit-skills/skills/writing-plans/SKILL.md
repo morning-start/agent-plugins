@@ -26,7 +26,7 @@ NO IMPLEMENTATION WITHOUT A WRITTEN PLAN FIRST
 - [ ] 每个任务含明确的文件操作（Create/Modify/Test）和接口签名
 - [ ] 每个任务含验证命令（如 `moon test -f "test_name"`）
 - [ ] 每个任务聚焦**单个功能点**，目标过大已拆分（单任务不跨多个模块）
-- [ ] 任务按批次组织（每批最多 5 个），批次标注边界（flowstate 规范：批次按内聚程度 + 实现顺序，一批一验）
+- [ ] 任务按批次组织（每批最多 5 个），批次按内聚程度 + 实现顺序组织，一批一验
 - [ ] 计划文件中无占位符（搜索 `TODO`、`TBD`、`参照`、`类似上面`）
 
 未满足以上任一 → Iron Law 触发：停止，先完善计划。
@@ -179,11 +179,9 @@ src/
 
 ```json
 {
-  "node": "N3",
   "phase": "plan",
   "batch": 0,
   "task_index": 0,
-  "framework": "moonbit-skills-standalone",
   "project_type": "<从 plan 输出获取>",
   "targets": ["<从 plan 输出获取>"],
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",
@@ -275,7 +273,7 @@ src/
 
 ## 持久化状态与输出
 
-计划文档生成后， Agent 必须在 `.agent-workplace/state/checkpoint.json` 初始化管线状态（唯一状态源，FST 兼容）：
+计划文档生成后， Agent 必须在 `.agent-workplace/state/checkpoint.json` 初始化管线状态（唯一状态源）：
 
 ### 断点恢复契约 — Phase 切换时更新 plan_file
 
@@ -289,12 +287,10 @@ src/
 {
   "schema_version": 1,
   "pipeline": "development",
-  "node": "N3",
   "phase": "plan",
   "status": "in_progress",
   "batch": 0,
   "task_index": 0,
-  "framework": "moonbit-skills-standalone",
   "project_type": "lib",
   "targets": ["native"],
   "plan_file": ".agent-workplace/docs/plan/PLAN.md",
@@ -311,7 +307,7 @@ src/
 
 **Phase 切换检查点（进入新 Phase 前必做）**：
 1. 为 Phase 2 生成/获取新的拆解文档（`.agent-workplace/docs/task/` 或项目约定位置）
-2. 更新 `checkpoint.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数、`node` 更新为对应 FST 节点
+2. 更新 `checkpoint.json`：`plan_file` → 新文档路径、`tasks.total/completed/current` 重置为 Phase 2 计数、`phase` 更新为对应管线阶段
 3. 用 `python scripts/validate-pipeline-state.py --file .agent-workplace/state/checkpoint.json` 校验状态文件合法
 4. 再开始 Phase 2 的第一个任务
 

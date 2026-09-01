@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/morning-start/moonbit-skills/schemas/moonbit-pipeline.schema.json",
   "title": "MoonBit Pipeline State (Checkpoint)",
-  "description": "Persistent pipeline state and FST-compatible checkpoint for MoonBit development skills. Single source of truth for session recovery. Stored at .agent-workplace/state/checkpoint.json. Written by writing-plans, updated by implement/verify/evaluate/cd/learn.",
+  "description": "Persistent pipeline state and checkpoint for MoonBit development skills. Single source of truth for session recovery. Stored at .agent-workplace/state/checkpoint.json. Written by writing-plans, updated by implement/verify/evaluate/cd/learn.",
   "type": "object",
   "required": [
     "schema_version",
@@ -23,11 +23,6 @@
       "type": "string",
       "enum": ["development", "bugfix", "spike", "release"],
       "description": "Pipeline mode"
-    },
-    "node": {
-      "type": "string",
-      "pattern": "^N[1-9]$",
-      "description": "FST execution graph node (N1-N9). Maps pipeline phase to FST semantics."
     },
     "phase": {
       "type": "string",
@@ -55,11 +50,6 @@
       "type": "integer",
       "minimum": 0,
       "description": "Current task index within the batch"
-    },
-    "framework": {
-      "type": "string",
-      "enum": ["moonbit-skills-standalone", "flowstate"],
-      "description": "Active workflow framework. 'flowstate' when FST drives the execution graph."
     },
     "project_type": {
       "type": "string",
@@ -128,12 +118,10 @@
     {
       "schema_version": 1,
       "pipeline": "development",
-      "node": "N4",
       "phase": "implement",
       "status": "in_progress",
       "batch": 1,
       "task_index": 5,
-      "framework": "moonbit-skills-standalone",
       "project_type": "cli",
       "primary_type": "parser",
       "capabilities": ["lexer", "tokenizer"],

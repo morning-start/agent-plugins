@@ -28,7 +28,7 @@
 
 ## 二、规划与任务文档分离（放 .agent-workplace，不直接放项目 docs/）
 
-> 本节约定针对**用户 MoonBit 项目**（使用本技能的目标项目）；插件自身开发见仓库根 `.agent-workplace/`（flowstate 完整版）。
+> 本节约定针对**用户 MoonBit 项目**（使用本技能的目标项目）；插件自身开发见仓库根 `.agent-workplace/`。
 
 ### 工作区目录结构
 
@@ -42,10 +42,9 @@
 - **路线图与任务拆解分层**：`docs/plan/` 管方向，`docs/task/` 管执行
 - **规格与计划分离**：`docs/spec/` 存放 implement 阶段细化的设计规格
 - **决策可追溯**：`docs/decisions.md` 记录每个 DEC-xxx 决策
-- **单一状态文件**：`state/checkpoint.json` 是唯一的状态源（FST 兼容），每批完成即更新
+- **单一状态文件**：`state/checkpoint.json` 是唯一的状态源，每批完成即更新
 - 会话开始时按序读取：`state/checkpoint.json` → `docs/plan/` → `docs/task/`，恢复上下文
 - **过程态不提交**：`.agent-workplace/` 全目录被 gitignore，定稿发布到正式 `docs/`
-- **FST 兼容**：目录结构与 flowstate 的 `templates/agent-workplace/` 兼容，迁移时无需重构
 
 ## 三、进度与提交约定
 
@@ -96,8 +95,8 @@
 
 ### 恢复优先级（从高到低）
 
-1. **`.agent-workplace/state/checkpoint.json`**（唯一状态源，FST 兼容）
-   - 包含：node、phase、status、batch、task_index、framework、project_type、plan_file、tasks 进度
+1. **`.agent-workplace/state/checkpoint.json`**（唯一状态源）
+   - 包含：phase、status、batch、task_index、project_type、plan_file、tasks 进度
    - 由 `moonbit-writing-plans` 初始化，`moonbit-implement` / `moonbit-verify` / `moonbit-evaluate` / `moonbit-cd` 更新
 2. **`.agent-workplace/docs/plan/PLAN.md`**（计划文档）
    - 最后的上下文兜底：从计划文档重建任务列表
@@ -108,14 +107,10 @@
 Session 重新初始化
     │
     ├── 检测 .agent-workplace/state/checkpoint.json 存在？
-    │   ├── 是 → 读取 checkpoint，恢复到断点位置（node/batch/task_index/phase）
+    │   ├── 是 → 读取 checkpoint，恢复到断点位置（batch/task_index/phase）
     │   └── 否 → 继续
     │
-    ├── 检测 .agent-workplace/docs/plan/PLAN.md 存在？
-    │   ├── 是 → 从计划文档重建上下文
-    │   └── 否 → 全新开始（无历史状态）
-    │
-    └── 有 flowstate？
-        ├── 是 → 按 FST checkpoint 恢复（fst-iterate 的 checkpoint/resume 机制）
-        └── 否 → 按上述 moonbit-skills 自包含恢复
+    └── 检测 .agent-workplace/docs/plan/PLAN.md 存在？
+        ├── 是 → 从计划文档重建上下文
+        └── 否 → 全新开始（无历史状态）
 ```

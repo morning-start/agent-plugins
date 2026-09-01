@@ -19,14 +19,12 @@
 | `docs/task/` | 任务拆解文档（分阶段实现计划，含验证命令） |
 | `docs/spec/` | 规格草稿（implement 阶段的详细设计、API 契约） |
 | `docs/decisions.md` | 决策记录（DEC-xxx：日期 + 决策 + 理由 + 影响） |
-| `state/checkpoint.json` | 管线状态 + 断点续跑（FST 兼容，唯一状态源） |
+| `state/checkpoint.json` | 管线状态 + 断点续跑（唯一状态源） |
 | `state/artifacts.json` | 产物注册表（跨阶段追踪） |
 | `scripts/` | 可执行实验脚本 / 测试桩 |
 | `scratch/` | 一次性探索产物（`{YYYYMMDD}-{type}-{slug}`） |
 | `research/` | 调研缓存（技术选型、方案对比、根因调查） |
 
-## 与 flowstate 的关系
+## 维护方
 
-- **无 flowstate**：本目录由 `moonbit-writing-plans` / `moonbit-implement` 自行创建和维护
-- **有 flowstate**：本目录结构与 flowstate 的 `templates/agent-workplace/` 兼容，迁移时无需重构
-- 模式定义（todo/spec/loop/graph）不在本工作区内，它们在 `skills/` 或 flowstate 的 `references/agent-modes/` 中
+本目录由 `moonbit-writing-plans` / `moonbit-implement` 自行创建和维护，属 moonbit-skills 自包含管线的私有状态区。模式定义（todo/spec/loop/graph）不在本工作区内，它们位于 `skills/`。
