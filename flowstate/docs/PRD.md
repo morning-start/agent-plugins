@@ -88,20 +88,15 @@
 
 ## 三、核心概念与术语（统一口径）
 
-| 术语 | 定义 | 关键规则 |
-|------|------|---------|
-| **核心底线（3 条）** | ①解决什么核心问题 ②目标用户是谁 ③必须上线的基础价值 | 立项时锁定，之后不可模糊 |
-| **刚性核心需求** | 首期必须做、不可变更的需求（核心业务流程、核心功能） | 变更 = 重大变更，走审批 |
-| **弹性细节需求** | 规则模糊、待定、可延后的需求 | 迭代中补全，不做深度实现 |
-| **临时新增需求** | 迭代中冒出的新需求 | 统一进需求池，不插入当前迭代 |
-| **需求池** | 所有待定/新增/弹性需求的统一存放处 | 含优先级排序，每轮迭代排期 |
-| **变更分级** | 轻微 / 中度 / 重大 三档 | 由 AI 建议 + 人工确认 |
-| **DoD（完成定义）** | 迭代交付"做完"的验收标准 | 逐项核销后才算完成 |
-| **骨架开发** | 未确认需求只做最小可运行结构，不做细节实现 | 骨架必须能跑冒烟测试 |
-| **灰度** | 小流量上线验证 | 达标后才能全量 |
-| **迭代** | 固定周期（1~2 周）的交付批次 | 主干先行、细节后置 |
+> **术语定义唯一权威见 [`docs/glossary.md`](glossary.md)**（流程术语 / 图编排 / 产出物 / 工作区四类）。
+> 本段不复述完整定义表，只保留承上启下的关键约束与最核心的 3 个底线：
+
+- **核心底线（3 条）**：①解决什么核心问题 ②目标用户是谁 ③必须上线的基础价值 —— 立项时锁定，之后不可模糊
+- **刚性核心 vs 弹性细节 vs 临时新增**：需求三层；刚性变更 = 重大变更走审批，临时新增统一进需求池
+- **DoD（完成定义）**：迭代交付"做完"的逐项验收标准，核销后才算完成；未确认需求不纳入验收
 
 > 术语统一：全文只用"迭代"，不再用"里程碑"；"需求池"为唯一需求暂存区。
+> 首字母缩写（DoD / HITL / CR / REQ / N1~N9）全称与含义亦见 [`docs/glossary.md`](glossary.md)。
 
 ---
 
@@ -301,58 +296,32 @@
 
 ---
 
-## 五、产出物模板与字段定义（插件要生成的内容）
+## 五、产出物 schema（插件要生成的内容）
 
-> 每个产出物对应一个 schema（JSON），供插件校验与复用（参照 plugin-factory `schemas/prd.schema.json` 模式）。
+> **产出物结构的唯一权威是 `schemas/` 下的 JSON Schema + `tests/validate-schemas.mjs`**。
+> 本章不复述字段定义，只列 schema 清单与语义要点；字段细节一律以 `schemas/*.schema.json` 为准，
+> 新增/改动字段只改 schema，不再来回同步本章表格。编号 5.1~5.9 供 skills 与 `skill-graph.md` 引用。
 
-### 5.1 需求分层清单（F1/F2）
+| # | Schema | 关键语义（一句话） |
+|---|--------|-------------------|
+| 5.1 | [requirements-layer.schema.json](../schemas/requirements-layer.schema.json) | 需求分层清单：MoSCoW 分层 + 刚性/弹性，已知缺口显式记录 |
+| 5.2 | [scope.schema.json](../schemas/scope.schema.json) | 迭代范围说明书：in/out scope + 冻结核心 + 签署人 |
+| 5.3 | [change-request.schema.json](../schemas/change-request.schema.json) | 变更申请单：需求原文逐字记录 + 分级 + 影响 + 审批 |
+| 5.4 | [dod-checklist.schema.json](../schemas/dod-checklist.schema.json) | 迭代验收 Checklist：逐项核销，全部 ✅ 才放行 |
+| 5.5 | [risk-list.schema.json](../schemas/risk-list.schema.json) | 风险清单：分类/概率/影响/缓解/责任人 |
+| 5.6 | [tech-debt.schema.json](../schemas/tech-debt.schema.json) | 技术债清单：妥协说明 + 为何 + 偿还迭代 |
+| 5.7 | [retrospective.schema.json](../schemas/retrospective.schema.json) | 回顾报告：交付/变更/度量/风险/下轮建议 |
+| 5.8 | [plan.schema.json](../schemas/plan.schema.json) | 开发计划 docs/plan：按 phase 拆分，每 phase 声明 goal（做什么）/ rationale（为什么）/ strategy（spec/loop/graph），formal phase 必须含 `strategy` |
+| 5.9 | [task.schema.json](../schemas/task.schema.json) | 任务清单 docs/task：phase 下按 batch 分批，任务含 `acceptance`（spec 必须）与 `deps`（graph 依赖边） |
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | string | 需求编号（REQ-001） |
-| title | string | 需求标题 |
-| source | string | 来源（业务方/产品/用户反馈/技术自驱） |
-| layer | enum | 刚性核心 / 弹性细节 / 临时新增 / 待确认 |
-| priority | enum | P0 / P1 / P2 / P3 |
-| status | enum | 待确认 / 已冻结 / 开发中 / 已完成 / 已排期 / 已拒绝 |
-| known_gaps | string[] | 已知的模糊点、未知场景（显式记录） |
-| iteration | string | 排入的迭代号（可为空） |
+**关键语义要点**（在 schema 里的行为约束）：
 
-### 5.2 迭代范围说明书（F2）
+- **plan.phase.strategy**：执行方略 `spec`（默认）/ `loop` / `graph`；trivial todo 不进入正式 plan
+- **task.task.acceptance**：spec 方略必填的可验证断言，逐项核销
+- **task.task.deps**：graph 方略的前置依赖边，任务按拓扑推进
+- **分批规则（内聚 + 顺序）**：同批改动同一模块/层、先做前置依赖、每批完成即可独立验证（编译/冒烟）
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| iteration | string | 迭代号 |
-| in_scope | string[] | 本轮交付需求 id 列表 |
-| out_scope | string[] | 明确不做（含原因） |
-| frozen_core | string[] | 冻结的刚性核心需求 id |
-| change_rule | string | 迭代内新增需求统一走变更流程 |
-| signed_by | string | 签署人 / 日期 |
-
-### 5.3 变更申请单（F5/F9）
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | string | 变更编号（CR-001） |
-| req_original | string | 需求原文（逐字记录，防口头需求） |
-| raised_by | string | 提出人 / 渠道（口头/IM/邮件） |
-| level | enum | 轻微 / 中度 / 重大 / 紧急 |
-| impact | object | 是否改库 / 是否重构 / 影响旧功能 / 工时估算 / 返工量 |
-| decision | enum | 接受 / 延后 / 拒绝 / 紧急直通 |
-| approved_by | string | 审批人（重大变更必填） |
-| iteration | string | 排入迭代 |
-| archived_at | string | 归档时间 |
-
-### 5.4 迭代验收 Checklist（DoD，F4/F6）
-
-| 项 | 是否必须 | 说明 |
-|----|---------|------|
-| 功能完成（含骨架冒烟通过） | ✅ | 未确认需求至少跑通骨架 |
-| 变更针对性测试通过 | ✅ | 改动点 + 关联影响点 |
-| 核心主干回归通过 | ✅ | 每次迭代/变更后 |
-| 文档同步（PRD/设计文档） | ✅ | 变更后必更新 |
-| 变更记录归档 | ✅ | 无归档 = 未完成 |
-| 待定需求不纳入交付验收 | — | 未确认需求不测深度细节 |
+> 所有 schema 使用 JSON Schema draft-07，`$id` 前缀为 `https://github.com/morning-start/agent-plugins/schemas/`；测试 fixture 位于 `tests/fixtures/verify-valid/` 与 `verify-invalid/`。
 
 ### 5.5 风险清单（F1/F8）
 
@@ -461,91 +430,13 @@
 
 ## 七、Agent 执行图（图编排内化）
 
-> 本插件的流程不是一份线性文档，而是一张**可执行的状态图（State Graph）**。AI 助手按图遍历执行：节点是流程环节，边是流转条件，循环/分支/人工闸门显式建模。**图为逻辑蓝图，采用动态软编排**——由 Claude Code / Codex 等 Agent 框架按 skills/commands 驱动执行（节点、条件边、循环、Checkpoint、HITL 均为图上的设计概念）。
+> **执行图（节点 / 边 / 条件边 / 循环 / HITL / Checkpoint / 并行 / 短路）的唯一定义与完整
+> Mermaid 在 [`references/flow-graph.md`](../references/flow-graph.md)**，本章不复述，只给概述与能力对比。
+> 需求阶段的输入参考：节点产出物与 DoD 判据的权威定义见 `references/flow-graph.md`。
 
-### 7.1 节点（Node）= 流程环节
+本插件的流程不是一份线性文档，而是一张**可执行的状态图（State Graph）**。AI 助手按图遍历执行：节点是流程环节，边是流转条件，循环/分支/人工闸门显式建模。**图为逻辑蓝图，采用动态软编排**——由 Claude Code / Codex 等 Agent 框架按 skills/commands 驱动执行（节点、条件边、循环、Checkpoint、HITL 均为图上的设计概念）。
 
-F1~F9 每个功能阶段是一个节点，节点持有自己的输入、产出物与 DoD：
-
-| 节点 | 对应功能 | 产出物（schema） |
-|------|---------|----------------|
-| N1 立项调研 | F1 | 项目目标、已知/待定需求清单、风险清单 |
-| N2 需求冻结 | F2 | 迭代范围说明书、需求分层清单 |
-| N3 方案设计 | F3 | 柔性 PRD、可拓展架构方案 |
-| N4 迭代开发 | F4 | docs/plan、docs/task、可运行功能 |
-| N5 变更管控 | F5 | 变更申请单、影响评估 |
-| N6 测试回归 | F6 | 测试报告、回归结果、缺陷清单 |
-| N7 灰度上线 | F7 | 灰度方案、反馈汇总 |
-| N8 持续迭代 | F8 | 回顾报告、下轮范围 |
-| N9 紧急通道 | F9 | hotfix 记录、补录变更单 |
-
-### 7.2 边（Edge）= DoD 判据
-
-边就是流转判据（见第六章），**DoD 核销是边上的守卫条件（guard）**，未核销不能沿边前进：
-
-- N1 → N2：3 条底线书面确认
-- N2 → N3：范围说明书签署
-- N3 → N4：柔性 PRD 评审通过
-- N4 → N6：功能完成 + 变更归档
-- N6 → N7：核心回归通过 + 变更点测试通过
-- N7 → 全量：灰度指标达标
-
-### 7.3 条件边（Conditional Edge）= 路由决策
-
-图与线性流程的关键区别——按条件分叉：
-
-- **N4 → N5（变更回环）**：开发中任何新需求/改动，无条件进入变更节点
-- **N5 → N4 / N3**：轻微/中度 → 回 N4 继续开发；重大 → 回 N3 重新评估设计（暂停重启）
-- **N7 → 全量 / 回滚**：指标达标 → 全量；不达标 → 回滚并回 N6
-
-### 7.4 循环（Loop）= 迭代闭环
-
-- **变更回环**：N4 → N5 → N4，迭代内需求变更反复评估，直到收敛
-- **迭代闭环**：N8 → N4，持续迭代是外层大循环
-- **Hotfix 短路**：任意节点 → N9 → N6，先修后补单
-
-### 7.5 人工闸门（HITL）= 必须暂停等人
-
-对应 2.2 节"AI 做但必须人工确认"，图执行到这些节点**强制暂停**，等用户输入后才继续：
-
-- 底线冻结确认（N1 出口）
-- 迭代范围确认（N2 出口）
-- 变更分级确认（N5）
-- 重大变更审批（N5）
-- 灰度放量 / 全量决策（N7）
-- DoD 核销（N6）
-
-### 7.6 检查点（Checkpoint）= 断点续跑
-
-- 每个节点完成即保存状态（产出物 + 流转记录），默认落 `.agent-workplace/state/`
-- 中途打断可从**断点恢复**，不重跑已完成节点
-- 对应 F4.1"每批实现后更新 docs/task 状态"
-
-### 7.7 并行（Parallel）
-
-- 多张变更单互不依赖时可**并行评估影响**
-- 需求池排序与风险扫描可并行执行
-
-### 7.8 完整执行图
-
-```mermaid
-flowchart TD
-    Start([启动]) --> N1[F1 立项调研<br/>HITL: 底线确认]
-    N1 -->|DoD: 底线书面确认| N2[F2 需求冻结<br/>HITL: 范围签署]
-    N2 -->|DoD: 范围签署| N3[F3 方案设计<br/>HITL: PRD 评审]
-    N3 -->|DoD: PRD 通过| N4[F4 迭代开发<br/>plan→task→分批]
-    N4 -->|变更触发| N5[F5 变更管控<br/>HITL: 分级/审批]
-    N5 -->|轻微/中度| N4
-    N5 -->|重大| N3
-    N4 -->|功能完成+归档| N6[F6 测试回归<br/>HITL: DoD 核销]
-    N6 -->|回归通过| N7[F7 灰度上线<br/>HITL: 放量决策]
-    N7 -->|指标达标| Full[全量上线]
-    N7 -->|不达标| N6
-    Full --> N8[F8 持续迭代<br/>HITL: 下轮范围]
-    N8 -->|新迭代| N4
-    Incident([线上事故]) --> N9[F9 紧急通道<br/>先修后补单]
-    N9 -->|修复+验证| N6
-```
+执行图要素（N1~N9 节点、DoD 守卫边、变更分级条件边、变更回环与迭代闭环、HITL 人工闸门、Checkpoint 断点续跑、并行评估、Hotfix 短路）的**完整定义见 [`references/flow-graph.md`](../references/flow-graph.md)**。
 
 ### 7.9 图编排带来的能力（对比纯线性流程）
 

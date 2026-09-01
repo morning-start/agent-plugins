@@ -124,22 +124,26 @@ NO DOD, NO SHIP
 
 ## 输出
 
+> **结构权威见 [`schemas/dod-checklist.schema.json`](../schemas/dod-checklist.schema.json)（5.4）**：DoD 核销项的 key 枚举、必检/通过、all_passed 判定只在那里维护。
+> 本段仅给运行期返回摘要作示意，字段与校验一律以 schema 为准，变更不改这里。
+
 ```json
 {
-  "status": "passed | blocked | rolled_back",
-  "dod": {
-    "functional": true,
-    "targeted_tests": true,
-    "regression": true,
-    "docs_synced": true,
-    "change_archived": true
-  },
+  "iteration": "iter-004",
+  "items": [
+    { "key": "functional", "label": "核心功能", "required": true, "passed": true },
+    { "key": "targeted_tests", "label": "变更针对性测试", "required": true, "passed": true },
+    { "key": "regression", "label": "核心回归", "required": true, "passed": true },
+    { "key": "docs_synced", "label": "文档同步", "required": true, "passed": true },
+    { "key": "change_archived", "label": "变更归档", "required": true, "passed": true },
+    { "key": "pending_excluded", "label": "待定需求不测", "required": false, "passed": true }
+  ],
+  "all_passed": true,
   "gray_release": {
     "traffic_percent": 10,
     "metrics": { "pass_rate": 99.5, "error_rate": 0.2 },
     "decision": "full_release | rollback"
-  },
-  "defects": []
+  }
 }
 ```
 

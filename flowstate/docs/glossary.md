@@ -1,6 +1,8 @@
 # Glossary（术语表）
 
-> 术语以 `docs/PRD.md` §三 为权威口径；本表收录全部术语 + 图编排补充术语。
+> **本文件是全插件统一术语的唯一权威口径**。任何文档（PRD / CLAUDE / README / architecture / skill-split / SKILL）遇到术语定义，
+> 一律引用本表，**不复制成另一份术语表**；改术语只改这里。术语变更时勾稽 `docs/PRD.md` §三、`CLAUDE.md`、`README.md` 的引用。
+> 首字母缩写（DoD / HITL / CR / REQ / N1~N9）只在此登记全称与含义。
 
 ## 流程术语
 

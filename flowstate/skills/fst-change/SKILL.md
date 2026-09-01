@@ -132,19 +132,20 @@ PLAN ONLY, NEVER EXECUTE — EXECUTION GOES TO fst-iterate
 
 ## 输出
 
+> **结构权威见 [`schemas/change-request.schema.json`](../schemas/change-request.schema.json)（5.3）**：变更申请单的字段、枚举、必填校验只在那里维护。
+> 本段仅给运行期返回摘要作示意，字段与校验一律以 schema 为准，变更不改这里。
+
 ```json
 {
-  "status": "archived | scheduled | hotfix_backfilled | rejected",
-  "change_id": "CR-001",
-  "level": "minor | moderate | major | emergency",
-  "impact": {
-    "db_change": false,
-    "refactor": false,
-    "affected_features": ["..."]
-  },
-  "decision": "accepted | deferred | rejected | emergency",
+  "id": "CR-001",
+  "req_original": "【需求原文逐字记录】",
+  "raised_by": "业务方 / IM",
+  "level": "轻微 | 中度 | 重大 | 紧急",
+  "impact": { "db_change": false, "refactor": false, "affects_old_features": false },
+  "decision": "接受 | 延后 | 拒绝 | 紧急直通",
   "approved_by": "user",
-  "scheduled_iteration": "iter-004"
+  "iteration": "iter-004",
+  "archived_at": "2026-08-26T11:05:00Z"
 }
 ```
 

@@ -135,6 +135,8 @@ NO RESEARCH, NO ANALYSIS; NO EVIDENCE, NO CONCLUSION
 
 ## 输出
 
+> **事实核查条目结构见 [`schemas/investigation-fact-check.schema.json`](../schemas/investigation-fact-check.schema.json)**（claim/evidence/status/confidence）；本段是调研摘要示意，字段以 schema 为准。
+
 ```json
 {
   "status": "report_ready | evidence_gap | blocked",
@@ -148,8 +150,7 @@ NO RESEARCH, NO ANALYSIS; NO EVIDENCE, NO CONCLUSION
   "conclusions": [
     { "conclusion": "方案 A 性能更优但维护成本高", "evidence": ["raw/20260823-tech-abc.md#benchmark"] }
   ],
-  "evidence_gaps": ["缺少生产环境压测数据"],
-  "next": "caller skill (fst-init | fst-change | fst-iterate | fst-review)"
+  "evidence_gaps": ["缺少生产环境压测数据"]
 }
 ```
 

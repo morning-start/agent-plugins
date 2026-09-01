@@ -145,19 +145,22 @@ approved_at: 2026-08-26T11:05:00Z
 
 ## 输出
 
+> **结构权威见 [`schemas/promotion-request.schema.json`](../schemas/promotion-request.schema.json)**：提升请求的字段、枚举（`promotion_type` / `status`）、校验只在那里维护。
+> 本段仅给运行期返回摘要作示意，字段与校验一律以 schema 为准，变更不改这里。
+
 ```json
 {
-  "status": "promoted | pending_approval | rejected | blocked",
+  "status": "pending_approval | approved | rejected | blocked",
   "source": ".agent-workplace/iterations/iteration-XXX/investigation/fact-checks.md",
   "target": "docs/architecture.md",
   "promotion_type": "render",
   "metadata": {
     "source_version": "2026-08-26T10:30:00Z",
     "source_confidence": 0.85,
+    "iteration": "iteration-XXX",
     "approver": "user@example.com",
     "approved_at": "2026-08-26T11:05:00Z"
-  },
-  "next": "caller skill (fst-init | fst-change | fst-iterate | fst-review)"
+  }
 }
 ```
 

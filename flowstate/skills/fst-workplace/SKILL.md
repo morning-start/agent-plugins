@@ -269,6 +269,8 @@ bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根> --json
 
 ## 输出
 
+> **说明**：工作区状态无独立 schema（仅目录/指针落盘校验见 `fst-workplace-init.*`）；文档状态追踪结构见 [`schemas/document-status.schema.json`](../schemas/document-status.schema.json)。本段为示意。
+
 ```json
 {
   "status": "initialized | present | maintained",
@@ -279,8 +281,7 @@ bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根> --json
   "commit_boundary": {
     "committed": "formal docs/ (PRD, ADR, DoD acceptance, change archive)",
     "private": ".agent-workplace/ (investigation, requirements, design, development, release, state)"
-  },
-  "next": "caller skill (fst-init | fst-change | fst-iterate | fst-review | fst-research)"
+  }
 }
 ```
 

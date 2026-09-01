@@ -16,16 +16,19 @@
 
 ## 2. 生命周期职责矩阵
 
-| 节点 | 唯一负责技能 | 核心产出 | 交接条件 |
-|---|---|---|---|
-| N1~N3 | fst-init | 需求分层、范围说明书、柔性 PRD、风险清单 | 底线确认、范围签署、PRD 通过 |
-| N4 | fst-iterate | plan、task、代码分支、技术债、批次验证记录 | 代码完成、批次 Gate 通过 |
-| N5 | fst-change | 变更申请、分级、影响评估、排期归档 | 用户确认、变更单归档并排期 |
-| N6~N7 | fst-review | 测试回归报告、DoD、灰度方案、放量决策 | DoD 通过、灰度指标达标 |
-| N8 | fst-iterate | 回顾报告、下轮范围建议 | 用户确认下轮范围 |
-| N9 | fst-change（紧急例外） | 紧急 checkpoint、Hotfix、补录变更单 | 修复验证后进入 fst-review |
+> 节点→技能归属、交接边与越权的**唯一权威**是 [`references/skill-graph.md`](../references/skill-graph.md)。
+> 本节只做职责边界总览，不复制完整矩阵；改动请到 skill-graph 维护。
 
-fst-workplace 与 fst-research 横切 N1~N9，但只提供基础设施（工作区 / 分析调查），不占用生命周期节点。
+生命周期技能各司其职，**互不越权**：
+
+| 技能 | 职责 | 不负责 |
+|------|------|--------|
+| `fst-init` | N1~N3 立项/冻结/设计 | 不写代码 |
+| `fst-change` | N5/N9 变更管控（记录→分级→评估→审批→归档） | 不实现代码、不开功能分支（N9 Hotfix 例外） |
+| `fst-iterate` | N4/N8 执行迭代 + 回顾闭环 | （唯一执行入口） |
+| `fst-review` | N6/N7 测试/灰度 + DoD 核销 | 不开发，发现缺陷回 fst-change |
+
+`fst-workplace` / `fst-research` / `fst-promote` 横切 N1~N9，只提供基础设施（工作区 / 调查证据 / 定稿闸门），不占用生命周期节点。
 
 ## 3. 变更入口与 trivial diff 边界
 

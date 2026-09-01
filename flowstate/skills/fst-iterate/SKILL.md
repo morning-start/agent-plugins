@@ -212,20 +212,19 @@ phase 之间体现依赖顺序：前一个 phase 是后一个的基础。
 
 ## 输出
 
+> **结构权威**：plan → [`schemas/plan.schema.json`](../schemas/plan.schema.json)（5.8）、task → [`schemas/task.schema.json`](../schemas/task.schema.json)（5.9）、技术债 → [`schemas/tech-debt.schema.json`](../schemas/tech-debt.schema.json)（5.6）、回顾 → [`schemas/retrospective.schema.json`](../schemas/retrospective.schema.json)（5.7）。
+> 本段仅给迭代运行期汇总作示意，字段与校验一律以对应 schema 为准，不在此处内联结构。
+
 ```json
 {
   "status": "iteration_done | in_progress | blocked",
-  "plan": { "phases": 4, "status": "completed" },
-  "tasks": { "total": 12, "done": 12, "batches": 3 },
-  "branches": { "merged": ["feat/CR-001"], "open": [] },
-  "tech_debt": { "open": 2, "repaid": 1 },
-  "retrospective": {
-    "completion_rate": 0.9,
-    "change_count": 3,
-    "rework_rate": 0.05,
-    "backlog_count": 12
-  },
-  "next_iteration": { "scope_confirmed": true, "items": ["..."] }
+  "plan_files": ["iterations/current/development/plan.md"],
+  "task_files": ["iterations/current/development/task.md"],
+  "result": {
+    "branches_merged": ["feat/CR-001"],
+    "tech_debt_open": 2,
+    "batch_gates_passed": true
+  }
 }
 ```
 
