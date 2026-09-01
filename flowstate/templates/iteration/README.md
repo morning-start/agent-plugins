@@ -36,12 +36,27 @@ iteration/
 
 ### 1. 创建新迭代
 
-```bash
-# 复制迭代模板
-cp -r flowstate/templates/iteration .agent-workplace/iterations/iteration-002
+用初始化脚本指向新迭代（幂等，自动复制模板并重指 `current`）：
 
-# 创建当前迭代符号链接
-ln -sfn iteration-002 .agent-workplace/current
+```bash
+# bash / Git Bash — 插件根 = scripts/ 的上一级
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根> --iteration 002 --force
+
+# Windows PowerShell
+& <plugin-root>\scripts\fst-workplace-init.ps1 -Root <项目根> -Iteration 002 -Force
+```
+
+> `-Force` / `--force` 是重指 `current` 所必需的：脚本默认不会动已存在的指针。
+> 若 `iterations/current` 是真实目录（旧版 `ln -s` 退化产物），
+> `-Force` 会**先删除该目录再建链接**——执行前先确认其中没有未迁移的产物。
+
+手工等价操作（脚本不可用时）：
+
+```bash
+cp -r <plugin-root>/templates/iteration .agent-workplace/iterations/iteration-002
+# 注意：Windows Git Bash 下 ln -s 会退化成目录复制，不要硬用；
+# 建不了链接就直接用显式路径 iterations/iteration-002/
+ln -sfn iteration-002 .agent-workplace/iterations/current
 ```
 
 ### 2. 继承上一轮迭代

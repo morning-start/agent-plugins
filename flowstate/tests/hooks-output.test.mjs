@@ -16,7 +16,14 @@ const ROUTES = ["fst-init", "fst-change", "fst-review", "fst-iterate", "fst-work
 const MARKER = "FLOWSTATE_BOOTSTRAP:flowstate";
 
 async function assertHookJson(label, cmd, args) {
-  const { stdout } = await run(cmd, args, { cwd: ROOT, shell: false });
+  // These tests run with cwd = the plugin root, so SessionStart would otherwise
+  // auto-initialize the plugin's own .agent-workplace as a side effect.
+  // Workspace behavior is covered by tests/workspace-init.test.mjs.
+  const { stdout } = await run(cmd, args, {
+    cwd: ROOT,
+    shell: false,
+    env: { ...process.env, FLOWSTATE_AUTO_WORKPLACE: "0" },
+  });
   const parsed = JSON.parse(stdout); // throws on invalid JSON — the regression this guards
   assert.equal(parsed.hookSpecificOutput.hookEventName, "SessionStart", label);
   const ctx = parsed.hookSpecificOutput.additionalContext;

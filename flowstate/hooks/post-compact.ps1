@@ -1,4 +1,4 @@
-# flowstate Post-Compact Hook (PowerShell)
+﻿# flowstate Post-Compact Hook (PowerShell)
 # 会话压缩（checkpoint 边界）后自动生成待提升文档清单
 
 Write-Host "flowstate Post-Compact: 生成待提升文档清单..."
@@ -10,12 +10,14 @@ if (-not (Test-Path ".agent-workplace/state/document-status.json")) {
 }
 
 # 读取 document-status.json
-$documentStatus = Get-Content ".agent-workplace/state/document-status.json" -Raw | ConvertFrom-Json
+# -Encoding UTF8 is mandatory: PowerShell 5.1 defaults to the ANSI codepage,
+# which corrupts non-ASCII bytes in the JSON.
+$documentStatus = Get-Content ".agent-workplace/state/document-status.json" -Raw -Encoding UTF8 | ConvertFrom-Json
 
 # 读取 current-iteration.json
 $currentIteration = "unknown"
 if (Test-Path ".agent-workplace/state/current-iteration.json") {
-    $currentIterationData = Get-Content ".agent-workplace/state/current-iteration.json" -Raw | ConvertFrom-Json
+    $currentIterationData = Get-Content ".agent-workplace/state/current-iteration.json" -Raw -Encoding UTF8 | ConvertFrom-Json
     $currentIteration = $currentIterationData.current_iteration
 }
 

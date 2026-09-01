@@ -150,27 +150,29 @@ flowstate/templates/iteration/           # 迭代目录模板
 
 ### 新项目初始化
 
+用随插件分发的脚本（幂等，重复运行无副作用，**不覆盖已有文件**）：
+
 ```bash
-# 复制工作区模板
-cp -r flowstate/templates/agent-workplace <目标项目>/.agent-workplace
+# bash / Git Bash
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <目标项目>
 
-# 复制第一个迭代
-cp -r flowstate/templates/iteration <目标项目>/.agent-workplace/iterations/iteration-001
-
-# 创建当前迭代符号链接
-ln -sfn iteration-001 <目标项目>/.agent-workplace/current
-
-# 在目标项目 .gitignore 追加
-echo ".agent-workplace/" >> <目标项目>/.gitignore
+# Windows PowerShell（5.1+，不需要管理员权限）
+& <plugin-root>\scripts\fst-workplace-init.ps1 -Root <目标项目>
 ```
+
+一次完成：复制工作区模板 → 复制第一个迭代 → 建 `iterations/current` 指针
+→ `.gitignore` 幂等追加 → 补齐空目录 → 写 `state/workspace.json`。
+
+> SessionStart hook 每次会话开始会自动跑一次（项目根有项目标记时），
+> 手工执行只是为了确认或处理被跳过的目录。
 
 初始化后走 `fst-init` 新项目路径：访谈底线 → 需求分层 → 冻结 → 设计。
 
 ### 已有项目初始化
 
 ```bash
-# 同上：复制工作区模板 + 迭代 + 符号链接 + .gitignore
-# 但不得覆盖项目现有的 docs/ 目录内容
+# 同上，脚本默认即不覆盖已有文件（含 docs/）
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <目标项目>
 ```
 
 初始化后走 `fst-init` 已有项目路径：

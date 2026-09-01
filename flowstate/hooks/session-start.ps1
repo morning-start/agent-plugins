@@ -1,4 +1,4 @@
-# flowstate session-start bootstrap (PowerShell variant).
+﻿# flowstate session-start bootstrap (PowerShell variant).
 # Emits Claude-compatible hook JSON with the canonical using-fst entry
 # context (frontmatter stripped, single FLOWSTATE_BOOTSTRAP marker).
 # Lightweight and dependency-free: reads the SKILL.md directly, no node needed.
@@ -25,6 +25,18 @@ if (-not (Test-Path $entry)) {
 $raw = Get-Content -Raw -LiteralPath $entry -Encoding UTF8
 $body = [regex]::Replace($raw, '(?s)\A\s*---\r?\n[\s\S]*?\r?\n---\r?\n?', '') -replace '\r\n', "`n"
 $body = $body -replace '^\s*\r?\n', ''
+
+# Ensure .agent-workplace exists before any fst-* skill tries to write into it.
+# Idempotent and gitignored, so auto-creating it is safe; opt out with
+# FLOWSTATE_AUTO_WORKPLACE=0. Skipped silently when the cwd is not a project root.
+$wsInit = Join-Path $pluginRoot "scripts\fst-workplace-init.ps1"
+if ($env:FLOWSTATE_AUTO_WORKPLACE -ne "0" -and (Test-Path -LiteralPath $wsInit)) {
+    $proj = if ($env:CLAUDE_PROJECT_DIR) { $env:CLAUDE_PROJECT_DIR } else { (Get-Location).Path }
+    try {
+        $wsNotice = (& $wsInit -Root $proj -Context 2>$null | Out-String).Trim()
+        if ($wsNotice) { $body = $body + "`n`n" + $wsNotice }
+    } catch { }
+}
 
 $marker = "FLOWSTATE_BOOTSTRAP:flowstate"
 # Full JSON string escaping: backslash first, then double quote, then control

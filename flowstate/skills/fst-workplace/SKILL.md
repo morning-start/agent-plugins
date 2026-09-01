@@ -74,13 +74,53 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 ### 1. 初始化（若项目根无 `.agent-workplace/`）
 
-**通用步骤**（新项目和已有项目都执行）：
+#### 首选：执行脚本（幂等，可重复运行）
 
-- 复制插件模板：`flowstate/templates/agent-workplace/` → 项目根 `.agent-workplace/`
-- 复制迭代模板：`flowstate/templates/iteration/` → `.agent-workplace/iterations/iteration-001/`
-- 创建符号链接：`ln -sfn iteration-001 .agent-workplace/current`
-- 项目 `.gitignore` 追加一行 `.agent-workplace/`
-- 校验模板完整性：`iterations/`、`shared/`、`state/`、`scratch/`、`README.md` 均存在
+```bash
+# bash / Git Bash（Windows 下同样可用）
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根>
+
+# PowerShell（Windows 5.1+，不需要管理员权限）
+& <plugin-root>\scripts\fst-workplace-init.ps1 -Root <项目根>
+```
+
+脚本一次做完 5 件事，且**不会覆盖已有文件**（除非加 `--force`）：
+
+1. 复制 `templates/agent-workplace/` → 项目根 `.agent-workplace/`
+2. 复制 `templates/iteration/` → `.agent-workplace/iterations/iteration-001/`
+3. 建立 `iterations/current` 指针（symlink → junction → 显式路径 三级降级）
+4. 项目 `.gitignore` 幂等追加 `.agent-workplace/`（已有则不重复写）
+5. 补齐 `iterations/` 与 `scratch/`（空目录不进 git，模板里的 `.gitkeep` 也可能丢失）
+
+结果写入 `.agent-workplace/state/workspace.json`，含 `current_pointer.mode`。
+
+**插件根怎么定位**：脚本从自身位置推导（取 `scripts/` 的上一级），不依赖任何环境变量。
+若只拿得到技能路径，则 `skills/fst-workplace/SKILL.md` 的上一级即插件根。
+
+**SessionStart 已兜底**：`hooks/session-start.sh` / `.ps1` 每次会话开始都会自动跑一次
+初始化脚本——所以正常路径下不需要手工执行。仅当项目根缺少
+`.git` / `package.json` / `Cargo.toml` / `README.md` 等项目标记时才跳过（避免在非项目
+目录里乱建目录），此时需显式执行脚本并加 `--force` / `-Force`。
+设置环境变量 `FLOWSTATE_AUTO_WORKPLACE=0` 可关闭自动初始化。
+
+#### `iterations/current` 指针的四种模式
+
+| 模式 | 触发条件 | 行为 |
+|------|---------|------|
+| `symlink` | Unix；或 Windows 开了开发者模式/提权 | **相对**符号链接，可随项目整体移动 |
+| `junction` | Windows 无提权（最常见） | NTFS junction，免管理员；目标为绝对路径 |
+| `directory` | 旧版 Git Bash `ln -s` 退化出的真实目录 | 脚本**不自动删除**；`--force` 重建（会清空该目录，执行前先确认无未迁移产物） |
+| `explicit` | 链接创建全部失败 | 不创建 `current`，落点改用显式路径 `.agent-workplace/iterations/iteration-XXX/` |
+
+> `directory` / `explicit` 模式下，`iterations/current/<stage>/` 路径不可用或不可靠；
+> 所有落点必须写成显式迭代目录。
+
+#### 手工兜底（脚本不可用时的降级路径）
+
+按顺序手工完成脚本的 5 件事，然后校验
+`iterations/`、`shared/`、`state/`、`scratch/`、`README.md` 均存在。
+**注意**：不要用 `ln -sfn` 硬建 `current`——Windows Git Bash 下它会退化成目录复制，
+那正是 `directory` 模式的来源。用不了脚本时，宁可不建 `current` 而直接用显式路径。
 
 **已有项目额外步骤**：
 
@@ -180,11 +220,18 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 ### 7. 工作区健康检查
 
+**直接重跑初始化脚本即可**——它幂等且自带修复能力，缺什么补什么，
+并在有实际修复时返回 `status: repaired`：
+
+```bash
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根> --json
+```
+
 定期检查工作区的完整性：
 
 | 检查项 | 检查内容 | 不满足时的处理 |
 |--------|---------|---------------|
-| 目录结构 | 检查必要目录是否存在 | 创建缺失的目录 |
+| 目录结构 | 检查必要目录是否存在 | 重跑初始化脚本；或手工 `mkdir -p` |
 | 文件完整性 | 检查必要文件是否存在 | 创建缺失的文件 |
 | 状态一致性 | `state/document-status.json` 与实际文档一致 | 修复不一致的状态 |
 | 迭代关系 | 当前迭代符号链接有效 | 修复符号链接 |
@@ -211,8 +258,9 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 ## 关联最佳实践
 
 - **工作区规范全文**（`docs/agent-workplace.md`）：核心规则、迭代感知架构、目录结构
-- **模板**（`templates/agent-workplace/`）：干净骨架，复制初始化新项目
-- **迭代模板**（`templates/iteration/`）：迭代目录骨架
+- **初始化脚本**（`scripts/fst-workplace-init.sh` / `.ps1`）：幂等初始化与修复，唯一推荐入口
+- **模板**（`templates/agent-workplace/`）：干净骨架，由初始化脚本复制
+- **迭代模板**（`templates/iteration/`）：迭代目录骨架，由初始化脚本复制
 - **定稿闸门**（`fst-promote`）：过程文档 → 定稿文档的唯一受控通道
 - **骨架契约**（`references/skill-structure.md`）：技能章节结构约定
 - 调用方：`fst-init`（初始化）、`fst-change`（变更单草稿）、`fst-iterate`
@@ -240,7 +288,8 @@ NO WORKSPACE, NO DRAFT; NO COMMIT BOUNDARY, NO PROCESS
 
 - [ ] `.agent-workplace/` 已存在且 `.gitignore` 含条目
 - [ ] 模板目录完整（iterations / shared / scratch / state）
-- [ ] 当前迭代符号链接 `current` 指向正确的迭代目录
+- [ ] `iterations/current` 指针存在，且 `state/workspace.json` 中 `current_pointer.mode`
+      不是 `explicit` / `directory`（若是，落点改用显式迭代目录路径）
 - [ ] 写前已判断提交边界（定稿 `docs/`、过程态 `.agent-workplace/`）
 - [ ] 过程稿发布到正式目录前已通过 `fst-promote` 闸门
 - [ ] `state/checkpoint.json` 已更新（断点续跑可用）

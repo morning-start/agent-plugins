@@ -31,7 +31,7 @@ flowstate 是一个**项目开发全流程规范插件**：引导 AI 编程助�
 
 ## 功能总览
 
-flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → 落地」全链路：
+flowstate 由 6 类交付物组成，覆盖「引导 → 产出 → 校验 → 落地」全链路：
 
 | 交付物 | 数量 | 作用 |
 |--------|------|------|
@@ -39,6 +39,7 @@ flowstate 由 5 类交付物组成，覆盖「引导 → 产出 → 校验 → �
 | 命令 `commands/` | 5 | 斜杠命令快捷入口（`/fst-*`，加载对应技能） |
 | 产出模板 `schemas/` | 12 | 产出物 JSON 契约（需求分层 / 范围 / 变更单 / DoD / 文档状态 / 事实核查 / 提升请求） |
 | 生命周期钩子 `hooks/` | 4 类 | SessionStart + PreCommit + PostCompact + DocumentStatusCheck |
+| 初始化脚本 `scripts/` | 2 | `fst-workplace-init`（bash + PowerShell）：幂等创建/修复 `.agent-workplace` |
 | 工作区模板 `templates/` | 2 | 迭代模板 + 工作区模板 |
 
 ### 技能族
@@ -203,10 +204,28 @@ flowstate 是跨端插件：技能按 Agent Skills 标准写一次，各端原�
 
 | Hook | 事件 | 作用 |
 |------|------|------|
-| `session-start.sh` / `.ps1` | SessionStart | 注入 `using-fst` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`），会话开始即建立流程框架引导 |
+| `session-start.sh` / `.ps1` | SessionStart | 注入 `using-fst` 入口技能（marker `FLOWSTATE_BOOTSTRAP:flowstate`）＋ **自动初始化 `.agent-workplace/`**，会话开始即具备流程框架与落点 |
 | `pre-commit.sh` / `.ps1` | PreCommit（git 门禁） | 拦截 `.agent-workplace/` 入提交 + 疑似密钥扫描，守护「私有区永不提交」铁律 |
 
 > 轻量自包含：直接读 SKILL.md 输出 / git diff，不依赖 node 运行时；多 shell 对齐 plugin-factory 约定。
+
+### 自动工作区初始化
+
+`.agent-workplace/` 是全部 fst-* 技能的落点，缺了它任何过程态产物都无处可写。
+SessionStart 会自动跑 `scripts/fst-workplace-init.*`（幂等，重复运行无副作用）：
+
+```bash
+# 手工执行（通常不需要，仅用于被跳过的目录或切换迭代）
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根>
+& <plugin-root>\scripts\fst-workplace-init.ps1 -Root <项目根>
+```
+
+- 项目根需有项目标记（`.git` / `package.json` / `Cargo.toml` / …）才会自动初始化，
+  否则只提示不建目录；强制初始化加 `--force` / `-Force`
+- 关闭自动初始化：`FLOWSTATE_AUTO_WORKPLACE=0`
+- `iterations/current` 指针按 symlink → NTFS junction → 显式路径降级
+  （Windows 无提权时 `ln -s` 会退化成目录复制，junction 无需管理员），
+  实际模式记录在 `.agent-workplace/state/workspace.json`
 
 ## 文档
 

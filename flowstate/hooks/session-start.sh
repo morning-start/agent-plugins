@@ -25,6 +25,18 @@ body="$(
     !infront { print }
   ' "$entry"
 )"
+# Ensure .agent-workplace exists before any fst-* skill tries to write into it.
+# Idempotent and gitignored, so auto-creating it is safe; opt out with
+# FLOWSTATE_AUTO_WORKPLACE=0. Skipped silently when the cwd is not a project root.
+ws_init="$plugin_root/scripts/fst-workplace-init.sh"
+if [ "${FLOWSTATE_AUTO_WORKPLACE:-1}" != "0" ] && [ -f "$ws_init" ]; then
+  proj="${CLAUDE_PROJECT_DIR:-$PWD}"
+  ws_notice="$(FLOWSTATE_PROJECT_ROOT="$proj" bash "$ws_init" --root "$proj" --context 2>/dev/null || true)"
+  if [ -n "$ws_notice" ]; then
+    body="$body"$'\n\n'"$ws_notice"
+  fi
+fi
+
 # Escape for a JSON string literal: backslash, double quote, then convert
 # newlines to \n via awk (control chars are illegal raw inside JSON strings).
 body="$(printf '%s' "$body" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk '{ printf "%s\\n", $0 }' | sed -e 's/\r//g')"

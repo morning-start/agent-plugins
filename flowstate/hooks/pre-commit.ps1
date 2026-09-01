@@ -1,4 +1,4 @@
-# flowstate pre-commit gate (PowerShell variant).
+﻿# flowstate pre-commit gate (PowerShell variant).
 # Blocks commits that violate the workspace commit-boundary iron law:
 #   - staged .agent-workplace/ content (private, must never be committed)
 #   - obvious secrets in staged files (API keys, passwords, tokens)

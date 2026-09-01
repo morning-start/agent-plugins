@@ -1,4 +1,4 @@
-# flowstate Document Status Check Hook (PowerShell)
+﻿# flowstate Document Status Check Hook (PowerShell)
 # 检查文档状态的一致性
 
 Write-Host "flowstate Document Status Check: 检查文档状态..."
@@ -10,7 +10,9 @@ if (-not (Test-Path ".agent-workplace/state/document-status.json")) {
 }
 
 # 读取 document-status.json
-$documentStatus = Get-Content ".agent-workplace/state/document-status.json" -Raw | ConvertFrom-Json
+# -Encoding UTF8 is mandatory: PowerShell 5.1 defaults to the ANSI codepage,
+# which corrupts non-ASCII bytes in the JSON.
+$documentStatus = Get-Content ".agent-workplace/state/document-status.json" -Raw -Encoding UTF8 | ConvertFrom-Json
 
 # 检查是否有文档状态为 REVIEW_NEEDED 但置信度低于 0.8
 $lowConfidenceDocs = $documentStatus.documents | Where-Object { $_.type -eq "REVIEW_NEEDED" -and $_.confidence -lt 0.8 }

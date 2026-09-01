@@ -37,9 +37,12 @@ docs/                    ← 成果层：只放人类审批过的定稿（提交
 |------|------|
 | `iterations/` | 迭代目录（按迭代编号组织） |
 | `iterations/iteration-XXX/` | 迭代目录（从迭代模板复制） |
-| `current -> iteration-XXX` | 当前迭代符号链接 |
+| `iterations/current -> iteration-XXX` | 当前迭代指针（symlink 或 NTFS junction，不是普通目录） |
 
-> **迭代模板**：`flowstate/templates/iteration/`，使用时复制到 `iterations/iteration-XXX/`。
+> **迭代模板**：`<plugin-root>/templates/iteration/`，由 `scripts/fst-workplace-init.*`
+> 复制到 `iterations/iteration-XXX/`。
+> 指针模式（symlink / junction / directory / explicit）记录在 `state/workspace.json`；
+> 若不是 symlink / junction，落点请用显式路径 `iterations/iteration-XXX/`。
 
 ### 迭代内部结构
 

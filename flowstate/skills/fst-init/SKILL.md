@@ -95,9 +95,19 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ### A1. 初始化 .agent-workplace（前置）
 
-项目根目录若无 `.agent-workplace/`，调用 `fst-workplace` 完成初始化
-（复制 `templates/agent-workplace/` → 项目根 + `.gitignore` 追加一行
-`.agent-workplace/` + 创建第一个迭代目录 + 符号链接 `current`）。
+项目根目录若无 `.agent-workplace/`，执行初始化脚本（幂等，重复运行无副作用）：
+
+```bash
+bash <plugin-root>/scripts/fst-workplace-init.sh --root <项目根>
+# Windows PowerShell：
+& <plugin-root>\scripts\fst-workplace-init.ps1 -Root <项目根>
+```
+
+脚本完成复制模板、建首个迭代目录、建 `iterations/current` 指针、追加 `.gitignore`
+条目，并把结果写入 `.agent-workplace/state/workspace.json`。
+落点规则与指针模式（`symlink` / `junction` / `directory` / `explicit`）见 `fst-workplace`。
+
+> SessionStart hook 通常已自动跑过一次，这里只是显式确认。
 
 ### A2. 访谈 3 条核心底线（一次一问）
 
@@ -143,7 +153,8 @@ NO BASELINE, NO SCOPE; NO SCOPE, NO DESIGN
 
 ### B1. 初始化 .agent-workplace（前置）
 
-同 A1。但注意：已有项目的 `docs/` 可能已有内容，初始化时**不得覆盖**现有文档。
+同 A1（脚本默认不覆盖已有文件）。但注意：已有项目的 `docs/` 可能已有内容，
+初始化时**不得覆盖**现有文档。
 
 ### B2. 探索现状（调用 fst-research）
 
