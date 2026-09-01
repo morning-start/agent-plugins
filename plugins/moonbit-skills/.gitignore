@@ -1,4 +1,6 @@
 draft/
+# Agent 运行时私有工作区（临时草稿/探索产物），不提交 git。
+.agent-workplace/
 **/skills/*-workspace/
 .*/skills/
 analysis_reference/
@@ -8,9 +10,6 @@ workspace/
 **/.mooncakes/
 **/.moonagent/
 docs/plans
-
-# Agent 私有工作区（过程态，不提交）
-.agent-workplace/
 
 # Local Serena project memories are developer-machine state.
 .serena/memories/

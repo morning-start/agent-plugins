@@ -4,11 +4,13 @@
 
 所有用户请求从 `skills/using-moonbit-skills/SKILL.md` 进入。该引导技能在 SessionStart 时通过 `hooks/session-start` 注入到 agent 系统提示中。
 
----
+***
 
 ## 技能全景
 
-### 开发管线（推荐流程）
+moonbit-skills 是 **MoonBit 专属**能力插件，聚焦 **设计、骨架生成、测试设计、验证、CI 基础设施** 五类，**不承载**通用开发流程（实现、任务拆解、代码审查、发布、部署、性能、重构、git 操作、文档、安全、学习、接入初始化）。实现类流程由用户或外部流程插件（如 flowstate/fst）承担，本插件与其可协同使用、不接管其管线状态。
+
+### 推荐流程
 
 ```
 用户说"我要做 X"
@@ -24,21 +26,14 @@
 │ moonbit-plan — 需求澄清 + 设计决策                    │
 │ 输出: primary_type + capabilities + targets + API    │
 │ 用户介入: 选择架构模式 + 设计 API                      │
-│ 路由: → Spike (可选) 或 writing-plans 或 scaffold                     │
+│ 路由: → Spike (可选) 或 scaffold                       │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
 │ [Spike] 原型验证（可选）                              │
-│ 验证关键假设 → 丢弃代码 → 经验写入 writing-plans       │
-│ 路由: → writing-plans                                 │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-writing-plans — 设计→可执行任务拆解            │
-│ 输出: task list (每任务含行为增量+验证命令+预期结果)     │
-│ 路由: → scaffold (新项目) / implement (已有项目)       │
+│ 验证关键假设 → 丢弃代码 → 经验写入设计文档              │
+│ 路由: → scaffold                                     │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
@@ -47,149 +42,62 @@
 │ 方式: 按类型动态生成，不依赖预置模板                    │
 │ CLI: pkgtype(kind: "executable")                     │
 │ 验证: moon fmt --check + moon check + moon test      │
-│ 路由: → init 或 testing 或 implement                           │
+│ 路由: → testing / ci（如需要）/ verify                 │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
-│ moonbit-init — Git hooks 配置（L1 + L2 本地门禁）      │
-│ L1 pre-commit: fmt --check + check                    │
-│ L2 pre-push: test + audit                             │
-│ 路由: → ci                                            │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-ci — CI 基础设施（新项目首次提交前必配）     │
+│ moonbit-ci — CI 基础设施（如需要，随时可调用）          │
 │ 本地: commit-msg(Conventional Commits) + 安全扫描     │
+│       + 基础 hooks（fmt+check / test）                │
 │ 远端: GitHub Actions 多 job 流水线                     │
-│ 路由: → testing 或 implement                           │
+│ 路由: → testing / verify                              │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
-│ moonbit-testing — 测试设计与编写                       │
-│ 输出: 测试策略 + 文件组织 + 测试代码                    │
-│ 路由: ↔ implement（双向）                              │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-implement — TDD 实现 / Bug 修复              │
-│ 模式: Feature TDD | Bug Fix                          │
-│ Feature: RED(测试)→GREEN(实现)→VERIFY(全量)         │
-│ Bug Fix: REPRODUCE→DIAGNOSE→FIX→VERIFY→LEARN        │
-│ 模块化小步实现: 单任务单功能点, 目标过大回 writing-plans │
-│ 每任务后: moonbit-code-review（未批准则循环）              │
-│ Bug Fix 后: 自动触发 moonbit-learn                     │
-│ 分类: main项目 + moon run . / lib项目 + 临时 consumer  │
+│ moonbit-testing — 测试设计                            │
+│ 输出: 测试策略 + 文件组织 + 测试时机（先行 vs 后补）     │
 │ 路由: → verify                                        │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-perform — 性能优化                            │
-│ 输出: 性能基线 + 优化实现 + 对比验证                    │
-│ 路由: ↔ implement（双向）；↔ refactor（双向）；→ verify  │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-refactor — 重构                               │
-│ 输出: 重构后的代码（可观察行为不变）                     │
-│ 路由: ↔ implement（双向）；↔ perform（双向）；→ verify   │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
 ┌─────────────────────────────────────────────────────┐
 │ moonbit-verify — 全量验证门禁                          │
 │ 硬性: B1-B4 (格式/类型/测试/工作区) + C1-C3 (API/run/consumer) │
-│ 专属: main→moon run . / lib→临时 consumer 编译验证     │
 │ 软性: E1-E6 (跨平台/安全/性能/API深度/CI/文档)          │
-│ 路由: → evaluate                                      │
+│ 路由: 报告结果 → 交还用户判断                          │
 └─────────────────┬───────────────────────────────────┘
                   │
                   ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-evaluate — 验收评估 + 发布管理                    │
-│ 委托 verify + 类型专属验证 + CHANGELOG/Release Notes/回退预案 │
-│ main: moon run . + 输出验证                           │
-│ lib: 临时 consumer 编译验证 + cross-platform           │
-│ API: 比对 pkg.generated.mbti 与上一 Tag，自动建议 Major/Minor/Patch │
-│ CI/CHANGELOG/Release Notes: 预览模式，用户批准后写入     │
-│ 用户介入: 判断"好了"或"再改"                           │
-│ 路由: → cd（部署） 或 → implement                      │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ moonbit-cd — 持续部署                                  │
-│ 部署策略: 蓝绿/金丝雀/滚动/直接发布                     │
-│ 制品管理: native binary / wasm / mooncake 包           │
-│ 回滚预案: 每个部署必须附带回滚计划                       │
-│ 路由: → 生产运行（或 hotfix → implement）               │
-└─────────────────┬───────────────────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────┐
-│ 生产运行                                              │
-│ 可观测性数据 (structured logs / metrics / traces)     │
-│ 参考: references/patterns/observability.md             │
-└─────────────────┬───────────────────────────────────┘
-                  │
-          ┌───────┴────────┐
-          ▼                ▼
-   ┌────────────┐   ┌──────────────┐
-   │ 正常运行    │   │ 事故/异常    │
-   └────────────┘   └──────┬───────┘
-                           │
-                           ▼
-                    ┌──────────────────┐
-                    │ incident →       │
-                    │ moonbit-learn    │
-                    │ (RCA 模式)       │
-                    │ 复盘 → 沉淀      │
-                    └──────────────────┘
+          交付设计/骨架/测试/验证契约
+          实现与后续由用户或外部流程插件执行
 ```
 
 ### 管线语义
 
-moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门、检查点均由本插件的 `moonbit-*` 技能承担：
+moonbit-skills 内的技能承担设计→骨架→测试→验证→CI 的流转；**实现/部署等超出本插件范围**，由外部流程插件（如 fst）或用户执行：
 
 | 语义 | moonbit-skills 对应 |
-|--------|--------------------|
-| **阶段** | 管线各阶段（plan / writing-plans / implement / verify / evaluate…） |
-| **守卫（Guard）** | 阶段间流转条件 = 门禁（如 verify 的 B1-B4+C1-C3 全绿才到 evaluate） |
-| **条件路由** | 项目类型路由（lib→consumer 编译验证、main→moon run）、变更类型路由（Feature/Bug Fix） |
-| **循环** | 设计回溯（implement/perform/refactor→plan）、testing↔implement 双向 |
-| **人工闸门（HITL）** | 用户决策点：plan 设计批准、evaluate"好了/再改"、deploy 策略批准 |
-| **检查点（Checkpoint）** | 批次边界（每批最多 5 任务）→ 提交 + 会话压缩，断点续跑 |
-| **短路** | hotfix → implement（Bug Fix Mode）直通车 |
+| ---- | ---- |
+| **阶段** | 设计（plan）→ 骨架（scaffold）→ 测试设计（testing）→ 验证（verify），CI 随时可调 |
+| **守卫（Guard）** | 阶段间流转条件 = 门禁（如 verify 的 B1-B4+C1-C3 全绿才可声明可用） |
+| **条件路由** | 项目类型路由（lib→consumer 编译验证、main→moon run） |
+| **循环** | 设计回溯（测试/验证/实现阶段→plan） |
+| **人工闸门（HITL）** | 用户决策点：plan 设计批准、失败项修复方式 |
+| **检查点（Checkpoint）** | 由外部流程插件（如 fst）承接，本插件不维护跨 Session 开发管线状态 |
 
 ### 独立技能（单次调用）
 
 | 技能 | 触发场景 | 类型 |
-|------|---------|------|
-| `moonbit-init` | 初始化项目、配置 git hooks | 管线步骤 |
-| `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 管线步骤 |
-| `moonbit-docs` | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 管线步骤 |
-| `moonbit-security` | 威胁建模、依赖漏洞扫描、安全设计审查 | 管线步骤 |
+| ---- | ---- | ---- |
 | `moonbit-plan` | 需求澄清（目标/场景/客户/边界/维护五问）、架构和 API 设计；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 | 管线入口 |
-| `moonbit-writing-plans` | 设计→任务拆解（分阶段 Phase、分步骤、粒度约束、维护 Phase、批次 ≤5） | 管线步骤 |
 | `moonbit-scaffold` | 动态生成项目骨架（按模块组织目录） | 管线步骤 |
 | `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 管线并行 |
-| `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 管线并行 |
-| `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 管线并行 |
-| `moonbit-implement` | TDD 实现 + Iron Law + debug；模块化小步实现；批次上限（≤5/批）；Git 提交契约（一次性授权：目标项目 AGENTS.md 已有授权→验收后自动建分支→提交→合并；无→询问一次并写入） | 管线核心 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD + 逐项验收交付（交付后按一次性授权自动提交合并，构成批次检查点） | 管线核心 |
-| `moonbit-git` | 功能分支工作流、一次性授权提交契约、合并、worktree 并行管理 | 独立 |
-| `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 任务间门禁 |
 | `moonbit-verify` | 全量验证门禁 + 按模块/任务验证子集 | 管线检查点 |
-| `moonbit-evaluate` | 验收评估（任务级验收清单汇总）+ 发布管理 | 管线终点 |
-| `moonbit-cd` | 持续部署 + 制品管理 + 回滚执行 | 管线终点 |
-| `moonbit-learn` | 吸收错误、更新技能 | 独立 |
+| `moonbit-ci` | CI 基础设施构建（GitHub Actions + 本地 hooks + 分支保护） | 随时可调用 |
 
----
+***
 
 ## 三级检测体系
 
@@ -200,7 +108,7 @@ moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门�
 任何 MoonBit 项目均须通过，否则不能声称代码可用：
 
 | # | 要求 | 归属技能 | 命令 |
-|---|------|---------|------|
+| -- | ---- | ---- | ---- |
 | B1 | 代码格式一致性 | verify | `moon fmt --check` |
 | B2 | 类型安全 | verify | `moon check --warn-list +73` |
 | B3 | 功能完整性 | verify | `moon test`（目标由项目类型决定） |
@@ -211,17 +119,17 @@ moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门�
 不同项目类型有不同验证标准，属于该类型则必选：
 
 | # | 要求 | 归属技能 | 命令 | 适用类型 |
-|---|------|---------|------|---------|
+| -- | ---- | ---- | ---- | ---- |
 | C1 | API 稳定性 | verify | `moon info --target native` + `git diff --exit-code` | lib/cli/parser/async；ffi/wasm 豁免 |
-| C2 | [main] 可执行验证 | verify + evaluate | `moon run .` + 输出验证 | main/cli 项目 |
-| C3 | [lib] 消费验证 | verify + evaluate | 临时 consumer 编译验证 | lib/ffi/wasm/parser/async |
+| C2 | [main] 可执行验证 | verify | `moon run .` + 输出验证 | main/cli 项目 |
+| C3 | [lib] 消费验证 | verify | 临时 consumer 编译验证 | lib/ffi/wasm/parser/async |
 
 ### 增强测试（E1-E6 — 推荐但非阻断）
 
 推荐执行，报告结果供用户决策：
 
 | # | 要求 | 归属技能 | 命令 |
-|---|------|---------|------|
+| -- | ---- | ---- | ---- |
 | E1 | 跨平台兼容 | verify | `moon check --target all` |
 | E2 | 安全审计 | verify | `moon-audit pipeline .` |
 | E3 | 性能基线 | verify | 测试执行时间对比 |
@@ -229,25 +137,25 @@ moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门�
 | E5 | CI 配置完整性 | verify | `.github/workflows/ci.yml` 校验 |
 | E6 | 文档完整性 | verify | pub fn docstring / README 示例 / CLI --help |
 
----
+***
 
 ## 项目类型分支
 
-项目类型检测逻辑详见 [`references/type-detection.md`](./type-detection.md)，verify 和 evaluate 共用同一份检测逻辑，避免漂移。此处不再重复检测代码。
+项目类型检测逻辑详见 [`references/type-detection.md`](./type-detection.md)，verify 共用同一份检测逻辑，避免漂移。此处不再重复检测代码。
 
-类型分支决定后续路径：
+类型分支决定验证路径：
 
-| 类型 | implement | verify | evaluate |
-|------|-----------|--------|---------|
-| **main**（`pkgtype(kind: "executable")` 或旧 `"is-main": true`） | `moon run .` 验证输出 | B1-B4 + C1 + C2 `moon run .` | `moon run .` + 输出非空 + CI 含 run |
-| **lib**（都不是） | `moon check --target all` | B1-B4 + C1 + C3 临时 consumer 编译验证 | 临时 consumer + cross-platform + README 生成 |
+| 类型 | verify |
+| ---- | ---- |
+| **main**（`pkgtype(kind: "executable")` 或旧 `"is-main": true`） | B1-B4 + C1 + C2 `moon run .` |
+| **lib**（都不是） | B1-B4 + C1 + C3 临时 consumer 编译验证 |
 
----
+***
 
 ## hooks 关联
 
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
-|-----------|---------|---------|---------|
+| ---- | ---- | ---- | ---- |
 | SessionStart | startup/clear/compact | `hooks/session-start`（Bash；Windows 可用 `run-hook.cmd` / PowerShell 入口） | `skills/using-moonbit-skills/SKILL.md` |
 | PreCommit | git commit | `hooks/pre-commit.sh` | B1 + B2（fmt + check） |
 | PrePush | git push | `hooks/pre-push.sh` | B3 + E2（test + audit） |
@@ -255,108 +163,30 @@ moonbit-skills 是自包含管线，其流转、守卫、循环、人工闸门�
 
 平台差异：Claude/Kimi 的 `hooks/hooks.json` 接入完整 Git/完成前事件；OMP/Pi 接入 SessionStart 与 PostTool；Codex/Cursor/Gemini 默认接入编辑后的轻量验证。平台 Hook 不能替代显式 `moonbit-verify`。
 
----
+***
 
 ## 技能间依赖关系
 
 ```
 using-moonbit-skills (alwaysApply, 路由入口)
     │
-    ├── moonbit-init（无依赖）
-    ├── moonbit-docs（无依赖，可任何时候调用）
-    ├── moonbit-security（无依赖，可任何时候调用）
     ├── moonbit-plan（无依赖）
     │    │
-    │    ├── moonbit-writing-plans（依赖 plan 输出）
-    │    │    │
-    │    │    ├── moonbit-scaffold（依赖 plan 输出类型）
-    │    │    │    │
-    │    │    │    ├── moonbit-testing（与 implement 双向依赖）
-    │    │    │    │    │
-    │    │    │    │    └── moonbit-implement（testing 提供组织决策，implement 遵循）
-    │    │    │    │
-    │    │    │    └── → moonbit-implement（依赖 plan+scaffold）
-    │    │    │         │
-    │    │    │         ├── → moonbit-code-review（每任务后）
-    │    │    │         │
-    │    │    │         ├── → moonbit-perform（可选，性能优化循环）
-    │    │    │         │
-    │    │    │         ├── → moonbit-refactor（可选，重构循环）
-    │    │    │         │
-    │    │    │         └── → moonbit-verify（全量后）
-    │    │    │              │
-    │    │    │              ├── → moonbit-evaluate（verify 通过后）
-    │    │    │              │    │
-    │    │    │              │    └── → moonbit-cd（evaluate 批准后）
-    │    │    │              │
-    │    │    │              └── → moonbit-learn（bug fix 后自动触发）
-    │    │    │
-    │    │    └── moonbit-implement（已有项目，跳过 scaffold）
-    │    │    └── moonbit-task（单一任务：测试前置 TDD + 逐项验收交付，依赖 writing-plans 输出）
-    │    │
-    │    └── moonbit-scaffold（直接 scaffold）
+    │    └── moonbit-scaffold（依赖 plan 输出类型）
+    │         │
+    │         ├── moonbit-testing（可与 verify 交叉）
+    │         │    │
+    │         │    └── moonbit-verify（依赖 scaffold/testing 输出）
+    │         │
+    │         └── moonbit-ci（无依赖，随时可调用）
+    │              │
+    │              └── → moonbit-verify（验证 CI 基础设施）
     │
-    ├── moonbit-code-review（无依赖，可任何时候调用）
-    ├── moonbit-verify（依赖 implement 完成）
-    └── moonbit-learn（无依赖，可任何时候调用）
+    ├── moonbit-verify（无前置依赖，可独立调用）
+    └── moonbit-ci（无依赖，可任何时候调用）
 ```
 
----
-
-## 管线持久化状态（单一状态文件）
-
-moonbit-skills 使用**单一状态文件** `.agent-workplace/state/checkpoint.json` 实现跨 Session 持久化与断点续跑，是本插件的唯一状态源。
-
-### 状态文件结构
-
-```json
-{
-  "schema_version": 1,
-  "pipeline": "development",
-  "phase": "implement",
-  "status": "in_progress",
-  "batch": 1,
-  "task_index": 5,
-  "project_type": "cli",
-  "primary_type": "parser",
-  "capabilities": ["lexer", "tokenizer"],
-  "targets": ["native"],
-  "plan_file": ".agent-workplace/docs/plan/PLAN.md",
-  "tasks": {"total": 13, "completed": 4, "current": 5},
-  "last_verification": "2026-07-29T10:25:00Z",
-  "last_updated": "2026-07-29T10:30:00Z",
-  "next": "implement:task-5"
-}
-```
-
-字段说明：
-- `phase`：当前管线阶段
-- `batch`：当前批次编号（每批最多 5 任务）
-- `task_index`：当前批次内的任务索引
-- `project_type` / `primary_type` / `capabilities` / `targets`：项目元数据
-- `plan_file`：计划文档路径（断点恢复关键锚点）
-- `tasks`：任务进度（total / completed / current）
-
-状态必须通过 `scripts/validate-pipeline-state.py --file .agent-workplace/state/checkpoint.json` 校验。
-
-验证命令输出应另存为 `moonbit-verification.schema.json` 定义的验证产物，不要把检查详情混入管线状态文件。
-
-### Session 恢复机制
-
-当 Session 重新初始化或发生 Context 压缩重入时，按以下优先级恢复：
-
-```
-Session 重新初始化
-    │
-    ├── 1. 检测 .agent-workplace/state/checkpoint.json
-    │   └── 存在 → 读取全部状态（phase/batch/task_index/tasks/plan_file），恢复到断点
-    │
-    └── 2. 检测 .agent-workplace/docs/plan/PLAN.md
-        └── 存在 → 从计划文档重建任务列表上下文
-```
-
-恢复时跳过重复的计划与探索逻辑，直接从断点继续执行。
----
+***
 
 ## 回落链
 
@@ -371,20 +201,19 @@ Session 重新初始化
 ```
 
 例如：
-- `moon-audit` 未安装 → 跳过 S2，提示用户安装
+
+- `moon-audit` 未安装 → 跳过 E2，提示用户安装
 - `ffi` 项目无 C 编译器 → 提示安装 GCC/Clang，中止
 - `wasm` 项目无 WASM 运行时 → 提示安装 wasmtime，继续
-- `moonbit-code-review` 未找到 → 归入 `moonbit-verify` 执行
 - 项目无 `moon.pkg` → 提示先执行 `moonbit-scaffold`
-- CI 本地通过后失败 → 回到 `moonbit-implement` (Bug Fix Mode)，使用 CI 日志接入规范 (Log Ingestion) 提取 target/错误码进行诊断与复现
+- 用户提出实现/部署/发布等通用流程需求 → 声明不在本插件范围，交付设计/骨架/测试/验证契约，交还用户或外部流程插件
 
 ### 设计回溯
 
 ```
 设计回溯触发
     │
-    ├── implement 发现 API 不可测 → 回到 plan
-    ├── perform 发现瓶颈是架构问题 → 回到 plan
-    ├── refactor 发现坏味是设计缺陷 → 回到 plan
-    └── evaluate 用户不认可设计方向 → 回到 plan
+    ├── 测试设计无法为验收项写测试（API 不可测）→ 回到 plan
+    ├── 验证发现设计缺陷 → 回到 plan
+    └── 实现/优化/重构（外部流程驱动）发现设计问题 → 回到 plan
 ```

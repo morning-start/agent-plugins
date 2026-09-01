@@ -38,9 +38,7 @@ jobs:
 
       - name: Validate all JSON schemas
         run: |
-          python -m json.tool schemas/moonbit-pipeline.schema.json > /dev/null
           python -m json.tool schemas/moonbit-verification.schema.json > /dev/null
-          python -m json.tool schemas/change-evidence.schema.json > /dev/null
 
   shell-checks:
     name: Shell Script Checks

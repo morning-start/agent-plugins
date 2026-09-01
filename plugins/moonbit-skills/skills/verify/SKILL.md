@@ -89,7 +89,7 @@ moon test -f "edge/"     # 边界条件
 
 ### B3a. 按模块/任务验证子集（单 Task 完成时）
 
-实现按模块/任务小步推进（见 `moonbit-writing-plans` 的 Phase 和 `moonbit-implement` 的模块化小步实现），因此验证也支持子集粒度：
+实现按模块/任务小步推进，因此验证也支持子集粒度：
 
 ```bash
 # 单任务/模块验证：只跑当前 Task 的测试
@@ -184,7 +184,7 @@ moon-audit --fail-on-error .     # Error 级别漏洞时 exit 1
 
 ### E3. 性能基线
 
-> 性能优化详见 [`moonbit-perform`](../perform/SKILL.md)。E3 提供粗粒度信号，perform 提供独立优化循环。
+> 性能优化不在 verify 职责内；E3 仅提供粗粒度性能信号，需进一步优化时交还用户决策。
 
 ```bash
 # 记录测试执行时间
@@ -240,9 +240,6 @@ moon coverage analyze && moon coverage report
 ```
 Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
   │
-  ├── [可选] REQUEST SUB-SKILL: moonbit-code-review
-  │   （若 implement 阶段未做审查，verify 可委托；否则跳过）
-  │
   ├── B1. moon fmt --check               ← 基础测试（所有项目必选）
   ├── B2. moon check --warn-list +73
   ├── B3. moon test
@@ -267,7 +264,7 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 **Custom 测试（C1-C3）按项目类型执行**，属于该类型则必选，失败阻断。
 **增强测试（E1-E6）报告结果不阻断**，用户判断是否接受。
 
-> **CI 失败反向回落**：如果本地验证通过但远程 CI（GitHub Actions 等）失败（如跨平台兼容、WASM 运行时、编译器版本差异），回到 `moonbit-implement` 的 **Bug Fix Mode**，使用 CI 失败日志接入规范（Log Ingestion）进行诊断与修复。
+> **CI 失败反向回落**：如果本地验证通过但远程 CI（GitHub Actions 等）失败（如跨平台兼容、WASM 运行时、编译器版本差异），将 CI 失败日志接入诊断，修复后交还用户复核。
 
 ---
 
@@ -286,8 +283,8 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 |------|------|------|
 | `moon info` 失败 | 先 `moon check` | 类型正确后重试 |
 | 临时目录编译失败 | workspace 路径错误 | 检查 `moon.work` 路径 |
-| 性能退化 | E3 检测到耗时显著增加 | 建议调用 `moonbit-perform` 优化 |
-| 重构回归 | refactor 后测试失败 | 回滚重构步骤，回到 `moonbit-refactor` |
+| 性能退化 | E3 检测到耗时显著增加 | 报告信号，交还用户决策是否优化 |
+| 重构回归 | 重构后测试失败 | 报告失败项，交还用户回滚决策 |
 
 ## 输出
 
@@ -351,4 +348,4 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 
 ## 下一步
 
-验证通过后，进入 `moonbit-evaluate` 做最终验收和发布准备。如果基础测试或 Custom 测试失败，回到 `moonbit-implement` 修复问题。性能问题建议调用 `moonbit-perform`，技术债务建议调用 `moonbit-refactor`。
+验证通过后，向用户报告结果。如果基础测试或 Custom 测试失败，报告具体失败项，由用户决定修复方式（本插件不承载实现/重构/优化流程，相关改动由用户或外部流程编排负责）。

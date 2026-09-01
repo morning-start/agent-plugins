@@ -106,7 +106,7 @@ Usage: moon work <COMMAND>
 
 - **深度说明**：管理多模块工作区（monorepo 场景）。`init` 创建 `moon.work`；`use` 把多个模块纳入统一工作区；`sync` 统一依赖版本，避免成员间版本漂移。
 - **要点**：工作区项目用 `moon.work` 而非单 `moon.mod`；多包依赖分析用 `moon tree`。
-- **与技能仓库映射**：`moonbit-verify` B4 工作区状态检查、`moonbit-cd` 制品管理（工作区打包）。
+- **与技能仓库映射**：`moonbit-verify` B4 工作区状态检查。
 
 ### 3.2 构建与运行
 
@@ -122,7 +122,7 @@ Usage: moon build [OPTIONS] [PATH]...
 
 - **深度说明**：编译当前包产出目标文件。`--watch` 可监听文件系统自动重建；`--target all` 一次构建全部后端；`--output-json` 供脚本解析诊断。
 - **要点**：`-d --deny-warn` 把警告当错误（严格门禁）；`--frozen` 离线构建。
-- **与技能仓库映射**：`moonbit-verify` 各类型专属验证、`moonbit-implement` 编译回归。
+- **与技能仓库映射**：`moonbit-verify` 各类型专属验证。
 
 #### `moon check [PATH]...` — 类型检查（不产出目标文件）
 
@@ -134,7 +134,7 @@ Usage: moon check [OPTIONS] [PATH]...
 
 - **深度说明**：只做类型/借用检查，不生成目标文件，速度远快于 build。`--fmt` 顺带检查格式；`--explain` 展开错误码；`--patch-file` 校验补丁；可对单个 `.mbt.md` 文档内嵌代码检查。
 - **要点**：CI 与本地门禁的首选检查命令；`--warn-list +73` 启用无条件递归警告（仓库 B2 门禁）。
-- **与技能仓库映射**：`moonbit-verify` **B2**（`moon check --warn-list +73`）、`moonbit-code-review` 验证步骤。
+- **与技能仓库映射**：`moonbit-verify` **B2**（`moon check --warn-list +73`）。
 
 #### `moon prove [PATH]` — 形式化证明
 
@@ -160,7 +160,7 @@ Usage: moon run [OPTIONS] <PACKAGE_OR_MBT_FILE|-e <SCRIPT>> [ARGS]...
 
 - **深度说明**：运行 main 包；支持 `-e` 单行脚本与 stdin 管道；`--profile` 直接出性能剖析。
 - **要点**：CLI 项目验收的必需命令（输出非空）；`-e` 适合快速冒烟测试。
-- **与技能仓库映射**：`moonbit-verify` **C2**（main 项目 `moon run .` + stdout 非空）、`moonbit-evaluate` main 专属验证、`moonbit-perform` 性能基线。
+- **与技能仓库映射**：`moonbit-verify` **C2**（main 项目 `moon run .` + stdout 非空）。
 
 #### `moon runwasm <LOCAL|PACKAGE[@VERSION]> [ARGS]...` — WASM 运行
 
@@ -173,12 +173,11 @@ Usage: moon runwasm [OPTIONS] <LOCAL_PACKAGE|PACKAGE[@VERSION]> [ARGS]...
 
 - **深度说明**：本地包按 `moon run --target wasm` 运行，或直接运行 mooncakes 上预构建的 wasm 二进制（无需本地构建）。
 - **要点**：支持 pin 版本坐标与自动解析最新版；适合快速试跑生态工具（如 moonfmt）。
-- **与技能仓库映射**：`moonbit-verify` wasm 类型验证、`moonbit-cd` wasm 制品分发。
+- **与技能仓库映射**：`moonbit-verify` wasm 类型验证。
 
 #### `moon clean` — 删除 _build
 
 - **深度说明**：清除 `<project-root>/_build`，解决陈旧产物导致的诡异编译错误。
-- **与技能仓库映射**：`moonbit-implement` 调试恢复手段（构建产物损坏时）。
 
 ### 3.3 测试与基准
 
@@ -205,7 +204,7 @@ Usage: moon test [OPTIONS] [PATH]...
 
 - **深度说明**：MoonBit 测试总入口。`-f` 过滤是 TDD 循环中 RED/GREEN 聚焦验证的关键；`-u` 用于 expect test（快照测试）更新；`--test-failure-json` 供 CI 脚本解析；`--outline` 可先看测试清单。
 - **要点**：本仓库所有 TDD 步骤均用 `moon test -f "test_name"` 聚焦；valid/invalid/edge 分类靠测试名前缀（`-f "valid/"` 等）。
-- **与技能仓库映射**：`moonbit-verify` **B3**、`moonbit-implement` RED/GREEN/VERIFY、`moonbit-testing` 测试运行、`moonbit-task` 验收项验证。
+- **与技能仓库映射**：`moonbit-verify` **B3**、`moonbit-testing` 测试运行。
 
 #### `moon bench [PATH]...` — 运行基准测试
 
@@ -221,7 +220,7 @@ Usage: moon bench [OPTIONS] [PATH]...
 
 - **深度说明**：运行 `bench_` 前缀的基准测试。`-f/--file` 与 `-i` 用于精准定位单个基准；`--no-parallelize` 串行跑保证测量稳定。
 - **要点**：性能回归检测的基础；配合 `moon run --profile` 做热点定位。
-- **与技能仓库映射**：`moonbit-perform` 基线测量、`moonbit-verify` E3 性能基线。
+- **与技能仓库映射**：`moonbit-verify` E3 性能基线。
 
 #### `moon coverage <SUBCOMMAND>` — 代码覆盖率
 
@@ -250,7 +249,7 @@ Usage: moon fmt [OPTIONS] [PATH]... [-- <ARGS>...]
 
 - **深度说明**：自动格式化；`--check` 是 CI/门禁的标准用法（本仓库 B1）。可指定单文件/单包范围。
 - **要点**：`moon fmt --check` 失败后先 `moon fmt` 自动修复，再 `git diff --exit-code` 确认干净。
-- **与技能仓库映射**：`moonbit-verify` **B1**、`moonbit-code-review` 验证步骤、hooks pre-commit。
+- **与技能仓库映射**：`moonbit-verify` **B1**、hooks pre-commit。
 
 #### `moon doc [SYMBOL]` — 生成/检索文档
 
@@ -264,7 +263,6 @@ Usage: moon doc [OPTIONS] [SYMBOL]
 
 - **深度说明**：`--serve` 起本地文档服务器；符号查询已迁移到 `moon ide doc`。
 - **要点**：evaluate 阶段文档预览用 `moon doc --target-dir`（老接口）或 `--serve` 浏览。
-- **与技能仓库映射**：`moonbit-docs` 文档生成、`moonbit-evaluate` 发布前文档预览。
 
 #### `moon explain <--diagnostic|--attribute>` — 解释诊断码与语言特性
 
@@ -276,7 +274,7 @@ Usage: moon explain [OPTIONS] <--diagnostic [<ID_OR_NAME>]|--attribute [<NAME>]>
 
 - **深度说明**：编译器诊断码（如 `E4053`）与语言属性的官方解释入口，无网络依赖。
 - **要点**：本仓库错误恢复的统一第一步：`moon explain --diagnostic E####` 定位类型错误。
-- **与技能仓库映射**：`moonbit-implement` / `moonbit-verify` 错误恢复、`moonbit-learn` 错误码沉淀。
+- **与技能仓库映射**：`moonbit-verify` 错误恢复。
 
 #### `moon info [PATH]...` — 生成公共接口 .mbti
 
@@ -289,7 +287,7 @@ Usage: moon info [OPTIONS] [PATH]...
 
 - **深度说明**：为每个包生成 `pkg.generated.mbti`（公共 API 签名文件），是 API 稳定性检查的基础。默认写 canonical backend（模块/工作区 `preferred-backend`，回退 `wasm-gc`）；`--target` 只检查不改写。
 - **要点**：`git diff --exit-code pkg.generated.mbti` 用于 API 表面比对（C1/H5 门禁）；跨版本比对决定 SemVer 建议。
-- **与技能仓库映射**：`moonbit-verify` **C1**（API 稳定性）、`moonbit-evaluate` SemVer 建议、`moonbit-refactor` API 不变验证。
+- **与技能仓库映射**：`moonbit-verify` **C1**（API 稳定性）。
 
 ### 3.5 依赖管理
 
@@ -304,7 +302,7 @@ Usage: moon add [OPTIONS] <MODULE>
 
 - **深度说明**：添加 mooncakes 注册表依赖。`--bin` 添加二进制包（工具类）；`--upgrade` 升级版本。
 - **要点**：本仓库依赖管理契约的第一步：`moon add <pkg>` → `moon check` → `moon test` → `moon-audit`。
-- **与技能仓库映射**：`moonbit-implement` 依赖管理契约、`moonbit-verify` E2 依赖安全审计。
+- **与技能仓库映射**：`moonbit-verify` E2 依赖安全审计。
 
 #### `moon remove <MODULE>` — 移除依赖
 
@@ -313,7 +311,6 @@ Usage: moon remove [OPTIONS] <MODULE>
 ```
 
 - **深度说明**：从 manifest 移除依赖。
-- **与技能仓库映射**：`moonbit-implement` 依赖管理契约（`moon remove` 后同样需 check/test 回归）。
 
 #### `moon install [SOURCE] [PATH_IN_REPO]` — 安装二进制/项目依赖
 
@@ -333,7 +330,7 @@ Usage: moon install [OPTIONS] [SOURCE] [PATH_IN_REPO]
 #### `moon tree` — 显示依赖树
 
 - **深度说明**：打印当前模块的依赖树，排查依赖版本冲突与循环依赖。
-- **与技能仓库映射**：`moonbit-implement` 依赖问题诊断、`moonbit-plan` 依赖评估。
+- **与技能仓库映射**：`moonbit-plan` 依赖评估。
 
 #### `moon fetch <MODULE[@VERSION]>` — 下载包到 .repos（不稳定）
 
@@ -344,7 +341,6 @@ Usage: moon fetch [OPTIONS] <MODULE[@VERSION]>
 
 - **深度说明**：不稳定命令，把包下载到 `.repos` 目录（本地开发/调试依赖用）。
 - **要点**：标注 unstable，生产流程慎用。
-- **与技能仓库映射**：依赖本地调试（`moonbit-implement` 依赖调试）。
 
 #### `moon update` — 更新注册索引
 
@@ -363,7 +359,6 @@ Usage: moon register       # 在 mooncakes.io 注册账号
 
 - **深度说明**：发布前置三件套：注册 → 登录 → 确认身份。`whoami` 验证当前凭证。
 - **要点**：`moon publish` 前必须 login 成功。
-- **与技能仓库映射**：`moonbit-evaluate` 发布准备（用户确认后执行）。
 
 #### `moon publish` — 发布当前模块
 
@@ -374,7 +369,6 @@ Usage: moon publish [OPTIONS]
 
 - **深度说明**：把当前模块发布到 mooncakes.io（lib 项目的发布方式）。发布前应完成全量验证 + SemVer 决策。
 - **要点**：发布不可逆，版本号一经发布不可改写（注册表不可变语义）。
-- **与技能仓库映射**：`moonbit-evaluate` 发布执行（用户批准后）、`moonbit-cd` lib 制品分发。
 
 #### `moon package [--list]` — 打包当前模块
 
@@ -384,7 +378,6 @@ Usage: moon package [OPTIONS]
 ```
 
 - **深度说明**：打包当前模块为可分发包（发布前预览包含哪些文件）。`--list` 查看内容清单。
-- **与技能仓库映射**：`moonbit-evaluate` 发布检查、`moonbit-cd` 制品管理。
 
 ### 3.7 工具链与杂项
 
@@ -411,7 +404,6 @@ Usage: moon upgrade [OPTIONS]
 
 - **深度说明**：升级 moon 工具链本体。`--dev` 安装开发版（尝鲜/验证新特性）。
 - **要点**：工具链升级后应重跑全量验证（新版本可能改变诊断/行为）。
-- **与技能仓库映射**：`moonbit-learn` 工具链版本记录、升级后回归验证。
 
 #### `moon shell-completion` — 生成 shell 补全
 
@@ -423,7 +415,6 @@ Usage: moon shell-completion [OPTIONS]
 
 - **深度说明**：输出补全脚本到 stdout，支持 bash/elvish/fish/pwsh/zsh。示例：`moon shell-completion --shell bash >> ~/.local/share/bash-completion/completions/moon`；或 `eval "$(moon shell-completion --shell <SHELL>)"` 动态加载。
 - **要点**：Windows 用 PowerShell 补全（v5.0+）。
-- **与技能仓库映射**：开发环境搭建（`moonbit-init` 环境准备）。
 
 ---
 
@@ -432,22 +423,9 @@ Usage: moon shell-completion [OPTIONS]
 | 技能 | 核心命令 | 用途 |
 |------|---------|------|
 | `moonbit-plan` | `moon tree` | 依赖评估；不直接使用构建命令 |
-| `moonbit-writing-plans` | `moon test -f` | 任务拆解时给出聚焦验证命令 |
 | `moonbit-scaffold` | `moon new` | 新项目骨架前提 |
-| `moonbit-init` | `moon shell-completion` | 开发环境准备 |
 | `moonbit-testing` | `moon test`、`moon test --outline` | 测试运行与组织 |
-| `moonbit-implement` | `moon test -f`、`moon check`、`moon explain`、`moon clean` | TDD 循环 RED/GREEN/VERIFY、诊断、恢复 |
-| `moonbit-task` | `moon test -f`、`moon fmt --check` | 单任务验收项验证 |
-| `moonbit-code-review` | `moon fmt --check`、`moon check`、`moon test` | 审查验证步骤 |
 | `moonbit-verify` | `moon fmt --check`（B1）、`moon check --warn-list +73`（B2）、`moon test`（B3）、`moon info`（C1）、`moon run .`（C2）、`moon check --target all`（E1） | 三级门禁 |
-| `moonbit-perform` | `moon bench`、`moon run --profile` | 性能基线、热点定位 |
-| `moonbit-refactor` | `moon info`、`moon test` | API 不变验证、回归确认 |
-| `moonbit-evaluate` | `moon info`、`moon publish`、`moon package`、`moon doc --serve`、`moon login/whoami` | 发布准备与执行 |
-| `moonbit-cd` | `moon package`、`moon runwasm` | 制品管理与 wasm 分发 |
-| `moonbit-docs` | `moon doc`、`moon ide doc` | 文档生成 |
-| `moonbit-security` | `moon add`（依赖审计前置）、`moon-audit` | 依赖漏洞扫描 |
-| `moonbit-learn` | `moon explain --diagnostic` | 错误码沉淀 |
-| `moonbit-git` | `moon fmt`（格式化后提交） | 提交前格式对齐 |
 
 ## 五、实用组合速查
 

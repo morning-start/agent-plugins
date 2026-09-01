@@ -1,6 +1,6 @@
 # error-codes.json 数据格式规范
 
-本文件定义 [`references/error-codes.json`](./error-codes.json) 的字段格式，由 `moonbit-learn` 维护。从 `skills/learn/SKILL.md` 下沉至此，保持技能文件职责单一。
+本文件定义 [`references/error-codes.json`](./error-codes.json) 的字段格式，供 `moonbit-verify` 及错误码解释按需参考，保持参考文件职责单一。
 
 ## 数组结构
 

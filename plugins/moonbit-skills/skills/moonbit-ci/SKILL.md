@@ -1,6 +1,6 @@
 ---
 name: moonbit-ci
-description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when setting up CI for a MoonBit project — GitHub Actions workflows, local git hooks (pre-commit security scan, commit-msg Conventional Commits), branch protection rules, cross-platform test matrices, and deprecation warning interception. Triggered by user phrases like 'add CI', 'set up GitHub Actions', 'configure CI workflow', 'add commit-msg hook', 'add security scan', 'set up branch protection', 'CI pipeline', '自动化测试', '持续集成', 'configure pre-commit', 'conventional commits hook'. Also triggered when a MoonBit project lacks a .github/workflows directory or doesn't have local git hooks configured. Do NOT use for verification gate checks (use moonbit-verify), release preparation (use moonbit-evaluate), or deployment (use moonbit-cd) — this skill is about BUILDING the CI pipeline infrastructure, not deployment."
+description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT use outside one. Use when setting up CI for a MoonBit project — GitHub Actions workflows, local git hooks (pre-commit security scan, commit-msg Conventional Commits), branch protection rules, cross-platform test matrices, and deprecation warning interception. Triggered by user phrases like 'add CI', 'set up GitHub Actions', 'configure CI workflow', 'add commit-msg hook', 'add security scan', 'set up branch protection', 'CI pipeline', '自动化测试', '持续集成', 'configure pre-commit', 'conventional commits hook'. Also triggered when a MoonBit project lacks a .github/workflows directory or doesn't have local git hooks configured. Do NOT use for verification gate checks (use moonbit-verify) — this skill is about BUILDING the CI pipeline infrastructure, not verification or deployment."
 ---
 
 # CI — 持续集成与本地质量门禁
@@ -13,18 +13,16 @@ description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present); do NOT u
 2. **GitHub Actions CI** — 多 job 并行流水线（格式/编译/测试/安全/文档）
 3. **分支保护** — GitHub 分支保护规则建议
 
-**不重复** `moonbit-init` 的基础 hooks 配置，而是在其之上增加安全扫描、commit-msg 校验和接口文件自动同步。
+本技能**自主**搭建完整的本地 hooks 与 CI 基础设施（含基础 hooks 的初始创建），不依赖任何外部流程插件。
 
-**注意**：`moonbit-ci` 专注于 CI（构建/测试/分支保护），不再涵盖 CD（部署/回滚/制品管理）。CD 职责已拆分到 `moonbit-cd`，详见 [`skills/cd/SKILL.md`](../cd/SKILL.md)。
+**注意**：`moonbit-ci` 专注于 CI（构建/测试/分支保护），不涵盖部署（deploy/rollback/制品管理）。
 
 ## 与其它技能的边界
 
 | 技能 | moonbit-ci 不做什么 |
 |------|-------------------|
-| `moonbit-init` | 不做基础 hooks 配置（init 已做）；ci 在其之上增强 |
-| `moonbit-cd` | 不做部署执行和回滚管理（cd 已拆分，专注持续部署） |
 | `moonbit-verify` | 不运行验证门禁；ci 只搭建流水线框架 |
-| `moonbit-evaluate` | 不做发布准备；ci 仅提供持续集成阶段 |
+| `moonbit-scaffold` | 不生成项目骨架；ci 只在项目已存在时搭建流水线 |
 
 ---
 
@@ -84,13 +82,13 @@ fi
 |------|---------|
 | 无 CI workflow | 完整 GitHub Actions CI |
 | 已有单步 CI | 升级为多 job 并行 |
-| 无 hooks | 先调用 `moonbit-init` 配置基础 hooks，再增强 |
+| 无 hooks | 自主创建基础 hooks（pre-commit/pre-push/commit-msg）+ 增强 |
 
 ---
 
-### 阶段 2：增强本地 Hooks（commit-msg + 安全扫描）
+### 阶段 2：配置本地 Hooks（commit-msg + 安全扫描 + 基础门禁）
 
-在 `moonbit-init` 已配置的基础 hooks（pre-commit: fmt+check, pre-push: test）之上，补充：
+若项目尚无 `.githooks/`，先创建基础 hooks（合入安全扫描、commit-msg 校验、接口文件自动同步与基础 `fmt+check`、`test` 门禁），再在已有 hook 基础上增强。本技能**自主完成**，不依赖外部流程插件：
 
 #### 2a. 添加 commit-msg hook（Conventional Commits）
 
@@ -133,7 +131,7 @@ chmod +x .githooks/commit-msg
 
 #### 2b. 增强 pre-commit：添加安全扫描 + auto-restage
 
-在 `moonbit-init` 已创建的 pre-commit 基础上，补充安全扫描和格式化/接口文件自动 stage 逻辑：
+在 pre-commit 中加入安全扫描、格式化/类型检查、接口文件自动 stage 逻辑（若无现有 pre-commit 则新建）：
 
 ```bash
 # 增强 pre-commit（在现有脚本顶部插入安全扫描段）
@@ -411,4 +409,4 @@ gh api repos/:owner/:repo/branches/master/protection 2>/dev/null \
 
 ## 下一步
 
-CI 配置完成后，进入 `moonbit-verify` 执行验证门禁，或进入 `moonbit-implement` 继续开发。
+CI 配置完成后，进入 `moonbit-verify` 执行验证门禁。

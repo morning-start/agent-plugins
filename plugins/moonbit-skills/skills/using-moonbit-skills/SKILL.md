@@ -30,6 +30,18 @@ ALWAYS CHECK SKILL BEFORE ANY ACTION
 
 Announce with "Using [skill] to [purpose]" and follow the skill exactly.
 
+## 能力边界
+
+moonbit-skills 聚焦 **MoonBit 专属**能力，只承载 **设计、骨架生成、测试设计、验证、CI 基础设施** 五类：
+
+- **设计** — `moonbit-plan`：需求澄清、架构与 API 决策、模块划分、设计规则
+- **骨架生成** — `moonbit-scaffold`：按已批准设计生成项目骨架
+- **测试设计** — `moonbit-testing`：测试设计、组织、写法、时机决策
+- **验证** — `moonbit-verify`：三级检验门禁（fmt/check/test/audit）
+- **CI** — `moonbit-ci`：GitHub Actions、本地 hooks、分支保护
+
+**不做**通用开发流程（实现、任务拆解、代码审查、发布、部署、性能、重构、git 操作、文档、安全、学习、接入初始化）。这些由 **用户、其他流程插件（如 flowstate/fst）或外部编排** 承担。若用户需要实现类能力且未安装流程插件，直接交付设计/骨架/测试/验证契约，交给用户或外部编排执行实现。
+
 ## Skill Priority（互斥路由）
 
 When multiple skills match, route by intent:
@@ -37,55 +49,29 @@ When multiple skills match, route by intent:
 | 状态 / 意图 | 技能 |
 |-------------|------|
 | 新项目或未决定架构/API | `moonbit-plan` |
-| 已有 MoonBit 项目、接入 moonbit-skills | `moonbit-init` |
-| 设计已批准、需要任务分解 | `moonbit-writing-plans` |
-| 生成项目骨架 | `moonbit-scaffold` |
-| 配置本地 git hooks 质量门禁 | `moonbit-init` |
-| CI 配置、GitHub Actions、hooks 增强 | `moonbit-ci` |
-| 文档编写、维护、更新 | `moonbit-docs` |
-| 安全设计审查、威胁建模 | `moonbit-security` |
+| 设计已批准、生成项目骨架 | `moonbit-scaffold` |
 | 测试设计、组织、写法 | `moonbit-testing` |
-| 已有项目、需求明确、要写代码 | `moonbit-implement` (Feature TDD) |
-| 单一任务、单模块功能、逐项验收交付 | `moonbit-task` (Single Task TDD) |
-| Git 分支/提交/合并/worktree 操作 | `moonbit-git` |
-| 修复已有 bug、调试失败 | `moonbit-implement` (Bug Fix Mode) |
-| 性能优化、瓶颈分析 | `moonbit-perform` |
-| 重构、技术债务、坏味 | `moonbit-refactor` |
-| 审查代码差异和设计问题 | `moonbit-code-review` |
 | 检查质量或完成状态 | `moonbit-verify` |
-| 发布准备 | `moonbit-evaluate` |
-| 部署执行、回滚管理 | `moonbit-cd` |
-| 从已定位问题中沉淀知识 | `moonbit-learn` |
+| CI 配置、GitHub Actions、hooks | `moonbit-ci` |
 
 ## Trigger Matrix
 
 > ⚠️ **前置条件**：以下触发词**仅在 MoonBit 项目上下文**（当前目录存在 `moon.mod`
 > 或 `*.mbt` 文件，或用户明确提及 MoonBit / moon CLI 命令）时生效。非 MoonBit
-> 项目（Python/JS/Rust/其他）中的同名词（build/docs/check/test/git 等）**不得**
+> 项目（Python/JS/Rust/其他）中的同名词（build/check/test/git 等）**不得**
 > 路由到 moonbit-* 技能——直接回答或按其他插件流程处理。
 
 | User says (English) | User says (中文) | Skill |
 |---|---|---|
-| "init", "setup", "hooks", "initialize", "onboard", "adopt", "existing project" | "初始化", "设置", "钩子", "接入", "已有项目" | `moonbit-init` |
 | "ci", "github actions", "workflow", "continuous integration", "commit-msg" | "CI", "工作流", "持续集成", "commit message" | `moonbit-ci` |
-| "docs", "documentation", "readme", "changelog", "docstring", "adr" | "文档", "README", "CHANGELOG", "docstring", "写文档" | `moonbit-docs` |
 | "build", "create", "new", "I want to make" | "我要做", "写一个", "创建", "开发" | `moonbit-plan` |
 | "plan", "design", "architecture" | "设计", "架构", "规划" | `moonbit-plan` |
-| "decompose", "tasks", "breakdown", "steps" | "拆解", "任务", "步骤" | `moonbit-writing-plans` |
 | "scaffold", "generate", "skeleton" | "骨架", "模板", "生成" | `moonbit-scaffold` |
 | "how to test", "write tests", "test organization" | "如何测试", "写测试", "测试组织", "补测试", "测试重构" | `moonbit-testing` |
-| "optimize performance", "benchmark", "profile" | "性能优化", "性能瓶颈", "测量", "基线对比" | `moonbit-perform` |
-| "refactor", "technical debt", "code smell" | "重构", "技术债务", "坏味", "清理代码" | `moonbit-refactor` |
-| "implement", "write code", "add feature", "build" | "实现", "写代码", "加功能" | `moonbit-implement` |
-| "single task", "implement this task", "finish this task", "one module" | "实现这个任务", "单一任务", "单模块", "逐项验收" | `moonbit-task` |
-| "branch", "git commit", "merge", "worktree", "git workflow" | "分支", "提交", "合并", "worktree", "git 操作" | `moonbit-git` |
-| "review", "code review" | "审查", "评审", "检查" | `moonbit-code-review` |
 | "verify", "check", "quality", "audit", "is it ready", "does it pass" | "验证", "检查", "质量", "审计", "是否完成", "是否通过" | `moonbit-verify` |
-| "threat model", "security review", "secure design", "vulnerability" | "安全设计", "威胁建模", "安全审查", "漏洞扫描" | `moonbit-security` |
-| "evaluate", "publish", "release", "ship" | "发布验收", "发布", "版本", "上线前检查" | `moonbit-evaluate` |
-| "deploy", "rollout", "deployment", "rollback" | "部署", "回滚", "发布到生产" | `moonbit-cd`（evaluate 批准后） |
-| "learn", "remember", "don't repeat" | "学习", "记住", "教训" | `moonbit-learn` |
-| "debug", "fix", "error", "bug", "fail" | "调试", "修bug", "出错" | `moonbit-implement` (Bug Fix Mode) |
+
+> **通用流程意图**（实现/拆解/审查/发布/部署/性能/重构/git/文档/安全/学习/接入）触发的
+> 同名词**不路由**到 moonbit-* 技能；本插件不承载这些能力，直接交还用户或外部流程插件。
 
 ## Red Flags
 
@@ -107,7 +93,7 @@ These thoughts mean STOP — you are rationalizing:
 
 - 无法匹配任何技能且不属于 MoonBit 领域 → 声明 "This scenario is not covered by current skills"，建议提交 issue
 - 匹配到技能但技能文件不可用 → 报告缺失的技能，回退到 references/ 知识库
-- 多个技能同时匹配且无法通过优先级消歧 → 列出匹配的技能，让用户选择
+- 用户提出通用开发流程需求（实现/部署/发布等）→ 声明本插件不承载该能力，建议用户使用外部流程插件，但可交付设计/骨架/测试/验证契约
 
 ## 错误恢复
 
@@ -117,54 +103,40 @@ These thoughts mean STOP — you are rationalizing:
 | 目标技能文件不存在 | 技能路径错误 | 回退到 `references/` 知识库，标记缺失技能 |
 | 技能加载后执行失败 | 技能内部错误 | 报告失败技能和原因，尝试降级方案 |
 | 意图识别错误 | 用户说"不是这个意思" | 重新分类，使用修正后的技能 |
+| 用户需求超出能力边界 | 需要实现/部署等 | 交付契约，交还用户或外部流程插件 |
 
-## 流程框架
+## 定位
 
-moonbit-skills 是**自包含的完整流程框架**，不依赖任何外部流程插件（如 flowstate）：
+moonbit-skills 是 **MoonBit 专属**能力插件，**不包含**通用开发流程，也**不内置**自包含的完整开发管线：
 
-- 管线流转、DoD、HITL 闸门、Checkpoint、断点续跑**全部由本插件承担**。
-- 项目工作区、状态文件、恢复机制由 `moonbit-*` 技能维护（详见 `references/project-contract.md` §二、`references/orchestration.md`「管线持久化状态」）。
-- 冲突时按 AGENTS.md「指令优先级」：用户要求 > 仓库约束 > 技能 > 参考。
-
-**插件自身 vs 用户项目**：
-- **插件自身开发**（本仓库）：遵循本插件的自包含管线与仓库工作规则（见 AGENTS.md）。
-- **用户 MoonBit 项目**（使用本技能的目标项目）：从 `templates/agent-workplace/` 复制初始化 `.agent-workplace/`，由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖任何外部流程框架**。
+- 设计 → 骨架 → 测试设计 → 验证 → CI 由本插件承担。
+- **实现**（编码、TDD、提交）等流程由用户或外部流程插件（如 flowstate/fst）执行。
+- `moonbit-*` 技能可在任何阶段被外部流程插件调用，与 fst 等插件可协同使用（本插件不与其冲突，也不接管其管线状态）。
 
 ## Pipeline (recommended flow)
 
 ```
-Plan → [Spike (可选)] → [Writing-Plans] → Scaffold → [Testing ↔] Implement ↔ [Code-Review] → [Perform ↔ Refactor ↔] → Verify → Evaluate → CD
-                                          ↑                    │
-                                          └──── 设计回溯 ──────┘
+Plan → [Spike (可选)] → Scaffold → [Testing ↔] Verify
+                                    ↑            │
+                                    └── 设计回溯 ─┘
 ```
 
-注: Perform 和 Refactor 为可选双向步骤，在 implement 之后、verify 之前。两者之间可双向跳转（优化引入坏味 → refactor；重构影响热路径 → perform）。Spike 为可选原型验证步骤，在 plan 之后、writing-plans 之前。设计回溯可从 implement/perform/refactor 回到 plan。
-Code-Review 支持多轮循环：未批准时回到 implement 修复，修复后自动再次触发 review。
+注：Spike 为可选原型验证步骤，在 plan 之后、scaffold 之前。设计回溯可从实现/测试/验证阶段回到 plan 修正设计（本插件不承载实现，回溯触发由外部流程或用户发起）。
+Testing 与 Verify 可交叉：测试设计指导验证门禁，验证结果反馈测试补充。
 
-Steps can be skipped — the pipeline is recommended, not mandatory. If the project already exists, skip scaffold. If no release is needed, skip evaluate.
+实现类步骤（Implement/Commit/Review/Deploy 等）由外部流程编排，不在此管线内。
+
+Steps can be skipped — the pipeline is recommended, not mandatory. If the project already exists, skip scaffold. If no CI is needed, skip moonbit-ci.
 
 ## Available Skills
 
-| Skill | When to Use | 管线阶段 |
+| Skill | When to Use | 阶段 |
 |-------|-------------|---------------------------|
-| `moonbit-init` | Project onboarding (existing or new), assess state, setup .agent-workplace/, git hooks, quality gates | 接入 |
-| `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks enhancement, commit-msg enforcement | 随时可调用 |
-| `moonbit-docs` | Write and maintain API docs, README, CHANGELOG, user guides, ADRs | 随时可调用 |
-| `moonbit-security` | Threat modeling, security design review, dependency vulnerability scanning | 随时可调用 |
-| `moonbit-plan` | Clarify requirements (goal/scenario/customer/boundary/maintenance), design architecture and API; macro design + module breakdown + rule carrying + maintainability | plan |
-| `moonbit-writing-plans` | Break design into executable tasks (phased, stepped, granular, maintenance phase) | writing-plans |
-| `moonbit-scaffold` | Generate project skeleton from templates | scaffold |
-| `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) | 开发（与 implement 并行） |
-| `moonbit-perform` | Optimize performance with measurement-driven cycle | 优化 |
-| `moonbit-refactor` | Refactor code with test protection, eliminate code smells | 重构 |
-| `moonbit-implement` | Write code via TDD (test → implement → verify); modular small-step implementation; batch limit (≤5 tasks per batch); git commit contract (one-time authorization: if the target project's AGENTS.md already records auto-commit approval → auto branch → commit → merge after acceptance; otherwise ask once and record it) | implement |
-| `moonbit-task` | Deliver a single task end-to-end: test-first TDD, item-by-item acceptance, auto commit & merge on delivery per one-time authorization, batch checkpoint on completion | implement |
-| `moonbit-git` | Branch-per-task workflow, one-time authorization commit contract (ask once → record in target project AGENTS.md → auto commit & merge afterwards), worktree (user consent required), batch checkpoints | 开发（任务验收后） |
-| `moonbit-code-review` | Review code diff and design between tasks | 开发（任务间） |
-| `moonbit-verify` | Full quality gate: fmt, check, test, audit | verify |
-| `moonbit-evaluate` | Release readiness, README/CHANGELOG preview, release notes, rollback assessment | evaluate |
-| `moonbit-cd` | Deployment execution, artifact management, rollback planning | cd |
-| `moonbit-learn` | Extract lessons from bugs, update skills | 回顾 |
+| `moonbit-plan` | Clarify requirements (goal/scenario/customer/boundary/maintenance), design architecture and API; macro design + module breakdown + rule carrying + maintainability | 设计 |
+| `moonbit-scaffold` | Generate project skeleton from approved design | 骨架 |
+| `moonbit-testing` | Design tests, organize test files, timing decisions (test-first vs post-impl) | 测试设计 |
+| `moonbit-verify` | Full quality gate: fmt, check, test, audit | 验证 |
+| `moonbit-ci` | CI pipeline, GitHub Actions workflow, local hooks, commit-msg enforcement | 随时可调用 |
 
 ## 路由后自检清单
 
@@ -172,7 +144,7 @@ Steps can be skipped — the pipeline is recommended, not mandatory. If the proj
 
 - [ ] **目标技能**：已路由到 `moonbit-{skill}`
 - [ ] **Iron Law**：已读取并理解该技能的 Iron Law（复述核心约束）
-- [ ] **停止条件**：已确认本次任务的停止边界（如 3 次失败上限、用户确认点）
+- [ ] **停止条件**：已确认本次任务的停止边界（如用户确认点、能力边界）
 - [ ] **验证命令**：已确认本次任务将执行的验证命令（如 `moon test`、`moon fmt --check`）
 - [ ] **输出契约**：已确认技能的 JSON 输出格式
 

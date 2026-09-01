@@ -1,15 +1,14 @@
 ---
-description: Start the MoonBit development pipeline from plan to release
+description: Start the MoonBit development pipeline (design → scaffold → testing → verify)
 ---
 
 I want to start a MoonBit development task. Follow the MoonBit Skills pipeline:
 
-1. **Plan** — Use `moonbit-plan` to clarify my requirements and design the architecture
-2. **Writing Plans** — Use `moonbit-writing-plans` to break the design into executable tasks
-3. **Scaffold** — Use `moonbit-scaffold` if this is a new project (skip if project exists)
-4. **Implement** — Use `moonbit-implement` with TDD for each task
-5. **Code Review** — Use `moonbit-code-review` after each implementation task
-6. **Verify** — Use `moonbit-verify` for full quality gate after all tasks
-7. **Evaluate** — Use `moonbit-evaluate` for release readiness (skip if not publishing)
+1. **Plan** — Use `moonbit-plan` to clarify my requirements and design the architecture/API
+2. **Scaffold** — Use `moonbit-scaffold` if this is a new project (skip if project exists)
+3. **Testing** — Use `moonbit-testing` to design the test strategy
+4. **Verify** — Use `moonbit-verify` for the full quality gate
 
-Start by asking me what I want to build or fix. Then route through the pipeline step by step, getting my approval at each stage before proceeding.
+CI (GitHub Actions, hooks) can be added any time via `moonbit-ci`. Implementation and deployment are outside this plugin's scope and handled by the user or an external workflow such as flowstate/fst.
+
+Start by asking me what I want to build. Then route through the pipeline step by step, getting my approval at each stage before proceeding.

@@ -39,11 +39,11 @@
 - 行动前先读取 `skills/using-moonbit-skills/SKILL.md`，按其路由表匹配用户意图到对应技能。
 - 若用户直接指定技能，优先使用该技能，跳过路由匹配。
 - 若引导入口未列出某个技能或意图，以本文件的「技能职责边界」为准补充判断。
-- 推荐的新项目路径：`plan → [Spike (可选)] → writing-plans → scaffold → init → ci → [testing ↔] implement → code-review → [perform ↔ refactor ↔] → verify → evaluate → cd`。
-- 注: `↔` 表示双向依赖（含设计回溯，可从 implement/perform/refactor/evaluate 回到 plan）
-- **流程框架（自包含）**：moonbit-skills 是不依赖任何外部流程插件（如 flowstate）的自包含完整管线。管线流转、DoD、HITL 闸门、Checkpoint、断点续跑均由本插件的 `moonbit-*` 技能承担。详见 `skills/using-moonbit-skills/SKILL.md`「流程框架」。
-- **工作区约定（用户项目）**：`.agent-workplace/` 从 `templates/agent-workplace/` 复制初始化，由 `moonbit-writing-plans` / `moonbit-implement` 维护，**不依赖任何外部流程框架**。过程态一律进 `.agent-workplace/`（git 忽略）。详见 `references/project-contract.md` §二。
-- 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`、`init`、`ci`；设计已经获批可从 `writing-plans` 或 `implement` 开始；不发布则跳过 `evaluate`。
+- 推荐的新项目路径：`plan → [Spike (可选)] → scaffold → ci → [testing ↔] verify`。
+- 注: `↔` 表示双向依赖（含设计回溯，可从实现/测试/验证阶段回到 plan）
+- **能力边界**：moonbit-skills 是 **MoonBit 专属**能力插件，聚焦设计、骨架生成、测试设计、验证、CI 五类，**不承载**通用开发流程（实现、任务拆解、代码审查、发布、部署、性能、重构、git 操作、文档、安全、学习、接入初始化）。实现类流程由用户或外部流程插件（如 flowstate/fst）承担。详见 `skills/using-moonbit-skills/SKILL.md`「能力边界」。
+- `moonbit-*` 技能可在任何阶段被外部流程插件调用，与 fst 等插件可协同使用，本插件不与其冲突、不接管其管线状态。
+- 允许按上下文跳过不适用阶段：已有项目通常跳过 `scaffold`；设计已获批可从 `scaffold` 开始；不需要 CI 则跳过 `moonbit-ci`。
 - 不得跳过当前技能定义的门禁。验证体系分为三级：基础测试（B，所有项目必选）、Custom 测试（C，按类型选择）、增强测试（E，推荐非阻断）。详见 `references/orchestration.md` 的三级检测体系。
 
 ## 技能职责边界
@@ -52,24 +52,13 @@
 
 | 技能 | 职责边界 | 不可越权 |
 |---|---|---|
-| `moonbit-init` | 项目接入评估（状态检测 + 能力矩阵）+ .agent-workplace/ 初始化 + 质量门禁配置 | 不负责项目内容生成、不负责架构设计 |
-| `moonbit-ci` | CI 基础设施构建（GitHub Actions + hooks 增强 + 分支保护） | 不替代 verify 运行门禁；不负责部署执行（归 cd） |
-| `moonbit-cd`（新增） | 部署策略、制品管理、回滚预案、发布渠道 | 不替代 verify 门禁；不判定"可发布"（归 evaluate） |
-| `moonbit-docs`（新增） | API 文档、README、CHANGELOG、用户指南、ADR 维护 | 不做发布前预览校验（归 evaluate） |
-| `moonbit-security`（新增） | 威胁建模、依赖漏洞扫描、安全设计审查 | 不替代 verify E2 最终审计门禁 |
 | `moonbit-plan` | 需求澄清（目标/场景/客户/边界/维护五问）、架构和 API 设计决策；宏观设计 + 模块划分 + 规则承载 + 可维护性设计 | 不写实现代码 |
-| `moonbit-writing-plans` | 设计→可执行任务拆解（分阶段 Phase、分步骤、任务粒度约束、维护 Phase） | 不写实现代码 |
 | `moonbit-scaffold` | 按已批准设计动态生成项目骨架（按模块组织目录） | 不依赖预置模板，不覆盖用户文件 |
-| `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 不写实现代码，不运行门禁判定，不接管 implement 的 TDD Red 阶段执行 |
-| `moonbit-perform` | 性能测量、瓶颈分析、优化实现 | 不改变功能行为，不替代 verify 门禁 |
-| `moonbit-refactor` | 技术债务识别、小步重构、回归验证 | 不改变可观察行为，不替代 testing 测试设计 |
-| `moonbit-implement` | Feature TDD + Bug Fix Mode 双模式实现；模块化小步实现 | 无失败测试/无 regression test 不写实现代码；目标过大回 writing-plans 拆分 |
-| `moonbit-task` | 单一任务实现：测试前置 TDD（RED→GREEN→VERIFY）+ 逐项验收交付 | 不写实现代码前无失败测试；不替代 verify 门禁；验收项未逐项确认不声称完成 |
-| `moonbit-git` | 功能分支工作流、提交契约、合并、worktree 并行管理 | 不在主分支直接修改；提交遵循授权契约；worktree 必须获用户同意 |
-| `moonbit-code-review` | 任务间代码审查（任务/模块粒度 + 验收项↔测试对应） | 不发布、不声称完成 |
+| `moonbit-testing` | 测试设计、组织、写法、迭代；测试时机决策（先行 vs 后补） | 不写实现代码，不运行门禁判定 |
 | `moonbit-verify` | 三级验证门禁（基础/Custom/增强）+ 按模块/任务验证子集 | 不声称完成除非有新鲜证据 |
-| `moonbit-evaluate`（扩展） | 验收评估（任务级验收清单汇总）+ 发布准备 + changelog/release notes/回退预案 | 不跳过 verify，不替用户决定版本号，不执行部署（归 cd） |
-| `moonbit-learn` | 从已定位问题中沉淀知识 + 生产事故 RCA | NO MEMORY WITHOUT ROOT CAUSE：未确认根因不写入，不重复创建 |
+| `moonbit-ci` | CI 基础设施构建（GitHub Actions + 本地 hooks + 分支保护） | 不替代 verify 运行门禁；不负责部署执行 |
+
+> 通用开发流程（实现、任务拆解、代码审查、发布、部署、性能、重构、git、文档、安全、学习、接入初始化）**不属于**本插件，交由用户或外部流程插件承担。
 
 ## 仓库工作规则
 
@@ -84,14 +73,11 @@
 
 - 优先修改现有文件；仅在职责明确且现有结构无法承载时新增文件。
 - `moonbit-scaffold` 必须按已批准设计动态生成文件，不依赖预置模板，不覆盖未获准的用户文件。
-- 功能、修复和重构遵循 `moonbit-implement` 的 TDD 与 Iron Law；测试必须覆盖可观察行为。
-- 每个实现任务后执行 `moonbit-code-review`；Critical 和 Important 问题必须在继续前处理或由用户明确接受。
+- 本插件不承载实现类流程；功能、修复和重构的编码由用户或外部流程插件执行，测试必须覆盖可观察行为。
+- 引导入口按 `moonbit-plan` / `moonbit-scaffold` / `moonbit-testing` / `moonbit-verify` / `moonbit-ci` 的约定执行；关键取舍在继续前由用户明确确认。
 - 失败时保留真实命令和错误证据，按对应技能的有界恢复策略重试；不得伪造通过、降级为空实现或用占位符交付。
 - 将意外改动视为用户工作。不要覆盖、回滚或删除来源不明的改动；先缩小自己的修改范围。
-- **适用对象说明（重要）**：本仓库是 **MoonBit 技能仓库**，文中的「用户」「目标项目」「项目」均指**使用本技能的用户及其实际 MoonBit 项目**。所有关于 Git 提交契约、一次性授权、任务验收的约定，都从用户角度出发，用于优化**目标项目的开发流程**；本技能仓库自身不设独立流程，其开发同样遵循这些契约（本仓库自身即一个目标项目实例，见下方实例授权）。
-- **任务验收后的 Git 提交契约（适用于使用本技能的目标项目）**：目标项目为 git 仓库时，每个任务验收通过后按 `moonbit-git` 一次性授权协议执行——检测**目标项目** AGENTS.md 的授权记录：已有 → 自动执行「建功能分支 → 提交（单次提交只含一个 Task 产物，遵循 Conventional Commits）→ 合并回主分支 → 删除分支」；无 → 询问一次并写入授权记录后自动执行；用户明确要求不自动提交/不合并时例外。非 git 仓库只展示变更，不执行 git 命令。详见 `moonbit-git` 的「一次性授权协议」。
-- **本仓库实例授权（用户已批准，2026-08-02）**：本技能仓库作为目标项目实例，用户已明确授权 Agent 自动执行 git 提交与合并（每任务验收后：建功能分支 → 提交 → 合并回主分支 → 删除分支），**后续会话无需再逐次询问**；仅当用户在本对话中明确说"不要自动提交/不要合并"时才例外。
-- **多任务批次上限**：连续执行任务每批最多 5 个，之后停止汇报并进入提交检查点（每任务验收后已自动提交合并，压缩会话/开始新上下文再继续）；平台不支持会话压缩时批次上限收紧为 ≤3。批次边界由 `moonbit-writing-plans` 规划、`moonbit-implement` 执行、`moonbit-git` 提交检查点衔接。
+- **本仓库实例 Git 约定（用户已批准，2026-08-02）**：本技能仓库自身作为 git 仓库，用户已明确授权 Agent 自动执行 git 提交与合并（每完成一个原子改动：建功能分支 → 提交（遵循 Conventional Commits）→ 合并回主分支 → 删除分支），**后续会话无需再逐次询问**；仅当用户在本对话中明确说"不要自动提交/不要合并"时才例外。本插件不提供 `moonbit-git` 技能，此约定为仓库级工作规则，直接执行 git 命令。
 
 ### 完成前
 
@@ -130,9 +116,8 @@ Hooks 只提供自动化子集，不能替代完整验证；各平台事件能�
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 18 个核心技能 + 1 个引导入口（`using-moonbit-skills`）；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 5 个核心技能 + 1 个引导入口（`using-moonbit-skills`）：`plan`、`scaffold`、`testing`、`verify`、`moonbit-ci`；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
-- `references/error-codes.json` 由 `moonbit-learn` 维护；写入前必须确认根因并去重。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。
 - 安装与集成界面覆盖 AtomCode、Claude Code、Codex CLI / App、Cursor、Kimi Code、OpenCode、Pi 和 Gemini CLI；各平台的自动注入能力不同，修改共享元数据时保持对应描述文件一致。
 - 文档中的流程和检查编号只在其权威文件维护；其他文件使用引用和语义名称，不复制易漂移清单。

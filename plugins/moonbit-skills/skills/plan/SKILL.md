@@ -9,7 +9,7 @@ description: "Use ONLY in a MoonBit project (moon.mod / *.mbt present) or when t
 
 Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求文档 + 架构决策 + 模块划分 + 设计规则。**
 
-设计要**宏观、清晰、能承载规则**：不只决定"做什么"，还要定下"模块边界"和"实现时必须遵守的规则"，让后续 writing-plans / testing / implement / task 有统一的约束来源，避免每个技能各自猜测。
+设计要**宏观、清晰、能承载规则**：不只决定"做什么"，还要定下"模块边界"和"实现时必须遵守的规则"，让后续 scaffold / testing / verify 有统一的约束来源，实现阶段交给用户或外部流程编排，避免各自猜测。
 
 ## 项目类型分类
 
@@ -58,7 +58,7 @@ NO CODE WITHOUT APPROVED DESIGN
 - [ ] 已定义**模块划分**（每个模块的职责与边界、模块间依赖方向）
 - [ ] 已定义**设计规则**（命名约定、错误处理策略、验证/测试约束、验收标准来源）
 - [ ] 当前阶段未产出任何 `.mbt` 实现代码文件
-- [ ] 若已进入 implement，回头检查是否有 plan 跳过证据
+- [ ] 若已进入实现阶段，回头检查是否有 plan 跳过证据
 
 未满足以上任一 → Iron Law 触发：停止，先完成设计或回到 plan。
 
@@ -260,30 +260,29 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
   },
   "api_surface": ["pub fn parse(StringView) -> Result[Ast, ParseError]"],
   "requirements_file": "docs/requirements.md",
-  "next": "writing-plans"
+  "next": "scaffold"
 }
 ```
 
 ## 设计回溯
 
-当 implement/perform/refactor 发现以下问题时，回到 plan 重新设计：
+当实现/优化/重构过程中（由用户或外部流程编排驱动）发现以下问题时，回到 plan 重新设计：
 
-| 触发场景 | 来源技能 | 回溯动作 |
+| 触发场景 | 来源阶段 | 回溯动作 |
 |---|---|---|
-| API 不可测试 | implement | 重新设计 API，简化可测性 |
-| 架构假设错误 | implement | 重新评估架构模式 |
-| 依赖不兼容 | implement | 重新选择依赖或架构 |
-| 性能瓶颈是架构问题 | perform | 重新设计性能关键路径 |
-| 技术债务是设计缺陷 | refactor | 重新设计模块边界 |
+| API 不可测试 | 实现 / 测试设计 | 重新设计 API，简化可测性 |
+| 架构假设错误 | 实现 | 重新评估架构模式 |
+| 依赖不兼容 | 实现 | 重新选择依赖或架构 |
+| 性能瓶颈是架构问题 | 优化 | 重新设计性能关键路径 |
+| 技术债务是设计缺陷 | 重构 | 重新设计模块边界 |
 
 ### 设计回溯流程
 
-1. 来源技能报告设计问题（停止条件触发）
+1. 来源阶段报告设计问题（停止条件触发）
 2. 进入 plan 的"设计修正"模式
 3. 重新评估架构决策（与用户确认）
 4. 更新 `docs/requirements.md`
-5. 进入 writing-plans 重新拆解任务
-6. 继续 implement
+5. 回到设计起点，重新交付设计给用户，由用户或外部流程编排接手后续实施
 
 ### 设计回溯的输出
 
@@ -291,11 +290,11 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 {
   "status": "design_revision",
   "trigger": "api_untestable",
-  "source_skill": "implement",
+  "source_phase": "implementation",
   "original_design": "...",
   "revised_design": "...",
   "user_confirmed": true,
-  "next": "writing-plans"
+  "next": "scaffold"
 }
 ```
 
@@ -303,7 +302,7 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 
 ## Spike 原型验证（可选）
 
-设计确定后，如果存在关键假设需要验证，可以在 writing-plans 之前增加可选 Spike 阶段。
+设计确定后，如果存在关键假设需要验证，可以在交付实现前增加可选 Spike 阶段。
 
 ### 何时需要 Spike
 
@@ -316,8 +315,8 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 
 1. 写**最小**的探索代码，只验证关键假设
 2. **验证完成即丢弃所有 Spike 代码**（不可进入版本控制）
-3. 产出物是经验——记录到 `writing-plans` 的任务拆解中
-4. Spike 代码不能被复用为生产代码（否则破坏 implement 的 Iron Law）
+3. 产出物是经验——沉淀到设计文档的设计规则中，供后续实现参考
+4. Spike 代码不能被复用为生产代码（否则破坏 TDD 约束）
 
 ### Spike 流程
 
@@ -325,17 +324,17 @@ grep -q "project_type" docs/requirements.md && echo "project_type: OK" || echo "
 ┌─ IDENTIFY:  确认关键假设（哪些决策需要验证）
 ├─ SPIKE:     写最小探索代码，验证假设
 ├─ EVALUATE:  验证结果 → 假设成立/不成立/部分成立
-└─ DISCARD:   丢弃 Spike 代码，记录经验到 writing-plans
+└─ DISCARD:   丢弃 Spike 代码，记录经验到设计文档
 ```
 
-### 与 implement 的关系
+### 与实现的关系
 
 - Spike 代码不是生产代码，不遵循 TDD Iron Law
-- Spike 完成后必须丢弃所有代码，再从空的 implement 开始 TDD
-- Spike 的经验可以指导 writing-plans 的 task 拆分，但不可以直接进入代码
+- Spike 完成后必须丢弃所有代码，后续实现从头开始
+- Spike 的经验可以指导实现的任务边界划分，但不可以直接进入代码
 
 ---
 
 ## 下一步
 
-计划确认后，进入 `moonbit-writing-plans` 将设计拆解为可执行任务。如果不需要分解（如小型改动），可以直接进入 `moonbit-scaffold` 生成项目骨架或 `moonbit-implement` 开始开发。
+计划确认后，将设计交付给用户。若需要项目骨架，进入 `moonbit-scaffold` 生成；随后由用户或外部流程编排接手实现，并以 `moonbit-testing` / `moonbit-verify` 保证设计与测试落地。

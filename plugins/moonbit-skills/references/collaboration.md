@@ -178,7 +178,3 @@ git commit -m "feat(parser): add JSON parser for config files"
 | 分支保护 | `moonbit-ci` 的分支保护建议 |
 | Commit 规范 | `moonbit-ci` 的 commit-msg hook（Conventional Commits） |
 | 测试门禁 | `moonbit-verify` 的 B1-B4 + C1 |
-| 安全审查 | `moonbit-security` 的威胁建模和设计审查 |
-| 文档同步 | `moonbit-docs` 的文档维护 |
-| 发布管理 | `moonbit-evaluate` 的验收评估 |
-| Code Review | `moonbit-code-review` 的任务间审查 |

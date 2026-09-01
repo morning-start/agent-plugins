@@ -235,9 +235,9 @@ moon test --target wasm
 |------|------|------|
 | 未知项目类型 | 不在 lib/cli/ffi/wasm 中 | 让用户从列表中选择 |
 | `moon` 命令不可用 | command not found | 报告工具链前置需求，不声称验证成功 |
-| 验证失败 | fmt/check/test 任一不通过 | 显示失败命令，返回 plan 或 implement |
+| 验证失败 | fmt/check/test 任一不通过 | 显示失败命令，返回 plan 修正设计 |
 | 占位符替换不完整 | 生成文件中 `{` 字符残留 | 检查生成后文件，确保占位符全部替换 |
 
 ## 下一步
 
-验证通过后，进入 `moonbit-implement` 开始逐个任务实现。
+骨架已验证通过。后续实现交给用户或外部流程编排，并以 `moonbit-testing` / `moonbit-verify` 保证测试与验证落地。
