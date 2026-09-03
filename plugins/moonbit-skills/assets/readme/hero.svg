@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">MoonBit Skills — 设计、骨架、测试与验证的质量门禁</title>
+  <desc id="hero-desc">把 MoonBit 开发从自然语言需求变为设计、骨架、测试与验证证据的 Agent 技能套件：plan → scaffold → testing → verify，门禁 B/C/E 把关，ci 随时可调。</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D1117"/>
+      <stop offset="1" stop-color="#101823"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="420" rx="24" fill="url(#bg)" stroke="#21262D" stroke-width="1"/>
+  <!-- Subtle top hairline -->
+  <rect x="0" y="0" width="1200" height="2" fill="#21262D" opacity="0.6"/>
+
+  <!-- ================= Left: title block ================= -->
+  <g id="title-block" transform="translate(56 48)">
+    <!-- category eyebrow -->
+    <text x="0" y="0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="600" fill="#8B949E" letter-spacing="2">MOONBIT AGENT SKILL SUITE</text>
+
+    <!-- repository name -->
+    <text x="0" y="64" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="60" font-weight="700" fill="#E6EDF3">MoonBit Skills</text>
+
+    <!-- concrete promise (Chinese value line) -->
+    <text x="0" y="120" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="26" font-weight="600" fill="#C9D1D9">把“设计 → 骨架 → 测试 → 验证”交给 Agent，</text>
+    <text x="0" y="154" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="26" font-weight="600" fill="#C9D1D9">完成与否由新鲜验证证据证明。</text>
+
+    <!-- primary proof line -->
+    <rect x="0" y="186" width="10" height="58" rx="5" fill="#58A6FF" fill-opacity="0.85"/>
+    <text x="30" y="212" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" fill="#E6EDF3">决策由你做，执行由 Agent 做：</text>
+    <text x="30" y="238" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" fill="#8B949E">5 个核心技能 + 1 个路由入口，门禁自动把关。</text>
+
+    <!-- metadata row -->
+    <text x="0" y="288" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#6E7681">plan · scaffold · testing · verify · ci</text>
+  </g>
+
+  <!-- ================= Right: pipeline proof panel ================= -->
+  <g id="pipeline-proof" transform="translate(700 48)">
+    <!-- panel -->
+    <rect x="0" y="0" width="444" height="308" rx="18" fill="#161B22" stroke="#30363D" stroke-width="1"/>
+
+    <!-- panel header -->
+    <text x="20" y="30" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="600" fill="#8B949E" letter-spacing="1.5">TYPICAL PIPELINE</text>
+    <line x1="20" y1="44" x2="424" y2="44" stroke="#21262D" stroke-width="1"/>
+
+    <!-- spine -->
+    <line x1="32" y1="84" x2="32" y2="268" stroke="#21262D" stroke-width="2"/>
+
+    <!-- stage 1: plan -->
+    <circle cx="32" cy="92" r="7" fill="#58A6FF"/>
+    <text x="56" y="96" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="21" font-weight="700" fill="#E6EDF3">moonbit-plan</text>
+    <text x="56" y="120" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">需求澄清 · 架构与 API 设计</text>
+
+    <!-- stage 2: scaffold -->
+    <circle cx="32" cy="148" r="7" fill="#58A6FF"/>
+    <text x="56" y="152" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="21" font-weight="700" fill="#E6EDF3">moonbit-scaffold</text>
+    <text x="56" y="176" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">按已批准设计生成骨架</text>
+
+    <!-- stage 3: testing -->
+    <circle cx="32" cy="204" r="7" fill="#3FB950"/>
+    <text x="56" y="208" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="21" font-weight="700" fill="#E6EDF3">moonbit-testing</text>
+    <text x="56" y="232" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">测试设计与组织</text>
+
+    <!-- stage 4: verify (gate) -->
+    <circle cx="32" cy="260" r="7" fill="#3FB950"/>
+    <text x="56" y="264" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="21" font-weight="700" fill="#E6EDF3">moonbit-verify</text>
+    <text x="56" y="288" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" fill="#8B949E">B / C / E 三级门禁证据</text>
+  </g>
+
+  <!-- ================= Bottom: evenly spaced gate pills ================= -->
+  <!-- Group origin at x=56; five 200-wide pills with 22 gaps span 56..1144 -->
+  <g id="gate-strip" transform="translate(56 386)">
+    <!-- ci pill (abs center 156) -->
+    <rect x="0" y="-17" width="200" height="34" rx="17" fill="#1F6FEB" fill-opacity="0.18"/>
+    <circle cx="20" cy="0" r="4" fill="#58A6FF"/>
+    <text x="100" y="5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="600" fill="#58A6FF" text-anchor="middle">ci · 随时可调</text>
+
+    <!-- base gates pill (abs center 378) -->
+    <rect x="222" y="-17" width="200" height="34" rx="17" fill="#21262D"/>
+    <text x="322" y="5" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="18" fill="#C9D1D9" text-anchor="middle">基础门禁 B1–B4</text>
+
+    <!-- custom gates pill (abs center 600) -->
+    <rect x="444" y="-17" width="200" height="34" rx="17" fill="#21262D"/>
+    <text x="544" y="5" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="18" fill="#C9D1D9" text-anchor="middle">Custom C1–C3 按类型</text>
+
+    <!-- enhanced gates pill (abs center 822) -->
+    <rect x="666" y="-17" width="200" height="34" rx="17" fill="#21262D"/>
+    <text x="766" y="5" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="18" fill="#C9D1D9" text-anchor="middle">增强 E1–E6 推荐</text>
+
+    <!-- bash hooks pill (abs center 1044) -->
+    <rect x="888" y="-17" width="200" height="34" rx="17" fill="#21262D"/>
+    <text x="988" y="5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#8B949E" text-anchor="middle">hooks: bash only</text>
+  </g>
+</svg>

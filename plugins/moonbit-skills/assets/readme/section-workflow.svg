@@ -4,9 +4,9 @@
   <rect width="1200" height="140" rx="16" fill="#0D1117" stroke="#21262D" stroke-width="1"/>
   <g transform="translate(56, 0)">
     <rect x="0" y="44" width="32" height="32" rx="8" fill="#3FB950" fill-opacity="0.15"/>
-    <text x="16" y="65" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" font-weight="700" fill="#3FB950" text-anchor="middle">4</text>
-    <text x="52" y="65" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="22" font-weight="700" fill="#E6EDF3">典型工作流</text>
-    <text x="52" y="90" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14" fill="#8B949E">5 个实战场景演示技能如何串联协作</text>
+    <text x="16" y="65" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="16" font-weight="700" fill="#3FB950" text-anchor="middle">2</text>
+    <text x="52" y="65" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="22" font-weight="700" fill="#E6EDF3">工作管线</text>
+    <text x="52" y="90" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14" fill="#8B949E">Plan → Scaffold → Testing ↔ Verify，CI 随时可调</text>
   </g>
   <line x1="56" y1="110" x2="1144" y2="110" stroke="#21262D" stroke-width="1"/>
 </svg>
