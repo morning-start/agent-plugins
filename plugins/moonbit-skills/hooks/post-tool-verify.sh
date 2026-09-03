@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # MoonBit Skills — Shared Post-Tool Verification (Shell)
 #
-# Called by Claude Code / Kimi Code / Codex CLI / Cursor / Gemini CLI
-# PostToolUse / afterFileEdit / AfterTool hooks.
+# Called by Claude Code / Kimi Code / Codex CLI / Cursor
+# PostToolUse / afterFileEdit hooks.
 #
 # Receives tool event JSON on stdin, runs lightweight MoonBit verification
 # if the tool modified a .mbt/.mbti file, and outputs result as JSON.
@@ -19,36 +19,41 @@
 #
 # Output format (stdout JSON):
 #   Claude Code/Codex/Kimi: exit code 2 = block, 0 = allow; stderr shown to model
-#   Gemini CLI: JSON with hookSpecificOutput.additionalContext
 #   Cursor: JSON on stdout
 #
 # To keep it simple and cross-platform: output JSON to stdout with both
-# "additionalContext" (Gemini) and "reason" (generic), and use exit code
+# "additionalContext" and "reason" fields, and use exit code
 # 2 for errors (Claude Code/Kimi/Codex block model).
 set -euo pipefail
 
 # Parse stdin JSON to get tool name and file path
-# Uses python3 for JSON parsing (available on all platforms with moon installed)
+# Uses node for JSON parsing (all agent harnesses run on Node.js)
 INPUT=$(cat)
 
 # Extract tool_name and file_path from JSON
-TOOL_NAME=$(echo "$INPUT" | python3 -c "
-import json, sys
-try:
-    data = json.load(sys.stdin)
-    tool = data.get('tool_name', data.get('toolName', data.get('tool', '')))
-    print(tool)
-except: print('')
+TOOL_NAME=$(echo "$INPUT" | node -e "
+let d = '';
+process.stdin.on('data', c => { d += c; });
+process.stdin.on('end', () => {
+  try {
+    const j = JSON.parse(d);
+    const tool = j.tool_name ?? j.toolName ?? j.tool ?? '';
+    process.stdout.write(String(tool));
+  } catch { process.stdout.write(''); }
+});
 " 2>/dev/null || echo "")
 
-FILE_PATH=$(echo "$INPUT" | python3 -c "
-import json, sys
-try:
-    data = json.load(sys.stdin)
-    ti = data.get('tool_input', data.get('toolInput', data.get('input', {})))
-    fp = ti.get('file_path', ti.get('path', ti.get('filePath', '')))
-    print(fp)
-except: print('')
+FILE_PATH=$(echo "$INPUT" | node -e "
+let d = '';
+process.stdin.on('data', c => { d += c; });
+process.stdin.on('end', () => {
+  try {
+    const j = JSON.parse(d);
+    const ti = j.tool_input ?? j.toolInput ?? j.input ?? {};
+    const fp = ti.file_path ?? ti.path ?? ti.filePath ?? '';
+    process.stdout.write(String(fp));
+  } catch { process.stdout.write(''); }
+});
 " 2>/dev/null || echo "")
 
 # Only check after write/edit operations on MoonBit files
@@ -125,17 +130,14 @@ fi
 # Build result message
 if [ "$HAS_ERRORS" -eq 1 ]; then
   MSG=$(printf "--- MoonBit Verification ---\n${ERRORS}${WARNINGS}Fix all errors above before presenting to the user.")
-  # Output JSON for platforms that parse stdout (Gemini CLI, Cursor)
-  python3 -c "
-import json, sys
-msg = sys.argv[1]
-print(json.dumps({
-    'hookSpecificOutput': {
-        'additionalContext': msg
-    },
-    'reason': msg
-}))
-" "$MSG" 2>/dev/null || echo "{\"reason\":\"$MSG\"}"
+  # Output JSON for platforms that parse stdout (Cursor)
+  MSG="$MSG" node -e "
+const msg = process.env.MSG;
+console.log(JSON.stringify({
+  hookSpecificOutput: { additionalContext: msg },
+  reason: msg,
+}));
+" 2>/dev/null || echo "{\"reason\":\"$MSG\"}"
   # Exit code 2 = block (Claude Code, Kimi Code, Codex CLI)
   exit 2
 else
@@ -144,15 +146,12 @@ else
   else
     MSG="✅ MoonBit verification passed (fmt + check)"
   fi
-  python3 -c "
-import json, sys
-msg = sys.argv[1]
-print(json.dumps({
-    'hookSpecificOutput': {
-        'additionalContext': msg
-    },
-    'reason': msg
-}))
-" "$MSG" 2>/dev/null || echo "{\"reason\":\"$MSG\"}"
+  MSG="$MSG" node -e "
+const msg = process.env.MSG;
+console.log(JSON.stringify({
+  hookSpecificOutput: { additionalContext: msg },
+  reason: msg,
+}));
+" 2>/dev/null || echo "{\"reason\":\"$MSG\"}"
   exit 0
 fi

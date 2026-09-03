@@ -24,7 +24,7 @@
 | `skills/using-moonbit-skills/SKILL.md` | SessionStart 引导入口、初始意图识别和用户意图→技能的完整路由表 |
 | `skills/*/SKILL.md` | 对应任务的执行步骤、停止条件、输出契约和恢复策略 |
 | `references/orchestration.md` | 完整管线、技能依赖和状态模型 |
-| `references/commands.md`、`references/idioms.md`、`references/patterns/` | MoonBit 命令、惯用法和项目类型模式 |
+| `references/cli/commands.md`、`references/language/idioms.md`、`references/project-types/patterns/` | MoonBit 命令、惯用法和项目类型模式 |
 | `hooks/` | 实际自动门禁行为；脚本实现优先于说明性文字 |
 | `README.md` | 面向使用者的安装、能力介绍和示例，不定义 Agent 执行规则 |
 
@@ -95,7 +95,7 @@ MoonBit 项目的完整门禁以 `skills/verify/SKILL.md` 为唯一权威，按�
 | 所有 MoonBit 项目 | 格式、类型检查、测试、工作区状态（B1-B4） |
 | main / CLI | B1-B4 + C1/C2：`moon run` 成功且输出非空 |
 | library | B1-B4 + C1/C3：包结构与临时 consumer 编译验证 |
-| ffi / wasm / parser / async | B1-B4 + C3：对应 `references/patterns/` 和技能定义的类型专属验证 |
+| ffi / wasm / parser / async | B1-B4 + C3：对应 `references/project-types/patterns/` 和技能定义的类型专属验证 |
 
 Hooks 只提供自动化子集，不能替代完整验证；各平台事件能力不同：
 
@@ -103,21 +103,20 @@ Hooks 只提供自动化子集，不能替代完整验证；各平台事件能�
 - `hooks/commit-msg.sh`：Conventional Commits 校验（由支持 Git hooks 的环境执行）。
 - `hooks/pre-push.sh`：编译检查 + 全量测试（由支持 Git hooks 的环境执行）。
 - `hooks/pre-completion.sh`：会话完成前的自动检查（仅接入该事件的平台执行）。
-- Codex/Cursor/Gemini 的默认集成目前以 PostTool/afterFileEdit 轻量检查为主，不宣称具备完整 PreCompletion 门禁。
+- Codex/Cursor 的默认集成目前以 PostTool/afterFileEdit 轻量检查为主，不宣称具备完整 PreCompletion 门禁。
 
 修改本技能仓库自身时，按变更范围执行针对性验证：
 
-- 插件描述或版本字段：`python scripts/check-plugin-metadata.py`。
+- 插件描述或版本字段：`node scripts/check-plugin-metadata.mjs`。
 - JSON 文件：使用解析器验证语法。
 - Shell hooks：执行对应脚本或静态语法检查。
-- 技能或路由：运行 `evals/evals.json` 中相关场景可用的评估工具；若环境没有评估运行器，必须明确标记未运行。
 - 纯 Markdown：检查标题层级、链接/路径、命令和跨文件事实；不得声称通过未运行的代码测试。
 
 ## 维护不变量
 
 - `skills/using-moonbit-skills/SKILL.md` 是引导入口；支持 SessionStart hooks 的平台通过 `hooks/session-start` 注入，其他平台由各自的插件注册或指令机制加载。
-- `skills/` 当前包含 5 个核心技能 + 1 个引导入口（`using-moonbit-skills`）：`plan`、`scaffold`、`testing`、`verify`、`moonbit-ci`；新增、删除或重命名技能时同步路由、README、评估和平台注册信息。
+- `skills/` 当前包含 5 个核心技能 + 1 个引导入口（`using-moonbit-skills`）：`plan`、`scaffold`、`testing`、`verify`、`moonbit-ci`；新增、删除或重命名技能时同步路由、README 和平台注册信息。
 - `references/` 是按需读取的知识库，不是可直接执行的技能。
 - 行为约束型技能必须保留明确的 Iron Law、Red Flags、停止条件和错误恢复契约。
-- 安装与集成界面覆盖 AtomCode、Claude Code、Codex CLI / App、Cursor、Kimi Code、OpenCode、Pi 和 Gemini CLI；各平台的自动注入能力不同，修改共享元数据时保持对应描述文件一致。
+- 安装与集成界面覆盖 AtomCode、Claude Code、Codex CLI / App、Cursor、Kimi Code、OpenCode 和 Pi；各平台的自动注入能力不同，修改共享元数据时保持对应描述文件一致。
 - 文档中的流程和检查编号只在其权威文件维护；其他文件使用引用和语义名称，不复制易漂移清单。

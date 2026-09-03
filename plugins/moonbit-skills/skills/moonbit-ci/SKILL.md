@@ -392,7 +392,7 @@ gh api repos/:owner/:repo/branches/master/protection 2>/dev/null \
   },
   "branch_protection": "suggested (requires gh CLI + admin)",
   "user_approval_required": true,
-  "next": "verify | implement"
+  "next": "verify"
 }
 ```
 

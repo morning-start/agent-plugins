@@ -133,7 +133,7 @@ NO TEST CODE WITHOUT TEST STRATEGY
 
 ## 各项目类型测试策略
 
-> 各类型的测试策略详见 `references/project-type-matrix.md`「测试策略」章节。
+> 各类型的测试策略详见 `references/project-types/matrix.md`「测试策略」章节。
 
 ## 测试文件组织决策树
 

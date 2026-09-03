@@ -74,7 +74,7 @@ pub fn hello() -> String {
 // test.mbt
 ///|
 /// {package_name} — 测试
-/// 测试组织决策遵循 moonbit-testing 契约，详见 references/testing.md
+/// 测试组织决策遵循 moonbit-testing 契约，详见 references/testing/testing.md
 test "hello" {
   if hello() != "Hello from {package_name}!" {
     fail("hello() returned unexpected value")
@@ -169,7 +169,7 @@ test "version" {
 
 ### 3. 能力扩展（按模块组织）
 
-当项目包含 `parser` 或 `async` 能力时，在基础结构上追加**模块目录**。模块来自 plan 的「模块划分」，每个模块一个文件组，为 writing-plans 的 Phase 和 implement 的分模块实现提供落地骨架：
+当项目包含 `parser` 或 `async` 能力时，在基础结构上追加**模块目录**。模块来自 plan 的「模块划分」，每个模块一个文件组，为后续按模块实现的落地骨架：
 
 | 能力 | 模块文件（每模块一个文件组） |
 |------|---------|

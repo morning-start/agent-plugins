@@ -44,7 +44,7 @@ If you catch yourself doing any of these, you are violating the verify contract:
 
 ## 项目类型检测
 
-进入验证前，先检测项目类型。检测逻辑详见 [`references/type-detection.md`](../../references/type-detection.md)，此处不再重复以避免漂移。
+进入验证前，先检测项目类型。检测逻辑详见 [`references/project-types/detection.md`](../../references/project-types/detection.md)，此处不再重复以避免漂移。
 
 类型决定验证路径的差异。
 
@@ -87,23 +87,23 @@ moon test -f "edge/"     # 边界条件
 
 **判定标准：** Total tests = passed，failed = 0。覆盖 valid（快乐路径）+ invalid（错误路径）+ edge（边界条件）三种类型。
 
-### B3a. 按模块/任务验证子集（单 Task 完成时）
+### B3a. 按模块/功能点验证子集
 
-实现按模块/任务小步推进，因此验证也支持子集粒度：
+实现按模块/功能点小步推进，因此验证也支持子集粒度：
 
 ```bash
-# 单任务/模块验证：只跑当前 Task 的测试
-moon test -f "task_x_*"              # 聚焦当前功能点
+# 单功能点/模块验证：只跑当前功能点的测试
+moon test -f "feature_x_*"          # 聚焦当前功能点
 moon fmt --check                     # 格式仍全量检查（低成本）
 moon check --warn-list +73           # 类型仍全量检查
 
-# 阶段（Phase）验证：某个模块完成后独立验证该模块
+# 模块验证：某个模块完成后独立验证该模块
 moon test -f "lexer_*"               # lexer 模块测试全绿
 ```
 
 **契约**：
-- **单 Task 完成时**：`-f` 子集验证即可证明该功能点，但**声称"任务完成"前仍须全量验证一次**（B1-B4）。
-- **Phase/模块完成时**：该模块测试全绿 + 全量 B1-B4 通过，才能声称模块交付。
+- **单功能点完成时**：`-f` 子集验证即可证明该功能点，但**声称"完成"前仍须全量验证一次**（B1-B4）。
+- **模块完成时**：该模块测试全绿 + 全量 B1-B4 通过，才能声称模块交付。
 - 子集验证 ≠ 全量验证：子集用于快速反馈，全量用于交付声明。
 
 ### B4. 工作区干净（发布准备阶段专用）
@@ -154,7 +154,7 @@ moon run . 2>&1 | grep -q "." || fail("moon run produced no output")
 ```bash
 test -f moon.mod || fail("moon.mod is required")
 test -f moon.pkg || fail("moon.pkg is required")
-# 临时 consumer 编译验证脚本见 references/type-detection.md
+# 临时 consumer 编译验证脚本见 references/project-types/detection.md
 ```
 
 **判定标准：** 临时 consumer 编译通过，验证当前 library 可被外部项目消费。main/cli 项目跳过此检查。
@@ -270,14 +270,14 @@ Start → 检测项目类型（main / lib / wasm / ffi / parser / async）
 
 ## 各类型验证全景
 
-> 各类型的验证需求详见 `references/project-type-matrix.md`「验证需求」章节。
+> 各类型的验证需求详见 `references/project-types/matrix.md`「验证需求」章节。
 
 ---
 
 ## 错误恢复
 
 > 共享错误恢复行（fmt/check/test/audit 失败、run 失败、consumer 编译失败）详见
-> `references/common-error-recovery.md`。以下仅列出 verify 独有的行。
+> `references/errors/common-error-recovery.md`。以下仅列出 verify 独有的行。
 
 | 命令 | 诊断 | 修复 |
 |------|------|------|

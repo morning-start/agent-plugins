@@ -1,6 +1,4 @@
 draft/
-# Agent 运行时私有工作区（临时草稿/探索产物），不提交 git。
-.agent-workplace/
 **/skills/*-workspace/
 .*/skills/
 analysis_reference/

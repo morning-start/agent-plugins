@@ -1,12 +1,12 @@
 # CLAUDE.md — moonbit-skills
 
-**Quick reference**: MoonBit-specific skill suite — design, scaffolding, test design, verification, and CI infrastructure. Harnesses: Claude Code, Cursor, Codex, Kimi, Gemini, OpenCode, Pi/OMP, Serena.
+**Quick reference**: MoonBit-specific skill suite — design, scaffolding, test design, verification, and CI infrastructure. Harnesses: Claude Code, Cursor, Codex, Kimi, OpenCode, Pi/OMP, Serena.
 
 - Skills use the `moonbit-` prefix. Entry skill: `skills/using-moonbit-skills/SKILL.md`.
-- Hooks ship bash + PowerShell + Nushell variants (`hooks/session-start`, `hooks/pre-commit.*`).
+- Hooks ship as Bash scripts only (`hooks/session-start`, `hooks/pre-commit.sh`, …) — run via Git Bash, also on Windows.
 - Scope: **MoonBit 专属**能力（设计、骨架生成、测试设计、验证、CI 基础设施），**不承载**通用开发流程（实现、任务拆解、代码审查、发布、部署、性能、重构、git、文档、安全）。实现类流程由用户或外部流程插件（如 flowstate/fst）编排。
 - Schemas live in `schemas/` (verification).
-- References live in `references/` (commands, idioms, patterns, error-codes, orchestration).
+- References live in `references/` — `cli/` (command quick-ref + deep reference), `project-types/` (matrix, detection, patterns), `language/` (idioms, pitfalls), `errors/` (error codes + recovery), `testing/`, and `orchestration.md`.
 - Dual manifest: root `plugin.json` = OMP, `.claude-plugin/plugin.json` = Claude Code.
 
 ## Available Skills (invoke via `Skill` tool)

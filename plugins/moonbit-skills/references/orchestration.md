@@ -141,7 +141,7 @@ moonbit-skills 内的技能承担设计→骨架→测试→验证→CI 的流�
 
 ## 项目类型分支
 
-项目类型检测逻辑详见 [`references/type-detection.md`](./type-detection.md)，verify 共用同一份检测逻辑，避免漂移。此处不再重复检测代码。
+项目类型检测逻辑详见 [`references/project-types/detection.md`](./project-types/detection.md)，verify 共用同一份检测逻辑，避免漂移。此处不再重复检测代码。
 
 类型分支决定验证路径：
 
@@ -156,12 +156,12 @@ moonbit-skills 内的技能承担设计→骨架→测试→验证→CI 的流�
 
 | Hook 事件 | 触发时机 | 执行脚本 | 注入内容 |
 | ---- | ---- | ---- | ---- |
-| SessionStart | startup/clear/compact | `hooks/session-start`（Bash；Windows 可用 `run-hook.cmd` / PowerShell 入口） | `skills/using-moonbit-skills/SKILL.md` |
+| SessionStart | startup/clear/compact | `hooks/session-start`（Bash；Windows 经 Git Bash 运行） | `skills/using-moonbit-skills/SKILL.md` |
 | PreCommit | git commit | `hooks/pre-commit.sh` | B1 + B2（fmt + check） |
 | PrePush | git push | `hooks/pre-push.sh` | B3 + E2（test + audit） |
 | PreCompletion | 对话完成前 | `hooks/pre-completion.sh` | B1-B3 + C1 + E2 |
 
-平台差异：Claude/Kimi 的 `hooks/hooks.json` 接入完整 Git/完成前事件；OMP/Pi 接入 SessionStart 与 PostTool；Codex/Cursor/Gemini 默认接入编辑后的轻量验证。平台 Hook 不能替代显式 `moonbit-verify`。
+平台差异：Claude/Kimi 的 `hooks/hooks.json` 接入完整 Git/完成前事件；OMP/Pi 接入 SessionStart 与 PostTool；Codex/Cursor 默认接入编辑后的轻量验证。平台 Hook 不能替代显式 `moonbit-verify`。
 
 ***
 

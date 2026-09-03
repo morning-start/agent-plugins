@@ -1,8 +1,5 @@
-# Shell hooks must stay LF so bash/nu can execute them on Windows.
+# Shell hooks must stay LF so bash can execute them on Windows.
 *.sh text eol=lf
-*.nu text eol=lf
-*.cmd text eol=crlf
-*.ps1 text eol=crlf
 *.ts text eol=lf
 *.json text eol=lf
 *.md text eol=lf

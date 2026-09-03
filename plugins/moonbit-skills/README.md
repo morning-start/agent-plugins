@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="MoonBit Skills：面向 MoonBit 项目的 Agent 技能套件，覆盖从设计到验证的开发流程。">
-</p>
-
 # MoonBit Skills
 
 面向 MoonBit 项目的 **Agent 技能套件与质量门禁**。
@@ -95,10 +91,6 @@ Plan → [Spike] → Scaffold → Testing ↔ Verify
 
 ## 5 个核心技能
 
-<p align="center">
-  <img src="./assets/readme/section-skills.svg" width="100%" alt="5 个核心技能按设计、骨架、测试、验证和 CI 组织。">
-</p>
-
 ### 设计与骨架
 
 | 技能 | 作用 |
@@ -160,12 +152,11 @@ Plan → [Spike] → Scaffold → Testing ↔ Verify
 | Cursor | 先添加自定义 Marketplace（指向 morning-start/agent-plugins），再在 Agent 聊天中执行 `/add-plugin moonbit-skills` |
 | Codex CLI / App | 先添加自定义 Marketplace（指向 morning-start/agent-plugins），再在 `/plugins` 中搜索安装 `moonbit-skills` |
 | Kimi Code | 先添加自定义 Marketplace（指向 morning-start/agent-plugins），再从市场安装 `moonbit-skills` |
-| Gemini CLI | `gemini extensions install https://github.com/morning-start/moonbit-skills`（Git 直装，无需 marketplace） |
 | OpenCode | 使用 `.opencode/opencode.json` 中的 instructions 和 plugin 配置（本地文件引用） |
 
 OMP/Pi 通过 `package.json` 的 `omp.extensions` / `pi.extensions` 注册扩展；`skills/`、`hooks/` 和 `commands/` 保持为可发现的插件内容。
 
-不同平台的 Hook 事件能力不同：Claude/Kimi 可接入 Git 与完成前门禁，Codex/Cursor/Gemini 默认以编辑后的轻量验证为主；任何平台都仍需显式运行 `moonbit-verify` 才能形成完整交付证据。
+不同平台的 Hook 事件能力不同：Claude/Kimi 可接入 Git 与完成前门禁，Codex/Cursor 默认以编辑后的轻量验证为主；任何平台都仍需显式运行 `moonbit-verify` 才能形成完整交付证据。
 
 </details>
 
@@ -177,7 +168,6 @@ hooks/                     SessionStart、post-tool、Git hooks 和共享验证�
 commands/                  平台可调用的命令入口
 references/                命令、惯用法、项目类型和编排参考
 scripts/                   元数据、流水线状态和仓库一致性检查
-evals/evals.json            路由与管线场景评估
 .github/workflows/          CI 配置
 ```
 
@@ -185,7 +175,6 @@ evals/evals.json            路由与管线场景评估
 
 - 路由入口：[`skills/using-moonbit-skills/SKILL.md`](./skills/using-moonbit-skills/SKILL.md)
 - 编排规则：[`references/orchestration.md`](./references/orchestration.md)
-- 评估场景：[`evals/evals.json`](./evals/evals.json)
 - 插件元数据：[`plugin.json`](./plugin.json)、[`package.json`](./package.json)
 
 ## 常见问题
@@ -208,18 +197,16 @@ evals/evals.json            路由与管线场景评估
 
 ### Windows 支持如何？
 
-插件安装和技能使用不依赖 Unix shell。仓库同时提供 Bash、Nushell 和 PowerShell 入口；Git hooks 推荐使用 Git Bash 或 WSL，并应运行仓库的针对性检查确认环境差异。
+插件安装和技能使用不依赖 Unix shell。hooks 只提供 Bash（sh）版本；Windows 下通过 Git Bash 或 WSL 运行，并应运行仓库的针对性检查确认环境差异。
 
 修改技能、路由、平台元数据或 hooks 后，至少运行：
 
 ```bash
-python scripts/run-repo-checks.py --allow-working-tree
-python scripts/check-plugin-metadata.py
-python scripts/check-pipeline-consistency.py
-python scripts/validate-evals.py
-python -m compileall -q scripts
+node scripts/run-repo-checks.mjs --allow-working-tree
+node scripts/check-plugin-metadata.mjs
+node scripts/check-pipeline-consistency.mjs
 ```
-如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。技能路由或评估变化还应运行 `python scripts/validate-evals.py`。Verify 产生 JSON 证据后，使用 `python scripts/validate-verification.py --file <artifact.json>`。
+如果修改了 JSON，使用解析器验证语法；如果修改了 shell hooks，在 Git Bash 中运行 `bash -n`。Verify 产生 JSON 证据后，使用 `node scripts/validate-verification.mjs --file <artifact.json>`。
 
 ## 许可证
 

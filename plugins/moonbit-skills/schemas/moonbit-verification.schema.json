@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/morning-start/moonbit-skills/schemas/moonbit-verification.schema.json",
   "title": "MoonBit Verification Artifact",
-  "description": "Structured verification result output by moonbit-verify. Validated by scripts/validate-verification.py.",
+  "description": "Structured verification result output by moonbit-verify. Validated by scripts/validate-verification.mjs.",
   "type": "object",
   "required": [
     "schema_version",

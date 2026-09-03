@@ -29,7 +29,7 @@ Agent 提问→用户描述→Agent 展示方案→用户决策。**产出需求
 
 ## 各类型追问清单
 
-> 各类型的需求追问清单详见 `references/project-type-matrix.md`「需求追问清单」章节。
+> 各类型的需求追问清单详见 `references/project-types/matrix.md`「需求追问清单」章节。
 
 项目可以同时具备多个能力，不要强行压缩成单一类型。记录：
 
@@ -128,7 +128,7 @@ If you catch yourself doing any of these, you are violating the plan contract:
 
 ### 3. 展示架构方案
 
-根据 `project_type` 展示对应架构模式（参考 `references/patterns/{type}.md`）：
+根据 `project_type` 展示对应架构模式（参考 `references/project-types/patterns/{type}.md`）：
 
 **项目类型 → 推荐架构**
 - `cli`: `main.mbt` (@argparse) + `lib.mbt`，native-only
@@ -184,7 +184,7 @@ pub fn parse(input: StringView) -> Result[Ast, ParseError]
 | {module_a} | {职责} | {边界} | {依赖} |
 | {module_b} | {职责} | {边界} | {依赖} |
 
-> 模块是后续任务拆解的最小聚合单元：每个模块对应一个 Phase，模块内再拆 Task。依赖方向必须无环。
+> 模块是后续任务拆解的最小聚合单元：外部实现流程可在模块内继续拆分子任务。依赖方向必须无环。
 
 ## 设计规则（实现必须遵守，后续技能统一引用）
 - 命名约定：{如 snake_case / 前缀规则}
