@@ -112,10 +112,14 @@ function checkBashSyntax() {
   for (const shFile of rglob(REPO_ROOT, (n) => n.endsWith(".sh"))) {
     count += 1;
     try {
-      const result = spawnSync("bash", ["-n", shFile], {
+      // Pass a repo-relative POSIX path (not an absolute Windows path): Git Bash
+      // treats a backslash like `\c` as an escape, so `E:\...\foo.sh` resolves to
+      // the wrong file. Running with cwd=REPO_ROOT lets bash resolve `hooks/foo.sh`.
+      const result = spawnSync("bash", ["-n", rel(shFile)], {
         encoding: "utf-8",
         timeout: 10000,
         maxBuffer: 10 * 1024 * 1024,
+        cwd: REPO_ROOT,
       });
       if (result.status !== 0) {
         errors.push(`${rel(shFile)}: ${(result.stderr || "").trim()}`);
