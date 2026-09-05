@@ -1,5 +1,5 @@
 {
-  "plugin": ["./plugins", "./.opencode/plugins"],
+  "plugin": ["./.opencode/plugins"],
   "instructions": [
     "skills/using-moonbit-skills/SKILL.md"
   ]
