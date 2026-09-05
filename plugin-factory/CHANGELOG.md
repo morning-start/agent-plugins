@@ -18,6 +18,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `tools/verify/verify.mjs` so the check would have caught this, with a regression
   test in `tests/verify/hook-event.test.mjs`. pre-commit 门禁仍作为真实 git
   钩子由 `pf-githooks` 安装，不再写进 hooks.json。
+- **`hooks/pre-commit.ps1` lacked a UTF-8 BOM** — Windows PowerShell 5.1
+  decodes BOM-less `.ps1` files with the ANSI codepage; the file's em dash
+  (`—`) rendered as mojibake and left the file one encoding mistake away from
+  the same `MissingEndCurlyBrace` parse failure that hit flowstate's hooks.
+  BOM added.
 
 ## [0.2.0] - 2026-08-23
 
